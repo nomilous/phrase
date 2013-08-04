@@ -12,5 +12,10 @@
   "main": "./lib/phrase",
   "repository": "git@github.com:nomilous/phrase.git",
   "dependencies": {},
-  "devDependencies": {}
+  "devDependencies": {
+    "hound": "~1.0.4",
+    "should": "~1.2.2",
+    "mocha": "~1.12.0",
+    "coffee-script": "~1.6.3"
+  }
 }
