@@ -1,4 +1,4 @@
-### Version 0.0.0 (release stub)
+### Version 0.0.1 (unstable)
 
 `npm install phrase`
 
