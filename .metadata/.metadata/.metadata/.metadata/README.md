@@ -9,7 +9,7 @@
 
 
 
-                              the horse - [that] raced past the barn - fell
+                                 the horse - [that] raced past the barn - fell
 
 
 

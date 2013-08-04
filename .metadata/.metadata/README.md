@@ -9,10 +9,10 @@
 
 
 
-                             phrase |noun| ~  the length of which a singer 
-                                              or instrumentalist can play,
+                                phrase |noun| ~  a length of which the singer 
+                                                 or instrumentalist can play,
 
-                                              in one breath.
+                                                 in one breath.
 
 
 
