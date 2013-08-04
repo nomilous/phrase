@@ -1,4 +1,9 @@
+### Version 0.0.0 (release stub)
+
+`npm install phrase`
+
 phrase
 ======
 
-difficult to describe
+A describer.
+

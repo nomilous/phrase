@@ -1,0 +1,16 @@
+{
+  "name": "phrase",
+  "description": "A describer.",
+  "version": "0.0.0",
+  "author": "nomilous <nomilous@gmail.com>",
+  "contributors": [
+    {
+      "name": "nomilous",
+      "email": "nomilous@gmail.com"
+    }
+  ],
+  "main": "./lib/phrase",
+  "repository": "git@github.com:nomilous/phrase.git",
+  "dependencies": {},
+  "devDependencies": {}
+}
