@@ -1,31 +1,36 @@
 require( 'also' ) exports, {}, (root) -> 
 
+    {context, validate} = root
+
+
     #
-    # ### stack 
+    # stack
+    # -----
     # 
     # * The stack of elements (sub phrases) that is pushed and popped
     #   as the 'flow of execution' traverses the phrase tree.
-    # 
+    #
 
-    root.context.stack = []
+    context.stack = []
+
+    # 
+    # * Stack is directly attached to the `root.context`, this means that
+    #   there can only be one root phrase per process.
+    # 
 
     #
     # Phrase.create( opts )
     # ---------------------
     # 
-    # Creates a phrase context.
-    # 
-    # ### opts 
-    # 
-    # * `title` (required) 
+    # Create the `root phrase` with assigned title and universally unique id
     # 
 
-    create: (opts = {}) -> 
+    create: validate.args
+
+        $address: 'phrase.create'
+        opts: 
+            title: {} 
+            uuid: {} 
+
+        (opts) -> 
         
-        #
-        # validate opts
-        #
-
-        missing = ['title', 'uuid'].filter( (e) -> not opts[e]? ).map( (e) -> "opts.#{e}" ).join ', '
-        throw new Error "Phrase.create(opts) expects #{ missing }" if missing.length > 0
-
