@@ -83,9 +83,12 @@ describe 'phrase', ->
             done()
 
 
-        it 'generates phrase::start when called', (done) -> 
+        it 'generates phrase::start (only once!) when called', (done) -> 
 
             emitter.on 'phrase::start', -> done()
             root()
+            root()
+            root()
+
 
 
