@@ -76,4 +76,10 @@ require( 'also' ) exports, {}, (root) ->
             #
 
             -> 
+
+                #
+                # called phrase root registrar
+                #
+
+                context.emitter.emit 'phrase::start'
         

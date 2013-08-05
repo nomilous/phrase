@@ -57,3 +57,35 @@ describe 'phrase', ->
             root.should.be.an.instanceof Function
             done()
 
+
+    context 'phrase registrar (root)', -> 
+
+        root    = undefined
+        emitter = undefined
+
+        before (done) -> 
+
+            root = Phrase.create 
+
+                title: 'Phrase Title'
+                uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
+
+                (e) -> 
+
+                    emitter = e
+                    done()
+
+
+        it 'was returned by the call to Phrase.create()', (done) ->
+
+            should.exist root
+            should.exist emitter
+            done()
+
+
+        it 'generates phrase:start when called', (done) -> 
+
+            emitter.on 'phrase::start', -> done()
+            root()
+
+
