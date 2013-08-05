@@ -28,9 +28,14 @@ require( 'also' ) exports, {}, (root) ->
     create: validate.args
 
         $address: 'phrase.create'
+
         opts: 
             title: {} 
             uuid: {} 
 
-        (opts) -> 
+        eventFn: {}
+
+        (opts, eventFn) -> 
+
+            eventFn()
         
