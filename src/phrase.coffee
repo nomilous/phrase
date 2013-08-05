@@ -10,7 +10,7 @@ require( 'also' ) exports, {}, (root) ->
     #
 
 
-    {context, validate} = root
+    {context, inject, validate} = root
 
 
     #
@@ -73,13 +73,18 @@ require( 'also' ) exports, {}, (root) ->
 
             #
             # return root phrase registrar
+            # ----------------------------
+            # 
+            # * root phrase registrar is an asynchronously embellished fanfare of revellers allocating stray tinsel fillament scritinizers to their approximatly crowded senses of self scaffolded human pyramids
             #
 
-            -> 
+            inject.async
 
-                #
-                # called phrase root registrar
-                #
+                beforeAll: (done) -> 
 
-                context.emitter.emit 'phrase::start'
+                    context.emitter.emit 'phrase::start'
+                    done()
+
+                ->
+
         
