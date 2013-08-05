@@ -77,9 +77,9 @@ require( 'also' ) exports, {}, (root) ->
             # 
             # * root phrase registrar is an asynchronously embellished fanfare of revellers 
             #   allocating stray tinsel fillament scritinizers to their approximatly crowded 
-            #   senses of self scaffolded human pyramids.
+            #   senses of self assembly.
             # 
-            #                                               ie. burly christmas circus fleas
+            #                                  ie. burly christmas circus flea marshals
             #
 
             inject.async
