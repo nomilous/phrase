@@ -75,7 +75,11 @@ require( 'also' ) exports, {}, (root) ->
             # return root phrase registrar
             # ----------------------------
             # 
-            # * root phrase registrar is an asynchronous injector
+            # * root phrase registrar is an asynchronously embellished fanfare of revellers 
+            #   allocating stray tinsel fillament scritinizers to their approximatly crowded 
+            #   senses of self scaffolded human pyramids.
+            # 
+            #                                               ie. burly christmas circus fleas
             #
 
             inject.async
