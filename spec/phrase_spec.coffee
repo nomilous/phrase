@@ -1,5 +1,6 @@
-should = require 'should'
-Phrase = require '../lib/phrase'
+should         = require 'should'
+Phrase         = require '../lib/phrase'
+{EventEmitter} = require 'events'
 
 describe 'phrase', -> 
 
@@ -10,7 +11,7 @@ describe 'phrase', ->
             Phrase.create.should.be.an.instanceof Function
             done()
 
-        it 'expects opts and eventFn', (done) -> 
+        it 'expects opts and linkFn', (done) -> 
 
             try Phrase.create 
 
@@ -19,10 +20,10 @@ describe 'phrase', ->
             
             catch error
 
-                error.should.match /phrase.create\(opts,eventFn\) expects eventFn/
+                error.should.match /phrase.create\(opts,linkFn\) expects linkFn/
                 done()
 
-        it 'calls eventFn', (done) -> 
+        it 'calls linkFn', (done) -> 
 
             Phrase.create 
 
@@ -30,4 +31,29 @@ describe 'phrase', ->
                 uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
 
                 -> done()
+
+
+        it 'passes an event emitter into linkFn', (done) -> 
+
+            Phrase.create 
+
+                title: 'Phrase Title'
+                uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
+
+                (emitter) -> 
+
+                    emitter.should.be.an.instanceof EventEmitter
+                    done()
+
+        it 'returns a function', (done) -> 
+
+            root = Phrase.create 
+
+                title: 'Phrase Title'
+                uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
+
+                (emitter) -> 
+
+            root.should.be.an.instanceof Function
+            done()
 
