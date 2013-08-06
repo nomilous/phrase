@@ -67,7 +67,7 @@ exports.create = (root) ->
 
 
 
-        afterEach:  ->
-        afterAll:   -> 
+        afterEach: (done) -> done()
+        afterAll:  (done) -> done() 
 
     }

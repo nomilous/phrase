@@ -10,29 +10,30 @@ exports.create = (root) ->
     {context, inject} = root
     {stack, emitter}  = context
 
-    recursor = (phraseString, parentControl) -> 
+    recursor = (parentPhraseString, parentPhraseControl) -> 
 
         #
         # create recursion control hooks 
         #
 
-        hooks = RecursorHooks.create root
+        recursionControl = RecursorHooks.create root
 
         #
         # recurse via async injector
         # 
 
         injector = inject.async
-        
+
 
             parallel:   false
-            beforeAll:  hooks.beforeAll
-            beforeEach: hooks.beforeEach
+            beforeAll:  recursionControl.beforeAll
+            beforeEach: recursionControl.beforeEach
+            afterEach:  recursionControl.afterEach
+            afterAll:   recursionControl.afterAll
 
+            (phraseString, phraseControl, phraseFn) -> 
 
-            (phraseString, control, recursor) -> 
-
-                recursor()
+                phraseFn recursor phraseString, phraseControl
 
     #
     # return root recursor
