@@ -1,5 +1,6 @@
 should         = require 'should'
 Phrase         = require '../lib/phrase'
+PhraseRecursor = require '../lib/phrase/recursor'
 {EventEmitter} = require 'events'
 
 describe 'phrase', -> 
@@ -10,7 +11,7 @@ describe 'phrase', ->
 
             Phrase.create.should.be.an.instanceof Function
             done()
-            
+
         it 'expects opts and linkFn', (done) -> 
 
             try Phrase.create 
@@ -45,7 +46,9 @@ describe 'phrase', ->
                     emitter.should.be.an.instanceof EventEmitter
                     done()
 
-        it 'returns a function', (done) -> 
+        it 'returns the root phrase recursor ', (done) -> 
+
+            PhraseRecursor.create = -> -> done()
 
             root = Phrase.create 
 
@@ -54,46 +57,5 @@ describe 'phrase', ->
 
                 (emitter) -> 
 
-            root.should.be.an.instanceof Function
-            done()
-
-
-    context 'phrase registrar (root phrase registra)', -> 
-
-        root    = undefined
-        emitter = undefined
-
-        before (done) -> 
-
-            root = Phrase.create 
-
-                title: 'Phrase Title'
-                uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
-
-                (e) -> 
-
-                    emitter = e
-                    done()
-
-
-        it 'was returned by the call to Phrase.create()', (done) ->
-
-            should.exist root
-            should.exist emitter
-            done()
-
-
-        it 'generates phrase::start (only once!) when called', (done) -> 
-
-            emitter.on 'phrase::start', -> done()
-            root ->
-            root ->
-            root ->
-
-
-        it 'returns a promise', (done) -> 
-
-            root( -> ).then.should.be.an.instanceof Function
-            done()
-
+            root()
 

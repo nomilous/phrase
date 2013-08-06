@@ -1,59 +1,89 @@
-should         = require 'should'
-Phrase         = require '../../lib/phrase'
-Recursor       = require '../../lib/phrase/recursor'
+should              = require 'should'
+Phrase              = require '../../lib/phrase'
+PhraseRecursor      = require '../../lib/phrase/recursor'
+PhraseRecursorHooks = require '../../lib/phrase/recursor/hooks'
 
-describe 'Recursor', -> 
+describe 'PhraseRecursor', -> 
 
-        root    = undefined
-        emitter = undefined
+    context 'create()', -> 
 
-        before (done) -> 
-
-            root = Phrase.create 
-
-                title: 'Phrase Title'
-                uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
-
-                (e) -> 
-
-                    emitter = e
-                    done()
+        root = undefined
+        asyncInjectionFn = ->
 
 
-        it 'was returned by the call to Phrase.create()', (done) ->
+        beforeEach ->
 
-            should.exist root
-            should.exist emitter
+            root = 
+
+                context: {}
+                inject:  
+                    async: -> 
+                        return asyncInjectionFn
+
+
+        it 'returns a function created by the async injection decorator', (done) -> 
+
+            PhraseRecursor.create( root ).should.equal asyncInjectionFn
             done()
 
 
-        it 'generates phrase::start (only once!) when called', (done) -> 
+        it 'creates recursion control hooks with root context', (done) -> 
 
-            emitter.on 'phrase::start', -> done()
-            root ->
-            root ->
-            root ->
+            PhraseRecursorHooks.create = (r) -> 
 
-
-        it 'returns a promise', (done) -> 
-
-            root().then.should.be.an.instanceof Function
-            done()
-
-
-        it 'calls the function passed as last arg', (done) -> 
-
-            #
-            # this forms the basis of the recursion that 
-            # traverses the phrase tree
-            #
-
-            RUN = []
-            root '', {}, -> RUN.push '3args'
-            root '',     -> RUN.push '2args'
-            root(       -> RUN.push '1args').then -> 
-
-                RUN.should.eql [ '3args', '2args', '1args' ]
+                r.should.equal root
                 done()
-                
+                throw 'go no further'
+
+            try PhraseRecursor.create root
+
+
+        it 'configures the injection decorator and assigns recursion control hooks', (done) -> 
+
+            PhraseRecursorHooks.create = -> 
+
+                beforeAll: 'assigned beforeAll' 
+                beforeEach:'assigned beforeEach'
+                afterEach: 'assigned afterEach'
+                afterAll:  'assigned afterAll'
+
+
+            root.inject.async = (Preparator, decoratedFn) ->   
+
+                Preparator.should.eql 
+
+                    parallel:   false
+                    beforeAll:  'assigned beforeAll' 
+                    beforeEach: 'assigned beforeEach'
+                    afterEach:  'assigned afterEach'
+                    afterAll:   'assigned afterAll'
+
+                done()
+
+            PhraseRecursor.create root
+
+
+        it 'recurses via the injector', (done) -> 
+
+            CALLS = []
+
+            root.inject.async = (Preparator, decoratedFn) -> -> 
+
+                CALLS.push arguments
+                decoratedFn.apply this, arguments
+
+            recursor = PhraseRecursor.create root
+
+            recursor 'outer phrase string', {}, (nested) ->
+
+                nested 'nested phrase string', {}, (deeper) -> 
+
+                    deeper '...', {}, ->
+
+                        CALLS[0][0].should.equal 'outer phrase string'
+                        CALLS[1][0].should.equal 'nested phrase string'
+                        CALLS[2][0].should.equal '...'
+
+                        done()
+
 
