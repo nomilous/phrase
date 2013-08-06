@@ -58,7 +58,7 @@ describe 'phrase', ->
             done()
 
 
-    context 'phrase registrar (root)', -> 
+    context 'phrase registrar (root phrase registra)', -> 
 
         root    = undefined
         emitter = undefined
@@ -93,25 +93,7 @@ describe 'phrase', ->
 
         it 'returns a promise', (done) -> 
 
-            root().then.should.be.an.instanceof Function
+            root( -> ).then.should.be.an.instanceof Function
             done()
-
-
-        it 'calls the function passed as last arg', (done) -> 
-
-            #
-            # this forms the basis of the recursion that 
-            # traverses the phrase tree
-            #
-
-            RUN = []
-            root '', {}, -> RUN.push '3args'
-            root '',     -> RUN.push '2args'
-            root(       -> RUN.push '1args').then -> 
-
-                RUN.should.eql [ '3args', '2args', '1args' ]
-                done()
-                
-
 
 
