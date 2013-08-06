@@ -11,7 +11,7 @@ require( 'also' ) exports, {}, (root) ->
     #
 
 
-    {context, inject, validate} = root
+    {context, validate} = root
 
 
 

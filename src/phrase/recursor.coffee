@@ -3,16 +3,11 @@
 # phrase recursor
 # ===============
 # 
-# * root phrase recursor is an asynchronously embellished fanfare of revellers 
-#   allocating stray tinsel fillament scritinizers to their approximatly crowded 
-#   senses of self assembly.
-# 
-#                                  ie. burly christmas circus flea marshals
-#
 
 exports.create = (root) ->
 
-    {context, inject, validate} = root
+    {context, inject} = root
+    {stack, emitter}  = context
 
     recursor = (phraseString, parentControl) -> 
 
@@ -26,7 +21,7 @@ exports.create = (root) ->
 
             beforeAll: (done) -> 
 
-                context.emitter.emit 'phrase::start'
+                emitter.emit 'phrase::start'
                 done()
 
             beforeEach: (done, inject) -> 
