@@ -1,3 +1,9 @@
+BeforeAll      = require './before_all'  
+BeforeEach     = require './before_each'
+AfterEach      = require './after_each'
+BeforeAll      = require './after_all'
+
+
 exports.create = (root) -> 
 
     {context} = root
@@ -5,10 +11,7 @@ exports.create = (root) ->
     
     return {
     
-        beforeAll: (done) -> 
-
-            emitter.emit 'phrase::start'
-            done()
+        beforeAll: BeforeAll.create root
 
         beforeEach: (done, inject) -> 
 
