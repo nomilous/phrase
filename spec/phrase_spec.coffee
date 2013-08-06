@@ -86,9 +86,32 @@ describe 'phrase', ->
         it 'generates phrase::start (only once!) when called', (done) -> 
 
             emitter.on 'phrase::start', -> done()
-            root()
-            root()
-            root()
+            root ->
+            root ->
+            root ->
+
+
+        it 'returns a promise', (done) -> 
+
+            root().then.should.be.an.instanceof Function
+            done()
+
+
+        it 'calls the function passed as last arg', (done) -> 
+
+            #
+            # this forms the basis of the recursion that 
+            # traverses the phrase tree
+            #
+
+            RUN = []
+            root '', {}, -> RUN.push '3args'
+            root '',     -> RUN.push '2args'
+            root(       -> RUN.push '1args').then -> 
+
+                RUN.should.eql [ '3args', '2args', '1args' ]
+                done()
+                
 
 
 
