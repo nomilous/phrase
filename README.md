@@ -20,6 +20,10 @@ root = require('phrase').create
 
     (emitter) -> 
 
+        #
+        # eg. emitter.on 'phrase::start', (payload...) -> 
+        #
+
 
 ```
 

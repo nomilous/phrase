@@ -67,14 +67,14 @@ require( 'also' ) exports, {}, (root) ->
 
 
             #
-            # callback with the event publisher
+            # callback with the event publisher (emitter)
             #
 
             linkFn context.emitter
 
 
             #
-            # return recursor
+            # return phrase recursor (root)
             # 
          
             return recursor.create root 
