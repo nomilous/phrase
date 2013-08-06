@@ -14,85 +14,89 @@ exports.create = (root) ->
 
     {context, inject, validate} = root
 
-    recursor = inject.async
+    recursor = (phraseString, parentControl) -> 
 
         #
-        # set the recursor to run all calls in sequence
-        #
+        # recurse via async injector
+        # 
 
-        parallel: false
+        injector = inject.async
 
-        beforeAll: (done) -> 
+            parallel: false
 
-            context.emitter.emit 'phrase::start'
-            done()
+            beforeAll: (done) -> 
 
-        beforeEach: (done, inject) -> 
+                context.emitter.emit 'phrase::start'
+                done()
 
-            #
-            # inject
-            # ------
-            # 
-            # This object controls the behaviour of the async injection into
-            # the target function `(phrase, control, recursor) ->`
-            # 
-            # * Inject.defer is a deferral held by the async controller that
-            #   wraps the call to the injection target. Ordinarilly it would
-            #   be passed into the injection target function as arg1 (done)
-            #   
-            #   But, instead, calling it out here...
-            # 
+            beforeEach: (done, inject) -> 
 
-            defer = inject.defer
+                #
+                # inject
+                # ------
+                # 
+                # This object controls the behaviour of the async injection into
+                # the target function: `(phrase, control, recursor) ->`
+                # 
+                # * Inject.defer is a deferral held by the async controller that
+                #   wraps the call to the injection target. Ordinarilly it would
+                #   be passed into the injection target function as arg1 (done)
+                #   
+                #   But, instead, calling it out here...
+                # 
 
-            #   ...prevents that behaviour.      And leaves the alternative 
-            #                                    resolution mechanism up to
-            #                                    the developer
-            #
-            #  
-            #  * Resolving this deferral results in the 'flow of execution'
-            #    proceeding into the next phrase.
-            # 
-            # 
-            #  * TEMPORARY !!!  this deferral resolves here
-            #               (pending unimplemented mechanism)
-            # 
-            defer.resolve()
+                defer = inject.defer
 
-
-            #
-            # * Inject.args are the inbound args that were called into the 
-            #   decorated function that was returned by inject.async.
-            # 
-            # * These args are passed oneward to the injection target but
-            #   can be modified as they pass through this beforeEach hook.
-            # 
-
-            # 
-            # manipulate phrase, control and recursor parameters for injection
-            # ----------------------------------------------------------------
-            # 
-            # * expects last arg as the function to contain nested phrases, 
-            #   ensure it is at arg3
-            # 
-
-            unless inject.args[2]?
-
-                inject.args[2] = inject.args[1] || inject.args[0] || -> console.log 'NO ARGS'
-
-            done()
+                #   ...prevents that behaviour.      And leaves the alternative 
+                #                                    resolution mechanism up to
+                #                                    the developer
+                #
+                #  
+                #  * Resolving this deferral results in the 'flow of execution'
+                #    proceeding into the next phrase.
+                # 
+                # 
+                #  * TEMPORARY !!!  this deferral resolves here
+                #               (pending unimplemented mechanism)
+                # 
+                defer.resolve()
 
 
+                #
+                # * Inject.args are the inbound args that were called into the 
+                #   decorated function that was returned by inject.async.
+                # 
+                # * These args are passed oneward to the injection target but
+                #   can be modified as they pass through this beforeEach hook.
+                # 
 
+                # 
+                # manipulate phrase, control and recursor parameters for injection
+                # ----------------------------------------------------------------
+                # 
+                # * expects last arg as the function to contain nested phrases, 
+                #   ensure it is at arg3
+                # 
 
-        (phrase, control, recursor) -> 
+                unless inject.args[2]?
 
-            recursor()
+                    inject.args[2] = inject.args[1] || inject.args[0] || -> console.log 'NO ARGS'
+
+                done()
 
 
 
-    return recursor
-            
+
+            (phraseString, control, recursor) -> 
+
+                recursor()
+
+    #
+    # return root recursor
+    #
+
+    return recursor 'ROOT', {} 
+                
 
 
 

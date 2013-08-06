@@ -12,7 +12,7 @@ require( 'also' ) exports, {}, (root) ->
 
 
     {context, inject, validate} = root
-    
+
 
 
     #
@@ -77,4 +77,4 @@ require( 'also' ) exports, {}, (root) ->
             # return recursor
             # 
          
-            return recursor.create root
+            return recursor.create root 

@@ -10,7 +10,7 @@ describe 'phrase', ->
 
             Phrase.create.should.be.an.instanceof Function
             done()
-
+            
         it 'expects opts and linkFn', (done) -> 
 
             try Phrase.create 
