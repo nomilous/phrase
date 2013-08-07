@@ -71,6 +71,8 @@ describe 'phrase', ->
 
         root 'root phrase text', (outer) -> 
 
+            before all: -> console.log before: 'all'
+
             outer 'outer nested phrase text', (inner) -> 
 
                 inner 'inner nested phrase text', (done) -> 

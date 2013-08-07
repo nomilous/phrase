@@ -7,7 +7,14 @@ describe 'RecursorBeforeAll', ->
 
     beforeEach -> 
 
-        root = context: emitter: emit: -> 
+        root = 
+            context: 
+                emitter: emit: -> 
+                hooks: 
+                    beforeAll: []
+                    beforeEach: []
+                    afterEach: []
+                    afterAll: []
 
 
     it 'emits phrase::start event', (done) -> 
@@ -18,10 +25,44 @@ describe 'RecursorBeforeAll', ->
             done()
 
         hook = RecursorBeforeAll.create root
-        hook ->
+        hook (->), {}
 
 
-    it 'calls the hook resolver', (done) -> 
+    it 'calls the recursion hook resolver', (done) -> 
 
         hook = RecursorBeforeAll.create root
-        hook -> done()
+        hook (
+            -> done()
+        ), {}
+
+
+    it 'transfers any regisered hooks onto the injection control context and runs the beforeAll hook', (done) -> 
+
+        hook    = RecursorBeforeAll.create root
+
+        root.context.hooks.beforeAll.push ->   done()
+        root.context.hooks.beforeEach.push ->  'beforeEach'
+        root.context.hooks.afterEach.push ->   'afterEach'
+        root.context.hooks.afterAll.push ->    'afterAll'
+
+        injectionControl = {}
+
+        hook (->
+
+            #
+            # recursion control hook was resolved
+            #
+
+            #
+            # and all hooks were attached to the 
+            #
+
+            console.log injectionControl
+            injectionControl.beforeAll.should.be.an.instanceof Function
+            injectionControl.beforeEach.should.be.an.instanceof Function
+            injectionControl.afterEach.should.be.an.instanceof Function
+            injectionControl.afterAll.should.be.an.instanceof Function
+
+        ), injectionControl
+
+

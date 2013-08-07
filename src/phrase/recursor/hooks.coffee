@@ -1,3 +1,7 @@
+#
+# bind all recusrion hooks to root context
+#
+
 BeforeAll      = require './before_all'  
 BeforeEach     = require './before_each'
 AfterEach      = require './after_each'
