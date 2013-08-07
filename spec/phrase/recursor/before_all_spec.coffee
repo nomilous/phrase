@@ -38,7 +38,7 @@ describe 'RecursorBeforeAll', ->
 
     it 'transfers any regisered hooks onto the injection control context and runs the beforeAll hook', (done) -> 
 
-        hook    = RecursorBeforeAll.create root
+        hook = RecursorBeforeAll.create root
 
         root.context.hooks.beforeAll.push ->   done()
         root.context.hooks.beforeEach.push ->  'beforeEach'
@@ -54,7 +54,8 @@ describe 'RecursorBeforeAll', ->
             #
 
             #
-            # and all hooks were attached to the 
+            # and all phrase hooks were attached to the injectionControl
+            # to be run by their corresponding recursion control hooks
             #
 
             console.log injectionControl
