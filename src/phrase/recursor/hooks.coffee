@@ -7,7 +7,7 @@ BeforeEach     = require './before_each'
 AfterEach      = require './after_each'
 AfterAll       = require './after_all'
 
-exports.create = (root) -> 
+exports.bind = (root) -> 
 
     beforeAll:   BeforeAll.create root
     beforeEach:  BeforeEach.create root

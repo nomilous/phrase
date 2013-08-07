@@ -28,7 +28,7 @@ describe 'PhraseRecursor', ->
 
         it 'creates recursion control hooks with root context', (done) -> 
 
-            PhraseRecursorHooks.create = (r) -> 
+            PhraseRecursorHooks.bind = (r) -> 
 
                 r.should.equal root
                 done()
@@ -39,7 +39,7 @@ describe 'PhraseRecursor', ->
 
         it 'configures the injection decorator and assigns recursion control hooks', (done) -> 
 
-            PhraseRecursorHooks.create = -> 
+            PhraseRecursorHooks.bind = -> 
 
                 beforeAll: 'assigned beforeAll' 
                 beforeEach:'assigned beforeEach'
@@ -67,7 +67,7 @@ describe 'PhraseRecursor', ->
 
             before each: -> done()
             try PhraseRecursor.create root
-            root.context.hooks.beforeEach[0]()
+            root.context.hooks.beforeEach[0].fn()
 
 
         it 'provides assess to stack', (done) -> 

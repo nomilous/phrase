@@ -10,7 +10,7 @@ exports.create = (root) ->
 
     {context, inject} = root
     {stack, emitter}  = context
-    context.hooks     = PhraseHooks.create root
+    context.hooks     = PhraseHooks.bind root
 
     recursor = (parentPhraseString, parentPhraseControl) -> 
 
@@ -18,7 +18,7 @@ exports.create = (root) ->
         # create recursion control hooks 
         #
 
-        recursionControl = RecursorHooks.create root
+        recursionControl = RecursorHooks.bind root
 
         #
         # recurse via async injector
@@ -42,7 +42,7 @@ exports.create = (root) ->
         #
 
         Object.defineProperty injectionFn, 'stack', 
-
+            enumarable: false
             get: -> stack 
 
         #
