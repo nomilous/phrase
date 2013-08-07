@@ -63,6 +63,13 @@ describe 'PhraseRecursor', ->
 
             try PhraseRecursor.create root
 
+        it 'assigns access to registered phrase hooks', (done) -> 
+
+            before each: -> done()
+            try PhraseRecursor.create root
+            root.context.hooks.beforeEach[0]()
+
+
         it 'provides assess to stack', (done) -> 
 
             root.context.stack = 'STACK'

@@ -1,4 +1,5 @@
 RecursorHooks  = require './recursor/hooks' 
+PhraseHooks    = require './phrase_hooks'
 
 #
 # phrase recursor
@@ -9,6 +10,7 @@ exports.create = (root) ->
 
     {context, inject} = root
     {stack, emitter}  = context
+    context.hooks     = PhraseHooks.create root
 
     recursor = (parentPhraseString, parentPhraseControl) -> 
 

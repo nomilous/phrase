@@ -18,7 +18,7 @@ describe 'PhraseHooks', ->
 
         hooks.beforeAll.should.eql  []
         hooks.beforeEach.should.eql []
-        hooks.afterEach.should.eql []
+        hooks.afterEach.should.eql  []
         hooks.afterAll.should.eql   []
         done()
 
