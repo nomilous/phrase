@@ -52,9 +52,15 @@ exports.create = (root) ->
         phrase = new Phrase 
 
             text:     phraseText
+
+            #
+            # todo: make these less exposed
+            #
+
             control:  phraseControl
             fn:       phraseFn
             deferral: deferral
+            queue:    injectionControl.queue
 
 
         stack.push phrase
