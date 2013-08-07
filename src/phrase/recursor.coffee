@@ -31,9 +31,9 @@ exports.create = (root) ->
             afterEach:  recursionControl.afterEach
             afterAll:   recursionControl.afterAll
 
-            (phraseString, phraseControl, phraseFn) -> 
+            (phraseString, phraseControl, nestedPhraseFn) -> 
 
-                phraseFn recursor phraseString, phraseControl
+                nestedPhraseFn recursor phraseString, phraseControl
 
     #
     # return root recursor

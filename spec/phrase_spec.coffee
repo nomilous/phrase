@@ -59,3 +59,21 @@ describe 'phrase', ->
 
             root()
 
+
+    context 'integrations', -> 
+
+        root = Phrase.create 
+
+                title: 'Phrase Title'
+                uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
+
+                (emitter) -> 
+
+        root 'root phrase text', (outer) -> 
+
+            outer 'outer nested phrase text', (inner) -> 
+
+                inner 'inner nested phrase text', (done) -> 
+
+                    done()
+
