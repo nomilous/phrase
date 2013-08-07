@@ -30,7 +30,7 @@ root = require('phrase').create
 
 root 'phrase text', (nested) -> 
 
-    before all: -> 
+    before each: -> 
 
         #
         # do something before each nested phrase
