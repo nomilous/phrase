@@ -5,9 +5,11 @@
 exports.create = (root) -> 
 
     {context} = root
-    {emitter} = context
+    {stack, emitter} = context
 
     (done) -> 
+
+        stack.pop()
 
         done()
 

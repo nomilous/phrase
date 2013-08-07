@@ -27,21 +27,13 @@ exports.create = (root) ->
         #   But, instead, calling it out here...
         # 
 
-        defer = injectionControl.defer
+        deferral = injectionControl.defer
 
         #   ...prevents that behaviour.      And leaves the alternative 
         #                                    resolution mechanism up to
         #                                    the developer
         #
-        #  
-        #  * Resolving this deferral results in the 'flow of execution'
-        #    proceeding into the next phrase.
         # 
-        # 
-        #  * TEMPORARY !!!  this deferral resolves here
-        #               (pending unimplemented mechanism)
-        # 
-        defer.resolve()
 
 
         #
@@ -59,9 +51,11 @@ exports.create = (root) ->
 
         phrase = new Phrase 
 
-            text:    phraseText
-            control: phraseControl
-            fn:      phraseFn
+            text:     phraseText
+            control:  phraseControl
+            fn:       phraseFn
+            deferral: deferral
+
 
         stack.push phrase
 

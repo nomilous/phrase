@@ -5,6 +5,16 @@ PhraseRecursor = require '../lib/phrase/recursor'
 
 describe 'phrase', -> 
 
+    phraseRecursor_swap = undefined
+    
+    beforeEach -> 
+
+        phraseRecursor_swap = PhraseRecursor.create 
+
+    afterEach -> 
+
+        PhraseRecursor.create = phraseRecursor_swap
+
     context 'create()', ->
 
         it 'is a function', (done) ->  
@@ -62,20 +72,51 @@ describe 'phrase', ->
 
     context 'integrations', -> 
 
-        root = Phrase.create 
+        it 'stacks up', (done) -> 
 
-                title: 'Phrase Title'
-                uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
+            root = Phrase.create 
 
-                (emitter) -> 
+                    title: 'Phrase Title'
+                    uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
 
-        root 'root phrase text', (outer) -> 
+                    (emitter) -> 
 
-            before all: -> console.log before: 'all'
+            root 'root phrase text', (outer) -> 
 
-            outer 'outer nested phrase text', (inner) -> 
+                before all:  -> console.log before: 'all'
+                before each: -> console.log before: 'each'
+                after  each: -> console.log after:  'each'
+                after  all:  -> console.log after:  'all'
 
-                inner 'inner nested phrase text', (done) -> 
+                outer 'outer nested phrase 1 text', (inner) -> 
 
-                    done()
+                    inner 'inner nested phrase 1 text', (end) -> 
+
+                        end.stack[0].text.should.equal 'root phrase text'
+                        end.stack[1].text.should.equal 'outer nested phrase 1 text'
+                        end.stack[2].text.should.equal 'inner nested phrase 1 text'
+                        should.not.exist end.stack[3]
+
+                    inner 'inner nested phrase 2 text', (end) -> 
+
+                        end.stack[0].text.should.equal 'root phrase text'
+                        end.stack[1].text.should.equal 'outer nested phrase 1 text'
+                        end.stack[2].text.should.equal 'inner nested phrase 2 text'
+                        should.not.exist end.stack[3]
+                        end()
+
+                outer 'outer nested phrase 2 text', (end) -> end()
+                outer( 'outer nested phrase 3 text', (end) -> 
+
+                        end.stack[0].text.should.equal 'root phrase text'
+                        end.stack[1].text.should.equal 'outer nested phrase 3 text'
+                        should.not.exist end.stack[2]
+                        end()
+
+                ).then -> 
+
+                    console.log outer.stack
+    
+
+
 

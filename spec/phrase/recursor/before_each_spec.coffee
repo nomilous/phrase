@@ -41,6 +41,22 @@ describe 'RecursorBeforeEach', ->
 
         nestedPhraseFn = -> 
         injectionControl.args = [ 'phrase text', { key: 'VALUE' }, nestedPhraseFn ]
+        
+        injectionControl.defer = 
+
+            resolve: -> 
+
+                # 
+                # the pushed phrase contains the injection deferral that the 
+                # async injector wrapped around the pending call to phraseFn
+                # 
+                # beforeEach recursion control hook should have created the 
+                # new Phrase with reference to that deferral (this mock)
+                #
+                # ensure that it did.....
+                # 
+
+                done()
 
         hook = RecursorBeforeEach.create root
 
@@ -50,7 +66,12 @@ describe 'RecursorBeforeEach', ->
             root.context.stack[0].text.should.equal 'phrase text'
             root.context.stack[0].control.key.should.equal 'VALUE'
             root.context.stack[0].fn.should.equal nestedPhraseFn
-            done()
+
+            #
+            # .....by resolving it to complete this test
+            #
+
+            root.context.stack[0].deferral.resolve()
 
         ), injectionControl
 
