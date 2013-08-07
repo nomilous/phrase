@@ -21,9 +21,8 @@ exports.create = (root) ->
         # * This first hook pops any phrase hooks that may have been 
         #   registered ahead of this phrase being called and places 
         #   them onto the injection control object so that they can
-        #   each be run by the corresponding recursion control hook.
-        #
-        # * Then it runs the beforeAll hook (if present)
+        #   be accumulated untill the 'flow of control' encounters
+        #   a leaf phrase in the tree.
         # 
 
         beforeAll  = hooks.beforeAll.pop()
@@ -37,4 +36,3 @@ exports.create = (root) ->
         injectionControl.afterAll   = afterAll
 
         done()
-
