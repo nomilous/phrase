@@ -1,5 +1,6 @@
 should             = require 'should'
 RecursorBeforeEach = require '../../../lib/phrase/recursor/before_each'
+Phrase             = require '../../../lib/phrase'
 
 describe 'RecursorBeforeEach', -> 
 
@@ -8,7 +9,9 @@ describe 'RecursorBeforeEach', ->
 
     beforeEach -> 
 
-        root = context: emitter: emit: ->
+        root = context: 
+            emitter: emit: ->
+            stack: []
         injectionControl = 
             defer: resolve: ->
             args: []
@@ -33,7 +36,25 @@ describe 'RecursorBeforeEach', ->
 
     xit 'should not resolve the deferral'
 
-    it ''
+
+    it 'pushes the new phrase into the stack', (done) -> 
+
+        nestedPhraseFn = -> 
+        injectionControl.args = [ 'phrase text', { key: 'VALUE' }, nestedPhraseFn ]
+
+        hook = RecursorBeforeEach.create root
+
+        hook (-> 
+
+            root.context.stack[0].should.be.an.instanceof Phrase
+            root.context.stack[0].text.should.equal 'phrase text'
+            root.context.stack[0].control.key.should.equal 'VALUE'
+            root.context.stack[0].fn.should.equal nestedPhraseFn
+            done()
+
+        ), injectionControl
+
+
 
     it 'ensures function as lastarg is at arg3', (done) -> 
 

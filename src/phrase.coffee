@@ -1,4 +1,5 @@
-exports.phrase = class Phrase
+module.exports = class Phrase
 
-    constructor: ->
-     
+    constructor: (properties) -> 
+
+        @[property] = properties[property] for property of properties
