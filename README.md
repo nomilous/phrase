@@ -24,6 +24,10 @@ root = require('phrase').create
         # eg. emitter.on 'phrase::start', (payload...) -> 
         #
 
+
+
+
+
 root 'phrase text', (nested) -> 
 
     before all: -> 
