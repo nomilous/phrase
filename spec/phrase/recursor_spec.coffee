@@ -20,7 +20,6 @@ describe 'PhraseRecursor', ->
                     async: -> 
                         return asyncInjectionFn
 
-
         it 'returns a function created by the async injection decorator', (done) -> 
 
             PhraseRecursor.create( root ).should.equal asyncInjectionFn
@@ -60,7 +59,17 @@ describe 'PhraseRecursor', ->
 
                 done()
 
-            PhraseRecursor.create root
+                throw 'go no further'
+
+            try PhraseRecursor.create root
+
+        it 'provides assess to stack', (done) -> 
+
+            root.context.stack = 'STACK'
+            root.inject.async = (Preparator, decoratedFn) ->  return {}
+            recursor = PhraseRecursor.create root
+            recursor.stack.should.equal 'STACK'
+            done()
 
 
         it 'recurses via the injector', (done) -> 

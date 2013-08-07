@@ -22,7 +22,7 @@ exports.create = (root) ->
         # recurse via async injector
         # 
 
-        injector = inject.async
+        injectionFn = inject.async
 
 
             parallel:   false
@@ -35,12 +35,26 @@ exports.create = (root) ->
 
                 nestedPhraseFn recursor phraseString, phraseControl
 
+        #
+        # access stack as property of injector function
+        #
+
+        Object.defineProperty injectionFn, 'stack', 
+
+            get: -> stack 
+
+        #
+        # recursor( phraseString, phraseControl ) 
+        # returns injector function
+        #
+
+        return injectionFn
+
+
+
     #
-    # return root recursor
+    # return root recursor (injectionFn)
     #
 
     return recursor 'ROOT', {} 
                 
-
-
-
