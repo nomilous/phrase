@@ -90,7 +90,7 @@ describe 'phrase', ->
 
                 outer 'to squiz at queued peers', key: 'VALUE', (recursor) -> 
 
-                    # console.log recursor.stack[1].queue
+                    console.log recursor.stack[1].queue
 
                     #
                     # 4 further calls to outer() remain to follow this
@@ -118,14 +118,14 @@ describe 'phrase', ->
                         end()
 
                 outer 'outer nested phrase 2 text', (end) -> end()
-                outer( 'outer nested phrase 3 text', (end) -> 
+                outer 'outer nested phrase 3 text', (end) -> 
 
                         end.stack[0].text.should.equal 'root phrase text'
                         end.stack[1].text.should.equal 'outer nested phrase 3 text'
                         should.not.exist end.stack[2]
                         end()
 
-                outer 'outer nested phrase 4 text', (end) -> end()
+                outer( 'outer nested phrase 4 text', (end) -> end()
 
                 ).then -> 
 

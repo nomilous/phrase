@@ -15,7 +15,7 @@ Usage
 
 root = require('phrase').create 
 
-    title: 'Title'
+    title: 'Stem Loop'
     uuid:  '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
 
     (emitter) -> 
