@@ -24,6 +24,17 @@ root = require('phrase').create
         # eg. emitter.on 'phrase::start', (payload...) -> 
         #
 
+root 'phrase text', (nested) -> 
+
+    before all: -> 
+
+        #
+        # do something before each nested phrase
+        # 
+
+    nested 'nested phrase 1 text', -> 
+    nested 'nested phrase 2 text', -> 
+
 
 ```
 
