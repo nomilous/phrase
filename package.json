@@ -9,7 +9,7 @@
       "email": "nomilous@gmail.com"
     }
   ],
-  "main": "./lib/phrase",
+  "main": "./lib/phrase_root",
   "repository": "git@github.com:nomilous/phrase.git",
   "dependencies": {
     "also": "0.0.5"

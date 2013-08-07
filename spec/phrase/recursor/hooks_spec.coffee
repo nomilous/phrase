@@ -25,7 +25,7 @@ describe 'RecursorHooks', ->
         it 'creates the necessary hooks', (done) -> 
 
             root  = context: emitter: emit: ->
-            hooks = RecursorHooks.create root
+            hooks = RecursorHooks.bind root
 
             hooks.beforeAll.should.be.an.instanceof  Function
             hooks.beforeEach.should.be.an.instanceof Function
