@@ -13,7 +13,7 @@ describe 'RecursorHooks', ->
 
     """, ->
 
-    context 'create()', -> 
+    context 'bind()', -> 
 
         it """
 

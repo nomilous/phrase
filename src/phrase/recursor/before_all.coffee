@@ -31,15 +31,10 @@ exports.create = (root) ->
         afterEach  = hooks.afterEach.pop()
         afterAll   = hooks.afterAll.pop()
 
-        injectionControl.beforeEach ||= beforeEach
-        injectionControl.beforeAll  ||= beforeAll
-        injectionControl.afterEach  ||= afterEach
-        injectionControl.afterAll   ||= afterAll
-
-        return done() unless typeof injectionControl.beforeAll == 'function'
-
-        injectionControl.beforeAll()
-
+        injectionControl.beforeEach = beforeEach
+        injectionControl.beforeAll  = beforeAll
+        injectionControl.afterEach  = afterEach
+        injectionControl.afterAll   = afterAll
 
         done()
 

@@ -1,5 +1,6 @@
 should             = require 'should'
 RecursorBeforeAll  = require '../../../lib/phrase/recursor/before_all'
+{PhraseHook}       = require '../../../lib/phrase/phrase_hooks'
 
 describe 'RecursorBeforeAll', -> 
     
@@ -36,14 +37,14 @@ describe 'RecursorBeforeAll', ->
         ), {}
 
 
-    it 'transfers any regisered hooks onto the injection control context and runs the beforeAll hook', (done) -> 
+    it 'transfers any regisered hooks onto the injection control context', (done) -> 
 
         hook = RecursorBeforeAll.create root
 
-        root.context.hooks.beforeAll.push ->   done()
-        root.context.hooks.beforeEach.push ->  'beforeEach'
-        root.context.hooks.afterEach.push ->   'afterEach'
-        root.context.hooks.afterAll.push ->    'afterAll'
+        root.context.hooks.beforeAll.push  new PhraseHook -> 
+        root.context.hooks.beforeEach.push new PhraseHook ->
+        root.context.hooks.afterEach.push  new PhraseHook -> 
+        root.context.hooks.afterAll.push   new PhraseHook -> 
 
         injectionControl = {}
 
@@ -58,11 +59,12 @@ describe 'RecursorBeforeAll', ->
             # to be run by their corresponding recursion control hooks
             #
 
-            console.log injectionControl
-            injectionControl.beforeAll.should.be.an.instanceof Function
-            injectionControl.beforeEach.should.be.an.instanceof Function
-            injectionControl.afterEach.should.be.an.instanceof Function
-            injectionControl.afterAll.should.be.an.instanceof Function
+            injectionControl.beforeAll.should.be.an.instanceof PhraseHook
+            injectionControl.beforeEach.should.be.an.instanceof PhraseHook
+            injectionControl.afterEach.should.be.an.instanceof PhraseHook
+            injectionControl.afterAll.should.be.an.instanceof PhraseHook
+
+            done()
 
         ), injectionControl
 
