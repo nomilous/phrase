@@ -5,10 +5,11 @@ PhraseLeaf = require './leaf'
 # Before Each (recursion hook)
 #
 
-exports.create = (root) -> 
+exports.create = (root, parent) -> 
 
-    {context} = root
+    {context}        = root
     {stack, emitter} = context
+    {control}        = parent
 
     phraseLeaf = PhraseLeaf.create root
 

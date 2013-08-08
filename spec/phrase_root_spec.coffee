@@ -70,6 +70,24 @@ describe 'phrase', ->
             root()
 
 
+        it 'passes opts into the root phrase recursor', (done) -> 
+
+            PhraseRecursor.create = (root, opts) -> -> 
+
+                opts.title.should.equal 'Phrase Title'
+                opts.uuid.should.equal '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
+                done()
+
+            root = Phrase.create 
+
+                title: 'Phrase Title'
+                uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
+
+                (emitter) -> 
+
+            root()
+
+
     context 'integrations', -> 
 
         it 'stacks up', (done) -> 

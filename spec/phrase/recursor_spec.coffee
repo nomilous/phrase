@@ -26,15 +26,17 @@ describe 'PhraseRecursor', ->
             done()
 
 
-        it 'creates recursion control hooks with root context', (done) -> 
+        it 'creates recursion control hooks with root context and parent control', (done) -> 
 
-            PhraseRecursorHooks.bind = (r) -> 
+            rootControl = {}
+            PhraseRecursorHooks.bind = (rooot, parent) -> 
 
-                r.should.equal root
+                rooot.should.equal root
+                parent.control.should.equal rootControl
                 done()
                 throw 'go no further'
 
-            try PhraseRecursor.create root
+            try PhraseRecursor.create root, rootControl
 
 
         it 'configures the injection decorator and assigns recursion control hooks', (done) -> 

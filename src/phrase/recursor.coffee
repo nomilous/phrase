@@ -6,7 +6,7 @@ PhraseHooks    = require './phrase_hooks'
 # ===============
 # 
 
-exports.create = (root) ->
+exports.create = (root, rootControl) ->
 
     {context, inject} = root
     {stack, emitter}  = context
@@ -16,9 +16,10 @@ exports.create = (root) ->
 
         #
         # create recursion control hooks 
-        #
+        # 
 
-        recursionControl = RecursorHooks.bind root
+        parent = control: parentPhraseControl
+        recursionControl = RecursorHooks.bind root, parent
 
         #
         # recurse via async injector
@@ -58,5 +59,5 @@ exports.create = (root) ->
     # return root recursor (injectionFn)
     #
 
-    return recursor 'ROOT', {} 
+    return recursor 'ROOT', rootControl
                 

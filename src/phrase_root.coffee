@@ -75,4 +75,4 @@ require( 'also' ) exports, {}, (root) ->
             # return phrase recursor (root)
             # 
          
-            return recursor.create root 
+            return recursor.create root, opts
