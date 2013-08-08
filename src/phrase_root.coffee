@@ -1,5 +1,5 @@
-{EventEmitter} = require 'events'
-recursor       = require './phrase/recursor'
+Notice    = require 'notice'
+recursor  = require './phrase/recursor'
 
 require( 'also' ) exports, {}, (root) -> 
 
@@ -26,15 +26,6 @@ require( 'also' ) exports, {}, (root) ->
 
     context.stack = []
 
-    #
-    # emitter
-    # -------
-    #
-    # * Emits / publishes phrase lifecycle and activity events emanating from within
-    #   the branch rooted at this phrase.
-    # 
-
-    context.emitter = new EventEmitter
 
     #
     # Phrase.create( opts, linkFn )
@@ -63,12 +54,21 @@ require( 'also' ) exports, {}, (root) ->
 
         (opts, linkFn) -> 
 
+            #
+            # notice
+            # -------
+            #
+            # * middlewares can register to receive phrase lifecycle and activity 
+            #   events emanating from within the branch rooted at this phrase.
+            # 
+
+            context.notice = Notice.create opts.uuid
 
             #
             # callback with the event publisher (emitter)
             #
 
-            linkFn context.emitter
+            linkFn context.notice
 
 
             #

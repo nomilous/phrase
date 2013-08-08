@@ -9,7 +9,7 @@ PhraseHooks    = require './phrase_hooks'
 exports.create = (root, rootControl) ->
 
     {context, inject} = root
-    {stack, emitter}  = context
+    {stack, notice}   = context
     context.hooks     = PhraseHooks.bind root
 
     recursor = (parentPhraseString, parentPhraseControl) -> 

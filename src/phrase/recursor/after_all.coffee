@@ -5,7 +5,7 @@
 exports.create = (root) -> 
 
     {context} = root
-    {emitter} = context
+    {notice}  = context
 
     (done) -> 
 

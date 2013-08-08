@@ -8,7 +8,7 @@ PhraseLeaf = require './leaf'
 exports.create = (root, parent) -> 
 
     {context, util}  = root
-    {stack, emitter} = context
+    {stack, notice}  = context
     {control}        = parent
 
     phraseLeaf = PhraseLeaf.create root
@@ -138,7 +138,32 @@ exports.create = (root, parent) ->
             # 
 
             injectionControl.args[2] = ->
-            deferral.resolve()
+
+            console.log injectionControl
+
+            finished = (result_or_error) -> 
+
+                #
+                # result / error from messenger pipeline
+                #
+
+                process.nextTick -> deferral.resolve()
+
             done()
+            
+            #
+            # LIKELY TEMPORARY!! 
+            # 
+            # * send the stack down the message middleware pipeline
+            #   and await completion. 
+            # 
+
+            notice.info( 'phrase::leaf', 
+
+                stack: stack
+
+            ).then finished, finished
+
+
             
 

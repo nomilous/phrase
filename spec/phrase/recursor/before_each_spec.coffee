@@ -13,8 +13,13 @@ describe 'RecursorBeforeEach', ->
 
         root = 
             context: 
-                emitter: emit: ->
                 stack: []
+
+                #
+                # mock notice pipeline
+                #
+                notice: info: -> then: (resolve) -> resolve()
+
             util: require('also').util
 
         injectionControl = 

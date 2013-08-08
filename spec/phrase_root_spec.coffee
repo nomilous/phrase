@@ -1,7 +1,6 @@
 should         = require 'should'
 Phrase         = require '../lib/phrase_root'
 PhraseRecursor = require '../lib/phrase/recursor'
-{EventEmitter} = require 'events'
 
 describe 'phrase', -> 
 
@@ -44,16 +43,16 @@ describe 'phrase', ->
                 -> done()
 
 
-        it 'passes an event emitter into linkFn', (done) -> 
+        it 'passes notifier into linkFn', (done) -> 
 
             Phrase.create 
 
                 title: 'Phrase Title'
                 uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
 
-                (emitter) -> 
+                (notice) -> 
 
-                    emitter.should.be.an.instanceof EventEmitter
+                    notice.use.should.be.an.instanceof Function
                     done()
 
         it 'returns the root phrase recursor ', (done) -> 
@@ -92,66 +91,67 @@ describe 'phrase', ->
 
         it 'stacks up', (done) -> 
 
+            PhraseRecursor.create = phraseRecursor_swap
+
             root = Phrase.create 
 
-                    title: 'Phrase Title'
-                    uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
+                title: 'Phrase Title'
+                uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
 
-                    (emitter) -> 
+                (notice) -> 
 
-                        emitter.on 'phrase::start', (payload...) -> 
-                            console.log PHRASE_START: payload
+                    notice.use (msg, next) -> 
 
-
+                        console.log msg
+                        next()
 
 
             root 'root phrase text', (outer) -> 
 
-                before all:  -> console.log before: 'all'
-                before each: -> console.log before: 'each'
-                after  each: -> console.log after:  'each'
-                after  all:  -> console.log after:  'all'
+                # console.log run: 'root phrase text'
 
-                outer 'to squiz at queued peers', key: 'VALUE', (nested) -> 
+                # before all:  -> console.log before: 'all'
+                # before each: -> console.log before: 'each'
+                # after  each: -> console.log after:  'each'
+                # after  all:  -> console.log after:  'all'
 
-                    nested.stack[1].token.name.should.equal 'outer'
+                # outer 'to squiz at queued peers', key: 'VALUE', (nested) -> 
 
-                    nested 'phrase', (end) -> end()
+                #     #nested.stack[1].token.name.should.equal 'outer'
 
-                    console.log 'this far'
+                #     nested 'phrase', (end) -> end()
 
-                outer 'outer nested phrase 1 text', (inner) -> 
+                #     console.log 'this far'
 
-                    inner 'inner nested phrase 1 text', (end) -> 
+                # outer 'outer nested phrase 1 text', (inner) -> 
 
-                        end.stack[0].text.should.equal 'root phrase text'
-                        end.stack[1].text.should.equal 'outer nested phrase 1 text'
-                        end.stack[2].text.should.equal 'inner nested phrase 1 text'
-                        end.stack[2].token.name.should.equal 'inner'
-                        should.not.exist end.stack[3]
+                #     inner 'inner nested phrase 1 text', (end) -> 
 
-                    inner 'inner nested phrase 2 text', (end) -> 
+                #         end.stack[0].text.should.equal 'root phrase text'
+                #         end.stack[1].text.should.equal 'outer nested phrase 1 text'
+                #         end.stack[2].text.should.equal 'inner nested phrase 1 text'
+                #         end.stack[2].token.name.should.equal 'inner'
+                #         should.not.exist end.stack[3]
 
-                        end.stack[0].text.should.equal 'root phrase text'
-                        end.stack[1].text.should.equal 'outer nested phrase 1 text'
-                        end.stack[2].text.should.equal 'inner nested phrase 2 text'
-                        should.not.exist end.stack[3]
-                        end()
+                #     inner 'inner nested phrase 2 text', (end) -> 
 
-                outer 'outer nested phrase 2 text', (end) -> end()
+                #         end.stack[0].text.should.equal 'root phrase text'
+                #         end.stack[1].text.should.equal 'outer nested phrase 1 text'
+                #         end.stack[2].text.should.equal 'inner nested phrase 2 text'
+                #         should.not.exist end.stack[3]
+                #         end()
+
+                # outer 'outer nested phrase 2 text', (end) -> end()
                 outer 'outer nested phrase 3 text', (end) -> 
 
-                        end.stack[0].text.should.equal 'root phrase text'
-                        end.stack[1].text.should.equal 'outer nested phrase 3 text'
-                        should.not.exist end.stack[2]
-                        end()
+                #         end.stack[0].text.should.equal 'root phrase text'
+                #         end.stack[1].text.should.equal 'outer nested phrase 3 text'
+                #         should.not.exist end.stack[2]
+                #         end()
 
-                outer( 'outer nested phrase 4 text', (end) -> end()
+                # outer 'outer nested phrase 4 text', (end) -> end()
 
-                ).then -> 
-
-                    done() 
-                    console.log outer.stack
+                
     
 
 

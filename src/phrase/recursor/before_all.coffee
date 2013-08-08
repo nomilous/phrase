@@ -4,12 +4,12 @@
 
 exports.create = (root) -> 
 
-    {context}        = root
-    {emitter, hooks} = context
+    {context}       = root
+    {notice, hooks} = context
 
     (done, injectionControl) ->
 
-        emitter.emit 'phrase::start'
+        # emitter.emit 'phrase::start'
 
         #
         # injectionControl
