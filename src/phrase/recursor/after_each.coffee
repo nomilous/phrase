@@ -2,14 +2,13 @@
 # After Each (recursion hook)
 #
 
-exports.create = (root) -> 
+exports.create = (root, parentControl) -> 
 
     {context}       = root
     {stack, notice} = context
 
-    (done) -> 
+    (done, injectionControl) -> 
 
         stack.pop()
-
         done()
 

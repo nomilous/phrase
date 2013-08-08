@@ -5,11 +5,11 @@ PhraseLeaf = require './leaf'
 # Before Each (recursion hook)
 #
 
-exports.create = (root, parent) -> 
+exports.create = (root, parentControl) -> 
 
     {context, util}  = root
     {stack, notice}  = context
-    {control}        = parent
+    {control}        = parentControl
 
     phraseLeaf = PhraseLeaf.create root
 
@@ -86,7 +86,7 @@ exports.create = (root, parent) ->
 
         stack.push phrase = new Phrase 
 
-            token:    parent.control.phraseToken
+            token:    control.phraseToken
             text:     phraseText
 
 
@@ -104,7 +104,8 @@ exports.create = (root, parent) ->
             # control:  phraseControl
             fn:       phraseFn
             deferral: deferral
-            # queue:    injectionControl.queue
+            queue:    injectionControl.queue
+
 
         #
         # is this phrase a leaf
@@ -139,17 +140,16 @@ exports.create = (root, parent) ->
 
             injectionControl.args[2] = ->
 
-            console.log injectionControl
-
             finished = (result_or_error) -> 
 
                 #
                 # result / error from messenger pipeline
                 #
 
+                done()
                 process.nextTick -> deferral.resolve()
 
-            done()
+            
             
             #
             # LIKELY TEMPORARY!! 

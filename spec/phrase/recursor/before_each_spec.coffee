@@ -26,7 +26,7 @@ describe 'RecursorBeforeEach', ->
             defer: resolve: ->
             args: ['phrase text', {}, (nested) -> ]
 
-        parent = control: {}
+        parent = control: phraseToken: name: 'it'
 
         PhraseLeaf_swap = PhraseLeaf.create
         PhraseLeaf.create = -> detect: (phrase, isLeaf) -> isLeaf true 

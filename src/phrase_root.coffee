@@ -65,7 +65,7 @@ require( 'also' ) exports, {}, (root) ->
             context.notice = Notice.create opts.uuid
 
             #
-            # callback with the event publisher (emitter)
+            # callback with the message pipeline (notice)
             #
 
             linkFn context.notice

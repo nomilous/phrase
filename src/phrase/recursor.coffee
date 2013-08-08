@@ -59,5 +59,7 @@ exports.create = (root, rootControl) ->
     # return root recursor (injectionFn)
     #
 
-    return recursor 'ROOT', rootControl
+    return recursor 'ROOT', 
+
+        phraseToken: name: 'root'
                 

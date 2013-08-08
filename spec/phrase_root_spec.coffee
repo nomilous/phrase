@@ -102,54 +102,63 @@ describe 'phrase', ->
 
                     notice.use (msg, next) -> 
 
-                        console.log msg
+                        #console.log '\n\n\n', msg
                         next()
 
 
             root 'root phrase text', (outer) -> 
 
-                # console.log run: 'root phrase text'
+                outer 'one last nest', (nest) -> 
+
+                    setTimeout (->
+
+                        nest 'text', (end) -> 
+
+                    ), 500
 
                 # before all:  -> console.log before: 'all'
                 # before each: -> console.log before: 'each'
                 # after  each: -> console.log after:  'each'
                 # after  all:  -> console.log after:  'all'
 
-                # outer 'to squiz at queued peers', key: 'VALUE', (nested) -> 
+                outer 'outer nested phrase 1 text', (inner) -> 
 
-                #     #nested.stack[1].token.name.should.equal 'outer'
+                    inner 'inner nested phrase 1 text', (end) -> 
 
-                #     nested 'phrase', (end) -> end()
+                        end.stack[0].text.should.equal 'root phrase text'
+                        end.stack[1].text.should.equal 'outer nested phrase 1 text'
+                        end.stack[2].text.should.equal 'inner nested phrase 1 text'
+                        end.stack[2].token.name.should.equal 'inner'
+                        should.not.exist end.stack[3]
 
-                #     console.log 'this far'
+                        end()
 
-                # outer 'outer nested phrase 1 text', (inner) -> 
 
-                #     inner 'inner nested phrase 1 text', (end) -> 
+                    inner 'inner nested phrase 2 text', (deeper) -> 
 
-                #         end.stack[0].text.should.equal 'root phrase text'
-                #         end.stack[1].text.should.equal 'outer nested phrase 1 text'
-                #         end.stack[2].text.should.equal 'inner nested phrase 1 text'
-                #         end.stack[2].token.name.should.equal 'inner'
-                #         should.not.exist end.stack[3]
+                        setTimeout (->
 
-                #     inner 'inner nested phrase 2 text', (end) -> 
+                            deeper.stack[0].text.should.equal 'root phrase text'
+                            deeper.stack[1].text.should.equal 'outer nested phrase 1 text'
+                            deeper.stack[2].text.should.equal 'inner nested phrase 2 text'
+                            should.not.exist deeper.stack[3]
 
-                #         end.stack[0].text.should.equal 'root phrase text'
-                #         end.stack[1].text.should.equal 'outer nested phrase 1 text'
-                #         end.stack[2].text.should.equal 'inner nested phrase 2 text'
-                #         should.not.exist end.stack[3]
-                #         end()
+                            deeper 'deep phrase', (end) -> end()
+                        
 
-                # outer 'outer nested phrase 2 text', (end) -> end()
+                        ), 500
+
+
+                outer 'outer nested phrase 2 text', (end) -> end()
                 outer 'outer nested phrase 3 text', (end) -> 
 
-                #         end.stack[0].text.should.equal 'root phrase text'
-                #         end.stack[1].text.should.equal 'outer nested phrase 3 text'
-                #         should.not.exist end.stack[2]
-                #         end()
+                        end.stack[0].text.should.equal 'root phrase text'
+                        end.stack[1].text.should.equal 'outer nested phrase 3 text'
+                        should.not.exist end.stack[2]
+                        end()
 
-                # outer 'outer nested phrase 4 text', (end) -> end()
+                outer 'outer nested phrase 4 text', (end) -> end()
+
 
                 
     

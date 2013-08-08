@@ -2,12 +2,14 @@
 # After All (recursion hook)
 #
 
-exports.create = (root) -> 
+exports.create = (root, parentControl) -> 
 
-    {context} = root
-    {notice}  = context
+    {context}        = root
+    {stack, notice}  = context
 
-    (done) -> 
+    (done, injectionControl) -> 
+
+        parent = stack[ stack.length - 1 ]
+        parent.deferral.resolve() if parent?
 
         done()
-

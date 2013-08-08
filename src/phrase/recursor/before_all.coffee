@@ -2,7 +2,7 @@
 # Before All (recursion hook)
 #
 
-exports.create = (root) -> 
+exports.create = (root, parentControl) -> 
 
     {context}       = root
     {notice, hooks} = context
