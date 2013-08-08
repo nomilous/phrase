@@ -77,8 +77,31 @@ exports.create = (root) ->
 
         phraseLeaf.detect phrase, (leaf) -> 
 
-            if leaf then console.log FOUND_LEAF: phrase
+            # 
+            # 'flow of control' proceeds to injetion into the phraseFn
+            # to recurse into nested phrases if not a leaf
+            #
 
+            return done() unless leaf
 
-        done()
+            #
+            # when this phrase is a leaf
+            # --------------------------
+            # 
+            # * inject noop as phraseFn into the recursor
+            # * the phraseFn promise is resolved
+            # 
+            # * AND... 
+            # 
+            #        
+            #        The stack is now populated with the sequence 
+            #        of parent phrases and all the hooks one the
+            #        'tree' pathway to the un-run leaf phrase.
+            #        
+            # 
+
+            injectionControl.args[2] = ->
+            deferral.resolve()
+            done()
+            
 

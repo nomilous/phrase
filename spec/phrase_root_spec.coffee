@@ -94,7 +94,7 @@ describe 'phrase', ->
                 after  each: -> console.log after:  'each'
                 after  all:  -> console.log after:  'all'
 
-                outer 'to squiz at queued peers', key: 'VALUE', (recursor) -> 
+                outer 'to squiz at queued peers', key: 'VALUE', (end) -> 
 
                     #console.log recursor.stack[1].queue
 

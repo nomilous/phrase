@@ -20,7 +20,7 @@ describe 'RecursorBeforeEach', ->
             args: []
 
         PhraseLeaf_swap = PhraseLeaf.create
-        PhraseLeaf.create = -> detect: ->
+        PhraseLeaf.create = -> detect: (phrase, isLeaf) -> isLeaf true 
 
     afterEach: -> 
 

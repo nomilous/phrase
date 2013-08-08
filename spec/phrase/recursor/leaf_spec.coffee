@@ -33,3 +33,22 @@ describe 'RecursorLeaf', ->
                 isLeaf.should.equal false
                 done()
 
+
+        it 'marks the phrase as a leaf', (done) -> 
+
+            phrase = new Phrase fn: (end) -> 
+            leaf   = RecursorLeaf.create root
+            leaf.detect phrase, (isLeaf) ->
+
+                phrase.leaf.should.equal true
+                done()
+
+        it 'marks the phrase as not a leaf', (done) -> 
+
+            phrase = new Phrase fn: (other) -> 
+            leaf   = RecursorLeaf.create root
+            leaf.detect phrase, (isLeaf) ->
+
+                phrase.leaf.should.equal false
+                done()
+

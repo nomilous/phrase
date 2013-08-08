@@ -6,7 +6,8 @@ exports.create = (root) ->
 
         try if util.argsOf( phrase.fn )[0] == 'end'
 
+            phrase.leaf = true
             return isLeaf true 
-            
-        isLeaf false
 
+        phrase.leaf = false
+        isLeaf false
