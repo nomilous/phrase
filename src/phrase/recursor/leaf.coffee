@@ -4,6 +4,9 @@ exports.create = (root) ->
 
     detect: (phrase, isLeaf) -> 
 
-        return isLeaf true if util.argsOf( phrase.fn )[0] == 'end'
+        try if util.argsOf( phrase.fn )[0] == 'end'
+
+            return isLeaf true 
+            
         isLeaf false
 
