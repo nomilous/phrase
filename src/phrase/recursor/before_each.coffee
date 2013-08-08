@@ -7,7 +7,7 @@ PhraseLeaf = require './leaf'
 
 exports.create = (root, parent) -> 
 
-    {context}        = root
+    {context, util}  = root
     {stack, emitter} = context
     {control}        = parent
 
@@ -58,19 +58,46 @@ exports.create = (root, parent) ->
         injectionControl.args[1] = phraseControl
         injectionControl.args[2] = phraseFn
 
+        #
+        # phraseToken 
+        # -----------
+        # 
+        # * is the signature name of the nested phrase recursor
+        #  
+        #     ie.    
+        #           phrase 'text', (nest) -> 
+        #                   
+        #               #    
+        #               # `nest` is now the phraseToken name
+        #               # 
+        #              
+        # * is carried through the injection to become the phraseToken 
+        #   associated with each nested child phrase
+        #    
+
+        if phraseControl? 
+
+            phraseControl.phraseToken = name: util.argsOf( phraseFn )[0]
+
+
+        #
+        # inject new phrase into stack
+        #
 
         stack.push phrase = new Phrase 
 
+            token:    parent.control.phraseToken
             text:     phraseText
+
 
             #
             # todo: make these less exposed
             #
 
-            control:  phraseControl
+            # control:  phraseControl
             fn:       phraseFn
             deferral: deferral
-            queue:    injectionControl.queue
+            # queue:    injectionControl.queue
 
         #
         # is this phrase a leaf

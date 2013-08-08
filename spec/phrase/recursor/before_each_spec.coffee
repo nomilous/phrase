@@ -15,10 +15,11 @@ describe 'RecursorBeforeEach', ->
             context: 
                 emitter: emit: ->
                 stack: []
+            util: require('also').util
 
         injectionControl = 
             defer: resolve: ->
-            args: []
+            args: ['phrase text', {}, (nested) -> ]
 
         parent = control: {}
 
@@ -75,8 +76,22 @@ describe 'RecursorBeforeEach', ->
 
             root.context.stack[0].should.be.an.instanceof Phrase
             root.context.stack[0].text.should.equal 'phrase text'
-            root.context.stack[0].control.key.should.equal 'VALUE'
+            #root.context.stack[0].control.key.should.equal 'VALUE'
             root.context.stack[0].fn.should.equal nestedPhraseFn
+
+        ), injectionControl
+
+    it 'attaches phraseToken to phraseControl for injection at arg2', (done) -> 
+
+        parentPhraseFn = (glia) -> 
+
+        injectionControl.args = [ 'parent phrase text', { key: 'VALUE' }, parentPhraseFn ]
+        hook = RecursorBeforeEach.create root, parent
+
+        hook (-> 
+
+            injectionControl.args[1].phraseToken.name.should.equal 'glia'
+            done()
 
         ), injectionControl
 

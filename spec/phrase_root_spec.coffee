@@ -112,17 +112,13 @@ describe 'phrase', ->
                 after  each: -> console.log after:  'each'
                 after  all:  -> console.log after:  'all'
 
-                outer 'to squiz at queued peers', key: 'VALUE', (end) -> 
+                outer 'to squiz at queued peers', key: 'VALUE', (nested) -> 
 
-                    #console.log recursor.stack[1].queue
+                    nested.stack[1].token.name.should.equal 'outer'
 
-                    #
-                    # 4 further calls to outer() remain to follow this
-                    #
+                    nested 'phrase', (end) -> end()
 
-                    recursor.stack[1].queue.remaining.should.equal 4
-                    done()
-
+                    console.log 'this far'
 
                 outer 'outer nested phrase 1 text', (inner) -> 
 
@@ -131,6 +127,7 @@ describe 'phrase', ->
                         end.stack[0].text.should.equal 'root phrase text'
                         end.stack[1].text.should.equal 'outer nested phrase 1 text'
                         end.stack[2].text.should.equal 'inner nested phrase 1 text'
+                        end.stack[2].token.name.should.equal 'inner'
                         should.not.exist end.stack[3]
 
                     inner 'inner nested phrase 2 text', (end) -> 
