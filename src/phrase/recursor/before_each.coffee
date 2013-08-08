@@ -94,6 +94,13 @@ exports.create = (root, parent) ->
             # todo: make these less exposed
             #
 
+            hooks: 
+
+                beforeAll:  injectionControl.beforeAll
+                beforeEach: injectionControl.beforeEach
+                afterEach:  injectionControl.afterEach
+                afterAll:   injectionControl.afterAll
+
             # control:  phraseControl
             fn:       phraseFn
             deferral: deferral

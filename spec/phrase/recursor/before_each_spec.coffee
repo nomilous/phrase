@@ -50,9 +50,13 @@ describe 'RecursorBeforeEach', ->
 
     it 'pushes the new phrase into the stack and resolves the injection deferral if leaf', (done) -> 
 
-        nestedPhraseFn = -> 
+        nestedPhraseFn = ->
+        phraseHookFn = ->
+
         injectionControl.args = [ 'phrase text', { key: 'VALUE' }, nestedPhraseFn ]
         PhraseLeaf.create = -> detect: (phrase, isLeaf) -> isLeaf true
+        parent.control.phraseToken = name: 'it'
+        injectionControl.beforeEach = phraseHookFn
         
         injectionControl.defer = 
 
@@ -75,9 +79,13 @@ describe 'RecursorBeforeEach', ->
         hook (-> 
 
             root.context.stack[0].should.be.an.instanceof Phrase
+
             root.context.stack[0].text.should.equal 'phrase text'
             #root.context.stack[0].control.key.should.equal 'VALUE'
             root.context.stack[0].fn.should.equal nestedPhraseFn
+            root.context.stack[0].token.name.should.equal 'it'
+            root.context.stack[0].hooks.beforeEach.should.equal phraseHookFn
+
 
         ), injectionControl
 
