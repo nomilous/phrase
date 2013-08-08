@@ -1,4 +1,5 @@
-Phrase = require '../../phrase'
+Phrase     = require '../../phrase'
+PhraseLeaf = require './leaf'
 
 #
 # Before Each (recursion hook)
@@ -8,6 +9,8 @@ exports.create = (root) ->
 
     {context} = root
     {stack, emitter} = context
+
+    phraseLeaf = PhraseLeaf.create root
 
     (done, injectionControl) -> 
 
@@ -49,7 +52,13 @@ exports.create = (root) ->
         phraseControl = if typeof injectionControl.args[1] == 'function' then {} else injectionControl.args[1]
         phraseFn      = injectionControl.args[2] || injectionControl.args[1] || injectionControl.args[0] || -> console.log 'NO ARGS'
 
-        phrase = new Phrase 
+
+        injectionControl.args[0] = phraseText
+        injectionControl.args[1] = phraseControl
+        injectionControl.args[2] = phraseFn
+
+
+        stack.push phrase = new Phrase 
 
             text:     phraseText
 
@@ -62,17 +71,13 @@ exports.create = (root) ->
             deferral: deferral
             queue:    injectionControl.queue
 
-
-        stack.push phrase
-
         #
-        # ensure args for injection (phraseString, phraseControl, nestedPhraseFn)
+        # is this phrase a leaf
         #
 
-        injectionControl.args[0] = phraseText
-        injectionControl.args[1] = phraseControl
-        injectionControl.args[2] = phraseFn
+        phraseLeaf.detect phrase, (leaf) -> 
 
+            if leaf then console.log FOUND_LEAF: phrase
 
 
         done()

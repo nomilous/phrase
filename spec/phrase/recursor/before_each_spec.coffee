@@ -1,5 +1,6 @@
 should             = require 'should'
 RecursorBeforeEach = require '../../../lib/phrase/recursor/before_each'
+PhraseLeaf         = require '../../../lib/phrase/recursor/leaf'
 Phrase             = require '../../../lib/phrase'
 
 describe 'RecursorBeforeEach', -> 
@@ -9,12 +10,21 @@ describe 'RecursorBeforeEach', ->
 
     beforeEach -> 
 
-        root = context: 
-            emitter: emit: ->
-            stack: []
+        root = 
+            context: 
+                emitter: emit: ->
+                stack: []
+
         injectionControl = 
             defer: resolve: ->
             args: []
+
+        PhraseLeaf_swap = PhraseLeaf.create
+        PhraseLeaf.create = -> detect: ->
+
+    afterEach: -> 
+
+        PhraseLeaf.create = PhraseLeaf_swap
 
 
     it 'extracts the injection deferral', (done) -> 
@@ -75,6 +85,18 @@ describe 'RecursorBeforeEach', ->
 
         ), injectionControl
 
+
+    it 'tests if the phrase is a leaf', (done) -> 
+
+        nestedPhraseFn = -> 
+        injectionControl.args = [ 'phrase text', { key: 'VALUE' }, nestedPhraseFn ]
+        PhraseLeaf.create = -> detect: (phrase) -> 
+
+            phrase.fn.should.equal nestedPhraseFn
+            done()
+
+        hook = RecursorBeforeEach.create root
+        hook (->), injectionControl
 
 
     it 'ensures function as lastarg is at arg3', (done) -> 
