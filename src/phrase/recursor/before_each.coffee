@@ -89,13 +89,15 @@ exports.create = (root) ->
             # --------------------------
             # 
             # * inject noop as phraseFn into the recursor
-            # * the phraseFn promise is resolved
+            # 
+            # * resolve the phraseFn promise so that the recusrion 
+            #   control thinks it was run
             # 
             # * AND... 
             # 
             #        
             #        The stack is now populated with the sequence 
-            #        of parent phrases and all the hooks one the
+            #        of parent phrases and all the hooks on the
             #        'tree' pathway to the un-run leaf phrase.
             #        
             # 
