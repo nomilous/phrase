@@ -12,7 +12,8 @@
   "main": "./lib/phrase_root",
   "repository": "git@github.com:nomilous/phrase.git",
   "dependencies": {
-    "also": "0.0.5"
+    "also": "0.0.5",
+    "notice": "0.0.7"
   },
   "devDependencies": {
     "hound": "~1.0.4",
