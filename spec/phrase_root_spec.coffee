@@ -81,6 +81,12 @@ describe 'phrase', ->
 
                     (emitter) -> 
 
+                        emitter.on 'phrase::start', (payload...) -> 
+                            console.log PHRASE_START: payload
+
+
+
+
             root 'root phrase text', (outer) -> 
 
                 before all:  -> console.log before: 'all'
@@ -90,7 +96,7 @@ describe 'phrase', ->
 
                 outer 'to squiz at queued peers', key: 'VALUE', (recursor) -> 
 
-                    console.log recursor.stack[1].queue
+                    #console.log recursor.stack[1].queue
 
                     #
                     # 4 further calls to outer() remain to follow this

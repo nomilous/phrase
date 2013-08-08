@@ -13,8 +13,6 @@ require( 'also' ) exports, {}, (root) ->
 
     {context, validate} = root
 
-
-
     #
     # stack
     # -----
