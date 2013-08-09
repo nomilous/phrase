@@ -99,8 +99,6 @@ describe 'RecursorBeforeEach', ->
 
     it 'emits "phrase::edge:create" into the middleware pipeline', (done) -> 
 
-        throw 'shortly'
-
         #
         # existing stack element
         #
@@ -116,7 +114,17 @@ describe 'RecursorBeforeEach', ->
         #
         parent.control = phraseToken: name: 'it'
         injectionControl.args      = [ 'has this child in', {}, -> ]
+        PhraseLeaf.create = -> detect: (phrase, isLeaf) -> isLeaf true 
+        root.context.notice.event = (event, payload) -> 
 
+            event.should.equal 'phrase::edge:create'
+            payload.$type.should.equal 'tree'
+            payload.$leaf.should.equal true
+
+            payload.vertices[0].text.should.equal 'the parent phrase'
+            payload.vertices[1].text.should.equal 'has this child in'
+
+            return then: -> done()
 
         hook = RecursorBeforeEach.create root, parent
         hook (->), injectionControl

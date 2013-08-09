@@ -159,11 +159,6 @@ exports.create = (root, parentControl) ->
 
                     deferral.resolve()
 
-                
-            #
-            # register this edge into the node graph container
-            #
-
             notice.event( 'phrase::edge:create', 
 
                 #
@@ -172,6 +167,12 @@ exports.create = (root, parentControl) ->
 
                 $type: 'tree'
                 $leaf: leaf
+
+                #
+                # last two phraseNode in the stack are parent and this
+                #
+
+                vertices: stack[ -2.. ]
 
                 #
                 # TODO: include this phrase and parent in message
