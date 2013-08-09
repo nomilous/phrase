@@ -16,10 +16,10 @@ describe 'integrations', ->
 
                     console.log '\n', msg.context.title, '\n', msg
 
-                    try
+                    # try
 
-                        console.log msg.stack[1].hooks
-                        msg.stack[1].hooks.afterAll.fn  -> 'PRETEND RESOLVER FN'
+                    #     console.log msg.stack[1].hooks
+                    #     msg.stack[1].hooks.afterAll.fn  -> 'PRETEND RESOLVER FN'
 
                     console.log '\n'
                     next()
@@ -37,4 +37,5 @@ describe 'integrations', ->
 
             outer 'outer phrase', (inner) -> 
                 inner 'inner phrase', (end) -> 
+                done()
 
