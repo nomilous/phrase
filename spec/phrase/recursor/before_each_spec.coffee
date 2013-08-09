@@ -1,7 +1,7 @@
 should             = require 'should'
 RecursorBeforeEach = require '../../../lib/phrase/recursor/before_each'
 PhraseLeaf         = require '../../../lib/phrase/recursor/leaf'
-Phrase             = require '../../../lib/phrase'
+PhraseNode         = require '../../../lib/phrase_node'
 
 describe 'RecursorBeforeEach', -> 
 
@@ -83,7 +83,7 @@ describe 'RecursorBeforeEach', ->
 
         hook (-> 
 
-            root.context.stack[0].should.be.an.instanceof Phrase
+            root.context.stack[0].should.be.an.instanceof PhraseNode
 
             root.context.stack[0].text.should.equal 'phrase text'
             #root.context.stack[0].control.key.should.equal 'VALUE'

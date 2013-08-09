@@ -9,8 +9,6 @@ exports.create = (root, parentControl) ->
 
     (done, injectionControl) ->
 
-        # emitter.emit 'phrase::start'
-
         #
         # injectionControl
         # ----------------

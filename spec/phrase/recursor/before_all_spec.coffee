@@ -18,17 +18,6 @@ describe 'RecursorBeforeAll', ->
                     afterAll: []
 
 
-    it 'emits phrase::start event', (done) -> 
-
-        root.context.emitter.emit = (event) -> 
-
-            event.should.equal 'phrase::start'
-            done()
-
-        hook = RecursorBeforeAll.create root
-        hook (->), {}
-
-
     it 'calls the recursion hook resolver', (done) -> 
 
         hook = RecursorBeforeAll.create root

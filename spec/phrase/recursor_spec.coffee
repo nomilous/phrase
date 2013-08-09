@@ -1,5 +1,4 @@
 should              = require 'should'
-Phrase              = require '../../lib/phrase_root'
 PhraseRecursor      = require '../../lib/phrase/recursor'
 PhraseRecursorHooks = require '../../lib/phrase/recursor/hooks'
 
@@ -28,15 +27,14 @@ describe 'PhraseRecursor', ->
 
         it 'creates recursion control hooks with root context and parent control', (done) -> 
 
-            rootControl = {}
             PhraseRecursorHooks.bind = (rooot, parent) -> 
 
                 rooot.should.equal root
-                parent.control.should.equal rootControl
+                parent.control.phraseToken.name.should.equal 'root'
                 done()
                 throw 'go no further'
 
-            try PhraseRecursor.create root, rootControl
+            try PhraseRecursor.create root, {}
 
 
         it 'configures the injection decorator and assigns recursion control hooks', (done) -> 

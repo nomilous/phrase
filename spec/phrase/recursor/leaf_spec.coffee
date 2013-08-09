@@ -1,6 +1,6 @@
 should         = require 'should'
 RecursorLeaf   = require '../../../lib/phrase/recursor/leaf'
-Phrase         = require '../../../lib/phrase'
+PhraseNode     = require '../../../lib/phrase_node'
 
 
 describe 'RecursorLeaf', -> 
@@ -17,7 +17,7 @@ describe 'RecursorLeaf', ->
 
         it 'detects leaf phrases when phrase fn arg1 is "end"', (done) -> 
 
-            phrase = new Phrase fn: (end) -> 
+            phrase = new PhraseNode fn: (end) -> 
             leaf   = RecursorLeaf.create root
             leaf.detect phrase, (isLeaf) ->
 
@@ -26,7 +26,7 @@ describe 'RecursorLeaf', ->
 
         it 'detects not leaf when phrase fn arg1 is not "end"', (done) ->
 
-            phrase = new Phrase fn: (other) -> 
+            phrase = new PhraseNode fn: (other) -> 
             leaf   = RecursorLeaf.create root
             leaf.detect phrase, (isLeaf) ->
 
@@ -36,7 +36,7 @@ describe 'RecursorLeaf', ->
 
         it 'marks the phrase as a leaf', (done) -> 
 
-            phrase = new Phrase fn: (end) -> 
+            phrase = new PhraseNode fn: (end) -> 
             leaf   = RecursorLeaf.create root
             leaf.detect phrase, (isLeaf) ->
 
@@ -45,7 +45,7 @@ describe 'RecursorLeaf', ->
 
         it 'marks the phrase as not a leaf', (done) -> 
 
-            phrase = new Phrase fn: (other) -> 
+            phrase = new PhraseNode fn: (other) -> 
             leaf   = RecursorLeaf.create root
             leaf.detect phrase, (isLeaf) ->
 

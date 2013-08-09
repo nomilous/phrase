@@ -4,12 +4,11 @@ recursor  = require './phrase/recursor'
 require( 'also' ) exports, {}, (root) -> 
 
     #
-    # phrase root
-    # ===========
+    # phrase
+    # ======
     # 
-    #  ??? TODO
+    # API Entrypoint
     #
-
 
     {context, validate} = root
 
@@ -28,13 +27,13 @@ require( 'also' ) exports, {}, (root) ->
 
 
     #
-    # Phrase.create( opts, linkFn )
+    # Phrase.createRoot( opts, linkFn )
     # -----------------------------
     # 
 
-    create: validate.args
+    createRoot: validate.args
 
-        $address: 'phrase.create'
+        $address: 'phrase.createRoot'
 
         opts: 
 

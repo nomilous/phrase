@@ -1,4 +1,11 @@
-module.exports = class Phrase
+#
+# phrase node
+# ===========
+# 
+# A vertex in the phrase graph / tree
+#
+
+module.exports = class PhraseNode
 
     constructor: (properties) -> 
 

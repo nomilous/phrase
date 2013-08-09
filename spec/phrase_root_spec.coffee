@@ -1,5 +1,5 @@
 should         = require 'should'
-Phrase         = require '../lib/phrase_root'
+PhraseRoot     = require '../lib/phrase_root'
 PhraseRecursor = require '../lib/phrase/recursor'
 
 describe 'phrase', -> 
@@ -18,24 +18,24 @@ describe 'phrase', ->
 
         it 'is a function', (done) ->  
 
-            Phrase.create.should.be.an.instanceof Function
+            PhraseRoot.createRoot.should.be.an.instanceof Function
             done()
 
         it 'expects opts and linkFn', (done) -> 
 
-            try Phrase.create 
+            try PhraseRoot.createRoot 
 
                 title: 'Phrase Title'
                 uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
             
             catch error
 
-                error.should.match /phrase.create\(opts,linkFn\) expects linkFn/
+                error.should.match /phrase.createRoot\(opts,linkFn\) expects linkFn/
                 done()
 
         it 'calls linkFn', (done) -> 
 
-            Phrase.create 
+            PhraseRoot.createRoot 
 
                 title: 'Phrase Title'
                 uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
@@ -45,7 +45,7 @@ describe 'phrase', ->
 
         it 'passes notifier into linkFn', (done) -> 
 
-            Phrase.create 
+            PhraseRoot.createRoot 
 
                 title: 'Phrase Title'
                 uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
@@ -59,7 +59,7 @@ describe 'phrase', ->
 
             PhraseRecursor.create = -> -> done()
 
-            root = Phrase.create 
+            root = PhraseRoot.createRoot 
 
                 title: 'Phrase Title'
                 uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
@@ -77,7 +77,7 @@ describe 'phrase', ->
                 opts.uuid.should.equal '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
                 done()
 
-            root = Phrase.create 
+            root = PhraseRoot.createRoot 
 
                 title: 'Phrase Title'
                 uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
@@ -93,7 +93,7 @@ describe 'phrase', ->
 
             PhraseRecursor.create = phraseRecursor_swap
 
-            root = Phrase.create 
+            root = PhraseRoot.createRoot 
 
                 title: 'Phrase Title'
                 uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'

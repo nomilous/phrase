@@ -1,4 +1,4 @@
-Phrase     = require '../../phrase'
+PhraseNode = require '../../phrase_node'
 PhraseLeaf = require './leaf'
 
 #
@@ -84,7 +84,7 @@ exports.create = (root, parentControl) ->
         # inject new phrase into stack
         #
 
-        stack.push phrase = new Phrase 
+        stack.push phrase = new PhraseNode 
 
             text:     phraseText
             token:    control.phraseToken
