@@ -169,14 +169,10 @@ exports.create = (root, parentControl) ->
                 $leaf: leaf
 
                 #
-                # last two phraseNode in the stack are parent and this
+                # top two phraseNode in the stack are parent and this
                 #
 
                 vertices: stack[ -2.. ]
-
-                #
-                # TODO: include this phrase and parent in message
-                #
 
             ).then finished, finished
 

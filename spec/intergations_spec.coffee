@@ -14,14 +14,14 @@ describe 'integrations', ->
 
                 notice.use (msg, next) -> 
 
-                    console.log '\n', msg.context.title, '\n', msg
+                    # console.log '\n', msg.context.title, '\n', msg
 
                     # try
 
                     #     console.log msg.stack[1].hooks
                     #     msg.stack[1].hooks.afterAll.fn  -> 'PRETEND RESOLVER FN'
 
-                    console.log '\n'
+                    # console.log '\n'
                     next()
 
         root 'root phrase 1', (end) ->       

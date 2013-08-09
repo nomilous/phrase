@@ -37,13 +37,13 @@ root = require('phrase').createRoot
             # be advised! 
             # -----------
             # 
-            # Certain of the notifications generated in the phrase tree 
-            # suspend their 'flow of execution' pending the completion 
-            # of ALL registered middleware functions.
+            # Certain of the notifications traversing the messenger pipeline 
+            # originate from processes that suspend their 'flow of execution' 
+            # pending the completion of ALL registered middleware functions.
             #             
             #  ie. Some stuff that sends a message down the pipeline 
             #      into which this middleware is registered waits for 
-            #      next() before resuming.
+            #      all middleware to call next() before resuming.
             # 
 
             next()
