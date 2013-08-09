@@ -14,7 +14,7 @@ describe 'integrations', ->
 
                 notice.use (msg, next) -> 
 
-                    # # console.log '\n', msg.context.title, '\n', msg
+                    console.log '\n', msg.context.title, '\n', msg
 
                     # if msg.context.title == 'phrase::edge:create'
 
@@ -25,11 +25,11 @@ describe 'integrations', ->
 
                     next()
 
-                setTimeout (->
-                    console.log JSON.stringify token.graph, null, 2
-                    done()
+                # setTimeout (->
+                #     console.log JSON.stringify token.graph, null, 2
+                #     done()
 
-                ), 100
+                # ), 100
 
         root 'root phrase 1', (end) ->       
         root 'root phrase 2', (outer) -> 

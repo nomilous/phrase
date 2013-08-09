@@ -7,6 +7,11 @@ exports.create = (root, parentControl) ->
     {context}       = root
     {notice, hooks} = context
 
+    #
+    # send notification of 'first walk' starting if 
+    # this is that
+    # 
+
     (done, injectionControl) ->
 
         #
@@ -23,14 +28,23 @@ exports.create = (root, parentControl) ->
         #   a leaf phrase in the tree.
         # 
 
-        beforeAll  = hooks.beforeAll.pop()
-        beforeEach = hooks.beforeEach.pop()
-        afterEach  = hooks.afterEach.pop()
-        afterAll   = hooks.afterAll.pop()
+        run = -> 
 
-        injectionControl.beforeEach = beforeEach
-        injectionControl.beforeAll  = beforeAll
-        injectionControl.afterEach  = afterEach
-        injectionControl.afterAll   = afterAll
+            beforeAll  = hooks.beforeAll.pop()
+            beforeEach = hooks.beforeEach.pop()
+            afterEach  = hooks.afterEach.pop()
+            afterAll   = hooks.afterAll.pop()
 
-        done()
+            injectionControl.beforeEach = beforeEach
+            injectionControl.beforeAll  = beforeAll
+            injectionControl.afterEach  = afterEach
+            injectionControl.afterAll   = afterAll
+
+            done()
+
+        return run() if context.recursor?
+        
+        notice.event( 'phrase::recurse:start' ).then -> 
+
+            context['first walk'] = startedAt: Date.now()
+            run()

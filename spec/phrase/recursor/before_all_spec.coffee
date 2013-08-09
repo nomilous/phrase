@@ -10,7 +10,7 @@ describe 'RecursorBeforeAll', ->
 
         root = 
             context: 
-                emitter: emit: -> 
+                notice: event: -> then: (resolve) -> resolve() 
                 hooks: 
                     beforeAll: []
                     beforeEach: []
@@ -58,3 +58,20 @@ describe 'RecursorBeforeAll', ->
         ), injectionControl
 
 
+    it 'generates "phrase::recurse:start" at the beginning of the "first walk" and marks the start', (done) -> 
+
+        EVENT = undefined 
+        Date.now = -> 1
+        root.context.notice.event = (title) -> 
+
+            EVENT = title
+            then: (resolve) -> resolve()
+
+        hook = RecursorBeforeAll.create root
+        hook (->
+
+            EVENT.should.equal 'phrase::recurse:start'
+            root.context['first walk'].startedAt.should.equal 1
+            done()
+
+        ), {}        
