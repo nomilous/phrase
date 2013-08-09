@@ -42,7 +42,7 @@ exports.create = (root, parentControl) ->
 
             done()
 
-        return run() if context.recursor?
+        return run() if context['first walk']?
         
         notice.event( 'phrase::recurse:start' ).then -> 
 

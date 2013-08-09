@@ -11,9 +11,9 @@ exports.create = (root, parentControl) ->
 
         parent = stack[ stack.length - 1 ]
 
-        done()
-
         if parent? 
+
+            done()
 
             process.nextTick -> 
 
@@ -39,6 +39,10 @@ exports.create = (root, parentControl) ->
 
         else 
 
-            console.log 'DONE'
+            #
+            # there is no parent
+            # 
+
+            notice.event 'phrase::recurse::end'
 
         

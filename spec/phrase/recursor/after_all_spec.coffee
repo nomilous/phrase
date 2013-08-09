@@ -13,6 +13,18 @@ describe 'RecursorAfterAll', ->
         ]
 
         hook = RecursorAfterAll.create root, {}
-        
         hook (->), {}
 
+
+    it 'generates the phrase::recurse::end event if there is no parent', (done) -> 
+
+        root = 
+            context: 
+                stack: []
+                notice: event: (title) -> 
+
+                    title.should.equal 'phrase::recurse::end'
+                    done()
+
+        hook = RecursorAfterAll.create root, {}
+        hook (->), {}
