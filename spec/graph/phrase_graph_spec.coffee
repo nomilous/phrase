@@ -97,12 +97,13 @@ describe 'PhraseGraph', ->
                     { uuid: 'UUID3', key: 'value3' }
                 ],  ->
 
-            graph.edges.UUID1.should.eql [
+            graph.edges.should.eql 
 
-                { connect: 'UUID2' }
-                { connect: 'UUID3' }
+                UUID1: [ { connect: 'UUID2' }, { connect: 'UUID3' }]
+                UUID2: [ { connect: 'UUID1' }                      ]
+                UUID3: [ { connect: 'UUID1' }                      ]
 
-            ]
+            
 
             done()
 

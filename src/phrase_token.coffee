@@ -6,5 +6,14 @@
 # to manage it's edges.  
 # 
 
-exports.create = (root) -> {}
+exports.create = (root) -> 
+
+    {context} = root
+    {graph}   = context
+
+    #
+    # TEMPORARY: access to edges via token
+    #
+
+    edges: graph.edges
 
