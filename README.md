@@ -83,7 +83,11 @@ root 'phrase text', (nested) ->
             # done has been called to enable this hook to break out 
             # asynchronously and wait... to be completed (resolved) 
             # inside the callback that was handed to the asynchronous 
-            # function
+            # function.
+            # 
+            #  ie. You can do remote stuff here, like make database 
+            #      calls to get things that the nested phrases need 
+            #      and only call done() once you have them.
             # 
 
             done()
