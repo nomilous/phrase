@@ -1,5 +1,6 @@
-Notice    = require 'notice'
-recursor  = require './phrase/phrase_recursor'
+Notice         = require 'notice'
+PhraseToken    = require './phrase_token'
+PhraseRecursor = require './phrase/phrase_recursor'
 
 require( 'also' ) exports, {}, (root) -> 
 
@@ -11,6 +12,18 @@ require( 'also' ) exports, {}, (root) ->
     #
 
     {context, validate} = root
+
+  
+
+    #
+    # rootToken
+    # ---------
+    #
+    # * A control / attachmant point for initiate actions into 
+    #   this phrase tree.
+    # 
+
+    context.rootToken = PhraseToken.create root
 
     #
     # stack
@@ -24,6 +37,7 @@ require( 'also' ) exports, {}, (root) ->
     # 
 
     context.stack = []
+
 
 
     #
@@ -67,11 +81,11 @@ require( 'also' ) exports, {}, (root) ->
             # callback with the message pipeline (notice)
             #
 
-            linkFn context.notice
+            linkFn context.rootToken, context.notice
 
 
             #
             # return phrase recursor (root)
             # 
          
-            return recursor.create root, opts
+            return PhraseRecursor.create root, opts

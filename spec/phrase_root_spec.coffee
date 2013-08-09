@@ -33,6 +33,20 @@ describe 'phrase', ->
                 error.should.match /phrase.createRoot\(opts,linkFn\) expects linkFn/
                 done()
 
+
+        it 'returns the root phrase recursor ', (done) -> 
+
+            PhraseRecursor.create = -> -> done()
+
+            root = PhraseRoot.createRoot 
+
+                title: 'Phrase Title'
+                uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
+                -> 
+
+            root()
+
+
         it 'calls linkFn', (done) -> 
 
             PhraseRoot.createRoot 
@@ -43,6 +57,19 @@ describe 'phrase', ->
                 -> done()
 
 
+        it 'passes rootToken into linkFn', (done) -> 
+
+            PhraseRoot.createRoot 
+
+                title: 'Phrase Title'
+                uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
+
+                (token, notice) -> 
+
+                    notice.use.should.be.an.instanceof Function
+                    done()
+
+
         it 'passes notifier into linkFn', (done) -> 
 
             PhraseRoot.createRoot 
@@ -50,23 +77,10 @@ describe 'phrase', ->
                 title: 'Phrase Title'
                 uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
 
-                (notice) -> 
+                (token, notice) -> 
 
                     notice.use.should.be.an.instanceof Function
                     done()
-
-        it 'returns the root phrase recursor ', (done) -> 
-
-            PhraseRecursor.create = -> -> done()
-
-            root = PhraseRoot.createRoot 
-
-                title: 'Phrase Title'
-                uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
-
-                (emitter) -> 
-
-            root()
 
 
         it 'passes opts into the root phrase recursor', (done) -> 
@@ -85,49 +99,3 @@ describe 'phrase', ->
                 (emitter) -> 
 
             root()
-
-
-    context 'integrations', -> 
-
-        it 'stacks up', (done) -> 
-
-            PhraseRecursor.create = phraseRecursor_swap
-
-            root = PhraseRoot.createRoot 
-
-                title: 'Phrase Title'
-                uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
-
-                (notice) -> 
-
-                    notice.use (msg, next) -> 
-
-                        console.log '\n', msg.context.title, '\n', msg
-
-                        try
-
-                            console.log msg.stack[1].hooks
-                            msg.stack[1].hooks.afterAll.fn  -> 'PRETEND RESOLVER FN'
-
-                        console.log '\n'
-                        next()
-
-            root 'root phrase 1', (end) ->       
-            root 'root phrase 2', (outer) -> 
-
-                before all:  -> 
-                before each: -> 
-                after  each: -> 
-                after  all:  (arg) -> 
-
-                    arg().should.equal 'PRETEND RESOLVER FN'
-                    done()
-
-                outer 'outer phrase', (inner) -> 
-                    inner 'inner phrase', (end) -> 
-
-
-
-                
-
-            

@@ -6,5 +6,5 @@
 # to manage it's edges.  
 # 
 
-exports.create = (root) -> 
+exports.create = (root) -> {}
 
