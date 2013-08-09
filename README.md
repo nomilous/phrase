@@ -5,7 +5,14 @@
 phrase
 ======
 
-A describer.
+What is it?
+-----------
+
+* A describer.
+* A repeatable context assembler.
+* ...
+* A matadata enriched scope heap.
+* **An Open Closure**.
 
 
 Usage
