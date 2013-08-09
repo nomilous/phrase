@@ -8,7 +8,10 @@
 
 exports.create = (root) -> 
 
-    return api = 
+    vertices = {}
+    edges    = {}
+
+    api = 
 
         #
         # assembler(msg, next)
@@ -28,5 +31,34 @@ exports.create = (root) ->
 
         registerEdge: (msg, next) -> 
 
+            [vertex1, vertex2] = msg.vertices
+
+            #
+            # TODO: overrwrite / change detection / related event generation
+            #
+
+            vertices[vertex1.uuid] = vertex1
+            vertices[vertex2.uuid] = vertex2
+
+            #
+            # TODO: non tree edges / weight / direction / etcetera
+            #
+
+            edges[ vertex1.uuid ] ||= []
+            edges[ vertex1.uuid ].push connect: vertex2.uuid
+
+            edges[ vertex2.uuid ] ||= []
+            edges[ vertex2.uuid ].push connect: vertex1.uuid
+
             next()
 
+
+    Object.defineProperty api, 'vertices', 
+
+        enumerable: true
+        get: -> vertices
+
+    Object.defineProperty api, 'edges', 
+
+        enumerable: true
+        get: -> edges

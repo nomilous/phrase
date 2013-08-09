@@ -118,8 +118,8 @@ describe 'RecursorBeforeEach', ->
         root.context.notice.event = (event, payload) -> 
 
             event.should.equal 'phrase::edge:create'
-            payload.$type.should.equal 'tree'
-            payload.$leaf.should.equal true
+            payload.type.should.equal 'tree'
+            payload.leaf.should.equal true
 
             payload.vertices[0].text.should.equal 'the parent phrase'
             payload.vertices[1].text.should.equal 'has this child in'

@@ -165,11 +165,11 @@ exports.create = (root, parentControl) ->
                 # trees as special case of graph, edge needs to know
                 # 
 
-                $type: 'tree'
-                $leaf: leaf
+                type: 'tree'
+                leaf: leaf
 
                 #
-                # top two phraseNode in the stack are parent and this
+                # top two phraseNodes in the stack are parent and this
                 #
 
                 vertices: stack[ -2.. ]
