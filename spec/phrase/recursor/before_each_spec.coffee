@@ -18,7 +18,9 @@ describe 'RecursorBeforeEach', ->
                 #
                 # mock notice pipeline
                 #
-                notice: info: -> then: (resolve) -> resolve()
+                notice: 
+                    info: -> then: (resolve) -> resolve()
+                    event: -> then: (resolve) -> resolve()
 
             util: require('also').util
 

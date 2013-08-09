@@ -119,18 +119,12 @@ exports.create = (root, parentControl) ->
 
         phraseLeaf.detect phrase, (leaf) -> 
 
-            # 
-            # 'flow of control' proceeds to injetion into the phraseFn
-            # to recurse into nested phrases if not a leaf
-            #
-
-            return done() unless leaf
-
             #
             # when this phrase is a leaf
             # --------------------------
             # 
-            # * inject noop as phraseFn into the recursor
+            # * inject noop as phraseFn into the recursor instead of 
+            #   the nestedPhraseFn that contains the recursive call
             # 
             # * resolve the phraseFn promise so that the recusrion 
             #   control thinks it was run
@@ -144,7 +138,7 @@ exports.create = (root, parentControl) ->
             #        
             # 
 
-            injectionControl.args[2] = ->
+            if leaf then injectionControl.args[2] = ->
 
             finished = (result_or_error) -> 
 
@@ -153,23 +147,37 @@ exports.create = (root, parentControl) ->
                 #
 
                 done()
-                process.nextTick -> deferral.resolve()
 
-            
-            
+                if leaf then process.nextTick -> 
+
+                    #
+                    # leaf node resolves self, there are
+                    # no children to recurse into
+                    # 
+                    # #GREP1
+                    #
+
+                    deferral.resolve()
+
+                
             #
-            # LIKELY TEMPORARY!! 
-            # 
-            # * send the stack down the message middleware pipeline
-            #   and await completion. 
-            # 
+            # register this edge into the node graph container
+            #
 
-            notice.info( 'phrase::leaf', 
+            notice.event( 'phrase::edge:create', 
 
-                stack: stack
+                #
+                # trees as special case of graph, edge needs to know
+                # 
+
+                $type: 'tree'
+                $leaf: leaf
+
+                #
+                # TODO: include this phrase and parent in message
+                #
 
             ).then finished, finished
 
 
-            
 
