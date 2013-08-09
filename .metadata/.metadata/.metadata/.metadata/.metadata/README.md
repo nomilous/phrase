@@ -9,27 +9,27 @@
 
 
                                        
-                     digital sentience |noun| ~ an infinitely preferable term
+                         digital sentience |noun| ~ an infinitely preferable term
                                                  
 
 
 
 
 
-                                              ipso. 
+                                                 ipso. 
 
-                    This world's first digital sentience will in all likelyhood 
-                    arrise entirely accidentally.  And go completely unnoticed.
-
-
+                       This world's first digital sentience will in all likelyhood 
+                       arrise entirely accidentally.  And go completely unnoticed.
 
 
 
 
 
-                                             facto.
 
-                                  it may have already happened
+
+                                                facto.
+
+                                     it may have already happened
 
 
 
