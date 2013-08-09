@@ -16,20 +16,8 @@ describe 'integrations', ->
 
                     console.log '\n', msg.context.title, '\n', msg
 
-                    # if msg.context.title == 'phrase::edge:create'
-
-                    #     [v1, v2] = msg.vertices
-
-                    #     console.log "\n[#{ try v1.uuid }]#{ try v1.text } - [#{ try v1.uuid }]#{try v2.text}"
-
-
+                    done() if msg.context.title == 'phrase::recurse:end'
                     next()
-
-                # setTimeout (->
-                #     console.log JSON.stringify token.graph, null, 2
-                #     done()
-
-                # ), 100
 
         root 'root phrase 1', (end) ->       
         root 'root phrase 2', (outer) -> 

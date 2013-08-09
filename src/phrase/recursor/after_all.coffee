@@ -44,6 +44,15 @@ exports.create = (root, parentControl) ->
             # to the phrase root
             # 
 
-            notice.event( 'phrase::recurse:end' ).then -> 
+            startedAt = context['first walk'].startedAt
+            context['first walk'].duration = Date.now() - startedAt
 
+            notice.event( 'phrase::recurse:end' 
+
+                context['first walk']
+
+            ).then -> 
+
+                # context.walks.push context['first walk']
+                # delete context['first walk']
                 process.nextTick done
