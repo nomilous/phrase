@@ -18,12 +18,18 @@ root = require('phrase').createRoot
     title: 'Stem Loop'
     uuid:  '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
 
-    (token, notice) -> 
+    #
+    # define the link function (callback)
+    # -----------------------------------
+    # 
+    # token  - Provides access to perfom actions in/on the phrase tree
+    # 
+    # notice - Message pipeline to which middleware can register to 
+    #          receive phrase lifecycle and activity events emanating 
+    #          from the phrase tree.
+    # 
 
-        #
-        # middlewares can register to receive phrase lifecycle and
-        # activity events emanating from the tree defined below.
-        #
+    (token, notice) -> 
 
         notice.use (msg, next) -> 
 
@@ -122,7 +128,23 @@ root 'phrase text', (nested) ->
             # Leaf Phrase
             # -----------
             #
-            # ... TODO
+            # When the phrase tree is initialized a 'first walk'
+            # is performed that does not execute any of the hooks
+            # or any of the leaf nodes.
+            # 
+            # This 'first walk' assembles a graph† of the phrase 
+            # tree containing all the 'vertexes' and 'edges' that
+            # define the structure of the phrase tree.
+            # 
+            # Once assembled, a phrase node (access) list is emitted 
+            # onto the notification pipeline. At that point the phrase
+            # tree is ready to recieve instructions via the token
+            # that was passed into the link function.
+            # 
+            # The token can be used to...  (TODO)
+            # 
+            # 
+            # † http://en.wikipedia.org/wiki/Graph_theory
             # 
 
 
