@@ -5,6 +5,9 @@ PhraseHooks    = require './phrase_hooks'
 # phrase recursor
 # ===============
 # 
+# Performs the 'first walk' of the tree, to assemble. Does not
+# run any of the hooks or leaf nodes.
+# 
 
 exports.create = (root, rootControl) ->
 
@@ -39,7 +42,7 @@ exports.create = (root, rootControl) ->
                 nestedPhraseFn recursor phraseString, phraseControl
 
         #
-        # access stack as property of injector function
+        # TEMPORARY: access stack as property of injector function
         #
 
         Object.defineProperty injectionFn, 'stack', 

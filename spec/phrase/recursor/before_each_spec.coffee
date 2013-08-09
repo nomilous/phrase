@@ -94,6 +94,34 @@ describe 'RecursorBeforeEach', ->
 
         ), injectionControl
 
+
+    it 'emits "phrase::edge:create" into the middleware pipeline', (done) -> 
+
+        throw 'shortly'
+
+        #
+        # existing stack element
+        #
+
+        root.context.stack.push parent = new PhraseNode
+
+            token: name: 'context'
+            text: 'the parent phrase'
+            fn: ->
+
+        #
+        # pending new stack element
+        #
+        parent.control = phraseToken: name: 'it'
+        injectionControl.args      = [ 'has this child in', {}, -> ]
+
+
+        hook = RecursorBeforeEach.create root, parent
+        hook (->), injectionControl
+
+
+
+
     it 'attaches phraseToken to phraseControl for injection at arg2', (done) -> 
 
         parentPhraseFn = (glia) -> 

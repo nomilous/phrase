@@ -1,5 +1,6 @@
 Notice         = require 'notice'
 PhraseToken    = require './phrase_token'
+PhraseGraph    = require './graph/phrase_graph'
 PhraseRecursor = require './phrase/phrase_recursor'
 
 require( 'also' ) exports, {}, (root) -> 
@@ -13,27 +14,34 @@ require( 'also' ) exports, {}, (root) ->
 
     {context, validate} = root
 
+    #
+    # graph
+    # -----
+    # 
+    # * Houses the set of vertexes and edges that define the phrase tree
+    # 
+    # * Assembled by the 'first walk' of the phrase recursor.
+    #
+
+    context.graph = PhraseGraph.create root
   
 
     #
-    # rootToken
-    # ---------
+    # token
+    # -----
     #
-    # * A control / attachmant point for initiate actions into 
+    # * A control / attachmant point to initiate actions into 
     #   this phrase tree.
     # 
 
-    context.rootToken = PhraseToken.create root
+    context.token = PhraseToken.create root
 
     #
     # stack
     # -----
     # 
     # * The stack of elements (sub phrases) that is pushed and popped
-    #   as the 'flow of execution' traverses the phrase tree.
-    # 
-    # * Stack is directly attached to the `root.context`, this means that
-    #   there can only be one root phrase per process.
+    #   as the 'first walk' traverses the phrase tree.
     # 
 
     context.stack = []
@@ -42,7 +50,7 @@ require( 'also' ) exports, {}, (root) ->
 
     #
     # Phrase.createRoot( opts, linkFn )
-    # -----------------------------
+    # ---------------------------------
     # 
 
     createRoot: validate.args
@@ -78,10 +86,17 @@ require( 'also' ) exports, {}, (root) ->
             context.notice = Notice.create opts.uuid
 
             #
+            # * first middleware is graph assembler
+            #
+
+            context.notice.use context.graph.assembler
+
+
+            #
             # callback with the message pipeline (notice)
             #
 
-            linkFn context.rootToken, context.notice
+            linkFn context.token, context.notice
 
 
             #

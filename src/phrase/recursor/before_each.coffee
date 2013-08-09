@@ -17,12 +17,10 @@ exports.create = (root, parentControl) ->
 
         #
         # injectionControl
-        # ------
+        # ----------------
         # 
         # This object controls the behaviour of the async injection into 
-        # the target function in recursor: 
-        # 
-        #      `(phraseString, phraseControl, nestedPhraseFn) -> `
+        # the target function for the recursor's 'first walk'
         # 
         # * injectionControl.defer is a deferral held by the async controller
         #   that wraps the call to the injection target. Ordinarilly it would
@@ -35,7 +33,14 @@ exports.create = (root, parentControl) ->
 
         #   ...prevents that behaviour.      And leaves the alternative 
         #                                    resolution mechanism up to
-        #                                    the developer
+        #                                    the developer.
+        # 
+        #          Having suspended the call to this resolver allows the 
+        #          recursor to suspend the call into the next phrase until
+        #          all the children of this phrase have been traversed.
+        #
+        #          This resolver is called in the afterAll hook of the
+        #          child injector. #GREP1
         #
         # 
 
