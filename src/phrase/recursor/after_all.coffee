@@ -40,9 +40,10 @@ exports.create = (root, parentControl) ->
         else 
 
             #
-            # there is no parent
+            # there is no parent, recursor has arrived back
+            # to the phrase root
             # 
 
-            notice.event 'phrase::recurse::end'
+            notice.event( 'phrase::recurse:end' ).then -> 
 
-        
+                process.nextTick done

@@ -74,4 +74,4 @@ describe 'RecursorBeforeAll', ->
             root.context['first walk'].startedAt.should.equal 1
             done()
 
-        ), {}        
+        ), {}

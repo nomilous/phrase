@@ -23,8 +23,18 @@ describe 'RecursorAfterAll', ->
                 stack: []
                 notice: event: (title) -> 
 
-                    title.should.equal 'phrase::recurse::end'
-                    done()
+                    title.should.equal 'phrase::recurse:end'
+                    
+
+                    then: ->
+
+                        #
+                        # and it pends calling final done
+                        # till after the message traverses 
+                        # all middleware
+                        #
+
+                        done()
 
         hook = RecursorAfterAll.create root, {}
         hook (->), {}
