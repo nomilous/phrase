@@ -140,6 +140,8 @@ root 'phrase text', (nested) ->
             # the 'vertexes' and 'edges' that define the structure 
             # of the phrase tree.
             # 
+            #           † http://en.wikipedia.org/wiki/Graph_theory
+            # 
             # Once assembled, a phrase node (access) list is emitted 
             # onto the notification pipeline. At that point the phrase
             # tree is ready to recieve instructions via the token
@@ -147,9 +149,7 @@ root 'phrase text', (nested) ->
             # 
             # The token can be used to...  (TODO)
             # 
-            # 
-            # † http://en.wikipedia.org/wiki/Graph_theory
-            # 
+
 
 
 
