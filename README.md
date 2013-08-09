@@ -132,9 +132,9 @@ root 'phrase text', (nested) ->
             # is performed that does not execute any of the hooks
             # or any of the leaf nodes.
             # 
-            # This 'first walk' assembles a graph† of the phrase 
-            # tree containing all the 'vertexes' and 'edges' that
-            # define the structure of the phrase tree.
+            # This 'first walk' assembles a graph† containing all 
+            # the 'vertexes' and 'edges' that define the structure 
+            # of the phrase tree.
             # 
             # Once assembled, a phrase node (access) list is emitted 
             # onto the notification pipeline. At that point the phrase
