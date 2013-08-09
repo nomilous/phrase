@@ -94,10 +94,20 @@ exports.create = (root, parentControl) ->
             text:     phraseText
             token:    control.phraseToken
             
-
+            #
+            # TODO: determine phrase line in source file
+            #       
+            #       1. IDE plugins could then interact
+            #          directly with phrases
+            # 
+            #          eg. nez - test results in sublime furrow
+            #                  - running single tests or context
+            #                    groups by click or keystroke on
+            #                    active line
+            # 
 
             #
-            # todo: make these less exposed
+            # TODO: make these less exposed
             #
 
             hooks: 
