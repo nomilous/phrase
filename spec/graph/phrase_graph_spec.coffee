@@ -84,3 +84,25 @@ describe 'PhraseGraph', ->
 
             done()
 
+
+        it 'allows multiple edges per vertex', (done) -> 
+
+            graph.registerEdge vertices: [
+                    { uuid: 'UUID1', key: 'value1' }
+                    { uuid: 'UUID2', key: 'value2' }
+                ],  ->
+
+            graph.registerEdge vertices: [
+                    { uuid: 'UUID1', key: 'value1' }
+                    { uuid: 'UUID3', key: 'value3' }
+                ],  ->
+
+            graph.edges.UUID1.should.eql [
+
+                { connect: 'UUID2' }
+                { connect: 'UUID3' }
+
+            ]
+
+            done()
+
