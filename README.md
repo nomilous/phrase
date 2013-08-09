@@ -11,7 +11,7 @@ What is it?
 * A describer.
 * A repeatable context assembler.
 * ...
-* A matadata enriched scope heap.
+* A metadata enriched scope heap.
 * **An Open Closure**.
 
 
