@@ -1,6 +1,6 @@
 should         = require 'should'
 PhraseRoot     = require '../lib/phrase_root'
-PhraseRecursor = require '../lib/phrase/recursor'
+PhraseRecursor = require '../lib/phrase/phrase_recursor'
 
 describe 'phrase', -> 
 

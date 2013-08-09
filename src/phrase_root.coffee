@@ -1,5 +1,5 @@
 Notice    = require 'notice'
-recursor  = require './phrase/recursor'
+recursor  = require './phrase/phrase_recursor'
 
 require( 'also' ) exports, {}, (root) -> 
 

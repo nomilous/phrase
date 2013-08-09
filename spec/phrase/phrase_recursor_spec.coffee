@@ -1,5 +1,5 @@
 should              = require 'should'
-PhraseRecursor      = require '../../lib/phrase/recursor'
+PhraseRecursor      = require '../../lib/phrase/phrase_recursor'
 PhraseRecursorHooks = require '../../lib/phrase/recursor/hooks'
 
 describe 'PhraseRecursor', -> 
