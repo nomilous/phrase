@@ -102,66 +102,32 @@ describe 'phrase', ->
 
                     notice.use (msg, next) -> 
 
-                        #console.log '\n\n\n', msg
+                        console.log '\n', msg.context.title, '\n', msg
+
+                        try
+
+                            console.log msg.stack[1].hooks
+                            msg.stack[1].hooks.afterAll.fn  -> 'PRETEND RESOLVER FN'
+
+                        console.log '\n'
                         next()
 
+            root 'root phrase 1', (end) ->       
+            root 'root phrase 2', (outer) -> 
 
-            root 'root phrase text', (outer) -> 
+                before all:  -> 
+                before each: -> 
+                after  each: -> 
+                after  all:  (arg) -> 
 
-                outer 'one last nest', (nest) -> 
+                    arg().should.equal 'PRETEND RESOLVER FN'
+                    done()
 
-                    setTimeout (->
+                outer 'outer phrase', (inner) -> 
+                    inner 'inner phrase', (end) -> 
 
-                        nest 'text', (end) -> 
-
-                    ), 500
-
-                # before all:  -> console.log before: 'all'
-                # before each: -> console.log before: 'each'
-                # after  each: -> console.log after:  'each'
-                # after  all:  -> console.log after:  'all'
-
-                outer 'outer nested phrase 1 text', (inner) -> 
-
-                    inner 'inner nested phrase 1 text', (end) -> 
-
-                        end.stack[0].text.should.equal 'root phrase text'
-                        end.stack[1].text.should.equal 'outer nested phrase 1 text'
-                        end.stack[2].text.should.equal 'inner nested phrase 1 text'
-                        end.stack[2].token.name.should.equal 'inner'
-                        should.not.exist end.stack[3]
-
-                        end()
-
-
-                    inner 'inner nested phrase 2 text', (deeper) -> 
-
-                        setTimeout (->
-
-                            deeper.stack[0].text.should.equal 'root phrase text'
-                            deeper.stack[1].text.should.equal 'outer nested phrase 1 text'
-                            deeper.stack[2].text.should.equal 'inner nested phrase 2 text'
-                            should.not.exist deeper.stack[3]
-
-                            deeper 'deep phrase', (end) -> end()
-                        
-
-                        ), 500
-
-
-                outer 'outer nested phrase 2 text', (end) -> end()
-                outer 'outer nested phrase 3 text', (end) -> 
-
-                        end.stack[0].text.should.equal 'root phrase text'
-                        end.stack[1].text.should.equal 'outer nested phrase 3 text'
-                        should.not.exist end.stack[2]
-                        end()
-
-                outer 'outer nested phrase 4 text', (end) -> end()
 
 
                 
-    
 
-
-
+            

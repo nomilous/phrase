@@ -86,8 +86,9 @@ exports.create = (root, parentControl) ->
 
         stack.push phrase = new Phrase 
 
-            token:    control.phraseToken
             text:     phraseText
+            token:    control.phraseToken
+            
 
 
             #
