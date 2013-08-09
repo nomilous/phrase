@@ -11,6 +11,24 @@ exports.create = (root) ->
     vertices = {}
     edges    = {}
 
+    #
+    # special case for trees
+    # ----------------------
+    # 
+    # ### parent
+    # 
+    # Index maps vertex to parent vertex 
+    # ie. parents[ UUID ] = parentUUID
+    # 
+    # ### children
+    # 
+    # Index maps vertex to array of children, (in created order)
+    # children[ UUID ] = [child1UUID, child2UUID, ...]
+    # 
+
+    parent   = {} 
+    children = {}
+
     api = 
 
         #
@@ -50,6 +68,12 @@ exports.create = (root) ->
             edges[ vertex2.uuid ] ||= []
             edges[ vertex2.uuid ].push connect: vertex1.uuid
 
+            if msg.type == 'tree'
+
+                parent[   vertex2.uuid ]   = vertex1.uuid
+                children[ vertex1.uuid ] ||= []
+                children[ vertex1.uuid ].push vertex2.uuid
+
             next()
 
 
@@ -62,3 +86,15 @@ exports.create = (root) ->
 
         enumerable: true
         get: -> edges
+
+    Object.defineProperty api, 'parent', 
+
+        enumerable: true
+        get: -> parent
+
+    Object.defineProperty api, 'children', 
+
+        enumerable: true
+        get: -> children
+
+

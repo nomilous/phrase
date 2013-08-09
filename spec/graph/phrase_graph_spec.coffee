@@ -107,3 +107,27 @@ describe 'PhraseGraph', ->
 
             done()
 
+
+        it 'stores parent and child relations if tree', (done) -> 
+
+            graph.registerEdge type: 'tree', vertices: [
+                    { uuid: 'UUID1', key: 'value1' }
+                    { uuid: 'UUID2', key: 'value2' }
+                ],  ->
+
+            graph.registerEdge type: 'tree', vertices: [
+                    { uuid: 'UUID1', key: 'value1' }
+                    { uuid: 'UUID3', key: 'value3' }
+                ],  ->
+
+            graph.parent.should.eql 
+
+                UUID3: 'UUID1'
+                UUID2: 'UUID1'
+
+            graph.children.should.eql 
+
+                UUID1: ['UUID2', 'UUID3']
+
+            done()
+

@@ -12,8 +12,8 @@ exports.create = (root) ->
     {graph}   = context
 
     #
-    # TEMPORARY: access to edges via token
+    # TEMPORARY: direct access to graph
     #
 
-    edges: graph.edges
+    graph: graph
 

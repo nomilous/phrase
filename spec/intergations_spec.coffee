@@ -14,20 +14,19 @@ describe 'integrations', ->
 
                 notice.use (msg, next) -> 
 
-                    # console.log '\n', msg.context.title, '\n', msg
+                    # # console.log '\n', msg.context.title, '\n', msg
 
-                    if msg.context.title == 'phrase::edge:create'
+                    # if msg.context.title == 'phrase::edge:create'
 
-                        [v1, v2] = msg.vertices
+                    #     [v1, v2] = msg.vertices
 
-                        console.log "\n[#{ try v1.uuid }]#{ try v1.text } - [#{ try v1.uuid }]#{try v2.text}"
+                    #     console.log "\n[#{ try v1.uuid }]#{ try v1.text } - [#{ try v1.uuid }]#{try v2.text}"
 
 
                     next()
 
                 setTimeout (->
-
-                    console.log JSON.stringify token.edges, null, 2
+                    console.log JSON.stringify token.graph, null, 2
                     done()
 
                 ), 100
