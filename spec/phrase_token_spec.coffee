@@ -3,52 +3,95 @@ PhraseRoot  = require '../lib/phrase_root'
 PhraseToken = require '../lib/phrase_token'
 
 describe 'PhraseToken', -> 
+    
+    root       = undefined
+    TOKEN      = undefined
+    LEAF_UUID  = undefined
+
+    beforeEach (done) -> 
+
+        root = PhraseRoot.createRoot
+
+            title: 'Title'
+            uuid:  'ROOT-UUID'
+
+            (token, notice) -> 
+
+                TOKEN = token
+
+                #
+                # TODO: token.on 'ready' (or something: 'changed')
+                # 
+                #       instead of eaves dropping on the message bus
+                #            
+                #       bear in mind the intended goal of
+                #       live reloadability for version 
+                #       release toggling and such
+                #
+
+                notice.use (msg, next) -> 
+
+                    if msg.context.title == 'phrase::recurse:end'
+
+                        #
+                        # tree is ready, locate UUID of nest TWO
+                        #
+
+                        leaves = TOKEN.graph.tree.leaves
+                        LEAF_UUID = ( for uuid of leaves
+                            continue unless leaves[uuid].convenience.match /TWO$/
+                            uuid
+                        )[0]
+                        done()
+
+                    next()
+
+
+        root 'phrase', (nested) -> 
+
+            nested 'nest ONE', (end) -> 
+            nested 'nest TWO', (end) -> 
+
+
 
     context 'run()', -> 
 
         it 'is a function', (done) -> 
 
-            token = PhraseToken.create context: graph: {}
-            token.run.should.be.an.instanceof Function
+            TOKEN.run.should.be.an.instanceof Function
             done()
 
         it 'returns a promise', (done) -> 
 
-            token = PhraseToken.create 
-                context: 
-                    graph: {}
-                inject: require('also').inject
-
-            token.run().then.should.be.an.instanceof Function
+            TOKEN.run().then.should.be.an.instanceof Function
             done()
 
+        it 'reject if no target uuid was supplied', (done) -> 
 
-    context 'integrations', -> 
+            TOKEN.run().then(
+                ->
+                (error) -> 
+                    error.code.should.equal 1
+                    error.should.match /missing opts.uuid/
+                    done()
+            )
+            
+        it 'rejects on missing uuid', (done) -> 
 
-        root  = undefined
-        TOKEN = undefined 
+            TOKEN.run( uuid: 'NO_SUCH_UUID' ).then(
+                ->
+                (error) -> 
+                    error.code.should.equal 2
+                    error.should.match /uuid: NO_SUCH_UUID not in local tree/
+                    done()
+            )
 
-        beforeEach (done) -> 
 
-            root = PhraseRoot.createRoot
 
-                title: 'Title'
-                uuid:  'ROOT-UUID'
 
-                (token, notice) -> 
 
-                    TOKEN = token
 
-                    notice.use (msg, next) -> 
-
-                        done() if msg.context.title == 'phrase::recurse:end'
-                        next()
-
-            root 'phrase', (nested) -> 
-
-                nested 'nest ONE', (end) -> 
-                nested 'nest TWO', (end) -> 
-
+    xcontext 'integrations', -> 
 
         it 'can run a leaf', (done) -> 
 
@@ -58,15 +101,7 @@ describe 'PhraseToken', ->
             # get uuid for 'nest TWO'
             #
 
-            leaves = TOKEN.graph.tree.leaves
-
-            uuid = ( for uuid of leaves
-
-                continue unless leaves[uuid].convenience.match /TWO$/
-                uuid
-
-            )[0]
-
+            
             TOKEN.run( uuid: uuid ).then(
 
                 (results) -> 

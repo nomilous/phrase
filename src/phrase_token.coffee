@@ -11,17 +11,36 @@
 exports.create = (root) -> 
 
     {context, inject} = root
-    {graph}   = context
+    {graph}           = context
 
     #
     # TEMPORARY: direct access to graph
     #
 
-    graph: graph
+    api = 
 
-    run: (opts) -> 
+        graph: graph
 
-        running = defer()
-        process.nextTick -> running.resolve []
-        running.promise
+        run: (opts = {}) -> 
 
+            running = defer()
+            process.nextTick -> 
+
+                unless opts.uuid? 
+
+                    error = new Error "missing opts.uuid"
+                    error.code = 1
+                    return running.reject error
+
+                unless graph.vertices[opts.uuid]?
+
+                    error = new Error "uuid: #{opts.uuid} not in local tree"
+                    error.code = 2
+                    return running.reject error
+
+                running.resolve []
+
+            running.promise
+
+
+    return api
