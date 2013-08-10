@@ -13,7 +13,7 @@ describe 'PhraseToken', ->
 
     beforeEach (done) -> 
 
-        root = PhraseRoot.createRoot
+        PhraseRoot.createRoot
 
             title: 'Title'
             uuid:  'ROOT-UUID'
@@ -23,16 +23,6 @@ describe 'PhraseToken', ->
                 TOKEN  = token
                 NOTICE = notice
                 done()
-
-        root 'PHRASE_ROOT', (nested) -> 
-
-            nested 'NEST_ONE', (deeper) -> 
-
-                deeper 'LEAF_ONE', (end) -> end()
-                deeper 'LEAF_TWO', (end) -> end()
-
-            nested 'LEAF_THREE', (end) -> end()
-
 
     context 'eventProxy', (done) -> 
 
