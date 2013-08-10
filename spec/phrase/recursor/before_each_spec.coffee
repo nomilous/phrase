@@ -100,8 +100,14 @@ describe 'RecursorBeforeEach', ->
     it 'emits "phrase::edge:create" into the middleware pipeline', (done) -> 
 
         #
-        # existing stack element
+        # existing stack elements
         #
+
+        root.context.stack.push parent = new PhraseNode
+
+            token: name: 'describe'
+            text: 'use case one'
+            fn: ->
 
         root.context.stack.push parent = new PhraseNode
 
@@ -126,8 +132,8 @@ describe 'RecursorBeforeEach', ->
 
             should.exist event1 = EVENTS['phrase::leaf:create']
             should.exist event1.uuid
-            event1.path.length.should.equal 2
-            event1.convenience.should.equal '/context/the parent phrase/it/has this child in'
+            event1.path.length.should.equal 3
+            event1.convenience.should.equal '/describe/use case one/context/the parent phrase/it/has this child in'
 
             should.exist event2 = EVENTS['phrase::edge:create']
             event2.type.should.equal 'tree'
