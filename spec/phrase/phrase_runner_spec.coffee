@@ -50,8 +50,10 @@ describe 'PhraseRunner', ->
         root 'PHRASE_ROOT', (nested) -> 
             nested 'NEST_ONE', (deeper) -> 
                 deeper 'LEAF_ONE', (end) -> end()
-                deeper 'NEST_TWO', (deeperer) -> 
-                    deeperer 'LEAF_TWO', (end) -> end()
+                deeper 'NEST_TWO', (deeper) -> 
+                    deeper 'NEST_THREE', (deeper) -> 
+                        deeper 'NEST_FOUR', (deeper) -> 
+                            deeper 'LEAF_TWO', (end) -> end()
                 deeper 'LEAF_THREE', (end) -> end()
             nested 'LEAF_FOUR', (end) -> end()
 

@@ -69,6 +69,10 @@ exports.run = (root, opts) ->
                         #
                         # only run before alls on the first inbound pass
                         #
+                        #
+                        # TODO: BUGFIX: inverse of the problem outlined below
+                        # 
+
   
                         console.log beforeAll: phrase.hooks.beforeAll
 
@@ -99,6 +103,12 @@ exports.run = (root, opts) ->
                         # only run after alls on the final outbound
                         # (last leaf)
                         #
+                        # TODO: BUGFIX: this mechanism won't run after alls
+                        #               from deeper that the last target leaf
+                        #
+                        #               a problem if one of the earlier leaves
+                        #               was much deeper in the tree
+                        # 
 
                         console.log afterAll: phrase.hooks.afterAll
 
