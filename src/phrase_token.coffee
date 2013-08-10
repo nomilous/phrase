@@ -19,6 +19,14 @@ exports.create = (root) ->
 
     run: (opts) -> 
 
-        running = inject.async ->
+        running = inject.async 
+
+            beforeEach: (done, injection) -> 
+
+                injection.defer.resolve(  ['RESULT'] )
+                done()
+
+            ->
+
         return running opts
 

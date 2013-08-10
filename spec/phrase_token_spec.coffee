@@ -46,14 +46,51 @@ describe 'PhraseToken', ->
 
             root 'phrase', (nested) -> 
 
-                nested 'nest 1', (end) -> 
-                nested 'nest 2', (end) -> 
+                nested 'nest ONE', (end) -> 
+                nested 'nest TWO', (end) -> 
 
 
         it 'can run a leaf', (done) -> 
 
-            console.log JSON.stringify TOKEN.graph.tree, null, 2
-            done()
+            #console.log JSON.stringify TOKEN.graph.tree, null, 2
+
+            #
+            # get uuid for 'nest TWO'
+            #
+
+            leaves = TOKEN.graph.tree.leaves
+
+            uuid = ( for uuid of leaves
+
+                continue unless leaves[uuid].convenience.match /TWO$/
+                uuid
+
+            )[0]
+
+            TOKEN.run( uuid: uuid ).then(
+
+                (results) -> 
+
+                    #
+                    # overall results
+                    #
+
+                    results.should.be.an.instanceof Array
+                    done()
+
+                (error)   ->
+
+                    #
+                    # catastrofic
+                    #
+
+                (notifiy) -> 
+
+                    #
+                    # per leaf results, including errors
+                    #
+
+            )
 
 
         it 'can run all leaves on a branch'
