@@ -6,6 +6,8 @@
 # to manage it's edges.  
 # 
 
+{defer} = require 'when' 
+
 exports.create = (root) -> 
 
     {context, inject} = root
@@ -19,14 +21,7 @@ exports.create = (root) ->
 
     run: (opts) -> 
 
-        running = inject.async 
-
-            beforeEach: (done, injection) -> 
-
-                injection.defer.resolve(  ['RESULT'] )
-                done()
-
-            ->
-
-        return running opts
+        running = defer()
+        process.nextTick -> running.resolve []
+        running.promise
 

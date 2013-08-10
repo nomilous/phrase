@@ -14,7 +14,8 @@
   "dependencies": {
     "also": "0.0.5",
     "notice": "0.0.7",
-    "node-uuid": "~1.4.0"
+    "node-uuid": "~1.4.0",
+    "when": "~2.3.0"
   },
   "devDependencies": {
     "hound": "~1.0.4",
