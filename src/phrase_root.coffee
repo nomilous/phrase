@@ -116,7 +116,7 @@ require( 'also' ) exports, {}, (root) ->
             # * callback with token and messenger
             #
 
-            process.nextTick -> linkFn context.token, context.notice
+            linkFn context.token, context.notice
 
 
             #
