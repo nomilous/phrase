@@ -21,6 +21,18 @@ exports.run = (root, opts) ->
         unless graph.vertices[uuid]?
             return running.reject error 2, "uuid: '#{uuid}' not in local tree"
 
-        running.resolve graph.leavesOf uuid
+
+        leaves = graph.leavesOf uuid
+        count  = leaves.length
+        state  = 'started'
+
+        running.notify 
+
+            timestamp: Date.now()
+            state:     state
+            total: count
+            done:  count - leaves.length
+
+        process.nextTick -> running.resolve()
 
     running.promise

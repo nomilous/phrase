@@ -83,9 +83,11 @@ describe 'PhraseRunner', ->
                     done()
             )
 
-        it 'can run a leaf', (done) -> 
+        it 'can run a single leaf', (done) -> 
 
             MESSAGES = []
+            tick     = 0
+            Date.now = -> ++tick
 
             TOKEN.run( uuid: LEAF_TWO ).then(
 
@@ -95,9 +97,12 @@ describe 'PhraseRunner', ->
                     # overall results
                     #
 
-                    console.log MESSAGES: MESSAGES
-                    console.log RESULTS: results
-                    # results.should.be.an.instanceof Array
+                    MESSAGES.should.eql [
+
+                        { timestamp: 1, state: 'started', total: 1, done: 0 }
+
+                    ]
+
                     done()
 
                 (error)   ->
@@ -108,12 +113,12 @@ describe 'PhraseRunner', ->
 
                     console.log ERROR: error
 
-                (notifiy) -> 
+                (notify) -> 
 
                     #
                     # per leaf results, including errors
                     #
-
+                    console.log notify
                     MESSAGES.push notify
 
             )
