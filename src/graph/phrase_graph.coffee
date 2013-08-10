@@ -46,15 +46,28 @@ exports.create = (root) ->
 
         assembler: (msg, next) -> 
 
+            # console.log msg.content
+
             if msg.context.title == 'phrase::edge:create'
 
                 api.registerEdge msg, next
             
+            else if msg.context.title == 'phrase::leaf:create'
+
+                api.registerLeaf msg, next
+
             else next()
 
         registerEdge: (msg, next) -> 
 
             [vertex1, vertex2] = msg.vertices
+
+            #
+            # the edge emitter includes [root, undefined]
+            # ignore it
+            #
+
+            return next() unless vertex2
 
             #
             # TODO: overrwrite / change detection / related event generation
@@ -79,6 +92,12 @@ exports.create = (root) ->
                 children[ vertex1.uuid ] ||= []
                 children[ vertex1.uuid ].push vertex2.uuid
                 leaves.push vertex2.uuid if vertex2.leaf
+
+            next()
+
+        registerLeaf: (msg, next) -> 
+
+            console.log LEAF: msg
 
             next()
 

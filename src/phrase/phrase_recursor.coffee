@@ -17,6 +17,8 @@ exports.create = (root, rootControl) ->
 
     recursor = (parentPhraseString, parentPhraseControl) -> 
 
+        # console.log arguments
+
         #
         # create recursion control hooks 
         # 

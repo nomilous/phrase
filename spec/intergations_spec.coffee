@@ -14,7 +14,7 @@ describe 'integrations', ->
 
                 notice.use (msg, next) -> 
 
-                    console.log '\n', msg.context.title, '\n', msg
+                    # console.log '\n', msg.context.title, '\n', msg
 
                     if msg.context.title == 'phrase::recurse:end'
 
@@ -24,6 +24,7 @@ describe 'integrations', ->
                                 tokenName: token.graph.vertices[uuid].token.name
                                 text: token.graph.vertices[uuid].text
 
+                        next()
                         done()
 
                     next()
@@ -41,5 +42,3 @@ describe 'integrations', ->
                 inner 'inner phrase 2', (end) -> 
 
             outer 'another leaf', (end) -> end()
-
-
