@@ -26,14 +26,29 @@ root = require('phrase').createRoot
     uuid:  '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
 
     #
-    # define the link function (callback)
-    # -----------------------------------
+    # leaf (optional)
+    # ---------------
+    #
+    # This is used to identify leaves on the phrase tree
+    # See 'Leaf Phrase's below.
+    # 
+    # 
+
+    #leaf: ['end']
+
+
+    #
+    # linker function (required, callback)
+    # ------------------------------------
     # 
     # token  - Provides access to perfom actions in/on the phrase tree
     # 
     # notice - Message pipeline to which middleware can register to 
     #          receive phrase lifecycle and activity events emanating 
     #          from the phrase tree.
+    # 
+    #           ie. For tapping into chatter on the phrase tree's 
+    #               internal message bus.
     # 
 
     (token, notice) -> 
