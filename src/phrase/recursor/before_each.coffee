@@ -139,10 +139,10 @@ exports.create = (root, parentControl) ->
             # 
             # * emit 'phrase::edge:create' for the graph assembler
             # 
-            # * TEMPORARY emit 'phrase::leaf:create' with text path and vertex map
+            # * TEMPORARY emit 'phrase::leaf:create' with uuid path and convenience text path
             # 
             # * resolve the phraseFn promise so that the recusrion 
-            #   control thinks it was run   
+            #   control thinks it was run
             # 
 
             if leaf then injectionControl.args[2] = ->

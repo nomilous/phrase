@@ -61,6 +61,23 @@ require( 'also' ) exports, {}, (root) ->
 
             title: {} 
             uuid: {} 
+            leaf: 
+                $default: ['end']
+                $description: """
+
+                    This specifies an array of possible phraseFn arg1 signature names 
+                    that are used to determine if the phrase function is a leaf.
+
+                        eg. 
+
+                        phraseRegistrar 'phrase text', (end) -> 
+
+                            # 
+                            # this is a leaf function
+                            # 
+
+                """
+                
 
         linkFn: 
 
@@ -68,8 +85,8 @@ require( 'also' ) exports, {}, (root) ->
             $description: """
 
                 This callback is called immediately upon initialization of the
-                phrase root. It receives an event publisher that can be used 
-                to subscribe to phrase events from the local branch.
+                phrase root. It receives the phrase tree access token and the
+                messenger middleware registrar.
 
             """
 
