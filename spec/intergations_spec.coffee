@@ -14,7 +14,7 @@ describe 'integrations', ->
 
                 notice.use (msg, next) -> 
 
-                    # console.log '\n', msg.context.title, '\n', msg
+                    console.log '\n', msg.context.title, '\n', msg
 
                     if msg.context.title == 'phrase::recurse:end'
 

@@ -8,7 +8,7 @@
 
 exports.create = (root) -> 
 
-    {context} = root
+    {context, inject} = root
     {graph}   = context
 
     #
@@ -16,4 +16,9 @@ exports.create = (root) ->
     #
 
     graph: graph
+
+    run: (opts) -> 
+
+        running = inject.async ->
+        return running opts
 
