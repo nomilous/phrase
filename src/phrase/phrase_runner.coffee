@@ -1,26 +1,26 @@
 {defer} = require 'when' 
 
+error = (code, message) -> Object.defineProperty (new Error message), 'code', value: code
+
 exports.run = (root, opts) -> 
 
     {context} = root
     {graph}   = context
     {uuid}    = opts
-    
+
+    #
+    # defer and promise the running phrase node
+    #
+
     running = defer()
     process.nextTick -> 
 
         unless uuid? 
-
-            error = new Error "missing opts.uuid"
-            error.code = 1
-            return running.reject error
+            return running.reject error 1, "missing opts.uuid"
 
         unless graph.vertices[uuid]?
+            return running.reject error 2, "uuid: '#{uuid}' not in local tree"
 
-            error = new Error "uuid: '#{uuid}' not in local tree"
-            error.code = 2
-            return running.reject error
-
-        running.resolve []
+        running.resolve graph.leavesOf uuid
 
     running.promise

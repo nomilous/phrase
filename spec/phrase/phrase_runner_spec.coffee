@@ -95,9 +95,8 @@ describe 'PhraseRunner', ->
                     # overall results
                     #
 
-                    console.log MESSAGES
-
-                    # console.log RESULTS: results
+                    console.log MESSAGES: MESSAGES
+                    console.log RESULTS: results
                     # results.should.be.an.instanceof Array
                     done()
 
@@ -115,7 +114,6 @@ describe 'PhraseRunner', ->
                     # per leaf results, including errors
                     #
 
-                    console.log NOTIFY: notifiy
                     MESSAGES.push notify
 
             )

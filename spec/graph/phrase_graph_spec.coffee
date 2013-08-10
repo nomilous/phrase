@@ -16,16 +16,10 @@ describe 'PhraseGraph', ->
         graph.vertices.should.eql {}
         done()
 
+
     context 'assembler middleware', -> 
 
         it 'registers edges', (done) ->
-
-            graph.registerEdge = (msg) -> 
-
-                should.exist msg.type
-                should.exist msg.leaf
-                should.exist msg.vertices
-                done()
 
             graph.assembler 
 
@@ -34,11 +28,17 @@ describe 'PhraseGraph', ->
                 #
 
                 context: title: 'phrase::edge:create'
-                type: 'tree'
-                leaf: true
-                vertices: []
+                vertices: [
+                    { uuid: 'UUID1', key: 'value1' }
+                    { uuid: 'UUID2', key: 'value2' }
+                ]
 
                 -> 
+
+                    should.exist graph.vertices.UUID1
+                    should.exist graph.vertices.UUID2
+                    done()
+
 
     context 'register edge', -> 
 
@@ -165,6 +165,87 @@ describe 'PhraseGraph', ->
                     done()
 
 
+    context 'leavesOf(uuid)', -> 
+
+        it 'returns the vertex at uuid if it is a leaf', (done) -> 
+
+            graph.registerEdge type: 'tree', vertices: [
+                    { uuid: 'UUID1', key: 'value1' }
+                    { uuid: 'UUID2', arbkey: 'arbvalue', leaf: true }
+                ],  ->
+
+            graph.leavesOf( 'UUID2' )[0].arbkey.should.equal 'arbvalue'
+            done()
+
+
+        it 'returns array of leaf vertices nested (any depth) in the vertex at uuid', (done) -> 
+
+            #
+            # assemble tree
+            # 
+            #   1: 
+            #      2: leaf
+            #      3: 
+            #         4: 
+            #            6: leaf
+            #            7: leaf
+            #         5: leaf
+            #      8: leaf
+            # 
+            #
+
+            graph.registerEdge type: 'tree', vertices: [
+                    { uuid: 'UUID1', key: 'value1' }
+                    { uuid: 'UUID2', key: 'value2', leaf: true }
+                ],  ->
+            graph.registerEdge type: 'tree', vertices: [
+                    { uuid: 'UUID1', key: 'value1' }
+                    { uuid: 'UUID3', key: 'value3' }
+                ],  ->
+            graph.registerEdge type: 'tree', vertices: [
+                    { uuid: 'UUID3', key: 'value3' }
+                    { uuid: 'UUID4', key: 'value4' }
+                ],  ->
+            graph.registerEdge type: 'tree', vertices: [
+                    { uuid: 'UUID3', key: 'value3' }
+                    { uuid: 'UUID5', key: 'value5', leaf: true }
+                ],  ->
+            graph.registerEdge type: 'tree', vertices: [
+                    { uuid: 'UUID4', key: 'value4' }
+                    { uuid: 'UUID6', key: 'value6', leaf: true }
+                ],  ->
+            graph.registerEdge type: 'tree', vertices: [
+                    { uuid: 'UUID4', key: 'value4' }
+                    { uuid: 'UUID7', key: 'value7', leaf: true }
+                ],  ->
+            graph.registerEdge type: 'tree', vertices: [
+                    { uuid: 'UUID1', key: 'value1' }
+                    { uuid: 'UUID8', key: 'value8', leaf: true }
+                ],  ->
+
+
+            graph.leavesOf( 'UUID4' ).should.eql [ 
+                { uuid: 'UUID6', key: 'value6', leaf: true }
+                { uuid: 'UUID7', key: 'value7', leaf: true }
+            ]
+
+            graph.leavesOf( 'UUID3' ).should.eql [ 
+                { uuid: 'UUID6', key: 'value6', leaf: true }
+                { uuid: 'UUID7', key: 'value7', leaf: true }
+                { uuid: 'UUID5', key: 'value5', leaf: true } 
+            ]
+
+            graph.leavesOf( 'UUID1' ).should.eql [ 
+                { uuid: 'UUID2', key: 'value2', leaf: true }
+                { uuid: 'UUID6', key: 'value6', leaf: true }
+                { uuid: 'UUID7', key: 'value7', leaf: true }
+                { uuid: 'UUID5', key: 'value5', leaf: true } 
+                { uuid: 'UUID8', key: 'value8', leaf: true }
+            ]
+
+
+
+            done()
 
 
 
