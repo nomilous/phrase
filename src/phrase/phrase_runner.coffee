@@ -1,4 +1,5 @@
-{defer, map} = require 'when' 
+{defer, map} = require 'when'
+sequence     = require 'when/sequence'
 
 error = (code, message) -> Object.defineProperty (new Error message), 'code', value: code
 
@@ -43,33 +44,67 @@ exports.run = (root, opts) ->
 
             if remaining == 0 then return process.nextTick -> running.resolve results
 
-            leaf    = leaves.shift()
-            path    = graph.tree.leaves[leaf.uuid].path
-            phrases = path.map (uuid) -> graph.vertices[uuid]
+            leaf     = leaves.shift()
+            path     = graph.tree.leaves[leaf.uuid].path
+            outbound = []
+            inbound  = path.map (uuid) -> 
 
-            #
-            # phrases (Array) now contains all the phrases along the 
-            # path from root to this leaf
-            #
+                outbound.unshift graph.vertices[uuid]
+                graph.vertices[uuid]
 
-            map( phrases, (phrase) -> 
-  
-                console.log beforeAll: phrase.hooks.beforeAll
-                console.log beforeEach: phrase.hooks.beforeEach 
-                console.log FN: phrase.fn
-                console.log afterEach: phrase.hooks.afterEach
-                console.log afterAll: phrase.hooks.afterAll
+
+            sequence([
 
                 #
-                # um... tricky! 
+                # inbound  (Array) Contains all the phrases along the path 
+                #                  from root to this leaf. 
                 # 
-                # thinks about using the 'first walk' recursor
-                # in non-'first walk' mode
+                #                  For running all before hooks.
+                # 
+
+                -> map inbound, (phrase) -> 
+
+                    if remaining == count
+
+                        #
+                        # only run before alls on the first inbound pass
+                        #
+  
+                        console.log beforeAll: phrase.hooks.beforeAll
+
+                    console.log beforeEach: phrase.hooks.beforeEach
+
+
+                #
+                # run the leaf function
                 #
 
-            ).then recurse
+                -> console.log RUN_LEAF: leaf.text
 
-            
+
+                # 
+                # outbound (Array) Contains all the phrases alone the path
+                #                  from leaf to root
+                # 
+                #                  For running all the after hooks.
+                #
+
+                -> map outbound, (phrase) -> 
+
+                    console.log afterEach: phrase.hooks.afterEach
+
+                    if leaves.length == 0
+
+                        #
+                        # only run after alls on the final outbound
+                        # (last leaf)
+                        #
+
+                        console.log afterAll: phrase.hooks.afterAll
+
+
+            ]).then recurse
+
 
         recurse()
 
