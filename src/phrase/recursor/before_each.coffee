@@ -146,12 +146,7 @@ exports.create = (root, parentControl) ->
             if leaf then injectionControl.args[2] = ->
 
 
-
-            finished = (result_or_error) -> 
-
-                #
-                # result / error from messenger pipeline
-                #
+            finished = -> 
 
                 done()
 
