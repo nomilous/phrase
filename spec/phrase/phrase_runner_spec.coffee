@@ -48,14 +48,14 @@ describe 'PhraseRunner', ->
 
 
         root 'PHRASE_ROOT', (nested) -> 
-
             nested 'NEST_ONE', (deeper) -> 
-
                 deeper 'LEAF_ONE', (end) -> end()
-                deeper 'LEAF_TWO', (end) -> end()
+                deeper 'NEST_TWO', (deeperer) -> 
+                    deeperer 'LEAF_TWO', (end) -> end()
                 deeper 'LEAF_THREE', (end) -> end()
-
             nested 'LEAF_FOUR', (end) -> end()
+
+
 
     context 'run()', ->
 
@@ -100,9 +100,9 @@ describe 'PhraseRunner', ->
 
                     MESSAGES.should.eql [
 
-                        { timestamp: 1, state: 'started', total: 3, remaining: 3 }
-                        { timestamp: 2, state: 'started', total: 3, remaining: 2 }
-                        { timestamp: 3, state: 'started', total: 3, remaining: 1 }
+                        { timestamp: 1, state: 'running', total: 3, remaining: 3 }
+                        { timestamp: 2, state: 'running', total: 3, remaining: 2 }
+                        { timestamp: 3, state: 'running', total: 3, remaining: 1 }
                         { timestamp: 4, state: 'done',    total: 3, remaining: 0 }
 
                     ]

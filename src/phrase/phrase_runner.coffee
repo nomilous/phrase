@@ -27,8 +27,13 @@ exports.run = (root, opts) ->
         results = []
         recurse = -> 
 
+            #
+            # recurse through the list of phrase leaves that
+            # require processing
+            #
+
             remaining = leaves.length
-            state     = if remaining == 0 then 'done' else 'started'
+            state     = if remaining == 0 then 'done' else 'running'
 
             running.notify 
                 timestamp:  Date.now()
@@ -36,13 +41,23 @@ exports.run = (root, opts) ->
                 total:      count
                 remaining:  remaining
 
-            leaf = leaves.shift()
+            if remaining == 0 then return process.nextTick -> running.resolve results
+
+            leaf    = leaves.shift()
+            path    = graph.tree.leaves[leaf.uuid].path
+            phrases = path.map (uuid) -> graph.vertices[uuid]
+
+            #
+            # phrases (Array) now contains the all phrases 
+            # from root to this leaf 
+            #
+
+            console.log leaf.text, phrase_depth: phrases.length
 
 
 
-
-            return recurse() unless remaining == 0
-            process.nextTick -> running.resolve results
+            recurse()
+            
 
         recurse()
 
