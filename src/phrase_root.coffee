@@ -105,12 +105,18 @@ require( 'also' ) exports, {}, (root) ->
 
             context.notice.use context.graph.assembler
 
+            #
+            # * second middleware is root token event emitter proxy 
+            #
+
+            context.notice.use context.token.eventProxy
+
 
             #
             # * callback with token and messenger
             #
 
-            linkFn context.token, context.notice
+            process.nextTick -> linkFn context.token, context.notice
 
 
             #

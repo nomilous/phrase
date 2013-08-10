@@ -6,7 +6,9 @@ describe 'PhraseToken', ->
     
     root       = undefined
     TOKEN      = undefined
-    LEAF_UUID  = undefined
+    NOTICE     = undefined
+    LEAF_TWO   = undefined
+    NEST_ONE   = undefined
 
     beforeEach (done) -> 
 
@@ -17,41 +19,49 @@ describe 'PhraseToken', ->
 
             (token, notice) -> 
 
-                TOKEN = token
-
-                #
-                # TODO: token.on 'ready' (or something: 'changed')
-                # 
-                #       instead of eaves dropping on the message bus
-                #            
-                #       bear in mind the intended goal of
-                #       live reloadability for version 
-                #       release toggling and such
-                #
+                TOKEN  = token
+                NOTICE = notice
 
                 notice.use (msg, next) -> 
+
+                    return done() if LEAF_TWO?
 
                     if msg.context.title == 'phrase::recurse:end'
 
                         #
-                        # tree is ready, locate UUID of nest TWO
+                        # tree is ready, locate UUIDs of test phrase nodes
                         #
 
                         leaves = TOKEN.graph.tree.leaves
-                        LEAF_UUID = ( for uuid of leaves
-                            continue unless leaves[uuid].convenience.match /TWO$/
+                        LEAF_TWO = ( for uuid of leaves
+                            continue unless leaves[uuid].convenience.match /LEAF_TWO/
                             uuid
                         )[0]
+                        # NEST_ONE = ( for uuid of leaves
+                        #     ### continue unless leaves[uuid].convenience.match /NEST_ONE/
+                        #     uuid
+                        # )[0]
                         done()
 
                     next()
 
 
-        root 'phrase', (nested) -> 
+        root 'PHRASE_ROOT', (nested) -> 
 
-            nested 'nest ONE', (end) -> 
-            nested 'nest TWO', (end) -> 
+            nested 'NEST_ONE', (deeper) -> 
 
+                deeper 'LEAF_ONE', (end) -> end()
+                deeper 'LEAF_TWO', (end) -> end()
+
+            nested 'LEAF_THREE', (end) -> end()
+
+
+    context 'eventProxy', (done) -> 
+
+        it 'proxies phrase::recurse:end from the message bus to local token event "ready"', (done) -> 
+
+            TOKEN.on 'ready', -> done()
+            NOTICE.event 'phrase::recurse:end'
 
 
     context 'run()', -> 
@@ -86,23 +96,9 @@ describe 'PhraseToken', ->
                     done()
             )
 
-
-
-
-
-
-    xcontext 'integrations', -> 
-
         it 'can run a leaf', (done) -> 
 
-            #console.log JSON.stringify TOKEN.graph.tree, null, 2
-
-            #
-            # get uuid for 'nest TWO'
-            #
-
-            
-            TOKEN.run( uuid: uuid ).then(
+            TOKEN.run( uuid: LEAF_TWO ).then(
 
                 (results) -> 
 
@@ -110,6 +106,7 @@ describe 'PhraseToken', ->
                     # overall results
                     #
 
+                    console.log RESULTS: results
                     results.should.be.an.instanceof Array
                     done()
 
@@ -119,11 +116,15 @@ describe 'PhraseToken', ->
                     # catastrofic
                     #
 
+                    console.log ERROR: error
+
                 (notifiy) -> 
 
                     #
                     # per leaf results, including errors
                     #
+
+                    console.log NOTIFY: notifiy
 
             )
 
