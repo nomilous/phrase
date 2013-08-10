@@ -85,19 +85,16 @@ require( 'also' ) exports, {}, (root) ->
             $description: """
 
                 This callback is called immediately upon initialization of the
-                phrase root. It receives the phrase tree access token and the
-                messenger middleware registrar.
+                phrase root. It receives the phrase tree access token and a
+                middleware registrar that enables tapping into the chatter 
+                traversing the phrase tree's internal message bus.
 
             """
 
         (opts, linkFn) -> 
 
             #
-            # notice
-            # -------
-            #
-            # * middlewares can register to receive phrase lifecycle and activity 
-            #   events emanating from within the branch rooted at this phrase.
+            # * create the message bus
             # 
 
             context.notice = Notice.create opts.uuid
@@ -110,14 +107,14 @@ require( 'also' ) exports, {}, (root) ->
 
 
             #
-            # callback with the message pipeline (notice)
+            # * callback with token and messenger
             #
 
             linkFn context.token, context.notice
 
 
             #
-            # return phrase recursor (root)
+            # return phrase recursor (root registrar)
             # 
          
             return PhraseRecursor.create root, opts
