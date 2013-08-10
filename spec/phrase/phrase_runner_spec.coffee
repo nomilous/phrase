@@ -33,15 +33,15 @@ describe 'PhraseRunner', ->
                         # tree is ready, locate UUIDs of test phrase nodes
                         #
 
-                        leaves = TOKEN.graph.tree.leaves
-                        LEAF_TWO = ( for uuid of leaves
-                            continue unless leaves[uuid].convenience.match /LEAF_TWO/
+                        vertices = TOKEN.graph.vertices
+                        LEAF_TWO = ( for uuid of vertices
+                            continue unless vertices[uuid].text == 'LEAF_TWO'
                             uuid
                         )[0]
-                        # NEST_ONE = ( for uuid of leaves
-                        #     ### continue unless leaves[uuid].convenience.match /NEST_ONE/
-                        #     uuid
-                        # )[0]
+                        NEST_ONE = ( for uuid of vertices
+                            continue unless vertices[uuid].text == 'NEST_ONE'
+                            uuid
+                        )[0]
                         done()
 
                     next()
@@ -53,8 +53,9 @@ describe 'PhraseRunner', ->
 
                 deeper 'LEAF_ONE', (end) -> end()
                 deeper 'LEAF_TWO', (end) -> end()
+                deeper 'LEAF_THREE', (end) -> end()
 
-            nested 'LEAF_THREE', (end) -> end()
+            nested 'LEAF_FOUR', (end) -> end()
 
     context 'run()', ->
 
@@ -83,13 +84,13 @@ describe 'PhraseRunner', ->
                     done()
             )
 
-        it 'can run a single leaf', (done) -> 
+        it 'can run all leaves on a branch', (done) -> 
 
             MESSAGES = []
             tick     = 0
             Date.now = -> ++tick
 
-            TOKEN.run( uuid: LEAF_TWO ).then(
+            TOKEN.run( uuid: NEST_ONE ).then(
 
                 (results) -> 
 
@@ -99,7 +100,10 @@ describe 'PhraseRunner', ->
 
                     MESSAGES.should.eql [
 
-                        { timestamp: 1, state: 'started', total: 1, done: 0 }
+                        { timestamp: 1, state: 'started', total: 3, remaining: 3 }
+                        { timestamp: 2, state: 'started', total: 3, remaining: 2 }
+                        { timestamp: 3, state: 'started', total: 3, remaining: 1 }
+                        { timestamp: 4, state: 'done',    total: 3, remaining: 0 }
 
                     ]
 
@@ -123,7 +127,7 @@ describe 'PhraseRunner', ->
 
             )
 
-
+        it 'can run a single leaf'
         it 'can run all leaves on a branch'
         it 'can run all leaves in the tree'
 

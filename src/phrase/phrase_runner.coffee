@@ -22,17 +22,28 @@ exports.run = (root, opts) ->
             return running.reject error 2, "uuid: '#{uuid}' not in local tree"
 
 
-        leaves = graph.leavesOf uuid
-        count  = leaves.length
-        state  = 'started'
+        leaves  = graph.leavesOf uuid
+        count   = leaves.length
+        results = []
+        recurse = -> 
 
-        running.notify 
+            remaining = leaves.length
+            state     = if remaining == 0 then 'done' else 'started'
 
-            timestamp: Date.now()
-            state:     state
-            total: count
-            done:  count - leaves.length
+            running.notify 
+                timestamp:  Date.now()
+                state:      state
+                total:      count
+                remaining:  remaining
 
-        process.nextTick -> running.resolve()
+            leaf = leaves.shift()
+
+
+
+
+            return recurse() unless remaining == 0
+            process.nextTick -> running.resolve results
+
+        recurse()
 
     running.promise
