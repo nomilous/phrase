@@ -7,13 +7,13 @@
 # 
 
 {EventEmitter} = require 'events' 
-{defer}        = require 'when' 
+PhraseRunner   = require './phrase/phrase_runner'
 
 exports.create = (root) -> 
 
-    {context, inject} = root
-    {graph}           = context
-    emitter           = new EventEmitter
+    {context} = root
+    {graph}   = context
+    emitter   = new EventEmitter
 
     #
     # TEMPORARY: direct access to graph
@@ -23,25 +23,12 @@ exports.create = (root) ->
 
     emitter.run = (opts = {}) -> 
 
-        running = defer()
-        process.nextTick -> 
+        #
+        # TODO: (later) opts.uuid becomes optional, this (token)
+        #               is assigned to a phrase, run that one.
+        #
 
-            unless opts.uuid? 
-
-                error = new Error "missing opts.uuid"
-                error.code = 1
-                return running.reject error
-
-            unless graph.vertices[opts.uuid]?
-
-                error = new Error "uuid: #{opts.uuid} not in local tree"
-                error.code = 2
-                return running.reject error
-
-            running.resolve []
-
-        running.promise
-
+        PhraseRunner.run root, opts
 
     Object.defineProperty emitter, 'eventProxy', 
 

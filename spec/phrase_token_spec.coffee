@@ -1,6 +1,7 @@
-should      = require 'should'
-PhraseRoot  = require '../lib/phrase_root'
-PhraseToken = require '../lib/phrase_token'
+should       = require 'should'
+PhraseRoot   = require '../lib/phrase_root'
+PhraseToken  = require '../lib/phrase_token'
+PhraseRunner = require '../lib/phrase/phrase_runner'
 
 describe 'PhraseToken', -> 
     
@@ -21,30 +22,7 @@ describe 'PhraseToken', ->
 
                 TOKEN  = token
                 NOTICE = notice
-
-                notice.use (msg, next) -> 
-
-                    return done() if LEAF_TWO?
-
-                    if msg.context.title == 'phrase::recurse:end'
-
-                        #
-                        # tree is ready, locate UUIDs of test phrase nodes
-                        #
-
-                        leaves = TOKEN.graph.tree.leaves
-                        LEAF_TWO = ( for uuid of leaves
-                            continue unless leaves[uuid].convenience.match /LEAF_TWO/
-                            uuid
-                        )[0]
-                        # NEST_ONE = ( for uuid of leaves
-                        #     ### continue unless leaves[uuid].convenience.match /NEST_ONE/
-                        #     uuid
-                        # )[0]
-                        done()
-
-                    next()
-
+                done()
 
         root 'PHRASE_ROOT', (nested) -> 
 
@@ -76,60 +54,11 @@ describe 'PhraseToken', ->
             TOKEN.run().then.should.be.an.instanceof Function
             done()
 
-        it 'reject if no target uuid was supplied', (done) -> 
+        it 'calls the phrase runner', (done) -> 
 
-            TOKEN.run().then(
-                ->
-                (error) -> 
-                    error.code.should.equal 1
-                    error.should.match /missing opts.uuid/
-                    done()
-            )
-            
-        it 'rejects on missing uuid', (done) -> 
+            swap = PhraseRunner.run
+            PhraseRunner.run = -> 
+                PhraseRunner.run = swap
+                done()
 
-            TOKEN.run( uuid: 'NO_SUCH_UUID' ).then(
-                ->
-                (error) -> 
-                    error.code.should.equal 2
-                    error.should.match /uuid: NO_SUCH_UUID not in local tree/
-                    done()
-            )
-
-        it 'can run a leaf', (done) -> 
-
-            TOKEN.run( uuid: LEAF_TWO ).then(
-
-                (results) -> 
-
-                    #
-                    # overall results
-                    #
-
-                    console.log RESULTS: results
-                    results.should.be.an.instanceof Array
-                    done()
-
-                (error)   ->
-
-                    #
-                    # catastrofic
-                    #
-
-                    console.log ERROR: error
-
-                (notifiy) -> 
-
-                    #
-                    # per leaf results, including errors
-                    #
-
-                    console.log NOTIFY: notifiy
-
-            )
-
-
-        it 'can run all leaves on a branch'
-        it 'can run all leaves in the tree'
-
-
+            TOKEN.run()
