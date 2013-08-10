@@ -121,25 +121,30 @@ describe 'RecursorBeforeEach', ->
         parent.control = phraseToken: name: 'it'
         injectionControl.args      = [ 'has this child in', {}, -> ]
         PhraseLeaf.create = -> detect: (phrase, isLeaf) -> isLeaf true 
+        SEQUENCE = []
         EVENTS = {}
         root.context.notice.event = (event, payload) -> 
 
+            SEQUENCE.push event
             EVENTS[event] = payload
             return then: (resolve) -> resolve() 
 
         hook = RecursorBeforeEach.create root, parent
         hook (->
 
-            should.exist event1 = EVENTS['phrase::leaf:create']
-            should.exist event1.uuid
-            event1.path.length.should.equal 3
-            event1.convenience.should.equal '/describe/use case one/context/the parent phrase/it/has this child in'
+            SEQUENCE.should.eql [ 'phrase::edge:create', 'phrase::leaf:create' ]
 
-            should.exist event2 = EVENTS['phrase::edge:create']
-            event2.type.should.equal 'tree'
-            event2.leaf.should.equal true
-            event2.vertices[0].text.should.equal 'the parent phrase'
-            event2.vertices[1].text.should.equal 'has this child in'
+            should.exist event1 = EVENTS['phrase::edge:create']
+            event1.type.should.equal 'tree'
+            event1.leaf.should.equal true
+            event1.vertices[0].text.should.equal 'the parent phrase'
+            event1.vertices[1].text.should.equal 'has this child in'
+
+            should.exist event2 = EVENTS['phrase::leaf:create']
+            should.exist event2.uuid
+            event2.path.length.should.equal 3
+            event2.convenience.should.equal '/describe/use case one/context/the parent phrase/it/has this child in'
+
             done()
 
         ), injectionControl

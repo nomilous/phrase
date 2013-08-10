@@ -1,5 +1,6 @@
 PhraseNode = require '../../phrase_node'
 PhraseLeaf = require './leaf'
+sequence   = require 'when/sequence'
 
 #
 # Before Each (recursion hook)
@@ -142,19 +143,9 @@ exports.create = (root, parentControl) ->
             #   control thinks it was run   
             # 
 
-            if leaf 
+            if leaf then injectionControl.args[2] = ->
 
-                injectionControl.args[2] = ->
 
-                #
-                # TEMPORARY (or partially temporary)
-                #
-
-                notice.event 'phrase::leaf:create',
-
-                    uuid:  phrase.uuid
-                    path:  stack.map( (p) -> p.uuid ) # .filter (uuid) -> uuid != phrase.uuid
-                    convenience: stack.map( (p) -> "/#{ p.token.name }/#{ p.text }" ).join ''
 
             finished = (result_or_error) -> 
 
@@ -175,22 +166,34 @@ exports.create = (root, parentControl) ->
 
                     deferral.resolve()
 
-            notice.event( 'phrase::edge:create'
+            sequence([
 
-                #
-                # trees as special case of graph, edge needs to know
-                # 
+                -> notice.event 'phrase::edge:create',
 
-                type: 'tree'
-                leaf: leaf
+                        #
+                        # trees as special case of graph, edge needs to know
+                        # 
 
-                #
-                # top two phraseNodes in the stack are parent and this
-                #
+                        type: 'tree'
+                        leaf: leaf
 
-                vertices: stack[ -2.. ]
+                        #
+                        # top two phraseNodes in the stack are parent and this
+                        #
 
-            ).then finished, finished
+                        vertices: stack[ -2.. ]
 
+                -> if leaf
 
+                    #
+                    # TEMPORARY (or partially temporary)
+                    #
+
+                    notice.event 'phrase::leaf:create',
+
+                        uuid:  phrase.uuid
+                        path:  stack.map( (p) -> p.uuid ) # .filter (uuid) -> uuid != phrase.uuid
+                        convenience: stack.map( (p) -> "/#{ p.token.name }/#{ p.text }" ).join ''
+
+            ]).then finished, finished
 
