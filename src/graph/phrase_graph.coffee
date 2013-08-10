@@ -18,7 +18,7 @@ exports.create = (root) ->
     # ### parent
     # 
     # Index maps vertex to parent vertex 
-    # ie. parents[ UUID ] = parentUUID
+    # ie. parent[ UUID ] = parentUUID
     # 
     # ### children
     # 

@@ -136,11 +136,21 @@ exports.create = (root, parentControl) ->
             # * inject noop as phraseFn into the recursor instead of 
             #   the nestedPhraseFn that contains the recursive call
             # 
+            # * emit 'phrase::leaf:create' with text path and vertex map
+            # 
             # * resolve the phraseFn promise so that the recusrion 
             #   control thinks it was run   
             # 
 
-            if leaf then injectionControl.args[2] = ->
+            if leaf 
+
+                injectionControl.args[2] = ->
+
+                notice.event 'phrase::leaf:create',
+
+                    uuid:      phrase.uuid
+                    ancestors: stack.map( (p) -> p.uuid ) # .filter (uuid) -> uuid != phrase.uuid
+                    path:      stack.map( (p) -> "/#{ p.token.name }/#{ p.text }" ).join ''
 
             finished = (result_or_error) -> 
 
@@ -161,7 +171,7 @@ exports.create = (root, parentControl) ->
 
                     deferral.resolve()
 
-            notice.event( 'phrase::edge:create', 
+            notice.event( 'phrase::edge:create'
 
                 #
                 # trees as special case of graph, edge needs to know
