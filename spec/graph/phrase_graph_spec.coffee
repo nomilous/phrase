@@ -131,3 +131,21 @@ describe 'PhraseGraph', ->
 
             done()
 
+        it 'stores a list of leaves if tree', (done) -> 
+
+            graph.registerEdge type: 'tree', vertices: [
+                    { uuid: 'UUID1', key: 'value1' }
+                    { uuid: 'UUID2', key: 'value2', leaf: true }
+                ],  ->
+
+            graph.registerEdge type: 'tree', vertices: [
+                    { uuid: 'UUID1', key: 'value1' }
+                    { uuid: 'UUID3', key: 'value3' }
+                ],  ->
+
+            graph.leaves.should.eql ['UUID2']
+
+            done()
+
+
+

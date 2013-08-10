@@ -25,9 +25,14 @@ exports.create = (root) ->
     # Index maps vertex to array of children, (in created order)
     # children[ UUID ] = [child1UUID, child2UUID, ...]
     # 
+    # ### leaves
+    # 
+    # Array of vertexes that are leaves on the tree
+    # 
 
     parent   = {} 
     children = {}
+    leaves   = []
 
     api = 
 
@@ -70,9 +75,10 @@ exports.create = (root) ->
 
             if msg.type == 'tree'
 
-                parent[   vertex2.uuid ]   = vertex1.uuid
+                parent[ vertex2.uuid ] = vertex1.uuid
                 children[ vertex1.uuid ] ||= []
                 children[ vertex1.uuid ].push vertex2.uuid
+                leaves.push vertex2.uuid if vertex2.leaf
 
             next()
 
@@ -96,5 +102,11 @@ exports.create = (root) ->
 
         enumerable: true
         get: -> children
+
+    Object.defineProperty api, 'leaves', 
+
+        enumerable: true
+        get: -> leaves
+
 
 

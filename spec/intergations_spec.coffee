@@ -16,20 +16,30 @@ describe 'integrations', ->
 
                     console.log '\n', msg.context.title, '\n', msg
 
-                    done() if msg.context.title == 'phrase::recurse:end'
-                    next()
+                    if msg.context.title == 'phrase::recurse:end'
 
-        root 'root phrase 1', (end) ->       
-        root 'root phrase 2', (outer) -> 
+                        for uuid in token.graph.leaves
+
+                            console.log LEAF: 
+                                tokenName: token.graph.vertices[uuid].token.name
+                                text: token.graph.vertices[uuid].text
+
+                        done()
+
+                    next()
+      
+        root 'root phrase', (outer) -> 
 
             before all:  -> 
             before each: -> 
             after  each: -> 
             after  all:  -> 
 
-            outer 'outer phrase', (inner) -> 
+            outer 'outer phrase 1', (inner) -> 
 
                 inner 'inner phrase 1', (end) -> 
                 inner 'inner phrase 2', (end) -> 
+
+            outer 'another leaf', (end) -> end()
 
 
