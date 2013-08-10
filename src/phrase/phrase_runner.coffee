@@ -75,7 +75,7 @@ exports.run = (root, opts) ->
                     #     console.log beforeAll: phrase.hooks.beforeAll
 
 
-                    console.log beforeEach: phrase.hooks.beforeEach
+                    phrase.hooks.beforeEach.run() if phrase.hooks.beforeEach?
 
 
                 #
@@ -94,8 +94,7 @@ exports.run = (root, opts) ->
 
                 -> map outbound, (phrase) -> 
 
-                    console.log afterEach: phrase.hooks.afterEach
-
+                    phrase.hooks.afterEach.run() if phrase.hooks.afterEach?
 
                     # if leaves.length == 0
                     #     #

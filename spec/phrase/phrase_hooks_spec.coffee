@@ -87,7 +87,7 @@ describe 'PhraseHooks', ->
 
             tick = 0
             Date.now = -> ++tick
-            hookFn = ->
+            hookFn = -> 'mooo'
 
             before each: hookFn
 
@@ -95,12 +95,13 @@ describe 'PhraseHooks', ->
             hook  = hooks.beforeEach.pop()
             hook.runCount.should.equal 0
             hook.run()
+            hook.run()
 
             hook.should.eql 
 
                 fn: hookFn
                 createdAt: 1
-                lastRunAt: 2
-                runCount:  1
+                runCount:  2
+                lastRunAt: 3
 
             done()

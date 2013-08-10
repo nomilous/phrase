@@ -47,8 +47,8 @@ describe 'PhraseRunner', ->
                     next()
 
 
-        before each: ->
-        after each: ->
+        before each: -> 'before, outside'
+        after each: -> 'after, outside'
         root 'PHRASE_ROOT', (nested) -> 
             before each: ->
             after each: ->
@@ -63,8 +63,8 @@ describe 'PhraseRunner', ->
                         before each: ->
                         after each: ->
                         deeper 'NEST_FOUR', (deeper) -> 
-                            before each: ->
-                            after each: ->
+                            before each: -> 'before MIDDLE'
+                            after each: -> 'after MIDDLE'
                             deeper 'LEAF_TWO', (end) -> end()
                 deeper 'LEAF_THREE', (end) -> end()
             nested 'LEAF_FOUR', (end) -> end()
