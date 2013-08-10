@@ -1,4 +1,4 @@
-{defer} = require 'when' 
+{defer, map} = require 'when' 
 
 error = (code, message) -> Object.defineProperty (new Error message), 'code', value: code
 
@@ -48,15 +48,27 @@ exports.run = (root, opts) ->
             phrases = path.map (uuid) -> graph.vertices[uuid]
 
             #
-            # phrases (Array) now contains the all phrases 
-            # from root to this leaf 
+            # phrases (Array) now contains all the phrases along the 
+            # path from root to this leaf
             #
 
-            console.log leaf.text, phrase_depth: phrases.length
+            map( phrases, (phrase) -> 
+  
+                console.log beforeAll: phrase.hooks.beforeAll
+                console.log beforeEach: phrase.hooks.beforeEach 
+                console.log FN: phrase.fn
+                console.log afterEach: phrase.hooks.afterEach
+                console.log afterAll: phrase.hooks.afterAll
 
+                #
+                # um... tricky! 
+                # 
+                # thinks about using the 'first walk' recursor
+                # in non-'first walk' mode
+                #
 
+            ).then recurse
 
-            recurse()
             
 
         recurse()
