@@ -97,7 +97,7 @@ describe 'RecursorBeforeEach', ->
         ), injectionControl
 
 
-    it 'emits "phrase::edge:create" into the middleware pipeline', (done) -> 
+    it 'emits "phrase::edge:create" and "phrase::leaf:create" in sequence into the middleware pipeline', (done) -> 
 
         #
         # existing stack elements
