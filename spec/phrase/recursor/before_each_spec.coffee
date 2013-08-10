@@ -126,8 +126,8 @@ describe 'RecursorBeforeEach', ->
 
             should.exist event1 = EVENTS['phrase::leaf:create']
             should.exist event1.uuid
-            event1.ancestors.length.should.equal 2
-            event1.path.should.equal '/context/the parent phrase/it/has this child in'
+            event1.path.length.should.equal 2
+            event1.convenience.should.equal '/context/the parent phrase/it/has this child in'
 
             should.exist event2 = EVENTS['phrase::edge:create']
             event2.type.should.equal 'tree'
