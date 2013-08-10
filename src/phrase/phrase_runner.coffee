@@ -64,17 +64,16 @@ exports.run = (root, opts) ->
 
                 -> map inbound, (phrase) -> 
 
-                    if remaining == count
 
-                        #
-                        # only run before alls on the first inbound pass
-                        #
-                        #
-                        # TODO: BUGFIX: inverse of the problem outlined below
-                        # 
+                    # if remaining == count
+                    #     #
+                    #     # only run before alls on the first inbound pass
+                    #     #
+                    #     #
+                    #     # TODO: BUGFIX: inverse of the problem outlined below
+                    #     # 
+                    #     console.log beforeAll: phrase.hooks.beforeAll
 
-  
-                        console.log beforeAll: phrase.hooks.beforeAll
 
                     console.log beforeEach: phrase.hooks.beforeEach
 
@@ -87,7 +86,7 @@ exports.run = (root, opts) ->
 
 
                 # 
-                # outbound (Array) Contains all the phrases alone the path
+                # outbound (Array) Contains all the phrases along the path
                 #                  from leaf to root
                 # 
                 #                  For running all the after hooks.
@@ -97,20 +96,19 @@ exports.run = (root, opts) ->
 
                     console.log afterEach: phrase.hooks.afterEach
 
-                    if leaves.length == 0
 
-                        #
-                        # only run after alls on the final outbound
-                        # (last leaf)
-                        #
-                        # TODO: BUGFIX: this mechanism won't run after alls
-                        #               from deeper that the last target leaf
-                        #
-                        #               a problem if one of the earlier leaves
-                        #               was much deeper in the tree
-                        # 
-
-                        console.log afterAll: phrase.hooks.afterAll
+                    # if leaves.length == 0
+                    #     #
+                    #     # only run after alls on the final outbound
+                    #     # (last leaf)
+                    #     #
+                    #     # TODO: BUGFIX: this mechanism won't run after alls
+                    #     #               from deeper that the last target leaf
+                    #     #
+                    #     #               a problem if one of the earlier leaves
+                    #     #               was much deeper in the tree
+                    #     # 
+                    #     console.log afterAll: phrase.hooks.afterAll
 
 
             ]).then recurse

@@ -7,6 +7,7 @@ describe 'PhraseHooks', ->
 
     it 'creates before and after hook registrars on the global scope', (done) -> 
 
+        hooks = PhraseHooks.bind {}
         before.should.be.an.instanceof Function
         after.should.be.an.instanceof Function
         before.toString().should.match /opts.each/
@@ -78,3 +79,28 @@ describe 'PhraseHooks', ->
             ] 
 
         done()
+
+
+    context 'run()', ->
+
+        it 'increments the run count', (done) -> 
+
+            tick = 0
+            Date.now = -> ++tick
+            hookFn = ->
+
+            before each: hookFn
+
+            hooks = PhraseHooks.bind {}
+            hook  = hooks.beforeEach.pop()
+            hook.runCount.should.equal 0
+            hook.run()
+
+            hook.should.eql 
+
+                fn: hookFn
+                createdAt: 1
+                lastRunAt: 2
+                runCount:  1
+
+            done()
