@@ -29,10 +29,15 @@ exports.create = (root) ->
     # 
     # Array of vertexes that are leaves on the tree
     # 
+    # ### tree
+    # 
+    # tree.leaves - Leaf list with path from root
+    # 
 
     parent   = {} 
     children = {}
     leaves   = []
+    tree     = leaves: {}
 
     api = 
 
@@ -97,8 +102,7 @@ exports.create = (root) ->
 
         registerLeaf: (msg, next) -> 
 
-            console.log LEAF: msg
-
+            tree.leaves[msg.uuid] = msg
             next()
 
 
@@ -126,6 +130,15 @@ exports.create = (root) ->
 
         enumerable: true
         get: -> leaves
+
+    Object.defineProperty api, 'tree', 
+
+        enumerable: true
+        get: -> tree
+
+    
+
+
 
 
 

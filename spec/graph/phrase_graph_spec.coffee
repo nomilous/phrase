@@ -147,5 +147,24 @@ describe 'PhraseGraph', ->
 
             done()
 
+    context 'register leaf', -> 
+
+        it 'stores registered leaves and provides access to the list via tree.leaves', (done) ->
+
+            graph.registerLeaf 
+
+                uuid: 'UUID3'
+                path: ['UUID1', 'UUID2']
+
+                -> 
+                    graph.tree.leaves.UUID3.should.eql 
+
+                        uuid: 'UUID3'
+                        path: ['UUID1', 'UUID2']
+
+                    done()
+
+
+
 
 

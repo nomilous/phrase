@@ -18,11 +18,12 @@ describe 'integrations', ->
 
                     if msg.context.title == 'phrase::recurse:end'
 
-                        for uuid in token.graph.leaves
+                        # for uuid in token.graph.leaves
+                        #     console.log LEAF: 
+                        #         tokenName: token.graph.vertices[uuid].token.name
+                        #         text: token.graph.vertices[uuid].text
 
-                            console.log LEAF: 
-                                tokenName: token.graph.vertices[uuid].token.name
-                                text: token.graph.vertices[uuid].text
+                        console.log JSON.stringify token.graph.tree, null, 2
 
                         next()
                         done()
