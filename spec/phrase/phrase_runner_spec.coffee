@@ -2,6 +2,7 @@ should       = require 'should'
 PhraseRoot   = require '../../lib/phrase_root'
 PhraseToken  = require '../../lib/phrase_token'
 PhraseRunner = require '../../lib/phrase/phrase_runner'
+PhraseJob    = require '../../lib/phrase/phrase_job'
 
 describe 'PhraseRunner', -> 
 
@@ -12,9 +13,23 @@ describe 'PhraseRunner', ->
     LEAF_TWO    = undefined
     PHRASE_ROOT = undefined
     NEST_ONE    = undefined
+    JOB_RUN     = undefined 
+
+    afterEach (done) -> 
+
+        PhraseJob.prototype.run = JOB_RUN
+        done()
     
 
     beforeEach (done) -> 
+
+        #
+        # stub job.run
+        #
+
+        JOB_RUN = PhraseJob.prototype.run
+        PhraseJob.prototype.run = ->
+
 
         root = PhraseRoot.createRoot
 
@@ -118,9 +133,24 @@ describe 'PhraseRunner', ->
                 PhraseRunner.getSteps = swap
                 opts.uuid.should.equal NEST_ONE
                 done()
-                then: ->
+                then: -> throw 'go no further'
 
-            TOKEN.run( uuid: NEST_ONE )
+            try TOKEN.run( uuid: NEST_ONE )
+
+
+        it 'calls creates a PhraseJob and calls it to run', (done) -> 
+
+            swap = PhraseRunner.getSteps
+            PhraseRunner.getSteps = (root, opts) ->
+                PhraseRunner.getSteps = swap
+                then: (resolve) -> resolve ['STEP']
+
+            PhraseJob.prototype.run = -> 
+                
+                @steps.should.eql ['STEP']
+                done()
+
+            try TOKEN.run( uuid: NEST_ONE )
 
 
 

@@ -1,4 +1,5 @@
-{defer} = require 'when'
+{defer}   = require 'when'
+PhraseJob = require './phrase_job' 
 
 error = (code, message) -> Object.defineProperty (new Error message), 'code', value: code
 
@@ -29,7 +30,13 @@ api =
             #
             # got steps
             #
-            
+
+            job = new PhraseJob 
+
+                steps: steps
+                deferral: running
+
+            job.run()
 
         
         return running.promise
