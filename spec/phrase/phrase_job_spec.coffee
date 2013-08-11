@@ -113,4 +113,17 @@ describe 'PhraseJob', ->
         (new PhraseJob steps: STEPS, deferral: DEFER).start()
 
 
+    it 'runs all steps', (done) -> 
 
+        STEPS = [
+
+            { fn: -> @one   = 1 }
+            { fn: -> @two   = 2 }
+            { fn: -> @three = 3 }
+
+        ]
+
+        job = new PhraseJob steps: STEPS, deferral: DEFER
+        job.start()
+        job.should.eql one: 1, two: 2, three: 3
+        done()
