@@ -120,7 +120,7 @@ describe 'PhraseRunner', ->
 
     context 'getSteps()', ->
 
-        it 'collects the sequence off calls required to run all the leaves on any given branch', (done) -> 
+        it 'collects the sequence of calls required to run all the leaves on any given branch', (done) -> 
 
             root     = context: graph: GRAPH
             opts     = uuid: NEST_ONE
