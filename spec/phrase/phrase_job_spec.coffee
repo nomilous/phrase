@@ -31,7 +31,32 @@ describe 'PhraseJob', ->
         should.exist PhraseJob.prototype.start
         done()
 
-    it 'notifies on start', (done) -> 
+    it 'rejects the deferral on assignment of reserved property', (done) -> 
+
+        job = new PhraseJob 
+
+            steps: STEPS
+            deferral: reject: (error) -> 
+
+                error.should.match /Cannot assign reserved property: uuid/
+                done()
+
+        job.uuid = 0
+
+    it 'throws on assignment of reserved property without deferral', (done) -> 
+
+        job = new PhraseJob 
+
+            steps: STEPS
+
+        try job.uuid = 'a'
+        catch error 
+
+            error.should.match /Cannot assign reserved property: uuid/
+            done()
+
+
+    it 'notifies the deferral on start', (done) -> 
 
         job = new PhraseJob 
 

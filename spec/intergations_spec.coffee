@@ -63,17 +63,17 @@ describe 'integrations', ->
                 subsystem.requires 'flight', 'navigation'
 
 
-        #
-        # and possibly:
-        #
+        # #
+        # # and possibly:
+        # #
 
-        peregrine = PhraseRoot.extend falcon, 'Peregrine Falcon'
+        # peregrine = PhraseRoot.extend falcon, 'Peregrine Falcon'
 
-        peregrine 'appearence', (bodypart) -> 
+        # peregrine 'appearence', (bodypart) -> 
 
-            bodypart 'cheek', (cheek, patternlib), -> 
+        #     bodypart 'cheek', (cheek, patternlib), -> 
 
-                # 
-                # ...
-                # 
+        #         # 
+        #         # ...
+        #         # 
 

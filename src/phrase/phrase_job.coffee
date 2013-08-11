@@ -14,7 +14,11 @@ module.exports = class PhraseJob
         # job deferrral is optional (if not present logs to console)
         #
 
-        opts.deferral ||= notify: (update) -> console.log 'PhraseJob:', JSON.stringify update
+        opts.deferral ||= 
+
+            reject: (error)  -> throw error
+            notify: (update) -> console.log 'PhraseJob:', JSON.stringify update
+
 
 
         localOpts =
@@ -28,7 +32,7 @@ module.exports = class PhraseJob
                 done:  0
 
         #
-        # silent properties
+        # reserved / silent properties
         #
 
         for property in ['uuid', 'steps', 'deferral', 'done', 'progress']
@@ -39,6 +43,18 @@ module.exports = class PhraseJob
 
                     enumerable: false
                     get: -> opts[property] || localOpts[property]
+                    set: (value) -> 
+
+                        #
+                        # reject the deferral on attempt to assign
+                        # value to reserved property
+                        #
+
+                        opts.deferral.reject new Error "Cannot assign reserved property: #{property}(=#{value})"
+
+
+
+
             
 
     start: ->
