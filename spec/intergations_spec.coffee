@@ -59,6 +59,21 @@ describe 'integrations', ->
                 # 
                 # 'the big one'... from a systems management perspective
                 #
-                
+
                 subsystem.requires 'flight', 'navigation'
+
+
+        #
+        # and possibly:
+        #
+
+        peregrine = PhraseRoot.extend falcon, 'Peregrine Falcon'
+
+        peregrine 'appearence', (bodypart) -> 
+
+            bodypart 'cheek', (cheek, patternlib), -> 
+
+                # 
+                # ...
+                # 
 
