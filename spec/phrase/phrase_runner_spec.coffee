@@ -46,25 +46,24 @@ describe 'PhraseRunner', ->
 
                     next()
 
-
-        before each: -> 'before, outside'
-        after each: -> 'after, outside'
+        before all:  -> 'before all,  outside'
+        before each: -> 'before each, outside'
+        after  each: -> 'after  each, outside'
+        after  all:  -> 'after  all,  outside'
         root 'PHRASE_ROOT', (nested) -> 
-            before each: ->
-            after each: ->
             nested 'NEST_ONE', (deeper) -> 
-                before each: ->
-                after each: ->
+                before all:  -> 'before all,  inside'
+                before each: -> 'before each, inside'
+                after  each: -> 'after  each, inside'
+                after  all:  -> 'after  all,  inside'
                 deeper 'LEAF_ONE', (end) -> end()
                 deeper 'NEST_TWO', (deeper) -> 
-                    before each: ->
-                    after each: ->
                     deeper 'NEST_THREE', (deeper) -> 
-                        before each: ->
-                        after each: ->
+                        before all:  -> 'before all,  DEEP'
+                        before each: -> 'before each, DEEP'
+                        after  each: -> 'after  each, DEEP'
+                        after  all:  -> 'after  all,  DEEP'
                         deeper 'NEST_FOUR', (deeper) -> 
-                            before each: -> 'before MIDDLE'
-                            after each: -> 'after MIDDLE'
                             deeper 'LEAF_TWO', (end) -> end()
                 deeper 'LEAF_THREE', (end) -> end()
             nested 'LEAF_FOUR', (end) -> end()
@@ -136,7 +135,7 @@ describe 'PhraseRunner', ->
                     #
                     # per leaf results, including errors
                     #
-                    console.log notify
+                    console.log '\n', notify
                     MESSAGES.push notify
 
             )

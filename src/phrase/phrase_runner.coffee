@@ -25,24 +25,50 @@ exports.run = (root, opts) ->
 
         leaves  = graph.leavesOf uuid
         count   = leaves.length
-        results = []
+
+        #
+        # steps   - Is populated with the sequence of calls to make such that
+        #           each leaf selected for running is processed, and all hooks
+        #           are run appropriately before and after.
+        # 
+        # befores - Maintains beforeAll precedence during step accumulation by
+        #           only recording each beforeAll hook as a step once, at the
+        #           first encountered instance.
+        # 
+        # afters  - Maintains afterAll precedence during step accumulation by
+        #           including every afterAll hook as a step and removing all
+        #           previous instances of that hook to ensure that only the
+        #           last encountered instance of each remains in the final  
+        #           step sequence.
+        #
+
+        steps   = []
+        befores = {}
+        afters  = {}
         recurse = -> 
 
             #
-            # recurse through the list of phrase leaves that
-            # require processing
+            # walk to and fro from root to each target leaf accumulating
+            # calls into the step array
             #
 
             remaining = leaves.length
-            state     = if remaining == 0 then 'done' else 'running'
 
-            running.notify 
-                timestamp:  Date.now()
-                state:      state
-                total:      count
-                remaining:  remaining
+            if remaining == 0 
 
-            if remaining == 0 then return process.nextTick -> running.resolve results
+                # #
+                # # TEMPORARY - verify steps
+                # #
+
+                # steps.map (step) -> 
+
+                #     if step.type == 'hook' 
+                #         console.log HOOK: step.ref.fn.toString()
+                #     else if step.type == 'leaf'
+                #         console.log LEAF: step.ref.text, step.ref.fn.toString()
+
+                return
+
 
             leaf     = leaves.shift()
             path     = graph.tree.leaves[leaf.uuid].path
@@ -52,67 +78,81 @@ exports.run = (root, opts) ->
                 outbound.unshift graph.vertices[uuid]
                 graph.vertices[uuid]
 
-
             sequence([
 
                 #
                 # inbound  (Array) Contains all the phrases along the path 
                 #                  from root to this leaf. 
                 # 
-                #                  For running all before hooks.
+                #                  For queueing all before hooks.
                 # 
 
                 -> map inbound, (phrase) -> 
 
+                    {beforeAll, beforeEach} = phrase.hooks
 
-                    # if remaining == count
-                    #     #
-                    #     # only run before alls on the first inbound pass
-                    #     #
-                    #     #
-                    #     # TODO: BUGFIX: inverse of the problem outlined below
-                    #     # 
-                    #     console.log beforeAll: phrase.hooks.beforeAll
+                    #
+                    # queue only the first of each beforeAll
+                    #
+                   
+                    if beforeAll? and not befores[beforeAll.uuid]?
+                        position = steps.push( type: 'hook', ref: beforeAll ) - 1
+                        befores[beforeAll.uuid] = position
 
+                    #
+                    # queue all beforeEachs
+                    #
 
-                    phrase.hooks.beforeEach.run() if phrase.hooks.beforeEach?
-
+                    if beforeEach?
+                        steps.push type: 'hook', ref: beforeEach
+                        
 
                 #
-                # run the leaf function
+                # queue the leaf function
                 #
 
-                -> console.log RUN_LEAF: leaf.text
+                -> steps.push type: 'leaf', ref: leaf
 
 
                 # 
                 # outbound (Array) Contains all the phrases along the path
-                #                  from leaf to root
+                #                  back to the root.
                 # 
-                #                  For running all the after hooks.
+                #                  For queueing all the after hooks.
                 #
 
                 -> map outbound, (phrase) -> 
 
-                    phrase.hooks.afterEach.run() if phrase.hooks.afterEach?
+                    {afterEach, afterAll} = phrase.hooks
 
-                    # if leaves.length == 0
-                    #     #
-                    #     # only run after alls on the final outbound
-                    #     # (last leaf)
-                    #     #
-                    #     # TODO: BUGFIX: this mechanism won't run after alls
-                    #     #               from deeper that the last target leaf
-                    #     #
-                    #     #               a problem if one of the earlier leaves
-                    #     #               was much deeper in the tree
-                    #     # 
-                    #     console.log afterAll: phrase.hooks.afterAll
+                    if afterEach?
+
+                        steps.push type: 'hook', ref: afterEach
+
+                    if afterAll?
+
+                        #
+                        # queue all afterAlls...
+                        #
+
+                        position = steps.push( type: 'hook', ref: afterAll ) - 1
+                        if afters[ afterAll.uuid ]?
+
+                            #
+                            # but delete the previously queued instance 
+                            # of each afterAll
+                            #
+
+                            oldPosition = afters[ afterAll.uuid ]
+                            delete steps[ oldPosition ]
+                            
+                        afters[ afterAll.uuid ] = position
 
 
             ]).then recurse
 
 
         recurse()
+        
 
     running.promise
