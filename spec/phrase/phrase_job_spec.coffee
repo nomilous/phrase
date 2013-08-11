@@ -28,9 +28,9 @@ describe 'PhraseJob', ->
         done()
 
 
-    it 'can be started', (done) -> 
+    it 'can be runed', (done) -> 
 
-        should.exist PhraseJob.prototype.start
+        should.exist PhraseJob.prototype.run
         done()
 
     it 'rejects the deferral on assignment of reserved property', (done) -> 
@@ -61,12 +61,12 @@ describe 'PhraseJob', ->
     it 'logs to console if running deferral is not defined', -> 
 
         # job = new PhraseJob steps: STEPS
-        # job.start()
+        # job.run()
 
-    context 'start()', -> 
+    context 'run()', -> 
 
 
-        it 'notifies the deferral on start', (done) -> 
+        it 'notifies the deferral on run', (done) -> 
 
             job = new PhraseJob 
 
@@ -75,19 +75,19 @@ describe 'PhraseJob', ->
                     notify: (msg) -> 
 
                         msg.class.should.equal 'PhraseJob'
-                        msg.action.should.equal 'start'
+                        msg.action.should.equal 'run'
                         msg.progress.should.eql steps: 0, done: 0
                         should.exist msg.uuid
                         should.exist msg.at
                         done()
 
-            job.start()
+            job.run()
 
 
         it 'returns a promise', (done) -> 
 
             job = new PhraseJob steps: STEPS, deferral: DEFER
-            job.start().then.should.be.an.instanceof Function
+            job.run().then.should.be.an.instanceof Function
             done()
 
 
@@ -100,7 +100,7 @@ describe 'PhraseJob', ->
             ]
 
             job = new PhraseJob steps: STEPS, deferral: DEFER
-            job.start().then -> 
+            job.run().then -> 
 
                 job.new_property.should.equal 'CREATED ON JOB INSTANCE'
                 done()
@@ -119,7 +119,7 @@ describe 'PhraseJob', ->
                 error.should.match /Cannot assign reserved property/
                 done()
 
-            (new PhraseJob steps: STEPS, deferral: DEFER).start()
+            (new PhraseJob steps: STEPS, deferral: DEFER).run()
 
 
         it 'runs all steps', (done) -> 
@@ -133,7 +133,7 @@ describe 'PhraseJob', ->
             ]
 
             job = new PhraseJob steps: STEPS, deferral: DEFER
-            job.start().then -> 
+            job.run().then -> 
 
                 job.should.eql one: 1, two: 2, three: 3
                 done()

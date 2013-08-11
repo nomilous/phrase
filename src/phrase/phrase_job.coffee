@@ -58,7 +58,7 @@ module.exports = class PhraseJob
 
             
 
-    start: ->
+    run: ->
 
         running = defer()
 
@@ -66,7 +66,7 @@ module.exports = class PhraseJob
 
             class:    @constructor.name
             uuid:     @uuid
-            action:   'start'
+            action:   'run'
             progress: @progress()
             at:       Date.now()
 
