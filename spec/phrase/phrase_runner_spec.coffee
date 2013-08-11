@@ -8,6 +8,7 @@ describe 'PhraseRunner', ->
     root       = undefined
     TOKEN      = undefined
     NOTICE     = undefined
+    GRAPH      = undefined
     LEAF_TWO   = undefined
     NEST_ONE   = undefined
 
@@ -22,6 +23,7 @@ describe 'PhraseRunner', ->
 
                 TOKEN  = token
                 NOTICE = notice
+                GRAPH  = token.graph
 
                 notice.use (msg, next) -> 
 
@@ -46,26 +48,32 @@ describe 'PhraseRunner', ->
 
                     next()
 
-        before all:  -> 'before all,  outside'
-        before each: -> 'before each, outside'
-        after  each: -> 'after  each, outside'
-        after  all:  -> 'after  all,  outside'
+        before all:  ->  'BEFORE-ALL-OUTSIDE'
+        before each: -> 'BEFORE-EACH-OUTSIDE'
+        after  each: ->  'AFTER-EACH-OUTSIDE'
+        after  all:  ->   'AFTER-ALL-OUTSIDE'
         root 'PHRASE_ROOT', (nested) -> 
             nested 'NEST_ONE', (deeper) -> 
-                before all:  -> 'before all,  inside'
-                before each: -> 'before each, inside'
-                after  each: -> 'after  each, inside'
-                after  all:  -> 'after  all,  inside'
-                deeper 'LEAF_ONE', (end) -> end()
+                before all:  ->  'BEFORE-ALL-NESTED'
+                before each: -> 'BEFORE-EACH-NESTED'
+                after  each: ->  'AFTER-EACH-NESTED'
+                after  all:  ->   'AFTER-ALL-NESTED'
+                deeper 'LEAF_ONE', (end) ->
+                    'RUN_LEAF_ONE' 
+                    end()
                 deeper 'NEST_TWO', (deeper) -> 
                     deeper 'NEST_THREE', (deeper) -> 
-                        before all:  -> 'before all,  DEEP'
-                        before each: -> 'before each, DEEP'
-                        after  each: -> 'after  each, DEEP'
-                        after  all:  -> 'after  all,  DEEP'
+                        before all:  ->  'BEFORE-ALL-DEEP'
+                        before each: -> 'BEFORE-EACH-DEEP'
+                        after  each: ->  'AFTER-EACH-DEEP'
+                        after  all:  ->   'AFTER-ALL-DEEP'
                         deeper 'NEST_FOUR', (deeper) -> 
-                            deeper 'LEAF_TWO', (end) -> end()
-                deeper 'LEAF_THREE', (end) -> end()
+                            deeper 'LEAF_TWO', (end) -> 
+                                'RUN_LEAF_TWO' 
+                                end()
+                deeper 'LEAF_THREE', (end) -> 
+                    'RUN_LEAF_THREE'
+                    end()
             nested 'LEAF_FOUR', (end) -> end()
 
 
@@ -99,9 +107,9 @@ describe 'PhraseRunner', ->
 
         it 'calls get all steps to run', (done) -> 
 
-            swap = TOKEN.getSteps
+            swap = PhraseRunner.getSteps
             PhraseRunner.getSteps = (root, opts) ->
-                TOKEN.getSteps = swap
+                PhraseRunner.getSteps = swap
                 opts.uuid.should.equal NEST_ONE
                 done()
                 then: ->
@@ -112,17 +120,50 @@ describe 'PhraseRunner', ->
 
     context 'getSteps()', ->
 
-        it 'collects the sequence off calls required to run all the leaves on any given branch'
+        it 'collects the sequence off calls required to run all the leaves on any given branch', (done) -> 
+
+            root     = context: graph: GRAPH
+            opts     = uuid: NEST_ONE
+            deferral = {}
 
 
+            PhraseRunner.getSteps( root, opts, deferral ).then (steps) -> 
 
+                # steps.map (step) -> 
+                #     console.log FN: step.ref.fn.toString()
 
+                i = 0
+                steps[i++].ref.fn.toString().should.match /BEFORE-ALL-OUTSIDE/   # first all
+                steps[i++].ref.fn.toString().should.match /BEFORE-EACH-OUTSIDE/
+                steps[i++].ref.fn.toString().should.match /BEFORE-ALL-NESTED/    # first all
+                steps[i++].ref.fn.toString().should.match /BEFORE-EACH-NESTED/
+                steps[i++].ref.fn.toString().should.match /RUN_LEAF_ONE/
+                steps[i++].ref.fn.toString().should.match /AFTER-EACH-NESTED/
+                steps[i++].ref.fn.toString().should.match /AFTER-EACH-OUTSIDE/
+                # 
+                steps[i++].ref.fn.toString().should.match /BEFORE-EACH-OUTSIDE/
+                steps[i++].ref.fn.toString().should.match /BEFORE-EACH-NESTED/
+                # 
+                steps[i++].ref.fn.toString().should.match /BEFORE-ALL-DEEP/      # first all
+                steps[i++].ref.fn.toString().should.match /BEFORE-EACH-DEEP/
+                steps[i++].ref.fn.toString().should.match /RUN_LEAF_TWO/
+                steps[i++].ref.fn.toString().should.match /AFTER-EACH-DEEP/
+                steps[i++].ref.fn.toString().should.match /AFTER-ALL-DEEP/       # last all
+                # 
+                steps[i++].ref.fn.toString().should.match /AFTER-EACH-NESTED/
+                steps[i++].ref.fn.toString().should.match /AFTER-EACH-OUTSIDE/
+                # 
+                steps[i++].ref.fn.toString().should.match /BEFORE-EACH-OUTSIDE/
+                steps[i++].ref.fn.toString().should.match /BEFORE-EACH-NESTED/
+                steps[i++].ref.fn.toString().should.match /RUN_LEAF_THREE/
+                steps[i++].ref.fn.toString().should.match /AFTER-EACH-NESTED/
+                steps[i++].ref.fn.toString().should.match /AFTER-ALL-NESTED/    # last all
+                steps[i++].ref.fn.toString().should.match /AFTER-EACH-OUTSIDE/
+                steps[i++].ref.fn.toString().should.match /AFTER-ALL-OUTSIDE/   # last all
+                # 
+                should.not.exist steps[i++]
 
-
-
-
-
-
+                done()
 
 
 

@@ -75,7 +75,7 @@ api =
 
             remaining = leaves.length
 
-            return getting.resolve steps if remaining == 0 
+            return getting.resolve (steps.filter (s) -> s?) if remaining == 0 
 
                 # #
                 # # TEMPORARY - verify steps
