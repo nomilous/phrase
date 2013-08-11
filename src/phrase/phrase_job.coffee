@@ -51,6 +51,15 @@ module.exports = class PhraseJob
                         # value to reserved property
                         #
 
+                        #
+                        # TODO: state 'failed' (maybe...) 
+                        # 
+                        #       the jobs steps will likely be divided into sets
+                        #       because a rejection emanating from a hook that 
+                        #       only affects the nested leaves whould not cause
+                        #       a global failure across all leaves in the job
+                        # 
+
                         opts.deferral.reject new Error "Cannot assign reserved property: #{property}(=#{value})"
 
 
@@ -64,15 +73,23 @@ module.exports = class PhraseJob
 
         @deferral.notify 
 
+            state:   'running'
             class:    @constructor.name
             uuid:     @uuid
-            action:   'run'
             progress: @progress()
             at:       Date.now()
 
         process.nextTick => 
 
             step.fn.call this for step in @steps
+
+            @deferral.notify 
+
+                state:   'succeeded'
+                class:    @constructor.name
+                uuid:     @uuid  
+                progress: @progress()
+                at:       Date.now()
 
             running.resolve  
 

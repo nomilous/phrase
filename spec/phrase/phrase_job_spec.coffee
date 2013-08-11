@@ -66,7 +66,9 @@ describe 'PhraseJob', ->
     context 'run()', -> 
 
 
-        it 'notifies the deferral on run', (done) -> 
+        it 'notifies the deferral on running state', (done) -> 
+
+            MESSAGES = []
 
             job = new PhraseJob 
 
@@ -74,14 +76,17 @@ describe 'PhraseJob', ->
                 deferral: 
                     notify: (msg) -> 
 
-                        msg.class.should.equal 'PhraseJob'
-                        msg.action.should.equal 'run'
-                        msg.progress.should.eql steps: 0, done: 0
-                        should.exist msg.uuid
-                        should.exist msg.at
-                        done()
+                        MESSAGES.push msg
 
-            job.run()
+            job.run().then -> 
+
+                msg = MESSAGES[0]
+                msg.class.should.equal 'PhraseJob'
+                msg.state.should.equal 'running'
+                msg.progress.should.eql steps: 0, done: 0
+                should.exist msg.uuid
+                should.exist msg.at
+                done()
 
 
         it 'returns a promise', (done) -> 
@@ -139,7 +144,7 @@ describe 'PhraseJob', ->
                 done()
 
 
-        it 'resolves with object containing the job instance', (done) -> 
+        it 'resolves with object containing the job instance and notified state succeeded', (done) -> 
 
             STEPS = [
 
@@ -148,10 +153,13 @@ describe 'PhraseJob', ->
                 { fn: -> @three = 3 }
 
             ]
+            MESSAGES     = []
+            DEFER.notify = (msg) -> MESSAGES.push msg
 
             job = new PhraseJob steps: STEPS, deferral: DEFER
             job.run().then (result) -> 
 
+                MESSAGES.pop().state.should.equal 'succeeded'
                 result.job.should.eql one: 1, two: 2, three: 3
                 done()
 
