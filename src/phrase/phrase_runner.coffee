@@ -36,7 +36,9 @@ api =
                 steps: steps
                 deferral: running
 
-            job.run()
+            job.run().then -> 
+
+                running.resolve()
 
         
         return running.promise

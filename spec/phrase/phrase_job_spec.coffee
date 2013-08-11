@@ -82,7 +82,7 @@ describe 'PhraseJob', ->
 
                 msg = MESSAGES[0]
                 msg.class.should.equal 'PhraseJob'
-                msg.state.should.equal 'running'
+                msg.state.should.equal 'run::starting'
                 msg.progress.should.eql steps: 0, done: 0
                 should.exist msg.uuid
                 should.exist msg.at
@@ -100,7 +100,7 @@ describe 'PhraseJob', ->
 
             STEPS = [
 
-                fn: -> @new_property = 'CREATED ON JOB INSTANCE'
+                ref: fn: -> @new_property = 'CREATED ON JOB INSTANCE'
 
             ]
 
@@ -115,7 +115,7 @@ describe 'PhraseJob', ->
 
             STEPS = [
 
-                fn: -> @uuid = '0000000000000000000000000000006.62606957'
+                ref: fn: -> @uuid = '0000000000000000000000000000006.62606957'
 
             ]
 
@@ -131,9 +131,9 @@ describe 'PhraseJob', ->
 
             STEPS = [
 
-                { fn: -> @one   = 1 }
-                { fn: -> @two   = 2 }
-                { fn: -> @three = 3 }
+                { ref: fn: -> @one   = 1 }
+                { ref: fn: -> @two   = 2 }
+                { ref: fn: -> @three = 3 }
 
             ]
 
@@ -148,9 +148,9 @@ describe 'PhraseJob', ->
 
             STEPS = [
 
-                { fn: -> @one   = 1 }
-                { fn: -> @two   = 2 }
-                { fn: -> @three = 3 }
+                { ref: fn: -> @one   = 1 }
+                { ref: fn: -> @two   = 2 }
+                { ref: fn: -> @three = 3 }
 
             ]
             MESSAGES     = []
@@ -160,7 +160,7 @@ describe 'PhraseJob', ->
             job.run().then (result) -> 
 
                 msg = MESSAGES.pop()
-                msg.state.should.equal 'succeeded'
+                msg.state.should.equal 'run::complete'
 
                 console.log FIX: msg.progress
 

@@ -73,7 +73,7 @@ module.exports = class PhraseJob
 
         @deferral.notify 
 
-            state:   'running'
+            state:   'run::starting'
             class:    @constructor.name
             uuid:     @uuid
             progress: @progress()
@@ -81,11 +81,15 @@ module.exports = class PhraseJob
 
         process.nextTick => 
 
-            step.fn.call this for step in @steps
+            for step in @steps
+
+                #console.log RUN_STEP: step
+
+                step.ref.fn.call this 
 
             @deferral.notify 
 
-                state:   'succeeded'
+                state:   'run::complete'
                 class:    @constructor.name
                 uuid:     @uuid  
                 progress: @progress()

@@ -81,7 +81,7 @@ describe 'PhraseRunner', ->
                 after  all:  ->   'AFTER-ALL-NESTED'
                 deeper 'LEAF_ONE', (end) ->
                     'RUN_LEAF_ONE' 
-                    end()
+                    #end()
                 deeper 'NEST_TWO', (deeper) -> 
                     deeper 'NEST_THREE', (deeper) -> 
                         before all:  ->  'BEFORE-ALL-DEEP'
@@ -91,11 +91,11 @@ describe 'PhraseRunner', ->
                         deeper 'NEST_FOUR', (deeper) -> 
                             deeper 'LEAF_TWO', (end) -> 
                                 'RUN_LEAF_TWO' 
-                                end()
+                                #end()
                 deeper 'LEAF_THREE', (end) -> 
                     'RUN_LEAF_THREE'
-                    end()
-            nested 'LEAF_FOUR', (end) -> end()
+                    #end()
+            nested 'LEAF_FOUR', (end) -> #end()
 
 
 
@@ -138,7 +138,7 @@ describe 'PhraseRunner', ->
             try TOKEN.run( uuid: NEST_ONE )
 
 
-        it 'calls creates a PhraseJob and calls it to run', (done) -> 
+        it 'creates a PhraseJob and calls it to run', (done) -> 
 
             swap = PhraseRunner.getSteps
             PhraseRunner.getSteps = (root, opts) ->
@@ -151,6 +151,42 @@ describe 'PhraseRunner', ->
                 done()
 
             try TOKEN.run( uuid: NEST_ONE )
+
+
+        it 'notifies state of the promise', (done) ->
+
+            #
+            # unstub PhraseJob
+            #
+
+            PhraseJob.prototype.run = JOB_RUN
+            tick = 0
+            Date.now = -> tick++
+
+            #Object.defineProperty require('node-uuid'), 'v1', get: -> -> 'UUID'
+            MESSAGES = {}
+
+            TOKEN.run( uuid: NEST_ONE ).then(
+
+                (result) -> 
+
+                    should.exist MESSAGES['scan::starting']
+                    should.exist MESSAGES['scan::complete']
+                    should.exist MESSAGES['run::starting']
+                    should.exist MESSAGES['run::complete']
+
+                    console.log JSON.stringify MESSAGES, null, 2
+
+                    done()
+
+
+                (error)  -> 
+
+                    console.log ERROR: error
+
+                (update) -> MESSAGES[update.state] = update
+
+            ) 
 
 
 
