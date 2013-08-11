@@ -97,7 +97,7 @@ describe 'PhraseJob', ->
         done()
 
 
-    it 'ties up with the reserved properties', (done) -> 
+    it 'ties into the reserved property rejection', (done) -> 
 
         STEPS = [
 
