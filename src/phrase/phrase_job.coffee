@@ -73,6 +73,17 @@ module.exports = class PhraseJob
         process.nextTick => 
 
             step.fn.call this for step in @steps
-            running.resolve()
+
+            running.resolve  
+
+                #
+                # job instance on subkey leaves room for 
+                # metadata (necessary later...)
+                # 
+
+                job: this
+
+         
+
 
         return running.promise
