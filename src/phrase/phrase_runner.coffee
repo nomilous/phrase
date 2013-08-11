@@ -65,7 +65,7 @@ api =
         befores   = {}
         afters    = {}
 
-        recurse = -> 
+        start = recurse = -> 
 
             #
             # walk to and fro from root to each target leaf accumulating
@@ -154,7 +154,7 @@ api =
 
             recurse()
 
-        recurse()
+        start()
         
         return getting.promise
         
