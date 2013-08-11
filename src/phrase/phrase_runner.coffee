@@ -74,7 +74,19 @@ api =
 
             remaining = leaves.length
 
-            return getting.resolve (steps.filter (s) -> s?) if remaining == 0 
+            if remaining == 0 
+
+                steps = steps.filter (s) -> s?
+
+                running.notify
+
+                    state:  'scan::complete'
+                    at:     Date.now()
+                    steps:  steps.length
+                    leaves: count
+
+                return getting.resolve steps
+
 
             leaf     = leaves.shift()
             path     = graph.tree.leaves[leaf.uuid].path
@@ -153,6 +165,11 @@ api =
                     afters[ afterAll.uuid ] = position
 
             recurse()
+
+        running.notify 
+
+            state: 'scan::starting'
+            at:    Date.now()
 
         start()
         

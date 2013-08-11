@@ -5,12 +5,14 @@ PhraseRunner = require '../../lib/phrase/phrase_runner'
 
 describe 'PhraseRunner', -> 
 
-    root       = undefined
-    TOKEN      = undefined
-    NOTICE     = undefined
-    GRAPH      = undefined
-    LEAF_TWO   = undefined
-    NEST_ONE   = undefined
+    root        = undefined
+    TOKEN       = undefined
+    NOTICE      = undefined
+    GRAPH       = undefined
+    LEAF_TWO    = undefined
+    PHRASE_ROOT = undefined
+    NEST_ONE    = undefined
+    
 
     beforeEach (done) -> 
 
@@ -38,6 +40,10 @@ describe 'PhraseRunner', ->
                         vertices = TOKEN.graph.vertices
                         LEAF_TWO = ( for uuid of vertices
                             continue unless vertices[uuid].text == 'LEAF_TWO'
+                            uuid
+                        )[0]
+                        PHRASE_ROOT = ( for uuid of vertices
+                            continue unless vertices[uuid].text == 'PHRASE_ROOT'
                             uuid
                         )[0]
                         NEST_ONE = ( for uuid of vertices
@@ -124,7 +130,7 @@ describe 'PhraseRunner', ->
 
             root     = context: graph: GRAPH
             opts     = uuid: NEST_ONE
-            deferral = {}
+            deferral = notify: ->
 
 
             PhraseRunner.getSteps( root, opts, deferral ).then (steps) -> 
@@ -165,6 +171,26 @@ describe 'PhraseRunner', ->
 
                 done()
 
+
+
+        it 'notifies state', (done) -> 
+
+            tick     = 0 
+            Date.now = -> tick++
+            root     = context: graph: GRAPH
+            opts     = uuid: PHRASE_ROOT
+            UPDATES  = []
+            deferral = notify: (update) -> UPDATES.push update
+
+
+            PhraseRunner.getSteps( root, opts, deferral ).then (steps) -> 
+
+                # console.log UPDATES
+                UPDATES.should.eql [
+                    { state: 'scan::starting', at: 0 }
+                    { state: 'scan::complete', at: 1, steps: 26, leaves: 4 }
+                ]
+                done()
 
 
         xit 'can run all leaves on a branch', (done) -> 
