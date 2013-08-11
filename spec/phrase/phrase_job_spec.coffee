@@ -21,8 +21,6 @@ describe 'PhraseJob', ->
             deferral: DEFER
             steps: STEPS
 
-        # console.log job
-
         job.steps.should.equal STEPS
         job.deferral.should.equal DEFER
         done()
@@ -37,7 +35,7 @@ describe 'PhraseJob', ->
 
         job = new PhraseJob 
 
-            #steps: STEPS
+            steps: STEPS
             deferral: 
                 notify: (msg) -> 
 

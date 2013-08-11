@@ -43,8 +43,6 @@ module.exports = class PhraseJob
 
     start: ->
 
-        # @progress.done++
-
         @deferral.notify 
 
             class:    @constructor.name

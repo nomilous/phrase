@@ -5,9 +5,9 @@ describe 'integrations', ->
 
     it 'stacks up', (done) -> 
 
-        root = PhraseRoot.createRoot 
+        falcon = PhraseRoot.createRoot 
 
-            title: 'Phrase Title'
+            title: 'Falcon'
             uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
 
             (token, notice) -> 
@@ -30,16 +30,29 @@ describe 'integrations', ->
 
                     next()
       
-        root 'root phrase', (outer) -> 
+        falcon 'Generic', (system) -> 
 
             before all:  -> 
             before each: -> 
             after  each: -> 
             after  all:  -> 
 
-            outer 'outer phrase 1', (inner) -> 
+            system 'sensory', (subsystem) -> 
 
-                inner 'inner phrase 1', (end) -> 
-                inner 'inner phrase 2', (end) -> 
+                subsystem 'vision', (component) -> 
 
-            outer 'another leaf', (end) -> end()
+                    component 'eyes', (end) ->
+
+            system 'flight', (subsystem) ->
+
+                subsystem '...', (end) -> 
+
+            system 'navigation', (subsystem) -> 
+
+                subsystem.requires 'sensory'
+                subsystem '...', (end) -> 
+
+            system 'hunt', (subsystem) -> 
+
+                subsystem.requires 'flight', 'navigation'
+
