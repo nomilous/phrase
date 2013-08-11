@@ -14,7 +14,7 @@ module.exports = class PhraseJob
         # job deferrral is optional (if not present logs to console)
         #
 
-        opts.running ||= notify: (update) -> console.log 'PhraseJob:', JSON.stringify update
+        opts.deferral ||= notify: (update) -> console.log 'PhraseJob:', JSON.stringify update
 
 
         localOpts =
