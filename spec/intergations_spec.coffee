@@ -35,20 +35,6 @@ describe 'integrations', ->
 
                     )
 
-                    #
-                    # verify hotswap ability (later...)
-                    #
-                    gps = (for uuid of vertices
-                        v = vertices[uuid]
-                        continue unless v.text == 'gps'
-                        uuid
-                    )[0]
-                    vertices[gps].fn = eval coffee.compile """
-                        -> console.log @value.toLowerCase() + ' nice!'
-                        """, 
-                        bare: true
-                    token.run uuid: gps 
-
       
         falcon 'Generic', (system) -> 
 
