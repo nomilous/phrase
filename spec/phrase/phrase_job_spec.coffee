@@ -97,4 +97,20 @@ describe 'PhraseJob', ->
         done()
 
 
+    it 'ties up with the reserved properties', (done) -> 
+
+        STEPS = [
+
+            fn: -> @uuid = '0000000000000000000000000000006.62606957'
+
+        ]
+
+        DEFER.reject = (error) -> 
+
+            error.should.match /Cannot assign reserved property/
+            done()
+
+        (new PhraseJob steps: STEPS, deferral: DEFER).start()
+
+
 
