@@ -3,28 +3,48 @@ sequence     = require 'when/sequence'
 
 error = (code, message) -> Object.defineProperty (new Error message), 'code', value: code
 
-exports.run = (root, opts) -> 
+api = 
+    
+    run: (root, opts) -> 
 
-    {context} = root
-    {graph}   = context
-    {uuid}    = opts
+        {context} = root
+        {graph}   = context
+        {uuid}    = opts
 
-    #
-    # defer and promise the running phrase node
-    #
+        #
+        # defer and promise the running phrase node
+        #
 
-    running = defer()
-    process.nextTick -> 
+        running = defer()
+        process.nextTick -> 
 
-        unless uuid? 
-            return running.reject error 1, "missing opts.uuid"
+            unless uuid? 
+                return running.reject error 1, "missing opts.uuid"
 
-        unless graph.vertices[uuid]?
-            return running.reject error 2, "uuid: '#{uuid}' not in local tree"
+            unless graph.vertices[uuid]?
+                return running.reject error 2, "uuid: '#{uuid}' not in local tree"
 
 
-        leaves  = graph.leavesOf uuid
-        count   = leaves.length
+        api.getSteps( root, opts, running ).then (steps) -> 
+
+            #
+            # got steps
+            #
+            
+
+        
+        return running.promise
+
+
+    getSteps: (root, opts, running) ->
+
+        {context} = root
+        {graph}   = context
+        {uuid}    = opts
+
+        getting   = defer() 
+        leaves    = graph.leavesOf uuid
+        count     = leaves.length
 
         #
         # steps   - Is populated with the sequence of calls to make such that
@@ -42,9 +62,10 @@ exports.run = (root, opts) ->
         #           step sequence.
         #
 
-        steps   = []
-        befores = {}
-        afters  = {}
+        steps     = []
+        befores   = {}
+        afters    = {}
+
         recurse = -> 
 
             #
@@ -54,20 +75,17 @@ exports.run = (root, opts) ->
 
             remaining = leaves.length
 
-            if remaining == 0 
+            return getting.resolve steps if remaining == 0 
 
                 # #
                 # # TEMPORARY - verify steps
                 # #
-
                 # steps.map (step) -> 
-
                 #     if step.type == 'hook' 
                 #         console.log HOOK: step.ref.fn.toString()
                 #     else if step.type == 'leaf'
                 #         console.log LEAF: step.ref.text, step.ref.fn.toString()
-
-                return
+                # return
 
 
             leaf     = leaves.shift()
@@ -151,8 +169,10 @@ exports.run = (root, opts) ->
 
             ]).then recurse
 
-
         recurse()
         
+        return getting.promise
+        
 
-    running.promise
+
+module.exports = api

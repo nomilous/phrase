@@ -97,7 +97,36 @@ describe 'PhraseRunner', ->
                     done()
             )
 
-        it 'can run all leaves on a branch', (done) -> 
+        it 'calls get all steps to run', (done) -> 
+
+            swap = TOKEN.getSteps
+            PhraseRunner.getSteps = (root, opts) ->
+                TOKEN.getSteps = swap
+                opts.uuid.should.equal NEST_ONE
+                done()
+                then: ->
+
+            TOKEN.run( uuid: NEST_ONE )
+
+
+
+    context 'getSteps()', ->
+
+        it 'collects the sequence off calls required to run all the leaves on any given branch'
+
+
+
+
+
+
+
+
+
+
+
+
+
+        xit 'can run all leaves on a branch', (done) -> 
 
             MESSAGES = []
             tick     = 0
