@@ -54,5 +54,11 @@ describe 'integrations', ->
 
             system 'hunt', (subsystem) -> 
 
+                #
+                # dependancy encapsulation
+                # 
+                # 'the big one'... from a systems management perspective
+                #
+                
                 subsystem.requires 'flight', 'navigation'
 
