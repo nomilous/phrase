@@ -4,20 +4,34 @@ module.exports = class PhraseJob
 
     constructor: (opts = {}) -> 
 
-        opts.running ||= notify: (update) -> 
-            console.log 'PhraseJob:', JSON.stringify update
-        opts.uuid    ||= v1()
+        #
+        # job uuid can be assigned (allows resume, later...)
+        #
+
+        opts.uuid ||= v1()
+
+        #
+        # job deferrral is optional (if not present logs to console)
+        #
+
+        opts.running ||= notify: (update) -> console.log 'PhraseJob:', JSON.stringify update
+
 
         localOpts =
+
+            #
+            # storage for progress indication
+            #
+
             progress: 
                 steps: if opts.steps? then opts.steps.length else 0
                 done:  0
 
-        for property in ['uuid', 'steps', 'running', 'done', 'progress']
+        #
+        # silent properties
+        #
 
-                                #
-                                # silent properties
-                                #
+        for property in ['uuid', 'steps', 'deferral', 'done', 'progress']
 
             do (property) =>
 
@@ -31,10 +45,10 @@ module.exports = class PhraseJob
 
         # @progress.done++
 
-        @running.notify 
+        @deferral.notify 
 
-            class:   @constructor.name
-            uuid:    @uuid
-            action:  'start'
+            class:    @constructor.name
+            uuid:     @uuid
+            action:   'start'
             progress: @progress
             at:       Date.now()
