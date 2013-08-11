@@ -28,7 +28,7 @@ describe 'PhraseJob', ->
         done()
 
 
-    it 'can be runed', (done) -> 
+    it 'can run() the job', (done) -> 
 
         should.exist PhraseJob.prototype.run
         done()
