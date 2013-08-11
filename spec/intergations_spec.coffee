@@ -12,27 +12,40 @@ describe 'integrations', ->
 
             (token, notice) -> 
 
-                notice.use (msg, next) -> 
+                token.on 'ready', -> 
 
-                    console.log '\n', msg.context.title, '\n', msg
+                    #
+                    # TODO: this following is obviously not a particularly
+                    #       sensible way to get things running...
+                    #
 
-                    if msg.context.title == 'phrase::recurse:end'
+                    vertices = token.graph.vertices
+                    root = (for uuid of vertices
+                        v = vertices[uuid]
+                        continue unless v.text == 'Generic'
+                        uuid
+                    )[0]
 
-                        # for uuid in token.graph.leaves
-                        #     console.log LEAF: 
-                        #         tokenName: token.graph.vertices[uuid].token.name
-                        #         text: token.graph.vertices[uuid].text
+                    token.run( uuid: root ).then( 
 
-                        console.log JSON.stringify token.graph.tree, null, 2
+                        ->
+                        ->
+                        (update) -> console.log '\n', update.state, update
 
-                        next()
-                        done()
+                    )
 
-                    next()
       
         falcon 'Generic', (system) -> 
 
             before all:  -> 
+                @value = """
+
+
+
+                    CONTEXT
+
+
+                """
             before each: -> 
             after  each: -> 
             after  all:  -> 
@@ -45,35 +58,21 @@ describe 'integrations', ->
 
             system 'flight', (subsystem) ->
 
-                subsystem '...', (end) -> 
+                subsystem 'left wing', (end) -> 
+                subsystem 'right wing', (end) -> 
 
             system 'navigation', (subsystem) -> 
 
-                subsystem.requires 'sensory'
-                subsystem '...', (end) -> 
+                subsystem 'gps', (end) -> 
+
+
+
+                    console.log @value
+
+
 
             system 'hunt', (subsystem) -> 
 
-                #
-                # dependancy encapsulation
-                # 
-                # 'the big one'... from a systems management perspective
-                #
+                subsystem 'prey detection', (end) ->
 
-                subsystem.requires 'flight', 'navigation'
-
-
-        # #
-        # # and possibly:
-        # #
-
-        # peregrine = PhraseRoot.extend falcon, 'Peregrine Falcon'
-
-        # peregrine 'appearence', (bodypart) -> 
-
-        #     bodypart 'cheek', (cheek, patternlib), -> 
-
-        #         # 
-        #         # ...
-        #         # 
 
