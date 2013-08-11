@@ -35,7 +35,7 @@ module.exports = class PhraseJob
         # reserved / silent properties
         #
 
-        for property in ['uuid', 'steps', 'deferral', 'done', 'progress']
+        for property in ['uuid', 'steps', 'deferral', 'progress']
 
             do (property) =>
 
