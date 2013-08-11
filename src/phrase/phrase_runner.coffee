@@ -1,4 +1,5 @@
 {defer}   = require 'when'
+pipeline  = require 'when/pipeline'
 PhraseJob = require './phrase_job' 
 
 error = (code, message) -> Object.defineProperty (new Error message), 'code', value: code
@@ -25,21 +26,51 @@ api =
                 return running.reject error 2, "uuid: '#{uuid}' not in local tree"
 
 
-        api.getSteps( root, opts, running ).then (steps) -> 
+        pipeline([
 
-            #
-            # got steps
-            #
+            (     ) -> api.getSteps root, opts, running
+            (steps) -> 
 
-            job = new PhraseJob 
+                #
+                # TODO: - keep track of running jobs
+                #       - configable maximum allowed
+                #       - configable one at a timeness
+                #       - message bus chatter for use
+                #         on a webui dashboard
+                #       - stop making lists...
+                #       - [rubina](http://www.youtube.com/watch?v=a5xzSjgatP8)
+                #
 
-                steps: steps
-                deferral: running
+                job = new PhraseJob
 
-            job.run().then -> 
+                    steps: steps
+                    deferral: running
 
-                running.resolve()
+                job.run()
 
+        ]).then( 
+
+            (result) -> running.resolve result
+            (error)  -> running.reject error
+
+            # 
+            # (update) -> running.notify update
+            # 
+            #        currently no updates from child promises
+            #        parent deferral was passed into each and
+            #        notifications are passed directly,
+            # 
+            #        keeping this for possible use as error pipe
+            #        to allow PhraseJob to reject on certain steps
+            #        without erroring the entire job.
+            # 
+            #        eg. test run with only some failures, since
+            #            failures are not particularly errors as-
+            #            such, a failing test is still a perfectly
+            #            functioning thing.
+            # 
+
+        )
         
         return running.promise
 

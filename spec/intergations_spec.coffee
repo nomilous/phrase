@@ -29,16 +29,23 @@ describe 'integrations', ->
 
                     token.run( uuid: root ).then( 
 
-                        ->
-                        ->
-                        (update) -> #console.log '\n', update.state, update
+                        (result) -> 
+                            console.log '\n', 'RESULT', '\n', 
+                                JSON.stringify result, null, 2
+
+                        (error) -> 
+                            console.log '\n', 'ERROR',  '\n', error
+
+                        (update) -> 
+                            console.log '\n', 'UPDATE', '\n', 
+                                update.state, JSON.stringify update, null, 2
 
                     )
 
       
         falcon 'Generic', (system) -> 
 
-            before all:  -> @value = 'CONTEXT'
+            before all:  -> 
             before each: -> 
             after  each: -> 
             after  all:  -> 
@@ -58,10 +65,7 @@ describe 'integrations', ->
 
                 subsystem 'gps', (end) -> 
 
-
-
-                    console.log @value
-
+                    @location = [0.0,0.0,0.0]
 
 
             system 'hunt', (subsystem) -> 

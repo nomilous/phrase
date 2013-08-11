@@ -30,6 +30,7 @@ exports.create = (root) ->
 
         PhraseRunner.run root, opts
 
+
     Object.defineProperty emitter, 'eventProxy', 
 
         enumerable: false
