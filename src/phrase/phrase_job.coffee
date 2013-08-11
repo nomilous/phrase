@@ -66,3 +66,8 @@ module.exports = class PhraseJob
             action:   'start'
             progress: @progress
             at:       Date.now()
+
+
+        step.fn.call this for step in @steps
+
+        

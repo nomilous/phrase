@@ -8,7 +8,9 @@ describe 'PhraseJob', ->
 
     beforeEach -> 
         STEPS = []
-        DEFER = notify: -> 
+        DEFER = 
+            notify: -> 
+            reject: ->
 
     it 'is a class', -> 
 
@@ -42,6 +44,7 @@ describe 'PhraseJob', ->
                 done()
 
         job.uuid = 0
+
 
     it 'throws on assignment of reserved property without deferral', (done) -> 
 
@@ -78,4 +81,20 @@ describe 'PhraseJob', ->
 
         # job = new PhraseJob steps: STEPS
         # job.start()
+
+
+    it 'runs each step.fn on phraseJob instance context', (done) -> 
+
+        STEPS = [
+
+            fn: -> @new_property = 'CREATED ON JOB INSTANCE'
+
+        ]
+
+        job = new PhraseJob steps: STEPS, deferral: DEFER
+        job.start()
+        job.new_property.should.equal 'CREATED ON JOB INSTANCE'
+        done()
+
+
 
