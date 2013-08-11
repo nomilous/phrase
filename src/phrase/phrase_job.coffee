@@ -1,4 +1,5 @@
-{v1} = require 'node-uuid'
+{v1}    = require 'node-uuid'
+{defer} = require 'when'
 
 module.exports = class PhraseJob
 
@@ -59,6 +60,8 @@ module.exports = class PhraseJob
 
     start: ->
 
+        running = defer()
+
         @deferral.notify 
 
             class:    @constructor.name
@@ -67,6 +70,9 @@ module.exports = class PhraseJob
             progress: @progress()
             at:       Date.now()
 
+        process.nextTick => 
 
-        step.fn.call this for step in @steps
+            step.fn.call this for step in @steps
+            running.resolve()
 
+        return running.promise

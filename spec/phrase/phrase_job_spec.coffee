@@ -58,72 +58,83 @@ describe 'PhraseJob', ->
             error.should.match /Cannot assign reserved property: uuid/
             done()
 
-
-    it 'notifies the deferral on start', (done) -> 
-
-        job = new PhraseJob 
-
-            steps: STEPS
-            deferral: 
-                notify: (msg) -> 
-
-                    msg.class.should.equal 'PhraseJob'
-                    msg.action.should.equal 'start'
-                    msg.progress.should.eql steps: 0, done: 0
-                    should.exist msg.uuid
-                    should.exist msg.at
-                    done()
-
-        job.start()
-
-
     it 'logs to console if running deferral is not defined', -> 
 
         # job = new PhraseJob steps: STEPS
         # job.start()
 
-
-    it 'runs each step.fn on phraseJob instance context', (done) -> 
-
-        STEPS = [
-
-            fn: -> @new_property = 'CREATED ON JOB INSTANCE'
-
-        ]
-
-        job = new PhraseJob steps: STEPS, deferral: DEFER
-        job.start()
-        job.new_property.should.equal 'CREATED ON JOB INSTANCE'
-        done()
+    context 'start()', -> 
 
 
-    it 'ties into the reserved property rejection', (done) -> 
+        it 'notifies the deferral on start', (done) -> 
 
-        STEPS = [
+            job = new PhraseJob 
 
-            fn: -> @uuid = '0000000000000000000000000000006.62606957'
+                steps: STEPS
+                deferral: 
+                    notify: (msg) -> 
 
-        ]
+                        msg.class.should.equal 'PhraseJob'
+                        msg.action.should.equal 'start'
+                        msg.progress.should.eql steps: 0, done: 0
+                        should.exist msg.uuid
+                        should.exist msg.at
+                        done()
 
-        DEFER.reject = (error) -> 
+            job.start()
 
-            error.should.match /Cannot assign reserved property/
+
+        it 'returns a promise', (done) -> 
+
+            job = new PhraseJob steps: STEPS, deferral: DEFER
+            job.start().then.should.be.an.instanceof Function
             done()
 
-        (new PhraseJob steps: STEPS, deferral: DEFER).start()
+
+        it 'runs each step.fn on phraseJob instance context', (done) -> 
+
+            STEPS = [
+
+                fn: -> @new_property = 'CREATED ON JOB INSTANCE'
+
+            ]
+
+            job = new PhraseJob steps: STEPS, deferral: DEFER
+            job.start().then -> 
+
+                job.new_property.should.equal 'CREATED ON JOB INSTANCE'
+                done()
 
 
-    it 'runs all steps', (done) -> 
+        it 'ties into the reserved property rejection', (done) -> 
 
-        STEPS = [
+            STEPS = [
 
-            { fn: -> @one   = 1 }
-            { fn: -> @two   = 2 }
-            { fn: -> @three = 3 }
+                fn: -> @uuid = '0000000000000000000000000000006.62606957'
 
-        ]
+            ]
 
-        job = new PhraseJob steps: STEPS, deferral: DEFER
-        job.start()
-        job.should.eql one: 1, two: 2, three: 3
-        done()
+            DEFER.reject = (error) -> 
+
+                error.should.match /Cannot assign reserved property/
+                done()
+
+            (new PhraseJob steps: STEPS, deferral: DEFER).start()
+
+
+        it 'runs all steps', (done) -> 
+
+            STEPS = [
+
+                { fn: -> @one   = 1 }
+                { fn: -> @two   = 2 }
+                { fn: -> @three = 3 }
+
+            ]
+
+            job = new PhraseJob steps: STEPS, deferral: DEFER
+            job.start().then -> 
+
+                job.should.eql one: 1, two: 2, three: 3
+                done()
+
