@@ -1,9 +1,12 @@
+{v1} = require 'node-uuid'
+
 exports.PhraseHook = class PhraseHook
 
     constructor: (root, @fn) -> 
 
         @createdAt = Date.now()
         @runCount  = 0
+        @uuid      = v1()
 
     run: -> 
 

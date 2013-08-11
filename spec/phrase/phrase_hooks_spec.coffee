@@ -52,31 +52,26 @@ describe 'PhraseHooks', ->
 
         hooks = PhraseHooks.bind {}
 
-        hooks.should.eql 
+        hooks.beforeAll[0].fn.should.equal beforeAll
+        hooks.beforeAll[0].createdAt.should.equal  1375908472253
+        hooks.beforeAll[0].runCount.should.equal  0 
+        should.exist hooks.beforeAll[0].uuid
 
-            beforeAll: [ 
-                fn: beforeAll
-                createdAt: 1375908472253
-                runCount: 0 
-            ]
+        hooks.beforeEach[0].fn.should.equal  beforeEach
+        hooks.beforeEach[0].createdAt.should.equal  1375908472253
+        hooks.beforeEach[0].runCount.should.equal  0
+        should.exist hooks.beforeEach[0].uuid
 
-            beforeEach: [ 
-                fn: beforeEach
-                createdAt: 1375908472253
-                runCount: 0 
-            ]
+        hooks.afterEach[0].fn.should.equal afterEach
+        hooks.afterEach[0].createdAt.should.equal  1375908472253
+        hooks.afterEach[0].runCount.should.equal  0
+        should.exist hooks.afterEach[0].uuid
 
-            afterEach: [ 
-                fn: afterEach
-                createdAt: 1375908472253
-                runCount: 0
-            ]
+        hooks.afterAll[0].fn.should.equal afterAll
+        hooks.afterAll[0].createdAt.should.equal  1375908472253
+        hooks.afterAll[0].runCount.should.equal  0
+        should.exist hooks.afterAll[0].uuid
 
-            afterAll: [ 
-                fn: afterAll
-                createdAt: 1375908472253
-                runCount: 0
-            ] 
 
         done()
 
@@ -84,6 +79,7 @@ describe 'PhraseHooks', ->
     context 'run()', ->
 
         it 'increments the run count', (done) -> 
+
 
             tick = 0
             Date.now = -> ++tick
@@ -99,9 +95,9 @@ describe 'PhraseHooks', ->
 
             hook.should.eql 
 
-                fn: hookFn
-                createdAt: 1
-                runCount:  2
-                lastRunAt: 3
+            hook.fn.should.equal hookFn
+            hook.createdAt.should.equal 1
+            hook.runCount.should.equal  2
+            hook.lastRunAt.should.equal 3
 
             done()
