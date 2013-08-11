@@ -11,7 +11,7 @@ module.exports = class PhraseJob
         opts.uuid ||= v1()
 
         #
-        # job deferrral is optional (if not present logs to console)
+        # job deferrral is optional
         #
 
         opts.deferral ||= 
