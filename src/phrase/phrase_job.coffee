@@ -27,7 +27,7 @@ module.exports = class PhraseJob
             # storage for progress indication
             #
 
-            progress: 
+            progress: -> 
                 steps: if opts.steps? then opts.steps.length else 0
                 done:  0
 
@@ -64,10 +64,9 @@ module.exports = class PhraseJob
             class:    @constructor.name
             uuid:     @uuid
             action:   'start'
-            progress: @progress
+            progress: @progress()
             at:       Date.now()
 
 
         step.fn.call this for step in @steps
 
-        
