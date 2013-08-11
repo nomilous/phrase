@@ -1,7 +1,7 @@
 {
   "name": "phrase",
   "description": "A describer.",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "nomilous <nomilous@gmail.com>",
   "contributors": [
     {
@@ -12,7 +12,7 @@
   "main": "./lib/phrase_root",
   "repository": "git@github.com:nomilous/phrase.git",
   "dependencies": {
-    "also": "0.0.5",
+    "also": "0.0.6",
     "notice": "0.0.7",
     "node-uuid": "~1.4.0",
     "when": "~2.3.0"
