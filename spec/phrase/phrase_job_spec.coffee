@@ -159,7 +159,11 @@ describe 'PhraseJob', ->
             job = new PhraseJob steps: STEPS, deferral: DEFER
             job.run().then (result) -> 
 
-                MESSAGES.pop().state.should.equal 'succeeded'
+                msg = MESSAGES.pop()
+                msg.state.should.equal 'succeeded'
+
+                console.log FIX: msg.progress
+
                 result.job.should.eql one: 1, two: 2, three: 3
                 done()
 
