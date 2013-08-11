@@ -12,7 +12,7 @@ exports.PhraseHook = class PhraseHook
 
         @runCount++
         @lastRunAt = Date.now()
-        console.log "run hook:", @fn.toString()
+        # console.log "run hook:", @fn.toString()
 
 # 
 # create before() and after() hook registrars on global scope
