@@ -1,4 +1,5 @@
 should         = require 'should'
+coffee         = require 'coffee-script'
 PhraseRoot     = require '../lib/phrase_root'
 
 describe 'integrations', -> 
@@ -30,22 +31,28 @@ describe 'integrations', ->
 
                         ->
                         ->
-                        (update) -> console.log '\n', update.state, update
+                        (update) -> #console.log '\n', update.state, update
 
                     )
+
+                    #
+                    # verify hotswap ability (later...)
+                    #
+                    gps = (for uuid of vertices
+                        v = vertices[uuid]
+                        continue unless v.text == 'gps'
+                        uuid
+                    )[0]
+                    vertices[gps].fn = eval coffee.compile """
+                        -> console.log @value.toLowerCase() + ' nice!'
+                        """, 
+                        bare: true
+                    token.run uuid: gps 
 
       
         falcon 'Generic', (system) -> 
 
-            before all:  -> 
-                @value = """
-
-
-
-                    CONTEXT
-
-
-                """
+            before all:  -> @value = 'CONTEXT'
             before each: -> 
             after  each: -> 
             after  all:  -> 
