@@ -137,7 +137,7 @@ describe 'PhraseRunner', ->
                 steps[i++].ref.fn.toString().should.match /BEFORE-EACH-OUTSIDE/
                 steps[i++].ref.fn.toString().should.match /BEFORE-ALL-NESTED/    # first all
                 steps[i++].ref.fn.toString().should.match /BEFORE-EACH-NESTED/
-                steps[i++].ref.fn.toString().should.match /RUN_LEAF_ONE/
+                steps[i++].ref.fn.toString().should.match                       /RUN_LEAF_ONE/
                 steps[i++].ref.fn.toString().should.match /AFTER-EACH-NESTED/
                 steps[i++].ref.fn.toString().should.match /AFTER-EACH-OUTSIDE/
                 # 
@@ -146,7 +146,7 @@ describe 'PhraseRunner', ->
                 # 
                 steps[i++].ref.fn.toString().should.match /BEFORE-ALL-DEEP/      # first all
                 steps[i++].ref.fn.toString().should.match /BEFORE-EACH-DEEP/
-                steps[i++].ref.fn.toString().should.match /RUN_LEAF_TWO/
+                steps[i++].ref.fn.toString().should.match                       /RUN_LEAF_TWO/
                 steps[i++].ref.fn.toString().should.match /AFTER-EACH-DEEP/
                 steps[i++].ref.fn.toString().should.match /AFTER-ALL-DEEP/       # last all
                 # 
@@ -155,7 +155,7 @@ describe 'PhraseRunner', ->
                 # 
                 steps[i++].ref.fn.toString().should.match /BEFORE-EACH-OUTSIDE/
                 steps[i++].ref.fn.toString().should.match /BEFORE-EACH-NESTED/
-                steps[i++].ref.fn.toString().should.match /RUN_LEAF_THREE/
+                steps[i++].ref.fn.toString().should.match                       /RUN_LEAF_THREE/
                 steps[i++].ref.fn.toString().should.match /AFTER-EACH-NESTED/
                 steps[i++].ref.fn.toString().should.match /AFTER-ALL-NESTED/    # last all
                 steps[i++].ref.fn.toString().should.match /AFTER-EACH-OUTSIDE/

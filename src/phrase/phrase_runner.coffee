@@ -1,5 +1,4 @@
-{defer, map} = require 'when'
-sequence     = require 'when/sequence'
+{defer} = require 'when'
 
 error = (code, message) -> Object.defineProperty (new Error message), 'code', value: code
 
@@ -77,17 +76,6 @@ api =
 
             return getting.resolve (steps.filter (s) -> s?) if remaining == 0 
 
-                # #
-                # # TEMPORARY - verify steps
-                # #
-                # steps.map (step) -> 
-                #     if step.type == 'hook' 
-                #         console.log HOOK: step.ref.fn.toString()
-                #     else if step.type == 'leaf'
-                #         console.log LEAF: step.ref.text, step.ref.fn.toString()
-                # return
-
-
             leaf     = leaves.shift()
             path     = graph.tree.leaves[leaf.uuid].path
             outbound = []
@@ -96,78 +84,75 @@ api =
                 outbound.unshift graph.vertices[uuid]
                 graph.vertices[uuid]
 
-            sequence([
+            #
+            # inbound  (Array) Contains all the phrases along the path 
+            #                  from root to this leaf. 
+            # 
+            #                  For queueing all before hooks.
+            # 
+
+            inbound.map (phrase) -> 
+
+                {beforeAll, beforeEach} = phrase.hooks
 
                 #
-                # inbound  (Array) Contains all the phrases along the path 
-                #                  from root to this leaf. 
-                # 
-                #                  For queueing all before hooks.
-                # 
+                # queue only the first of each beforeAll
+                #
+               
+                if beforeAll? and not befores[beforeAll.uuid]?
+                    position = steps.push( type: 'hook', ref: beforeAll ) - 1
+                    befores[beforeAll.uuid] = position
 
-                -> map inbound, (phrase) -> 
+                #
+                # queue all beforeEachs
+                #
 
-                    {beforeAll, beforeEach} = phrase.hooks
+                if beforeEach?
+                    steps.push type: 'hook', ref: beforeEach
+                    
+
+            #
+            # queue the leaf function
+            #
+
+            steps.push type: 'leaf', ref: leaf
+
+
+            # 
+            # outbound (Array) Contains all the phrases along the path
+            #                  back to the root.
+            # 
+            #                  For queueing all the after hooks.
+            #
+
+            outbound.map (phrase) -> 
+
+                {afterEach, afterAll} = phrase.hooks
+
+                if afterEach?
+
+                    steps.push type: 'hook', ref: afterEach
+
+                if afterAll?
 
                     #
-                    # queue only the first of each beforeAll
-                    #
-                   
-                    if beforeAll? and not befores[beforeAll.uuid]?
-                        position = steps.push( type: 'hook', ref: beforeAll ) - 1
-                        befores[beforeAll.uuid] = position
-
-                    #
-                    # queue all beforeEachs
+                    # queue all afterAlls...
                     #
 
-                    if beforeEach?
-                        steps.push type: 'hook', ref: beforeEach
+                    position = steps.push( type: 'hook', ref: afterAll ) - 1
+                    if afters[ afterAll.uuid ]?
+
+                        #
+                        # but delete the previously queued instance 
+                        # of each afterAll
+                        #
+
+                        oldPosition = afters[ afterAll.uuid ]
+                        delete steps[ oldPosition ]
                         
+                    afters[ afterAll.uuid ] = position
 
-                #
-                # queue the leaf function
-                #
-
-                -> steps.push type: 'leaf', ref: leaf
-
-
-                # 
-                # outbound (Array) Contains all the phrases along the path
-                #                  back to the root.
-                # 
-                #                  For queueing all the after hooks.
-                #
-
-                -> map outbound, (phrase) -> 
-
-                    {afterEach, afterAll} = phrase.hooks
-
-                    if afterEach?
-
-                        steps.push type: 'hook', ref: afterEach
-
-                    if afterAll?
-
-                        #
-                        # queue all afterAlls...
-                        #
-
-                        position = steps.push( type: 'hook', ref: afterAll ) - 1
-                        if afters[ afterAll.uuid ]?
-
-                            #
-                            # but delete the previously queued instance 
-                            # of each afterAll
-                            #
-
-                            oldPosition = afters[ afterAll.uuid ]
-                            delete steps[ oldPosition ]
-                            
-                        afters[ afterAll.uuid ] = position
-
-
-            ]).then recurse
+            recurse()
 
         recurse()
         
