@@ -178,7 +178,7 @@ describe 'PhraseJob', ->
 
     context 'run() calls each step asynchronously', ->  
 
-        it 'each step is passed through the injector', (done) -> 
+        xit 'each step is passed through the injector', (done) -> 
 
             fn1 = -> 
             fn2 = -> 
@@ -203,7 +203,7 @@ describe 'PhraseJob', ->
                 FUNCTIONS.should.eql [fn1, fn2, fn3]
                 done()
 
-        it 'injects no args when none are specified', (done) ->
+        xit 'injects no args when none are specified', (done) ->
 
             (new PhraseJob 
                 deferral: DEFER
@@ -219,6 +219,29 @@ describe 'PhraseJob', ->
 
                 ]
             ).run()
+
+
+        it 'injects the resolver if arg1 is "done"', (okgood) -> 
+
+            (new PhraseJob 
+                deferral: DEFER
+                steps: [ ref: fn: (done) -> 
+
+                    #
+                    # step.ref.fn signature has done at arg1
+                    # ...function was injected
+                    #
+
+                    done.should.be.an.instanceof Function
+                    console.log 'TODO', 'test this as custom resolver': done.toString()
+                    okgood()
+
+                ]
+            ).run().then(
+
+
+
+            )
 
 
 
