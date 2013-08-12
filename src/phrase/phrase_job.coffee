@@ -21,8 +21,6 @@ module.exports = class PhraseJob
             reject: (error)  -> throw error
             notify: (update) -> console.log 'PhraseJob:', JSON.stringify update
 
-
-
         localOpts =
 
             #
@@ -62,9 +60,6 @@ module.exports = class PhraseJob
                         # 
 
                         opts.deferral.reject new Error "Cannot assign reserved property: #{property}(=#{value})"
-
-
-
 
             
 

@@ -30,9 +30,7 @@ describe 'integrations', ->
                     token.run( uuid: root ).then( 
 
                         (result) -> 
-                            console.log '\n', 'RESULT', '\n', 
-                                JSON.stringify result, null, 2
-
+                            console.log '\n', 'RESULT', '\n', result
                             done()
 
                         (error) -> 
