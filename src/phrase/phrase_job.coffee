@@ -101,7 +101,7 @@ exports.create = (root) ->
                         # into arg1 of step.ref.fn
                         #
 
-                        defer = 
+                        defer = control.defer
 
                         if control.signature[0] == 'done'
 
