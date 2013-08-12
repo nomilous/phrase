@@ -221,25 +221,37 @@ describe 'PhraseJob', ->
             ).run()
 
 
-        it 'injects the resolver if arg1 is "done"', (okgood) -> 
+        it 'injects the resolver if arg1 is "done" and notifies on timeout', (done) -> 
 
             (new PhraseJob 
                 deferral: DEFER
-                steps: [ ref: fn: (done) -> 
+                steps: [ ref: 
 
-                    #
-                    # step.ref.fn signature has done at arg1
-                    # ...function was injected
-                    #
+                    timeout: 10
+                    fn: (done) -> 
 
-                    done.should.be.an.instanceof Function
-                    console.log 'TODO', 'test this as custom resolver': done.toString()
-                    okgood()
+                        #
+                        # step.ref.fn signature has done at arg1
+                        # ...custom resolver should have been injected
+                        #
+
+                        done.should.be.an.instanceof Function
+                        done.toString().should.match /clearTimeout/
+
+                        #
+                        # let it timeout
+                        #   
 
                 ]
+
             ).run().then(
 
+                ->
+                ->
+                (notify) -> 
 
+                    notify.event.should.equal 'timeout'
+                    done()
 
             )
 

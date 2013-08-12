@@ -94,6 +94,12 @@ exports.create = (root, parentControl) ->
 
             text:     phraseText
             token:    control.phraseToken
+
+            #
+            # TODO: configurable timeout on phraseNode
+            #
+
+            timeout: 2000
             
             #
             # TODO: determine phrase line in source file

@@ -8,6 +8,12 @@ exports.PhraseHook = class PhraseHook
         @runCount  = 0
         @uuid      = v1()
 
+        #
+        # TODO: configurable timeout on hook
+        #
+
+        @timeout   = 2000
+
     run: -> 
 
         @runCount++

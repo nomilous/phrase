@@ -94,7 +94,7 @@ exports.create = (root) ->
 
                 inject.async 
 
-                    beforeEach: (done, control) -> 
+                    beforeEach: (done, control) => 
 
                         #
                         # extract the deferral to prevent default injection
@@ -105,7 +105,49 @@ exports.create = (root) ->
 
                         if control.signature[0] == 'done'
 
-                            control.args[0] = defer.resolve
+                            #
+                            # this step is async, 
+                            # 
+                            # start timeout as defined as defined on step
+                            # 
+
+                            timeout = setTimeout (=>
+
+                                #
+                                # notify parent of timeout
+                                # 
+
+                                running.notify 
+
+                                    event: 'timeout'
+                                    class: @constructor.name
+                                    uuid:  @uuid
+                                    step:  step
+                                    at:    Date.now()
+
+                                #
+                                # for now: resolve on timeout to let the remaining 
+                                # job steps run
+                                # 
+                                defer.resolve()
+                                #
+                                # TODO: handle timeouts per step type, beforeAll and 
+                                #       beforeEach timeouts might not affect all leaves
+                                #       in the run. 
+                                #
+
+
+                            ), step.ref.timeout || 2000
+
+                            control.args[0] = -> 
+
+                                #
+                                # custom resolver passed as (done, ...) to
+                                # step function clears the timeout
+                                #
+
+                                clearTimeout timeout
+                                defer.resolve()
 
                         done()
 
