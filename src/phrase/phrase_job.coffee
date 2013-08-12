@@ -94,62 +94,101 @@ exports.create = (root) ->
 
                 inject.async 
 
+                    #
+                    # step.ref.fn is the injection target and will be called with
+                    # arguments as determined by this injector
+                    # 
+
                     beforeEach: (done, control) => 
 
                         #
-                        # extract the deferral to prevent default injection
-                        # into arg1 of step.ref.fn
+                        # extract the deferral that the injector has associated
+                        # with the running of the injection target
                         #
 
                         defer = control.defer
 
-                        if control.signature[0] == 'done'
+                        unless control.signature[0] == 'done'
 
                             #
-                            # this step is async, 
+                            # this step is not async
+                            # ----------------------
                             # 
-                            # start timeout as defined as defined on step
+                            # the promise therefore needs to be maually resolved
+                            #
+
+                            process.nextTick -> defer.resolve()
+                            done()
+                            return
+
+                        #
+                        # this step is async
+                        # ------------------
+                        # 
+                        # start timeout as defined as defined on step
+                        # 
+
+                        timeout = setTimeout (=>
+
+                            #
+                            # notify parent of timeout
                             # 
 
-                            timeout = setTimeout (=>
+                            running.notify 
 
-                                #
-                                # notify parent of timeout
-                                # 
+                                event: 'timeout'
+                                class: @constructor.name
+                                uuid:  @uuid
+                                step:  step
+                                at:    Date.now()
 
-                                running.notify 
-
-                                    event: 'timeout'
-                                    class: @constructor.name
-                                    uuid:  @uuid
-                                    step:  step
-                                    at:    Date.now()
-
-                                #
-                                # for now: resolve on timeout to let the remaining 
-                                # job steps run
-                                # 
-                                defer.resolve()
-                                #
-                                # TODO: handle timeouts per step type, beforeAll and 
-                                #       beforeEach timeouts might not affect all leaves
-                                #       in the run. 
-                                #
+                            #
+                            # for now: resolve on timeout to let the remaining 
+                            # job steps run
+                            # 
+                            defer.resolve()
+                            #
+                            # TODO: handle timeouts per step type, beforeAll and 
+                            #       beforeEach timeouts might not affect all leaves
+                            #       in the run. 
+                            #
 
 
-                            ), step.ref.timeout || 2000
+                        ), step.ref.timeout || 2000
 
-                            control.args[0] = -> 
+                        control.args[0] = -> 
 
-                                #
-                                # custom resolver passed as (done, ...) to
-                                # step function clears the timeout
-                                #
+                            #
+                            # custom resolver passed as (done, ...) to
+                            # step function clears the timeout
+                            #
 
-                                clearTimeout timeout
-                                defer.resolve()
+                            
+
+                            clearTimeout timeout
+
+                            console.log 'RESOLVED'
+                            defer.resolve()
 
                         done()
+
+                    afterEach: (done, control) -> 
+
+                        unless control.signature[0] == 'done'
+
+                            #
+                            # step.ref.fn has been called, but no resolver 
+                            # was injected, the promise associated with the
+                            # call therefore requires manual resolution
+                            # 
+
+                            control.defer.resolve()
+                        
+                        done()
+
+                    #
+                    # injection target
+                    #
 
                     step.ref.fn
 
