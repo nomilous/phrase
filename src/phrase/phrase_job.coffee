@@ -1,5 +1,6 @@
-{v1}    = require 'node-uuid'
-{defer} = require 'when'
+{v1}         = require 'node-uuid'
+{defer}      = require 'when'
+sequence     = require 'when/sequence'
 
 module.exports = class PhraseJob
 
@@ -79,13 +80,11 @@ module.exports = class PhraseJob
             progress: @progress()
             at:       Date.now()
 
-        process.nextTick => 
+        sequence( @steps.map (step) => 
 
-            for step in @steps
+            => step.ref.fn.call this
 
-                #console.log RUN_STEP: step
-
-                step.ref.fn.call this 
+        ).then => 
 
             @deferral.notify 
 
@@ -95,7 +94,7 @@ module.exports = class PhraseJob
                 progress: @progress()
                 at:       Date.now()
 
-            running.resolve  
+            running.resolve 
 
                 #
                 # job instance on subkey leaves room for 
@@ -103,8 +102,5 @@ module.exports = class PhraseJob
                 # 
 
                 job: this
-
-         
-
 
         return running.promise

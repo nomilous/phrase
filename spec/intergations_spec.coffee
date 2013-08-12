@@ -33,6 +33,8 @@ describe 'integrations', ->
                             console.log '\n', 'RESULT', '\n', 
                                 JSON.stringify result, null, 2
 
+                            done()
+
                         (error) -> 
                             console.log '\n', 'ERROR',  '\n', error
 
@@ -55,6 +57,8 @@ describe 'integrations', ->
                 subsystem 'vision', (component) -> 
 
                     component 'eyes', (end) ->
+
+                        @ultraviolet = true
 
             system 'flight', (subsystem) ->
 
