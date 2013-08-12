@@ -2,7 +2,6 @@ should       = require 'should'
 PhraseRoot   = require '../../lib/phrase_root'
 PhraseToken  = require '../../lib/phrase_token'
 PhraseRunner = require '../../lib/phrase/phrase_runner'
-PhraseJob    = require '../../lib/phrase/phrase_job'
 
 describe 'PhraseRunner', -> 
 
@@ -17,19 +16,10 @@ describe 'PhraseRunner', ->
 
     afterEach (done) -> 
 
-        PhraseJob.prototype.run = JOB_RUN
         done()
     
 
     beforeEach (done) -> 
-
-        #
-        # stub job.run
-        #
-
-        JOB_RUN = PhraseJob.prototype.run
-        PhraseJob.prototype.run = ->
-
 
         root = PhraseRoot.createRoot
 
@@ -143,23 +133,21 @@ describe 'PhraseRunner', ->
             swap = PhraseRunner.getSteps
             PhraseRunner.getSteps = (root, opts) ->
                 PhraseRunner.getSteps = swap
-                then: (resolve) -> resolve ['STEP']
 
-            PhraseJob.prototype.run = -> 
-                
-                @steps.should.eql ['STEP']
-                done()
+                swap = root.context.PhraseJob.prototype.run
+                root.context.PhraseJob.prototype.run = -> 
+
+                    root.context.PhraseJob.prototype.run = swap
+                    @steps.should.eql ['STEP']
+                    done()
+
+                then: (resolve) -> resolve ['STEP']
 
             try TOKEN.run( uuid: NEST_ONE )
 
 
         it 'notifies state of the promise', (done) ->
 
-            #
-            # unstub PhraseJob
-            #
-
-            PhraseJob.prototype.run = JOB_RUN
             tick = 0
             Date.now = -> tick++
 
@@ -175,14 +163,14 @@ describe 'PhraseRunner', ->
                     should.exist MESSAGES['run::starting']
                     should.exist MESSAGES['run::complete']
 
-                    console.log JSON.stringify MESSAGES, null, 2
+                    # console.log JSON.stringify MESSAGES, null, 2
 
                     done()
 
 
                 (error)  -> 
 
-                    console.log ERROR: error
+                    console.log error.stack
 
                 (update) -> MESSAGES[update.state] = update
 

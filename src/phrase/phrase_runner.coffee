@@ -1,6 +1,5 @@
-{defer}   = require 'when'
-pipeline  = require 'when/pipeline'
-PhraseJob = require './phrase_job' 
+{defer}      = require 'when'
+pipeline     = require 'when/pipeline'
 
 error = (code, message) -> Object.defineProperty (new Error message), 'code', value: code
 
@@ -41,7 +40,7 @@ api =
                 #       - [rubina](http://www.youtube.com/watch?v=a5xzSjgatP8)
                 #
 
-                job = new PhraseJob
+                job = new context.PhraseJob
 
                     steps: steps
                     deferral: running

@@ -2,100 +2,109 @@
 {defer}      = require 'when'
 sequence     = require 'when/sequence'
 
-module.exports = class PhraseJob
+exports.create = (root) -> 
 
-    constructor: (opts = {}) -> 
+    #
+    # PhraseJob (class factory)
+    # =========================
+    # 
+    # Has root access factory create() scope
+    #
 
-        #
-        # job uuid can be assigned (allows resume, later...)
-        #
+    class PhraseJob
 
-        opts.uuid ||= v1()
-
-        #
-        # job deferrral is optional
-        #
-
-        opts.deferral ||= 
-
-            reject: (error)  -> throw error
-            notify: (update) -> console.log 'PhraseJob:', JSON.stringify update
-
-        localOpts =
+        constructor: (opts = {}) -> 
 
             #
-            # storage for progress indication
+            # job uuid can be assigned (allows resume, later...)
             #
 
-            progress: -> 
-                steps: if opts.steps? then opts.steps.length else 0
-                done:  0
+            opts.uuid ||= v1()
 
-        #
-        # reserved / silent properties
-        #
+            #
+            # job deferrral is optional
+            #
 
-        for property in ['uuid', 'steps', 'deferral', 'progress']
+            opts.deferral ||= 
 
-            do (property) =>
+                reject: (error)  -> throw error
+                notify: (update) -> console.log 'PhraseJob:', JSON.stringify update
 
-                Object.defineProperty this, property,
+            localOpts =
 
-                    enumerable: false
-                    get: -> opts[property] || localOpts[property]
-                    set: (value) -> 
+                #
+                # storage for progress indication
+                #
 
-                        #
-                        # reject the deferral on attempt to assign
-                        # value to reserved property
-                        #
+                progress: -> 
+                    steps: if opts.steps? then opts.steps.length else 0
+                    done:  0
 
-                        #
-                        # TODO: state 'failed' (maybe...) 
-                        # 
-                        #       the jobs steps will likely be divided into sets
-                        #       because a rejection emanating from a hook that 
-                        #       only affects the nested leaves whould not cause
-                        #       a global failure across all leaves in the job
-                        # 
+            #
+            # reserved / silent properties
+            #
 
-                        opts.deferral.reject new Error "Cannot assign reserved property: #{property}(=#{value})"
+            for property in ['uuid', 'steps', 'deferral', 'progress']
 
-            
+                do (property) =>
 
-    run: ->
+                    Object.defineProperty this, property,
 
-        running = defer()
+                        enumerable: false
+                        get: -> opts[property] || localOpts[property]
+                        set: (value) -> 
 
-        @deferral.notify 
+                            #
+                            # reject the deferral on attempt to assign
+                            # value to reserved property
+                            #
 
-            state:   'run::starting'
-            class:    @constructor.name
-            uuid:     @uuid
-            progress: @progress()
-            at:       Date.now()
+                            #
+                            # TODO: state 'failed' (maybe...) 
+                            # 
+                            #       the jobs steps will likely be divided into sets
+                            #       because a rejection emanating from a hook that 
+                            #       only affects the nested leaves whould not cause
+                            #       a global failure across all leaves in the job
+                            # 
 
-        sequence( @steps.map (step) => 
+                            opts.deferral.reject new Error "Cannot assign reserved property: #{property}(=#{value})"
 
-            => step.ref.fn.call this
+                
 
-        ).then => 
+        run: ->
+
+            running = defer()
 
             @deferral.notify 
 
-                state:   'run::complete'
+                state:   'run::starting'
                 class:    @constructor.name
-                uuid:     @uuid  
+                uuid:     @uuid
                 progress: @progress()
                 at:       Date.now()
 
-            running.resolve 
+            sequence( @steps.map (step) => 
 
-                #
-                # job instance on subkey leaves room for 
-                # metadata (necessary later...)
-                # 
+                => step.ref.fn.call this
 
-                job: this
+            ).then => 
 
-        return running.promise
+                @deferral.notify 
+
+                    state:   'run::complete'
+                    class:    @constructor.name
+                    uuid:     @uuid  
+                    progress: @progress()
+                    at:       Date.now()
+
+                running.resolve 
+
+                    #
+                    # job instance on subkey leaves room for 
+                    # metadata (necessary later...)
+                    # 
+
+                    job: this
+
+            return running.promise

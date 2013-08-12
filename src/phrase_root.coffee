@@ -2,6 +2,7 @@ Notice         = require 'notice'
 PhraseToken    = require './phrase_token'
 PhraseGraph    = require './graph/phrase_graph'
 PhraseRecursor = require './phrase/phrase_recursor'
+PhraseJob      = require './phrase/phrase_job'
 
 require( 'also' ) exports, {}, (root) -> 
 
@@ -35,6 +36,18 @@ require( 'also' ) exports, {}, (root) ->
     # 
 
     context.token = PhraseToken.create root
+
+    #
+    # PhraseJob (closured class)
+    # --------------------------
+    #
+    # * PhraseJob instances are created with each call to token.run.
+    # 
+    # * The class definition is instanciated here to enable root access
+    # 
+    # 
+
+    context.PhraseJob = PhraseJob.create root
 
     #
     # stack

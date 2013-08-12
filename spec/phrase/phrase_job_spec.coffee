@@ -1,16 +1,23 @@
 should              = require 'should'
-PhraseJob           = require '../../lib/phrase/phrase_job'
+phraseJob           = require '../../lib/phrase/phrase_job'
+{inject}            = require 'also'
 
 describe 'PhraseJob', -> 
 
-    DEFER = undefined
-    STEPS = undefined
+    DEFER     = undefined
+    STEPS     = undefined
+    root      = undefined
+    PhraseJob = undefined
 
     beforeEach -> 
+        
         STEPS = []
         DEFER = 
             notify: -> 
             reject: ->
+
+        root      = context: inject: inject
+        PhraseJob = phraseJob.create root
 
     it 'is a class', -> 
 
@@ -18,7 +25,7 @@ describe 'PhraseJob', ->
 
     it 'is initialized with deferral and steps array', (done) -> 
 
-        job = new PhraseJob 
+        job = new PhraseJob
 
             deferral: DEFER
             steps: STEPS
@@ -35,7 +42,7 @@ describe 'PhraseJob', ->
 
     it 'rejects the deferral on assignment of reserved property', (done) -> 
 
-        job = new PhraseJob 
+        job = new PhraseJob
 
             steps: STEPS
             deferral: reject: (error) -> 
@@ -48,7 +55,7 @@ describe 'PhraseJob', ->
 
     it 'throws on assignment of reserved property without deferral', (done) -> 
 
-        job = new PhraseJob 
+        job = new PhraseJob
 
             steps: STEPS
 
@@ -70,7 +77,7 @@ describe 'PhraseJob', ->
 
             MESSAGES = []
 
-            job = new PhraseJob 
+            job = new PhraseJob
 
                 steps: STEPS
                 deferral: 
