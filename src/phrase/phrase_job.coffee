@@ -101,12 +101,14 @@ exports.create = (root) ->
 
                     beforeEach: (done, control) => 
 
+                        
+
                         #
                         # extract the deferral that the injector has associated
                         # with the running of the injection target
                         #
 
-                        defer = control.defer
+                        targetDefer = control.defer
 
                         unless control.signature[0] == 'done'
 
@@ -117,7 +119,7 @@ exports.create = (root) ->
                             # the promise therefore needs to be maually resolved
                             #
 
-                            process.nextTick -> defer.resolve()
+                            process.nextTick -> targetDefer.resolve()
                             done()
                             return
 
@@ -134,14 +136,14 @@ exports.create = (root) ->
                             # notify on the promise
                             # 
 
-                            defer.notify 
+                            targetDefer.notify 
 
                                 event: 'timeout'
                                 class: @constructor.name
                                 uuid:  @uuid
                                 step:  step
                                 at:    Date.now()
-                                defer: defer
+                                defer: targetDefer
 
 
                         ), step.ref.timeout || 2000
@@ -153,26 +155,11 @@ exports.create = (root) ->
                             # step function clears the timeout
                             #
 
-                            
-
                             clearTimeout timeout
-                            defer.resolve()
+                            targetDefer.resolve()
 
                         done()
 
-                    afterEach: (done, control) -> 
-
-                        unless control.signature[0] == 'done'
-
-                            #
-                            # step.ref.fn has been called, but no resolver 
-                            # was injected, the promise associated with the
-                            # call therefore requires manual resolution
-                            # 
-
-                            control.defer.resolve()
-                        
-                        done()
 
                     #
                     # injection target
@@ -201,7 +188,7 @@ exports.create = (root) ->
 
                         job: this
 
-                (error)  -> console.log ERROR_IN_PHRASE_JOB: error.stack
+                (error)  -> console.log 'ERROR_IN_PHRASE_JOB', error.stack
 
                 (notify) -> 
 

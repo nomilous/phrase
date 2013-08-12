@@ -19,7 +19,7 @@ describe 'PhraseJob', ->
         root      = inject: inject
         PhraseJob = phraseJob.create root
 
-    xcontext 'general', -> 
+    context 'general', -> 
 
         it 'is a class', -> 
 
@@ -71,6 +71,11 @@ describe 'PhraseJob', ->
 
             # job = new PhraseJob steps: STEPS
             # job.run()
+
+    it 'needs to set context on the othr side of injection', -> 
+
+        throw 'pending new feature in also'
+
 
     xcontext 'run()', -> 
 
@@ -178,7 +183,7 @@ describe 'PhraseJob', ->
 
     context 'run() calls each step asynchronously', ->  
 
-        xit 'each step is passed through the injector', (done) -> 
+        it 'each step is passed through the injector', (done) -> 
 
             fn1 = -> 
             fn2 = -> 
@@ -203,11 +208,13 @@ describe 'PhraseJob', ->
                 FUNCTIONS.should.eql [fn1, fn2, fn3]
                 done()
 
-        xit 'injects no args when none are specified', (done) ->
+        it 'injects no args when none are specified', (done) ->
 
             (new PhraseJob 
                 deferral: DEFER
                 steps: [ ref: fn: -> 
+
+                    console.log 'moo'
 
                     #
                     # step.ref.fn contains no arguments,
