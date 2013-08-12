@@ -125,33 +125,23 @@ exports.create = (root) ->
                         # this step is async
                         # ------------------
                         # 
-                        # start timeout as defined as defined on step
+                        # start timeout as defined on step
                         # 
 
                         timeout = setTimeout (=>
 
                             #
-                            # notify parent of timeout
+                            # notify on the promise
                             # 
 
-                            running.notify 
+                            defer.notify 
 
                                 event: 'timeout'
                                 class: @constructor.name
                                 uuid:  @uuid
                                 step:  step
                                 at:    Date.now()
-
-                            #
-                            # for now: resolve on timeout to let the remaining 
-                            # job steps run
-                            # 
-                            defer.resolve()
-                            #
-                            # TODO: handle timeouts per step type, beforeAll and 
-                            #       beforeEach timeouts might not affect all leaves
-                            #       in the run. 
-                            #
+                                defer: defer
 
 
                         ), step.ref.timeout || 2000
@@ -166,8 +156,6 @@ exports.create = (root) ->
                             
 
                             clearTimeout timeout
-
-                            console.log 'RESOLVED'
                             defer.resolve()
 
                         done()
@@ -192,23 +180,72 @@ exports.create = (root) ->
 
                     step.ref.fn
 
-            ).then => 
+            ).then(
 
-                @deferral.notify 
+                 => 
 
-                    state:   'run::complete'
-                    class:    @constructor.name
-                    uuid:     @uuid  
-                    progress: @progress()
-                    at:       Date.now()
+                    @deferral.notify 
 
-                running.resolve 
+                        state:   'run::complete'
+                        class:    @constructor.name
+                        uuid:     @uuid  
+                        progress: @progress()
+                        at:       Date.now()
 
-                    #
-                    # job instance on subkey leaves room for 
-                    # metadata (necessary later...)
-                    # 
+                    running.resolve 
 
-                    job: this
+                        #
+                        # job instance on subkey leaves room for 
+                        # metadata (necessary later...)
+                        # 
+
+                        job: this
+
+                (error)  -> console.log ERROR_IN_PHRASE_JOB: error.stack
+
+                (notify) -> 
+
+                    if notify.event == 'timeout'
+
+                        console.log HANDLE_TIMEOUT: notify
+
+                        #
+                        # one of the steps has timed out
+                        # ------------------------------
+                        # 
+                        # * TODO: this needs to error (without attempting run)
+                        #         on all leaves in the job that depend on the
+                        #         step. 
+                        #  
+                        #         hooks can have multiple dependant leaves
+                        #         before each hooks will be retries on the 
+                        #         next leaf and therefore only affect one
+                        #         leaf 
+                        #                 
+                        # * included in this notification is the deferral
+                        #   associated with the timed out step, whether or
+                        #   not it resolves or rejects may depend...
+                        # 
+                        #   for now, resolve.
+                        # 
+                        #   reject leads to the entire job failing, 
+                        #   (all remaining leaves)
+                        # 
+
+                        notify.defer.resolve()
+                        delete notify.defer
+
+                        running.notify notify
+
+                        #
+                        # TODO: consider sending this notification out the very top
+                        #       ( @deferral.notify() )
+                        #       to:  token.run(...).then( -> -> -> )
+                        #
+
+
+                        return
+
+            )
 
             return running.promise

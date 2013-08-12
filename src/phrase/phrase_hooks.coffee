@@ -12,7 +12,7 @@ exports.PhraseHook = class PhraseHook
         # TODO: configurable timeout on hook
         #
 
-        @timeout   = 2000
+        @timeout   = 1000
 
     run: -> 
 

@@ -45,10 +45,10 @@ describe 'integrations', ->
       
         falcon 'Generic', (system) -> 
 
-            before all:  -> 
+            before all:  (done) -> done()
             before each: -> 
             after  each: -> 
-            after  all:  -> 
+            after  all:  (done) -> 
 
             system 'sensory', (subsystem) -> 
 
@@ -58,22 +58,22 @@ describe 'integrations', ->
 
                         @ultraviolet = true
 
-            system 'flight', (subsystem) ->
+            # system 'flight', (subsystem) ->
 
-                subsystem 'left wing', (end) -> 
-                subsystem 'right wing', (end) -> 
+            #     subsystem 'left wing', (end) -> 
+            #     subsystem 'right wing', (end) -> 
 
-            system 'navigation', (subsystem) -> 
+            # system 'navigation', (subsystem) -> 
 
-                subsystem 'gps', (end) -> 
+            #     subsystem 'gps', (end) -> 
 
-                    console.log GPS: ''
+            #         console.log GPS: ''
 
-                    @location = [0.0,0.0,0.0]
+            #         @location = [0.0,0.0,0.0]
 
 
-            system 'hunt', (subsystem) -> 
+            # system 'hunt', (subsystem) -> 
 
-                subsystem 'prey detection', (end) ->
+            #     subsystem 'prey detection', (end) ->
 
 
