@@ -67,6 +67,8 @@ describe 'integrations', ->
 
                 subsystem 'gps', (end) -> 
 
+                    console.log GPS: ''
+
                     @location = [0.0,0.0,0.0]
 
 

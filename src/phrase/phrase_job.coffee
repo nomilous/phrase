@@ -88,7 +88,23 @@ exports.create = (root) ->
 
             sequence( @steps.map (step) => 
 
-                inject.async {}, step.ref.fn
+                #
+                # each job step is called through the async injector
+                #
+
+                inject.async 
+
+                    beforeEach: (done, control) -> 
+
+                        #
+                        # extract the deferral to prevent default injection
+                        # into arg1 of step.ref.fn
+                        #
+
+                        defer = control.defer
+                        done()
+
+                    step.ref.fn
 
             ).then => 
 

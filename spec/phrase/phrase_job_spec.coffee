@@ -180,19 +180,18 @@ describe 'PhraseJob', ->
 
         it 'each step is passed through the injector', (done) -> 
 
-            fn1 = ->
-            fn2 = ->
-            fn3 = ->
+            fn1 = -> 
+            fn2 = -> 
+            fn3 = -> 
 
             STEPS = [
-
-                { type: 'hook', ref: fn: fn1 }
-                { type: 'leaf', ref: fn: fn2 }
-                { type: 'hook', ref: fn: fn3 }
-
+                { ref: fn: fn1 }
+                { ref: fn: fn2 }
+                { ref: fn: fn3 }
             ]
 
             FUNCTIONS = []
+            swap = inject.async
             inject.async = (preparator, fn)-> 
                 FUNCTIONS.push fn
                 ->
@@ -200,9 +199,27 @@ describe 'PhraseJob', ->
             job = new PhraseJob steps: STEPS, deferral: DEFER
             job.run().then -> 
 
+                inject.async = swap
                 FUNCTIONS.should.eql [fn1, fn2, fn3]
+                done()
 
-            done()
+        it 'injects no args when none are specified', (done) ->
+
+            (new PhraseJob 
+                deferral: DEFER
+                steps: [ ref: fn: -> 
+
+                    #
+                    # step.ref.fn contains no arguments,
+                    # ...none were injected
+                    #
+
+                    arguments.should.eql {}
+                    done()
+
+                ]
+            ).run()
+
 
 
 
