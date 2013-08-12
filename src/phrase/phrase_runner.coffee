@@ -51,23 +51,7 @@ api =
 
             (result) -> running.resolve result
             (error)  -> running.reject error
-
-            # 
-            # (update) -> running.notify update
-            # 
-            #        currently no updates from child promises
-            #        parent deferral was passed into each and
-            #        notifications are passed directly,
-            # 
-            #        keeping this for possible use as error pipe
-            #        to allow PhraseJob to reject on certain steps
-            #        without erroring the entire job.
-            # 
-            #        eg. test run with only some failures, since
-            #            failures are not particularly errors as-
-            #            such, a failing test is still a perfectly
-            #            functioning thing.
-            # 
+            (update) -> running.notify update
 
         )
         

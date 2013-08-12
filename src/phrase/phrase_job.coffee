@@ -76,7 +76,15 @@ exports.create = (root) ->
 
         run: ->
 
-            running = defer()
+            #
+            # notifies onto parent's deferral
+            # 
+            #  token.run( ... ).then(
+            #     (result) -> 
+            #     (error)  -> 
+            #     (notify) ->   # HERE
+            #  )
+            #
 
             @deferral.notify 
 
@@ -85,6 +93,14 @@ exports.create = (root) ->
                 uuid:     @uuid
                 progress: @progress()
                 at:       Date.now()
+
+
+
+            #
+            # a local deferral for the promise of this step run
+            #
+
+            running = defer()
 
             sequence( @steps.map (step) => 
 
@@ -95,13 +111,15 @@ exports.create = (root) ->
                 inject.async 
 
                     #
-                    # step.ref.fn is the injection target and will be called with
-                    # arguments as determined by this injector
+                    # step.ref.fn is the injection target
+                    # -----------------------------------
+                    # console.log step 
+                    # 
+                    # and will be called with arguments as determined 
+                    # by this injector
                     # 
 
                     beforeEach: (done, control) => 
-
-                        
 
                         #
                         # extract the deferral that the injector has associated
@@ -120,8 +138,13 @@ exports.create = (root) ->
                             #
 
                             process.nextTick -> targetDefer.resolve()
-                            done()
+                            done()  
                             return
+                            #
+                            # target function is now called (by the injector)
+                            #
+
+
 
                         #
                         # this step is async
@@ -159,6 +182,7 @@ exports.create = (root) ->
                             targetDefer.resolve()
 
                         done()
+                        return
 
 
                     #
