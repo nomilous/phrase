@@ -11,6 +11,8 @@ exports.create = (root) ->
     # Has root access factory create() scope
     #
 
+    {inject} = root
+
     class PhraseJob
 
         constructor: (opts = {}) -> 
@@ -86,7 +88,7 @@ exports.create = (root) ->
 
             sequence( @steps.map (step) => 
 
-                => step.ref.fn.call this
+                inject.async {}, step.ref.fn
 
             ).then => 
 

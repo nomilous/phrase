@@ -16,61 +16,63 @@ describe 'PhraseJob', ->
             notify: -> 
             reject: ->
 
-        root      = context: inject: inject
+        root      = inject: inject
         PhraseJob = phraseJob.create root
 
-    it 'is a class', -> 
+    xcontext 'general', -> 
 
-        (new PhraseJob).should.be.an.instanceof PhraseJob
+        it 'is a class', -> 
 
-    it 'is initialized with deferral and steps array', (done) -> 
+            (new PhraseJob).should.be.an.instanceof PhraseJob
 
-        job = new PhraseJob
+        it 'is initialized with deferral and steps array', (done) -> 
 
-            deferral: DEFER
-            steps: STEPS
+            job = new PhraseJob
 
-        job.steps.should.equal STEPS
-        job.deferral.should.equal DEFER
-        done()
+                deferral: DEFER
+                steps: STEPS
+
+            job.steps.should.equal STEPS
+            job.deferral.should.equal DEFER
+            done()
 
 
-    it 'can run() the job', (done) -> 
+        it 'can run() the job', (done) -> 
 
-        should.exist PhraseJob.prototype.run
-        done()
+            should.exist PhraseJob.prototype.run
+            done()
 
-    it 'rejects the deferral on assignment of reserved property', (done) -> 
+        it 'rejects the deferral on assignment of reserved property', (done) -> 
 
-        job = new PhraseJob
+            job = new PhraseJob
 
-            steps: STEPS
-            deferral: reject: (error) -> 
+                steps: STEPS
+                deferral: reject: (error) -> 
+
+                    error.should.match /Cannot assign reserved property: uuid/
+                    done()
+
+            job.uuid = 0
+
+
+        it 'throws on assignment of reserved property without deferral', (done) -> 
+
+            job = new PhraseJob
+
+                steps: STEPS
+
+            try job.uuid = 'a'
+            catch error 
 
                 error.should.match /Cannot assign reserved property: uuid/
                 done()
 
-        job.uuid = 0
+        it 'logs to console if running deferral is not defined', -> 
 
+            # job = new PhraseJob steps: STEPS
+            # job.run()
 
-    it 'throws on assignment of reserved property without deferral', (done) -> 
-
-        job = new PhraseJob
-
-            steps: STEPS
-
-        try job.uuid = 'a'
-        catch error 
-
-            error.should.match /Cannot assign reserved property: uuid/
-            done()
-
-    it 'logs to console if running deferral is not defined', -> 
-
-        # job = new PhraseJob steps: STEPS
-        # job.run()
-
-    context 'run()', -> 
+    xcontext 'run()', -> 
 
 
         it 'notifies the deferral on running state', (done) -> 
@@ -173,4 +175,34 @@ describe 'PhraseJob', ->
 
                 result.job.should.eql one: 1, two: 2, three: 3
                 done()
+
+    context 'run() calls each step asynchronously', ->  
+
+        it 'each step is passed through the injector', (done) -> 
+
+            fn1 = ->
+            fn2 = ->
+            fn3 = ->
+
+            STEPS = [
+
+                { type: 'hook', ref: fn: fn1 }
+                { type: 'leaf', ref: fn: fn2 }
+                { type: 'hook', ref: fn: fn3 }
+
+            ]
+
+            FUNCTIONS = []
+            inject.async = (preparator, fn)-> 
+                FUNCTIONS.push fn
+                ->
+
+            job = new PhraseJob steps: STEPS, deferral: DEFER
+            job.run().then -> 
+
+                FUNCTIONS.should.eql [fn1, fn2, fn3]
+
+            done()
+
+
 
