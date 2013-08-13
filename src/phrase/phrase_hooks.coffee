@@ -2,10 +2,21 @@
 
 exports.PhraseHook = class PhraseHook
 
-    constructor: (root, @fn) -> 
+    constructor: (root, @type, opts) -> 
+
+        #
+        # TODO: get control timeout from parent node
+        #
+
+        @fn = switch type
+
+            when 'beforeEach', 'afterEach' then opts.each
+            when 'beforeAll',  'afterAll'  then opts.all
 
         @uuid      = v1()
-        @timeout   = 1000
+        @timeout   = opts.timeout || root.timeout || 2000
+
+        console.log @
 
 
 # 
@@ -26,16 +37,16 @@ exports.bind = (root) ->
         enumerable: false
         get: -> (opts = {}) -> 
 
-            beforeHooks.each.push new PhraseHook root, opts.each if typeof opts.each == 'function'
-            beforeHooks.all.push  new PhraseHook root, opts.all  if typeof opts.all  == 'function'
+            beforeHooks.each.push new PhraseHook root, 'beforeEach', opts if typeof opts.each == 'function'
+            beforeHooks.all.push  new PhraseHook root, 'beforeAll', opts  if typeof opts.all  == 'function'
 
 
     Object.defineProperty global, 'after',
         enumerable: false
         get: -> (opts = {}) -> 
 
-            afterHooks.each.push new PhraseHook root, opts.each if typeof opts.each == 'function'
-            afterHooks.all.push  new PhraseHook root, opts.all  if typeof opts.all  == 'function'
+            afterHooks.each.push new PhraseHook root, 'afterEach', opts if typeof opts.each == 'function'
+            afterHooks.all.push  new PhraseHook root, 'afterAll', opts  if typeof opts.all  == 'function'
 
         
     beforeAll:   beforeHooks.all

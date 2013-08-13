@@ -141,6 +141,11 @@ require( 'also' ) exports, {}, (root) ->
 
             context.notice.use context.token.eventProxy
 
+            #
+            # * used in hooks (TEMPORARY)
+            #
+
+            root.timeout = opts.timeout
 
             #
             # * callback with token and messenger

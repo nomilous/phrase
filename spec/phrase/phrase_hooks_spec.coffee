@@ -5,9 +5,10 @@ PhraseHooks         = require '../../lib/phrase/phrase_hooks'
 
 describe 'PhraseHooks', -> 
 
-    it 'creates before and after hook registrars on the global scope', (done) -> 
+    hooks = PhraseHooks.bind timeout: 200
 
-        hooks = PhraseHooks.bind {}
+    it 'creates before and after hook registrars on the global scope', (done) -> 
+ 
         before.should.be.an.instanceof Function
         after.should.be.an.instanceof Function
         before.toString().should.match /opts.each/
@@ -17,7 +18,6 @@ describe 'PhraseHooks', ->
 
     it 'binds access to registered hooks', (done) -> 
 
-        hooks = PhraseHooks.bind {}
         hooks.beforeAll.should.eql  []
         hooks.beforeEach.should.eql []
         hooks.afterEach.should.eql  []
@@ -44,12 +44,6 @@ describe 'PhraseHooks', ->
             each: afterEach
             all:  afterAll
 
-        #
-        # bind access to the hooks
-        #
-
-        hooks = PhraseHooks.bind {}
-
         hooks.beforeAll[0].fn.should.equal beforeAll
         should.exist hooks.beforeAll[0].uuid
 
@@ -66,3 +60,22 @@ describe 'PhraseHooks', ->
         done()
 
 
+    it 'default hook timeout from root timeout', (done) -> 
+
+        
+        before 
+            all: (done) -> done()
+
+        hooks.beforeAll.pop().timeout.should.equal 200
+        done()
+
+
+    it 'allows local timeout override', (done) -> 
+
+
+        before 
+            timeout: 2
+            all: (done) -> done()
+
+        hooks.beforeAll.pop().timeout.should.equal 2
+        done()

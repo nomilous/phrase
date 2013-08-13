@@ -28,31 +28,31 @@ describe 'RecursorHooks', ->
 
         it 'creates the necessry hooks with root and parent control', (done) -> 
 
-            parent = control: {} 
-            RUN    = [] 
+            control = {} 
+            RUN     = [] 
 
             RecursorBeforeAll.create = (root, parentControl) ->
-                parentControl.should.eql parent
+                parentControl.should.eql control
                 RUN.push 1
                 ->
 
             RecursorBeforeEach.create = (root, parentControl) ->
-                parentControl.should.eql parent
+                parentControl.should.eql control
                 RUN.push 2
                 ->
 
             RecursorAfterEach.create = (root, parentControl) ->
-                parentControl.should.eql parent
+                parentControl.should.eql control
                 RUN.push 3
                 ->
 
             RecursorAfterAll.create = (root, parentControl) ->
-                parentControl.should.eql parent
+                parentControl.should.eql control
                 RUN.push 4
                 ->
 
             root   = context: emitter: emit: ->
-            hooks  = RecursorHooks.bind root, parent
+            hooks  = RecursorHooks.bind root, control
 
             RUN.should.eql [1, 2, 3, 4]
             done()
@@ -60,9 +60,9 @@ describe 'RecursorHooks', ->
 
         it 'returns the necessary hooks', (done) -> 
 
-            root   = context: emitter: emit: ->
-            parent = control: {} 
-            hooks  = RecursorHooks.bind root, parent
+            root    = context: emitter: emit: ->
+            control = {} 
+            hooks   = RecursorHooks.bind root, control
 
             hooks.beforeAll.should.be.an.instanceof  Function
             hooks.beforeEach.should.be.an.instanceof Function

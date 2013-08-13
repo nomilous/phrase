@@ -53,7 +53,7 @@ describe 'integrations', ->
             before all:  (done) -> done()
             before each: -> 
             after  each: -> 
-            after  all:  (done) -> 
+            after  timeout: 1800, all:  (done) -> 
 
             system 'sensory',
 
