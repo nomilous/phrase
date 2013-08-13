@@ -115,9 +115,13 @@ exports.create = (root) ->
                     # -----------------------------------
                     # console.log step 
                     # 
-                    # and will be called with arguments as determined 
-                    # by this injector
+                    # * and will be called with arguments as determined 
+                    #   by this injector
                     # 
+                    # * and is run on this as context
+                    # 
+
+                    context: this
 
                     beforeEach: (done, control) => 
 
@@ -175,7 +179,7 @@ exports.create = (root) ->
 
                             #
                             # custom resolver passed as (done, ...) to
-                            # step function clears the timeout
+                            # the target function
                             #
 
                             clearTimeout timeout

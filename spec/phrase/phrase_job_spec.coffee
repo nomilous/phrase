@@ -72,12 +72,8 @@ describe 'PhraseJob', ->
             # job = new PhraseJob steps: STEPS
             # job.run()
 
-    it 'needs to set context on the othr side of injection', -> 
 
-        throw 'pending new feature in also'
-
-
-    xcontext 'run()', -> 
+    context 'run()', -> 
 
 
         it 'notifies the deferral on running state', (done) -> 

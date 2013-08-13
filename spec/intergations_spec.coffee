@@ -31,6 +31,9 @@ describe 'integrations', ->
 
                         (result) -> 
                             console.log '\n', 'RESULT', '\n', result
+
+                            
+                            console.log result.job.ultraviolet.should.equal 234
                             done()
 
                         (error) -> 
@@ -56,7 +59,7 @@ describe 'integrations', ->
 
                     component 'eyes', (end) ->
 
-                        @ultraviolet = true
+                        @ultraviolet = 234
 
             # system 'flight', (subsystem) ->
 
