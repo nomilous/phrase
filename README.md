@@ -35,6 +35,7 @@ root = require('phrase').createRoot
     # 
 
     #leaf: ['end']
+    #timeout: 2000
 
 
     #
@@ -88,6 +89,8 @@ root 'phrase text', (nested) ->
                         #
 
     before 
+
+        #timeout: 100 
 
         all: (done) -> 
 
