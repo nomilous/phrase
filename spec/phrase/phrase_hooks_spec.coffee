@@ -27,8 +27,6 @@ describe 'PhraseHooks', ->
 
     it 'registered hooks are accessable through the bind', (done) -> 
 
-        Date.now = -> 1375908472253
-
         #
         # create an register some hooks
         # 
@@ -53,51 +51,18 @@ describe 'PhraseHooks', ->
         hooks = PhraseHooks.bind {}
 
         hooks.beforeAll[0].fn.should.equal beforeAll
-        hooks.beforeAll[0].createdAt.should.equal  1375908472253
-        hooks.beforeAll[0].runCount.should.equal  0 
         should.exist hooks.beforeAll[0].uuid
 
         hooks.beforeEach[0].fn.should.equal  beforeEach
-        hooks.beforeEach[0].createdAt.should.equal  1375908472253
-        hooks.beforeEach[0].runCount.should.equal  0
         should.exist hooks.beforeEach[0].uuid
 
         hooks.afterEach[0].fn.should.equal afterEach
-        hooks.afterEach[0].createdAt.should.equal  1375908472253
-        hooks.afterEach[0].runCount.should.equal  0
         should.exist hooks.afterEach[0].uuid
 
         hooks.afterAll[0].fn.should.equal afterAll
-        hooks.afterAll[0].createdAt.should.equal  1375908472253
-        hooks.afterAll[0].runCount.should.equal  0
         should.exist hooks.afterAll[0].uuid
 
 
         done()
 
 
-    context 'run()', ->
-
-        it 'increments the run count', (done) -> 
-
-
-            tick = 0
-            Date.now = -> ++tick
-            hookFn = -> 'mooo'
-
-            before each: hookFn
-
-            hooks = PhraseHooks.bind {}
-            hook  = hooks.beforeEach.pop()
-            hook.runCount.should.equal 0
-            hook.run()
-            hook.run()
-
-            hook.should.eql 
-
-            hook.fn.should.equal hookFn
-            hook.createdAt.should.equal 1
-            hook.runCount.should.equal  2
-            hook.lastRunAt.should.equal 3
-
-            done()

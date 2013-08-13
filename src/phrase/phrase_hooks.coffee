@@ -4,21 +4,9 @@ exports.PhraseHook = class PhraseHook
 
     constructor: (root, @fn) -> 
 
-        @createdAt = Date.now()
-        @runCount  = 0
         @uuid      = v1()
-
-        #
-        # TODO: configurable timeout on hook
-        #
-
         @timeout   = 1000
 
-    run: -> 
-
-        @runCount++
-        @lastRunAt = Date.now()
-        # console.log "run hook:", @fn.toString()
 
 # 
 # create before() and after() hook registrars on global scope

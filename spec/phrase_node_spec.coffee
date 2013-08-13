@@ -8,8 +8,6 @@ describe 'PhraseNode', ->
         node = new PhraseNode
 
         should.exist node.uuid
-        should.exist node.runCount
-        should.exist node.createdAt
         done()
 
 

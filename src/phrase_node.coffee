@@ -13,7 +13,4 @@ module.exports = class PhraseNode
 
         @[property] = properties[property] for property of properties
         @uuid       = v1()
-        @createdAt  = Date.now()
-        @runCount   = 0
-
         # console.log "[#{ @token.name }] #{ @text }"
