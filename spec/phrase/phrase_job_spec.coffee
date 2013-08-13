@@ -258,6 +258,36 @@ describe 'PhraseJob', ->
 
             )
 
+        it 'always injects resolver into leaf phrases', (done) -> 
+
+
+            (new PhraseJob 
+                deferral: DEFER
+                steps: [ 
+
+                    type: 'leaf'
+                    ref: 
+
+                        
+                        fn: (arg1) -> 
+
+                            #
+                            # step.ref.fn signature has done at arg1
+                            # ...custom resolver should have been injected
+                            #
+
+                            arg1.should.be.an.instanceof Function
+                            arg1.toString().should.match /clearTimeout/
+                            arg1()
+
+                ]
+
+            ).run().then(
+
+                -> done()
+                ->
+                -> 
+            )
 
 
 

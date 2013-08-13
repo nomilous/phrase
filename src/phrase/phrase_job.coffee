@@ -132,7 +132,21 @@ exports.create = (root) ->
 
                         targetDefer = control.defer
 
-                        unless control.signature[0] == 'done'
+                        unless (
+
+                            #
+                            # leaves always have the resolver injected
+                            # 
+
+                            step.type == 'leaf' || 
+
+                            #
+                            # hardcoded resolver signature for hooks 
+                            # 
+
+                            control.signature[0] == 'done'
+
+                        )
 
                             #
                             # this step is not async
