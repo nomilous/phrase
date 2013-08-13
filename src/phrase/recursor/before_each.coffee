@@ -64,8 +64,8 @@ exports.create = (root, parentControl) ->
         #
 
         phraseControl          ||= {}
-        phraseControl.leaf       = parentControl.leaf
-        phraseControl.timeout    = parentControl.timeout
+        phraseControl.leaf     ||= parentControl.leaf
+        phraseControl.timeout  ||= parentControl.timeout
         injectionControl.args[0] = phraseText
         injectionControl.args[1] = phraseControl
         injectionControl.args[2] = phraseFn

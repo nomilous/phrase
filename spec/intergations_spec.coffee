@@ -10,8 +10,8 @@ describe 'integrations', ->
 
             title: 'Falcon'
             uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
-
-            leaf: ['ok']
+            leaf: ['end', 'done']
+            timeout: 100
 
             (token, notice) -> 
 
@@ -55,15 +55,24 @@ describe 'integrations', ->
             after  each: -> 
             after  all:  (done) -> 
 
-            system 'sensory', (subsystem) -> 
+            system 'sensory',
 
-                subsystem 'vision', (component) -> 
+                #
+                # redefined leaf match and timeout for all subnodes
+                #
 
-                    component 'eyes', (ok) ->
+                leaf: ['blink']
+                timeout: 1000
 
-                        console.log END: ok
+                (subsystem) -> 
 
-                        @ultraviolet = 234
+                    subsystem 'vision', (component) -> 
+
+                        component 'eyes', (blink) ->
+
+                            console.log END: blink
+
+                            @ultraviolet = 234
 
             # system 'flight', (subsystem) ->
 
