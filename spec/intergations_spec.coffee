@@ -11,7 +11,7 @@ describe 'integrations', ->
             title: 'Falcon'
             uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
             #leaf: ['end', 'done']
-            timeout: 100
+            timeout: 1000
 
             (token, notice) -> 
 
@@ -35,15 +35,15 @@ describe 'integrations', ->
                             console.log '\n', 'RESULT', '\n', result
 
                             
-                            console.log result.job.ultraviolet.should.equal 234
+                            result.job.ultraviolet.should.equal 234
                             done()
 
                         (error) -> 
                             console.log '\n', 'ERROR',  '\n', error
 
                         (update) -> 
-                            console.log '\n', 'UPDATE', '\n', 
-                                update.state, JSON.stringify update, null, 2
+                            # console.log '\n', 'UPDATE', '\n', 
+                            #     update.state, JSON.stringify update, null, 2
 
                     )
 
@@ -54,20 +54,38 @@ describe 'integrations', ->
             before each: -> 
             after  each: -> 
             after  all:  (done) -> 
+                console.log 'afterall'
+                setTimeout done, 500
 
             system 'sensory', (subsystem) -> 
 
                 subsystem 'vision', (component) -> 
 
-                    component 'eyes', (end) ->
+                    component 'left eye', (end) ->
 
+                        console.log 'left eye'
                         @ultraviolet = 234
-                        end()
+                        setTimeout end, 300
 
-            # system 'flight', (subsystem) ->
 
-            #     subsystem 'left wing', (end) -> 
-            #     subsystem 'right wing', (end) -> 
+                    component 'right eye', (end) ->
+
+                        console.log 'left eye'
+                        setTimeout end, 300
+
+
+
+            system 'flight', (subsystem) ->
+
+                subsystem 'left wing', (end) -> 
+
+                    console.log 'left wing'
+                    setTimeout end, 300
+
+                subsystem 'right wing', (end) -> 
+
+                    console.log 'right wing'
+                    setTimeout end, 300
 
             # system 'navigation', (subsystem) -> 
 

@@ -106,7 +106,7 @@ exports.create = (root, parentControl) ->
             # TODO: configurable timeout on phraseNode
             #
 
-            timeout: 2000
+            timeout: phraseControl.timeout
             
             #
             # TODO: determine phrase line in source file
