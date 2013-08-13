@@ -70,9 +70,8 @@ describe 'integrations', ->
 
                         component 'eyes', (blink) ->
 
-                            console.log END: blink
-
                             @ultraviolet = 234
+                            blink()
 
             # system 'flight', (subsystem) ->
 
