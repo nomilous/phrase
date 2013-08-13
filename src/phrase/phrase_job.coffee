@@ -34,13 +34,11 @@ exports.create = (root) ->
 
             localOpts =
 
-                #
-                # storage for progress indication
-                #
-
                 progress: -> 
+
                     steps: if opts.steps? then opts.steps.length else 0
-                    done:  0
+                    done:  opts.steps.map( (s) -> s.done ).length
+
 
             #
             # reserved / silent properties
@@ -53,7 +51,7 @@ exports.create = (root) ->
                     Object.defineProperty this, property,
 
                         enumerable: false
-                        get: -> opts[property] || localOpts[property]
+                        get: -> localOpts[property] || opts[property]
                         set: (value) -> 
 
                             #
@@ -201,6 +199,12 @@ exports.create = (root) ->
 
                         done()
                         return
+
+
+                    afterEach: (done) => 
+
+                        step.done = true
+                        done()
 
 
                     #

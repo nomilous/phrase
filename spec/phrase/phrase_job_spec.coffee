@@ -171,9 +171,7 @@ describe 'PhraseJob', ->
 
                 msg = MESSAGES.pop()
                 msg.state.should.equal 'run::complete'
-
-                console.log FIX: msg.progress
-
+                msg.progress.should.eql { steps: 3, done: 3 }
                 result.job.should.eql one: 1, two: 2, three: 3
                 done()
 
@@ -209,8 +207,6 @@ describe 'PhraseJob', ->
             (new PhraseJob 
                 deferral: DEFER
                 steps: [ ref: fn: -> 
-
-                    console.log 'moo'
 
                     #
                     # step.ref.fn contains no arguments,

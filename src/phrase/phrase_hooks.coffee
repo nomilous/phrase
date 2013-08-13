@@ -16,8 +16,6 @@ exports.PhraseHook = class PhraseHook
         @uuid      = v1()
         @timeout   = opts.timeout || root.timeout || 2000
 
-        console.log @
-
 
 # 
 # create before() and after() hook registrars on global scope
