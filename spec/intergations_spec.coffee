@@ -11,6 +11,8 @@ describe 'integrations', ->
             title: 'Falcon'
             uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
 
+            leaf: ['ok']
+
             (token, notice) -> 
 
                 token.on 'ready', -> 
@@ -57,7 +59,9 @@ describe 'integrations', ->
 
                 subsystem 'vision', (component) -> 
 
-                    component 'eyes', (end) ->
+                    component 'eyes', (ok) ->
+
+                        console.log END: ok
 
                         @ultraviolet = 234
 

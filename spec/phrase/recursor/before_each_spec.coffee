@@ -28,7 +28,7 @@ describe 'RecursorBeforeEach', ->
             defer: resolve: ->
             args: ['phrase text', {}, (nested) -> ]
 
-        parent = control: phraseToken: name: 'it'
+        parent = phraseToken: name: 'it'
 
         PhraseLeaf_swap = PhraseLeaf.create
         PhraseLeaf.create = -> detect: (phrase, isLeaf) -> isLeaf true 
@@ -62,7 +62,7 @@ describe 'RecursorBeforeEach', ->
 
         injectionControl.args = [ 'phrase text', { key: 'VALUE' }, nestedPhraseFn ]
         PhraseLeaf.create = -> detect: (phrase, isLeaf) -> isLeaf true
-        parent.control.phraseToken = name: 'it'
+        parent.phraseToken = name: 'it'
         injectionControl.beforeEach = phraseHookFn
         
         injectionControl.defer = 
@@ -118,7 +118,7 @@ describe 'RecursorBeforeEach', ->
         #
         # pending new stack element
         #
-        parent.control = phraseToken: name: 'it'
+        parent.phraseToken = name: 'it'
         injectionControl.args      = [ 'has this child in', {}, -> ]
         PhraseLeaf.create = -> detect: (phrase, isLeaf) -> isLeaf true 
         SEQUENCE = []

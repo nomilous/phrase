@@ -10,9 +10,8 @@ exports.create = (root, parentControl) ->
 
     {context, util}  = root
     {stack, notice}  = context
-    {control}        = parentControl
 
-    phraseLeaf = PhraseLeaf.create root
+    phraseLeaf = PhraseLeaf.create root, parentControl
 
     (done, injectionControl) -> 
 
@@ -55,14 +54,22 @@ exports.create = (root, parentControl) ->
         # * These args are then passed oneward to the injection target for recrsion.
         # 
 
-        phraseText    = if typeof injectionControl.args[0] == 'function' then {} else injectionControl.args[0]
+        phraseText    = if typeof injectionControl.args[0] == 'function' then '' else injectionControl.args[0]
         phraseControl = if typeof injectionControl.args[1] == 'function' then {} else injectionControl.args[1]
         phraseFn      = injectionControl.args[2] || injectionControl.args[1] || injectionControl.args[0] || -> console.log 'NO ARGS'
 
 
+        #
+        # inherit parent control unless re-defined and assign injection args
+        #
+
+        phraseControl          ||= {}
+        phraseControl.leaf       = parentControl.leaf
+        phraseControl.timeout    = parentControl.timeout
         injectionControl.args[0] = phraseText
         injectionControl.args[1] = phraseControl
         injectionControl.args[2] = phraseFn
+
 
         #
         # phraseToken 
@@ -93,7 +100,7 @@ exports.create = (root, parentControl) ->
         stack.push phrase = new PhraseNode 
 
             text:     phraseText
-            token:    control.phraseToken
+            token:    parentControl.phraseToken
 
             #
             # TODO: configurable timeout on phraseNode
@@ -124,7 +131,6 @@ exports.create = (root, parentControl) ->
                 afterEach:  injectionControl.afterEach
                 afterAll:   injectionControl.afterAll
 
-            # control:  phraseControl
             fn:       phraseFn
             deferral: deferral
             queue:    injectionControl.queue

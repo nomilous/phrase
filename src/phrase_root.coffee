@@ -75,7 +75,7 @@ require( 'also' ) exports, {}, (root) ->
             title: {} 
             uuid: {} 
             leaf: 
-                $default: ['end']
+                $default: ['end', 'done']
                 $description: """
 
                     This specifies an array of possible phraseFn arg1 signature names 
@@ -90,6 +90,23 @@ require( 'also' ) exports, {}, (root) ->
                             # 
 
                 """
+            timeout: 
+                $default: 2000
+                $description: """
+
+                    This specifies how long to allow asynchronous hooks or leaves
+                    to run before it is assumed they will not complete.
+
+                    eg. 
+
+                    before each: (done) -> 
+
+                        #
+                        # has 2 seconds to call done() or it will timeout
+                        #
+
+                """
+
                 
 
         linkFn: 

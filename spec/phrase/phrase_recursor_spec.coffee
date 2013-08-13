@@ -7,21 +7,25 @@ describe 'PhraseRecursor', ->
     context 'create()', -> 
 
         root = undefined
+        opts = undefined
         asyncInjectionFn = ->
 
 
         beforeEach ->
 
             root = 
-
                 context: {}
                 inject:  
                     async: -> 
                         return asyncInjectionFn
 
+            opts = 
+                leaf: ['end']
+                timeout: 1000
+
         it 'returns a function created by the async injection decorator', (done) -> 
 
-            PhraseRecursor.create( root ).should.equal asyncInjectionFn
+            PhraseRecursor.create( root, opts ).should.equal asyncInjectionFn
             done()
 
 
@@ -30,11 +34,11 @@ describe 'PhraseRecursor', ->
             PhraseRecursorHooks.bind = (rooot, parent) -> 
 
                 rooot.should.equal root
-                parent.control.phraseToken.name.should.equal 'root'
+                parent.phraseToken.name.should.equal 'root'
                 done()
                 throw 'go no further'
 
-            try PhraseRecursor.create root, {}
+            try PhraseRecursor.create root, opts
 
 
         it 'configures the injection decorator and assigns recursion control hooks', (done) -> 
@@ -61,12 +65,12 @@ describe 'PhraseRecursor', ->
 
                 throw 'go no further'
 
-            try PhraseRecursor.create root
+            try PhraseRecursor.create root, opts
 
         it 'assigns access to registered phrase hooks', (done) -> 
 
             before each: -> done()
-            try PhraseRecursor.create root
+            try PhraseRecursor.create root, opts
             root.context.hooks.beforeEach[0].fn()
 
 
@@ -74,7 +78,7 @@ describe 'PhraseRecursor', ->
 
             root.context.stack = 'STACK'
             root.inject.async = (Preparator, decoratedFn) ->  return {}
-            recursor = PhraseRecursor.create root
+            recursor = PhraseRecursor.create root, opts
             recursor.stack.should.equal 'STACK'
             done()
 
@@ -88,7 +92,7 @@ describe 'PhraseRecursor', ->
                 CALLS.push arguments
                 decoratedFn.apply this, arguments
 
-            recursor = PhraseRecursor.create root
+            recursor = PhraseRecursor.create root, opts
 
             recursor 'outer phrase string', {}, (nested) ->
 
