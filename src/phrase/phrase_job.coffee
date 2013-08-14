@@ -37,7 +37,7 @@ exports.create = (root) ->
                 progress: -> 
 
                     steps: if opts.steps? then opts.steps.length else 0
-                    done:  opts.steps.map( (s) -> s.done ).length
+                    done:  opts.steps.filter( (s) -> s.done ).length
 
 
             #
@@ -212,6 +212,15 @@ exports.create = (root) ->
                     afterEach: (done) => 
 
                         step.done = true
+
+                        @deferral.notify
+
+                            state:   'run::started'
+                            class:    @constructor.name
+                            uuid:     @uuid  
+                            progress: @progress()
+                            at:       Date.now()
+
                         done()
 
 
@@ -277,17 +286,7 @@ exports.create = (root) ->
 
                         notify.defer.resolve()
                         delete notify.defer
-
                         running.notify notify
-
-                        #
-                        # TODO: consider sending this notification out the very top
-                        #       ( @deferral.notify() )
-                        #       to:  token.run(...).then( -> -> -> )
-                        #
-
-
-                        return
 
             )
 
