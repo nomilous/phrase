@@ -197,7 +197,7 @@ describe 'PhraseJob', ->
             )
 
 
-        it '      (BUG)      notifies on error when step is synchronous', (done) -> 
+        it 'notifies on error when step is synchronous', (done) -> 
 
             STEPS = [
 

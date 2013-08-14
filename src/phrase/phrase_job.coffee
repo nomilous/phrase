@@ -155,12 +155,13 @@ exports.create = (root) ->
                             # 
                             # the promise therefore needs to be maually resolved
                             #
-############################# BUG: Non async steps to don't notify on error
                             # 
+                            # BUG: Non async steps to don't notify on error
+                            # process.nextTick -> targetDefer.resolve()
                             # 
-
-                            
-                            process.nextTick -> targetDefer.resolve()
+                            # nasty fix...
+                            # 
+                            setTimeout targetDefer.resolve, 1
                             done()
                             return
                             #
@@ -243,11 +244,13 @@ exports.create = (root) ->
 
                 (error)  -> console.log 'ERROR_IN_PHRASE_JOB', error.stack
 
-                (notify) -> 
+                (notify) => 
 
                     if notify.event == 'error' or notify.event == 'timeout'
 
                         console.log HANDLE_TIMEOUT_OR_ERROR: notify
+
+                        #console.log STEPS: @steps
 
                         #
                         # one of the steps has timed out or errored
