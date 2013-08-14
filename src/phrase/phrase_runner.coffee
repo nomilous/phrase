@@ -191,8 +191,8 @@ api =
                     #
                     # queue all afterAlls...
                     #
-
-                    position = steps.push( set: set, type: 'hook', ref: afterAll ) - 1
+                    step = sets: [set], type: 'hook', ref: afterAll
+                    position = steps.push( step ) - 1
                     if afters[ afterAll.uuid ]?
 
                         #
@@ -201,6 +201,7 @@ api =
                         #
 
                         oldPosition = afters[ afterAll.uuid ]
+                        step.sets.push pset for pset in steps[ oldPosition ].sets
                         delete steps[ oldPosition ]
                         
                     afters[ afterAll.uuid ] = position

@@ -252,7 +252,7 @@ describe 'PhraseRunner', ->
                 steps[i++].set.should.equal 2
                 steps[i++].set.should.equal 2  # /RUN_LEAF_TWO/
                 steps[i++].set.should.equal 2
-                steps[i++].set.should.equal 2  # last all
+                steps[i++].sets.should.eql [2]  # last all
                 steps[i++].set.should.equal 2
                 steps[i++].set.should.equal 2
                 
@@ -260,9 +260,9 @@ describe 'PhraseRunner', ->
                 steps[i++].set.should.equal 3
                 steps[i++].set.should.equal 3 # /RUN_LEAF_THREE/
                 steps[i++].set.should.equal 3
-                steps[i++].set.should.equal 3 # last all
+                steps[i++].sets.should.eql [3,2,1] # last all
                 steps[i++].set.should.equal 3
-                steps[i++].set.should.equal 3 # last all
+                steps[i++].sets.should.eql [3,2,1] # last all
 
                 done()
 
