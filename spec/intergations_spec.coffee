@@ -52,8 +52,9 @@ describe 'integrations', ->
 
             before all:  (done) -> done()
             before each: -> 
-            after  each: -> 
-            after  all:  (done) -> 
+            after  each: ->  
+            after  all:  ->  
+
                 console.log 'afterall'
                 setTimeout done, 500
 
@@ -69,6 +70,10 @@ describe 'integrations', ->
 
 
                     component 'right eye', (end) ->
+
+                        #throw new Error 'mooo'
+
+                        1.should.equal 2
 
                         console.log 'left eye'
                         setTimeout end, 300

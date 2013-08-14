@@ -175,6 +175,50 @@ describe 'PhraseJob', ->
                 result.job.should.eql one: 1, two: 2, three: 3
                 done()
 
+        it 'notifies on error', (done) -> 
+
+            STEPS = [
+
+                ref: fn: (done) -> throw new Error 'mooo'
+
+            ]
+            job = new PhraseJob steps: STEPS, deferral: DEFER
+            job.run().then(
+
+                -> 
+                ->
+                (notify) ->
+
+                    notify.event.should.equal 'error'
+                    notify.error.should.match /mooo/
+                    done()
+
+
+            )
+
+
+        it '      (BUG)      notifies on error when step is synchronous', (done) -> 
+
+            STEPS = [
+
+                ref: fn: -> throw new Error 'mooo'
+
+            ]
+            job = new PhraseJob steps: STEPS, deferral: DEFER
+            job.run().then(
+
+                -> 
+                ->
+                (notify) ->
+
+                    notify.event.should.equal 'error'
+                    notify.error.should.match /mooo/
+                    done()
+
+
+            )
+
+
     context 'run() calls each step asynchronously', ->  
 
         it 'each step is passed through the injector', (done) -> 

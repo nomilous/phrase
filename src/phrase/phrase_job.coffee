@@ -118,8 +118,11 @@ exports.create = (root) ->
                     # 
                     # * and is run on this as context
                     # 
+                    # * and is set to notifiy instead of reject on error
+                    # 
 
                     context: this
+                    notifyOnError: true
 
                     beforeEach: (done, control) => 
 
@@ -152,9 +155,13 @@ exports.create = (root) ->
                             # 
                             # the promise therefore needs to be maually resolved
                             #
+############################# BUG: Non async steps to don't notify on error
+                            # 
+                            # 
 
+                            
                             process.nextTick -> targetDefer.resolve()
-                            done()  
+                            done()
                             return
                             #
                             # target function is now called (by the injector)
@@ -238,13 +245,13 @@ exports.create = (root) ->
 
                 (notify) -> 
 
-                    if notify.event == 'timeout'
+                    if notify.event == 'error' or notify.event == 'timeout'
 
-                        console.log HANDLE_TIMEOUT: notify
+                        console.log HANDLE_TIMEOUT_OR_ERROR: notify
 
                         #
-                        # one of the steps has timed out
-                        # ------------------------------
+                        # one of the steps has timed out or errored
+                        # -----------------------------------------
                         # 
                         # * TODO: this needs to error (without attempting run)
                         #         on all leaves in the job that depend on the
