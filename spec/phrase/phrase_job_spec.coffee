@@ -215,8 +215,23 @@ describe 'PhraseJob', ->
                     notify.error.should.match /mooo/
                     done()
 
-
             )
+
+        it 'sets each step to done', (done) -> 
+
+            STEPS = [
+
+                { ref: fn: -> }
+                { ref: fn: -> }
+                { ref: fn: -> }
+
+
+            ]
+            job = new PhraseJob steps: STEPS, deferral: DEFER
+            job.run().then -> 
+
+                STEPS.map (s) -> s.done.should.equal true
+                done()
 
 
     context 'run() calls each step asynchronously', ->  
