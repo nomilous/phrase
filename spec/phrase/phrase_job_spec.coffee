@@ -217,6 +217,17 @@ describe 'PhraseJob', ->
 
             )
 
+
+
+        it 'error in beforeEach causes job to skip the rest of the set'
+        it 'error in beforeEach notifies the set leaf'
+        it 'error in beforeAll causes job to skip all sets which depend on it'
+        it 'error in beforeAll notifies all affected leaves'
+        it 'error in afterAll notifies'
+        it 'error in afterEach notifies'
+
+
+
         xit 'sets each step to done', (done) -> 
 
             STEPS = [
@@ -233,7 +244,7 @@ describe 'PhraseJob', ->
                 done()
 
 
-        it 'notifies parent deferral on each step completion', (done) -> 
+        xit 'notifies parent deferral on each step completion', (done) -> 
 
             STEPS = [
 
@@ -252,7 +263,7 @@ describe 'PhraseJob', ->
                 MESSAGES.map( (m) -> 
 
                     state: m.state, progress: m.progress
-                    
+
                 ).should.eql [ 
                     { state: 'run::starting', progress: { steps: 3, done: 0 } }
                     { state: 'run::started',  progress: { steps: 3, done: 1 } }
@@ -261,6 +272,8 @@ describe 'PhraseJob', ->
                     { state: 'run::complete', progress: { steps: 3, done: 3 } }
                 ]
                 done()
+
+
 
 
     xcontext 'run() calls each step asynchronously', ->  

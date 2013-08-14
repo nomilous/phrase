@@ -43,7 +43,7 @@ describe 'integrations', ->
 
                         (update) -> 
                             # console.log '\n', 'UPDATE', '\n', 
-                            #     update.state, JSON.stringify update, null, 2
+                            #     update.state || update.event, JSON.stringify update, null, 2
 
                     )
 
@@ -73,7 +73,7 @@ describe 'integrations', ->
 
                         #throw new Error 'mooo'
 
-                        1.should.equal 2
+                        #1.should.equal 2
 
                         console.log 'left eye'
                         setTimeout end, 300
@@ -81,6 +81,8 @@ describe 'integrations', ->
 
 
             system 'flight', (subsystem) ->
+
+                before each: -> 1.should.equal 2
 
                 subsystem 'left wing', (end) -> 
 

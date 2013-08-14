@@ -146,33 +146,34 @@ describe 'PhraseRunner', ->
             try TOKEN.run( uuid: NEST_ONE )
 
 
-        it 'notifies state of the promise', (done) ->
+        xit 'notifies state of the promise', (ok) ->
 
             tick = 0
             Date.now = -> tick++
 
-            #Object.defineProperty require('node-uuid'), 'v1', get: -> -> 'UUID'
-            MESSAGES = {}
+            MESSAGES = []
 
             TOKEN.run( uuid: NEST_ONE ).then(
 
                 (result) -> 
 
-                    should.exist MESSAGES['scan::starting']
-                    should.exist MESSAGES['scan::complete']
-                    should.exist MESSAGES['run::starting']
-                    should.exist MESSAGES['run::complete']
+                    console.log JSON.stringify MESSAGES, null, 2
 
-                    # console.log JSON.stringify MESSAGES, null, 2
+                    # should.exist MESSAGES['scan::starting']
+                    # should.exist MESSAGES['scan::complete']
+                    # should.exist MESSAGES['run::starting']
+                    # should.exist MESSAGES['run::complete']
 
-                    done()
+                    
+
+                    ok()
 
 
                 (error)  -> 
 
                     console.log error.stack
 
-                (update) -> MESSAGES[update.state] = update
+                (update) -> MESSAGES.push update
 
             ) 
 
@@ -222,6 +223,46 @@ describe 'PhraseRunner', ->
                 steps[i++].ref.fn.toString().should.match /AFTER-ALL-OUTSIDE/   # last all
                 # 
                 should.not.exist steps[i++]
+
+                done()
+
+
+        it 'assigns step sets per leaf', (done) -> 
+
+            root     = context: graph: GRAPH
+            opts     = uuid: NEST_ONE
+            deferral = notify: ->
+
+
+            PhraseRunner.getSteps( root, opts, deferral ).then (steps) -> 
+
+                i = 0
+
+                steps[i++].set.should.equal 1 # first all
+                steps[i++].set.should.equal 1
+                steps[i++].set.should.equal 1 # first all
+                steps[i++].set.should.equal 1
+                steps[i++].set.should.equal 1 # /RUN_LEAF_ONE/
+                steps[i++].set.should.equal 1
+                steps[i++].set.should.equal 1
+
+                steps[i++].set.should.equal 2
+                steps[i++].set.should.equal 2
+                steps[i++].set.should.equal 2  # first all
+                steps[i++].set.should.equal 2
+                steps[i++].set.should.equal 2  # /RUN_LEAF_TWO/
+                steps[i++].set.should.equal 2
+                steps[i++].set.should.equal 2  # last all
+                steps[i++].set.should.equal 2
+                steps[i++].set.should.equal 2
+                
+                steps[i++].set.should.equal 3
+                steps[i++].set.should.equal 3
+                steps[i++].set.should.equal 3 # /RUN_LEAF_THREE/
+                steps[i++].set.should.equal 3
+                steps[i++].set.should.equal 3 # last all
+                steps[i++].set.should.equal 3
+                steps[i++].set.should.equal 3 # last all
 
                 done()
 

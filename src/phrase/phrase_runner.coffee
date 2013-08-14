@@ -83,12 +83,19 @@ api =
         #           last encountered instance of each remains in the final  
         #           step sequence.
         #
+        # set     - A sequence number assigned to the each leaf group, included
+        #           in each set is one leaf and all the before and after hooks
+        #           that surround it in the step sequence.
+        # 
 
         steps     = []
         befores   = {}
         afters    = {}
+        set       = 0
 
         start = recurse = -> 
+
+            set++
 
             #
             # walk to and fro from root to each target leaf accumulating
@@ -135,7 +142,7 @@ api =
                 #
                
                 if beforeAll? and not befores[beforeAll.uuid]?
-                    position = steps.push( type: 'hook', ref: beforeAll ) - 1
+                    position = steps.push( set: set, type: 'hook', ref: beforeAll ) - 1
                     befores[beforeAll.uuid] = position
 
                 #
@@ -143,14 +150,14 @@ api =
                 #
 
                 if beforeEach?
-                    steps.push type: 'hook', ref: beforeEach
+                    steps.push set: set, type: 'hook', ref: beforeEach
                     
 
             #
             # queue the leaf function
             #
 
-            steps.push type: 'leaf', ref: leaf
+            steps.push set: set, type: 'leaf', ref: leaf
 
 
             # 
@@ -166,7 +173,7 @@ api =
 
                 if afterEach?
 
-                    steps.push type: 'hook', ref: afterEach
+                    steps.push set: set, type: 'hook', ref: afterEach
 
                 if afterAll?
 
@@ -174,7 +181,7 @@ api =
                     # queue all afterAlls...
                     #
 
-                    position = steps.push( type: 'hook', ref: afterAll ) - 1
+                    position = steps.push( set: set, type: 'hook', ref: afterAll ) - 1
                     if afters[ afterAll.uuid ]?
 
                         #

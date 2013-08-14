@@ -70,6 +70,28 @@ exports.create = (root) ->
 
                             opts.deferral.reject new Error "Cannot assign reserved property: #{property}(=#{value})"
 
+
+        handleError: (error, done) -> 
+
+            errored  = undefined
+            nextleaf = undefined
+
+
+            @steps.map (s) -> 
+
+                if s.done
+                    errored = s
+                else
+                    if errored? and not nextleaf?
+                        nextleaf = s if s.type == 'leaf'
+
+            # #if errored.type == 'hook' 
+
+            console.log HANDLE_ERROR_HOOK: errored
+            console.log NEXT_LEAF: nextleaf
+            
+
+            done()
                 
 
         run: ->
@@ -101,6 +123,8 @@ exports.create = (root) ->
             running = defer()
 
             sequence( @steps.map (step) => 
+
+                current = step
 
                 #
                 # each job step is called through the async injector
@@ -188,7 +212,6 @@ exports.create = (root) ->
                                 event: 'timeout'
                                 class: @constructor.name
                                 uuid:  @uuid
-                                step:  step
                                 at:    Date.now()
                                 defer: targetDefer
 
@@ -257,36 +280,11 @@ exports.create = (root) ->
 
                     if notify.event == 'error' or notify.event == 'timeout'
 
-                        console.log HANDLE_TIMEOUT_OR_ERROR: notify
+                        @handleError notify, -> 
 
-                        #console.log STEPS: @steps
-
-                        #
-                        # one of the steps has timed out or errored
-                        # -----------------------------------------
-                        # 
-                        # * TODO: this needs to error (without attempting run)
-                        #         on all leaves in the job that depend on the
-                        #         step. 
-                        #  
-                        #         hooks can have multiple dependant leaves
-                        #         before each hooks will be retries on the 
-                        #         next leaf and therefore only affect one
-                        #         leaf 
-                        #                 
-                        # * included in this notification is the deferral
-                        #   associated with the timed out step, whether or
-                        #   not it resolves or rejects may depend...
-                        # 
-                        #   for now, resolve.
-                        # 
-                        #   reject leads to the entire job failing, 
-                        #   (all remaining leaves)
-                        # 
-
-                        notify.defer.resolve()
-                        delete notify.defer
-                        running.notify notify
+                            notify.defer.resolve()
+                            delete notify.defer
+                            running.notify notify
 
             )
 
