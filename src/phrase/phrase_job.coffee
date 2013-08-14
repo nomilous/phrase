@@ -79,10 +79,8 @@ exports.create = (root) ->
 
             @steps.map (s) -> 
 
-                if s.done
-                    errored = s
-                else
-                    if errored? and not nextleaf?
+                if s.done then errored = s
+                else if errored? and not nextleaf?
                         nextleaf = s if s.type == 'leaf'
 
             # #if errored.type == 'hook' 

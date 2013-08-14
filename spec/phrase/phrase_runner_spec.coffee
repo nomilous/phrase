@@ -267,6 +267,46 @@ describe 'PhraseRunner', ->
                 done()
 
 
+        it 'assigns depth to each step', (done) -> 
+
+
+            root     = context: graph: GRAPH
+            opts     = uuid: NEST_ONE
+            deferral = notify: ->
+
+
+            PhraseRunner.getSteps( root, opts, deferral ).then (steps) -> 
+
+                i = 0
+
+                steps[i++].depth.should.equal 0 # first all
+                steps[i++].depth.should.equal 0
+                steps[i++].depth.should.equal 2 # first all
+                steps[i++].depth.should.equal 2
+                steps[i++].depth.should.equal 3 # /RUN_LEAF_ONE/
+                steps[i++].depth.should.equal 2
+                steps[i++].depth.should.equal 0
+
+                steps[i++].depth.should.equal 0
+                steps[i++].depth.should.equal 2
+                steps[i++].depth.should.equal 4  # first all
+                steps[i++].depth.should.equal 4
+                steps[i++].depth.should.equal 6  # /RUN_LEAF_TWO/
+                steps[i++].depth.should.equal 4
+                steps[i++].depth.should.equal 4  # last all
+                steps[i++].depth.should.equal 2
+                steps[i++].depth.should.equal 0
+                
+                steps[i++].depth.should.equal 0
+                steps[i++].depth.should.equal 2
+                steps[i++].depth.should.equal 3 # /RUN_LEAF_THREE/
+                steps[i++].depth.should.equal 2
+                steps[i++].depth.should.equal 2 # last all
+                steps[i++].depth.should.equal 0
+                steps[i++].depth.should.equal 0 # last all
+
+                done()
+
 
         it 'notifies state', (done) -> 
 

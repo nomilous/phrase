@@ -219,9 +219,20 @@ describe 'PhraseJob', ->
 
 
 
-        it 'error in beforeEach causes job to skip the rest of the set'
+        it 'error in beforeEach causes job to skip all remaining steps in the set that are at the same depth or deeper'
+
+            #
+            # ie. if a beforeEach at depth 2 fails, the afterEach at depth 1 should still proceed
+            #     all other steps leafing to and from the leaf should be skipped
+            #
+
         it 'error in beforeEach notifies the set leaf'
         it 'error in beforeAll causes job to skip all sets which depend on it'
+
+            #
+            # same with the depth
+            #
+
         it 'error in beforeAll notifies all affected leaves'
         it 'error in afterAll notifies'
         it 'error in afterEach notifies'

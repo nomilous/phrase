@@ -93,6 +93,7 @@ api =
         befores   = {}
         afters    = {}
         set       = 0
+        depth     = 0
 
         start = recurse = -> 
 
@@ -146,7 +147,7 @@ api =
 
                     unless befores[beforeAll.uuid]?
 
-                        position = steps.push( sets: [], type: 'hook', ref: beforeAll ) - 1
+                        position = steps.push( sets: [], depth: depth, type: 'hook', ref: beforeAll ) - 1
                         befores[beforeAll.uuid] = position
 
                     #
@@ -161,14 +162,17 @@ api =
                 #
 
                 if beforeEach?
-                    steps.push set: set, type: 'hook', ref: beforeEach
+                    steps.push set: set, depth: depth, type: 'hook', ref: beforeEach
+
+
+                depth++
                     
 
             #
             # queue the leaf function
             #
 
-            steps.push set: set, type: 'leaf', ref: leaf
+            steps.push set: set, depth: depth, type: 'leaf', ref: leaf
 
 
             # 
@@ -180,18 +184,20 @@ api =
 
             outbound.map (phrase) -> 
 
+                depth--
+
                 {afterEach, afterAll} = phrase.hooks
 
                 if afterEach?
 
-                    steps.push set: set, type: 'hook', ref: afterEach
+                    steps.push set: set, depth: depth, type: 'hook', ref: afterEach
 
                 if afterAll?
 
                     #
                     # queue all afterAlls...
                     #
-                    step = sets: [set], type: 'hook', ref: afterAll
+                    step = sets: [set], depth: depth, type: 'hook', ref: afterAll
                     position = steps.push( step ) - 1
                     if afters[ afterAll.uuid ]?
 
@@ -205,6 +211,8 @@ api =
                         delete steps[ oldPosition ]
                         
                     afters[ afterAll.uuid ] = position
+
+                
 
             recurse()
 
