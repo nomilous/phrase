@@ -78,9 +78,8 @@ describe 'PhraseRunner', ->
                         before each: -> 'BEFORE-EACH-DEEP'
                         after  each: ->  'AFTER-EACH-DEEP'
                         after  all:  ->   'AFTER-ALL-DEEP'
-                        deeper 'NEST_FOUR', (deeper) -> 
-                            deeper 'LEAF_TWO', (end) -> 
-                                'RUN_LEAF_TWO' 
+                        deeper 'LEAF_TWO', (end) -> 
+                            'RUN_LEAF_TWO' 
                                 #end()
                 deeper 'LEAF_THREE', (end) -> 
                     'RUN_LEAF_THREE'
@@ -291,7 +290,7 @@ describe 'PhraseRunner', ->
                 steps[i++].depth.should.equal 2
                 steps[i++].depth.should.equal 4  # first all
                 steps[i++].depth.should.equal 4
-                steps[i++].depth.should.equal 6  # /RUN_LEAF_TWO/
+                steps[i++].depth.should.equal 5  # /RUN_LEAF_TWO/
                 steps[i++].depth.should.equal 4
                 steps[i++].depth.should.equal 4  # last all
                 steps[i++].depth.should.equal 2
