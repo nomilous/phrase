@@ -238,9 +238,9 @@ describe 'PhraseRunner', ->
 
                 i = 0
 
-                steps[i++].set.should.equal 1 # first all
+                steps[i++].sets.should.eql [1,2,3] # first all
                 steps[i++].set.should.equal 1
-                steps[i++].set.should.equal 1 # first all
+                steps[i++].sets.should.eql [1,2,3] # first all
                 steps[i++].set.should.equal 1
                 steps[i++].set.should.equal 1 # /RUN_LEAF_ONE/
                 steps[i++].set.should.equal 1
@@ -248,7 +248,7 @@ describe 'PhraseRunner', ->
 
                 steps[i++].set.should.equal 2
                 steps[i++].set.should.equal 2
-                steps[i++].set.should.equal 2  # first all
+                steps[i++].sets.should.eql [2]  # first all
                 steps[i++].set.should.equal 2
                 steps[i++].set.should.equal 2  # /RUN_LEAF_TWO/
                 steps[i++].set.should.equal 2

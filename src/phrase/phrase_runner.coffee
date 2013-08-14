@@ -83,9 +83,10 @@ api =
         #           last encountered instance of each remains in the final  
         #           step sequence.
         #
-        # set     - A sequence number assigned to the each leaf group, included
-        #           in each set is one leaf and all the before and after hooks
-        #           that surround it in the step sequence.
+        # set     - A sequence number is assigned to the each step to represent
+        #           the sets of steps assicated with each leaf, included in each 
+        #           set is one leaf and all the before and after hooks that 
+        #           surround it in the step sequence.
         # 
 
         steps     = []
@@ -141,9 +142,19 @@ api =
                 # queue only the first of each beforeAll
                 #
                
-                if beforeAll? and not befores[beforeAll.uuid]?
-                    position = steps.push( set: set, type: 'hook', ref: beforeAll ) - 1
-                    befores[beforeAll.uuid] = position
+                if beforeAll? 
+
+                    unless befores[beforeAll.uuid]?
+
+                        position = steps.push( sets: [], type: 'hook', ref: beforeAll ) - 1
+                        befores[beforeAll.uuid] = position
+
+                    #
+                    # beforeAll hooks are in multiple sets
+                    # 
+
+                    position = befores[beforeAll.uuid] 
+                    steps[ position ].sets.push set
 
                 #
                 # queue all beforeEachs
