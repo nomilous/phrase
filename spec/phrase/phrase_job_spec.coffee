@@ -217,6 +217,30 @@ describe 'PhraseJob', ->
 
             )
 
+        it 'does not run steps that are flagged as done', (done) -> 
+
+            RAN   = false
+            STEPS = [
+
+                ref: fn: -> RAN = true
+                done: true
+
+            ]
+            job = new PhraseJob steps: STEPS, deferral: DEFER
+            job.run().then(
+
+                (result) -> 
+
+                    RAN.should.equal false
+                    done()
+
+
+                ->
+                ->
+
+
+            )
+
 
 
         it 'error in beforeEach causes job to skip all remaining steps in the set that are at the same depth or deeper'

@@ -122,7 +122,14 @@ exports.create = (root) ->
 
             sequence( @steps.map (step) => 
 
-                current = step
+
+                #
+                # a previous step in this set errored or timed out
+                #
+
+                if step.done then return -> 
+
+
 
                 #
                 # each job step is called through the async injector
