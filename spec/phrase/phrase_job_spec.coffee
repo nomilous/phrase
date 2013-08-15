@@ -279,13 +279,11 @@ describe 'PhraseJob', ->
 
             STEPS = [
 
-                { type: 'hook', set: 1, depth: 0, ref: { type: 'beforeEach', fn: -> } }
-                { type: 'hook', set: 1, depth: 1, ref: { type: 'beforeEach', fn: -> throw new Error 'error' } }
-
-                { type: 'leaf', set: 1, depth: 2, ref: { fn: (done) -> console.log '===========1'; done() } }
-
-                { type: 'hook', set: 1, depth: 1, ref: { type: 'afterEach', fn: -> console.log '==========2' } }
-                { type: 'hook', set: 1, depth: 0, ref: { type: 'afterEach', fn: -> console.log '==========3'} }
+                { type: 'hook', set: 1, depth: 1  , ref: { type: 'beforeEach', fn: (done) -> @one   = 1; done() } }
+                { type: 'hook', set: 1, depth: 2  , ref: { type: 'beforeEach', fn: (done) -> @two   = 2; throw new Error 'error' } }
+                { type: 'leaf', set: 1, depth: 3  , ref: {                     fn: (done) -> @three = 3; done() } }
+                { type: 'hook', set: 1, depth: 2  , ref: { type: 'afterEach',  fn: (done) -> @four  = 4; done() } }
+                { type: 'hook', set: 1, depth: 1  , ref: { type: 'afterEach',  fn: (done) -> @five  = 5; done() } }
                 
 
             ]
@@ -297,13 +295,22 @@ describe 'PhraseJob', ->
             job.run().then(
 
                 (result) ->
-                    console.log RESULT: result
+                    
+                    result.job.should.eql 
 
-                (error) ->
-                    console.log ERROR: error
+                        one:  1
+                        two:  2
 
-                (notify) -> 
-                    console.log NOTICE: notify
+                        #
+                        # step 3 and 4 skipped on account of error in step 2
+                        #
+
+                        five: 5
+
+                    done()
+
+                ->
+                ->
 
             )
 

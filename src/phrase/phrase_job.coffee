@@ -69,20 +69,6 @@ exports.create = (root) ->
                             # 
 
                             opts.deferral.reject new Error "Cannot assign reserved property: #{property}(=#{value})"
-
-
-        handleError: (error, deferral, step) -> 
-
-
-            console.log HANDLE_ERROR:
-
-                error:      error
-                deferral:   deferral
-                step:       step
-
-
-            deferral.resolve()
-    
                 
 
         run: ->
@@ -117,28 +103,6 @@ exports.create = (root) ->
 
 
                 #
-                # a previous step in this set errored or timed out
-                #
-
-                if step.done then return => 
-
-                    if step.type == 'leaf'
-
-                        @deferral.notify 
-
-                            event:    'skip'
-                            class:    @constructor.name
-                            jobUUID:  @uuid
-                            progress: @progress()
-                            at:       Date.now()
-                            #step:     step
-
-
-
-
-
-
-                #
                 # each job step is called through the async injector
                 #
 
@@ -159,7 +123,41 @@ exports.create = (root) ->
 
                     context: this
 
+                    onError: (type, error, deferral) => 
+
+
+                        #
+                        # error or timeout in leaf or hook
+                        # --------------------------------
+                        # 
+                        # skip all remaining steps in the set
+                        #
+
+                        for s in @steps
+
+                            continue unless s.set == step.set
+                            continue unless s.depth >= step.depth
+                            s.done = true
+
+                        deferral.resolve()
+
+
                     beforeEach: (done, control) => 
+
+
+                        #
+                        # an error or timeout in preceding step
+                        # -------------------------------------
+                        # 
+                        # * skip this step
+                        # 
+
+                        if step.done
+
+                            control.skip()
+                            done()
+
+
 
                         #
                         # extract the deferral that the injector has associated
@@ -212,37 +210,35 @@ exports.create = (root) ->
                         # start timeout as defined on step
                         # 
 
-                        console.log 'TODO: timeout as error'
-
-                        # timeout = setTimeout (=>
+                        timeout = setTimeout (=>
 
 
-                            
+                            targetDefer.reject new Error 'timeout'
 
-                        #     # #
-                        #     # # notify on the promise
-                        #     # # 
+                            # #
+                            # # notify on the promise
+                            # # 
 
-                        #     # targetDefer.notify 
+                            # targetDefer.notify 
 
-                        #     #     event: 'timeout'
-                        #     #     class: @constructor.name
-                        #     #     jobUUID:  @uuid
-                        #     #     at:    Date.now()
-                        #     #     defer: targetDefer
+                            #     event: 'timeout'
+                            #     class: @constructor.name
+                            #     jobUUID:  @uuid
+                            #     at:    Date.now()
+                            #     defer: targetDefer
 
 
-                        # ), step.ref.timeout || 2000
+                        ), step.ref.timeout || 2000
 
-                        # control.args[0] = -> 
+                        control.args[0] = -> 
 
-                        #     #
-                        #     # custom resolver passed as (done, ...) to
-                        #     # the target function
-                        #     #
+                            #
+                            # custom resolver passed as (done, ...) to
+                            # the target function
+                            #
 
-                        #     clearTimeout timeout
-                        #     targetDefer.resolve()
+                            clearTimeout timeout
+                            targetDefer.resolve()
 
                         done()
                         return
@@ -261,12 +257,6 @@ exports.create = (root) ->
                             at:       Date.now()
 
                         done()
-
-
-                    onError: (type, error, deferral) => 
-
-                        @handleError error, deferral, step
-
 
 
                     #
