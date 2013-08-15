@@ -104,13 +104,11 @@ exports.create = (root) ->
             #  )
             #
 
-            console.log 'todo: rename to jobUUID'
-
             @deferral.notify 
 
                 state:   'run::starting'
                 class:    @constructor.name
-                uuid:     @uuid
+                jobUUID:  @uuid
                 progress: @progress()
                 at:       Date.now()
 
@@ -137,10 +135,10 @@ exports.create = (root) ->
 
                             event:    'skip'
                             class:    @constructor.name
-                            uuid:     @uuid
+                            jobUUID:  @uuid
                             progress: @progress()
                             at:       Date.now()
-                            step:     step
+                            #step:     step
 
 
 
@@ -230,7 +228,7 @@ exports.create = (root) ->
 
                                 event: 'timeout'
                                 class: @constructor.name
-                                uuid:  @uuid
+                                jobUUID:  @uuid
                                 at:    Date.now()
                                 defer: targetDefer
 
@@ -259,7 +257,7 @@ exports.create = (root) ->
 
                             state:   'run::started'
                             class:    @constructor.name
-                            uuid:     @uuid  
+                            jobUUID:  @uuid
                             progress: @progress()
                             at:       Date.now()
 
@@ -280,7 +278,7 @@ exports.create = (root) ->
 
                         state:   'run::complete'
                         class:    @constructor.name
-                        uuid:     @uuid  
+                        jobUUID:  @uuid
                         progress: @progress()
                         at:       Date.now()
 

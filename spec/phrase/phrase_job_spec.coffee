@@ -94,7 +94,7 @@ describe 'PhraseJob', ->
                 msg.class.should.equal 'PhraseJob'
                 msg.state.should.equal 'run::starting'
                 msg.progress.should.eql steps: 0, done: 0
-                should.exist msg.uuid
+                should.exist msg.jobUUID
                 should.exist msg.at
                 done()
 
