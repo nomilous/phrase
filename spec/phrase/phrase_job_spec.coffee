@@ -288,7 +288,8 @@ describe 'PhraseJob', ->
 
             ]
 
-            #DEFER.notify = (notify) -> console.log notify
+            MESSAGES     = []
+            DEFER.notify = (notify) -> MESSAGES.push notify
 
             job = new PhraseJob steps: STEPS, deferral: DEFER
             
@@ -306,6 +307,18 @@ describe 'PhraseJob', ->
                         #
 
                         five: 5
+
+                    MESSAGES.map( (m) -> state: m.state, progress: m.progress ).should.eql [ 
+
+                        { state: 'run::starting',     progress: { steps: 5, done: 0, failed: 0, skipped: 0 } }
+                        { state: 'run::step:done',    progress: { steps: 5, done: 1, failed: 0, skipped: 0 } }
+                        { state: 'run::step:failed',  progress: { steps: 5, done: 1, failed: 1, skipped: 0 } }
+                        { state: 'run::step:skipped', progress: { steps: 5, done: 1, failed: 1, skipped: 1 } }
+                        { state: 'run::step:skipped', progress: { steps: 5, done: 1, failed: 1, skipped: 2 } }
+                        { state: 'run::step:done',    progress: { steps: 5, done: 2, failed: 1, skipped: 2 } }
+                        { state: 'run::complete',     progress: { steps: 5, done: 2, failed: 1, skipped: 2 } } 
+
+                    ]
 
                     done()
 
@@ -366,11 +379,11 @@ describe 'PhraseJob', ->
                     state: m.state, progress: m.progress
 
                 ).should.eql [ 
-                    { state: 'run::starting', progress: { steps: 3, done: 0 } }
-                    { state: 'run::started',  progress: { steps: 3, done: 1 } }
-                    { state: 'run::started',  progress: { steps: 3, done: 2 } }
-                    { state: 'run::started',  progress: { steps: 3, done: 3 } }
-                    { state: 'run::complete', progress: { steps: 3, done: 3 } }
+                    { state: 'run::starting', progress: { steps: 3, done: 0, failed: 0, skipped: 0 } }
+                    { state: 'run::step:done', progress: { steps: 3, done: 1, failed: 0, skipped: 0 } }
+                    { state: 'run::step:done', progress: { steps: 3, done: 2, failed: 0, skipped: 0 } }
+                    { state: 'run::step:done', progress: { steps: 3, done: 3, failed: 0, skipped: 0 } }
+                    { state: 'run::complete', progress: { steps: 3, done: 3, failed: 0, skipped: 0 } }
                 ]
                 done()
 

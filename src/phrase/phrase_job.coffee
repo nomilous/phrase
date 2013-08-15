@@ -36,8 +36,10 @@ exports.create = (root) ->
 
                 progress: -> 
 
-                    steps: if opts.steps? then opts.steps.length else 0
-                    done:  opts.steps.filter( (s) -> s.done ).length
+                    steps:   if opts.steps? then opts.steps.length else 0
+                    done:    opts.steps.filter( (s) -> s.done ).length
+                    failed:  opts.steps.filter( (s) -> s.fail ).length
+                    skipped: opts.steps.filter( (s) -> s.skip ).length
 
 
             #
@@ -137,7 +139,17 @@ exports.create = (root) ->
 
                             continue unless s.set == step.set
                             continue unless s.depth >= step.depth
-                            s.done = true
+
+                            if s is step then s.fail = true   
+                            else s.skip = true
+
+                            @deferral.notify
+
+                                state:    if s.skip then 'run::step:skipped' else 'run::step:failed'
+                                class:    @constructor.name
+                                jobUUID:  @uuid
+                                progress: @progress()
+                                at:       Date.now()
 
                         deferral.resolve()
 
@@ -152,7 +164,7 @@ exports.create = (root) ->
                         # * skip this step
                         # 
 
-                        if step.done
+                        if step.skip
 
                             control.skip()
                             done()
@@ -246,15 +258,18 @@ exports.create = (root) ->
 
                     afterEach: (done) => 
 
-                        step.done = true
+                        
+                        unless step.skip or step.fail
 
-                        @deferral.notify
+                            step.done = true
 
-                            state:   'run::started'
-                            class:    @constructor.name
-                            jobUUID:  @uuid
-                            progress: @progress()
-                            at:       Date.now()
+                            @deferral.notify
+
+                                state:   'run::step:done'
+                                class:    @constructor.name
+                                jobUUID:  @uuid
+                                progress: @progress()
+                                at:       Date.now()
 
                         done()
 
