@@ -108,7 +108,7 @@ exports.create = (root) ->
                 # each job step is called through the async injector
                 #
 
-                inject.async 
+                injectionConfig =  
 
                     #
                     # step.ref.fn is the injection target
@@ -140,12 +140,16 @@ exports.create = (root) ->
                             continue unless s.set == step.set
                             continue unless s.depth >= step.depth
 
-                            if s is step then s.fail = true   
-                            else s.skip = true
+                            if s is step 
+                                s.fail = true  
+                                state  = 'run::step:failed'  
+                            else 
+                                s.skip = true
+                                state  = 'run::step:skipped'
 
                             @deferral.notify
 
-                                state:    if s.skip then 'run::step:skipped' else 'run::step:failed'
+                                state:    state
                                 class:    @constructor.name
                                 jobUUID:  @uuid
                                 progress: @progress()
@@ -169,6 +173,25 @@ exports.create = (root) ->
                             control.skip()
                             done()
 
+                        #
+                        # Timeout initiates async errorHandler, if it fires 
+                        # then the resolution that could concievably still 
+                        # occurr while the timeout handler is running must
+                        # be ignored.
+                        # 
+                        # Ordinarilly this sort of thing would be handled 
+                        # by rejecting or resolving the promise that timed
+                        # out, but it is that same promise that is being 
+                        # used by the timeout handler to stop the flow
+                        # of execution from from proceeding into the next 
+                        # step. 
+                        # 
+                        # If the promise is resolved before the timeout 
+                        # handler completes that will lead to undesired
+                        # concurrencies.
+                        #
+
+                        hasTimedOut = false
 
 
                         #
@@ -225,19 +248,8 @@ exports.create = (root) ->
                         timeout = setTimeout (=>
 
 
-                            targetDefer.reject new Error 'timeout'
-
-                            # #
-                            # # notify on the promise
-                            # # 
-
-                            # targetDefer.notify 
-
-                            #     event: 'timeout'
-                            #     class: @constructor.name
-                            #     jobUUID:  @uuid
-                            #     at:    Date.now()
-                            #     defer: targetDefer
+                            hasTimedOut = true
+                            injectionConfig.onError null, new Error( 'timeout' ), targetDefer
 
 
                         ), step.ref.timeout || 2000
@@ -250,14 +262,21 @@ exports.create = (root) ->
                             #
 
                             clearTimeout timeout
+
+                            #
+                            # if the timeout has already fired 
+                            # this resolver is too late...
+                            # 
+
+                            return if hasTimedOut
                             targetDefer.resolve()
+
 
                         done()
                         return
 
 
                     afterEach: (done) => 
-
                         
                         unless step.skip or step.fail
 
@@ -274,11 +293,8 @@ exports.create = (root) ->
                         done()
 
 
-                    #
-                    # injection target
-                    #
+                inject.async injectionConfig, step.ref.fn
 
-                    step.ref.fn
 
             ).then(
 

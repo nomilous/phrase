@@ -19,7 +19,7 @@ describe 'PhraseJob', ->
         root      = inject: inject
         PhraseJob = phraseJob.create root
 
-    xcontext 'general', -> 
+    context 'general', -> 
 
         it 'is a class', -> 
 
@@ -76,7 +76,7 @@ describe 'PhraseJob', ->
     context 'run()', -> 
 
 
-        xit 'notifies the deferral on running state', (done) -> 
+        it 'notifies the deferral on running state', (done) -> 
 
             MESSAGES = []
 
@@ -93,20 +93,20 @@ describe 'PhraseJob', ->
                 msg = MESSAGES[0]
                 msg.class.should.equal 'PhraseJob'
                 msg.state.should.equal 'run::starting'
-                msg.progress.should.eql steps: 0, done: 0
+                msg.progress.should.eql steps: 0, done: 0, failed: 0, skipped: 0
                 should.exist msg.jobUUID
                 should.exist msg.at
                 done()
 
 
-        xit 'returns a promise', (done) -> 
+        it 'returns a promise', (done) -> 
 
             job = new PhraseJob steps: STEPS, deferral: DEFER
             job.run().then.should.be.an.instanceof Function
             done()
 
 
-        xit 'runs each step.fn on phraseJob instance context', (done) -> 
+        it 'runs each step.fn on phraseJob instance context', (done) -> 
 
             STEPS = [
 
@@ -121,7 +121,7 @@ describe 'PhraseJob', ->
                 done()
 
 
-        xit 'ties into the reserved property rejection', (done) -> 
+        it 'ties into the reserved property rejection', (done) -> 
 
             STEPS = [
 
@@ -137,7 +137,7 @@ describe 'PhraseJob', ->
             (new PhraseJob steps: STEPS, deferral: DEFER).run()
 
 
-        xit 'runs all steps', (done) -> 
+        it 'runs all steps', (done) -> 
 
             STEPS = [
 
@@ -154,7 +154,7 @@ describe 'PhraseJob', ->
                 done()
 
 
-        xit 'resolves with object containing the job instance and notified state succeeded', (done) -> 
+        it 'resolves with object containing the job instance and notified state succeeded', (done) -> 
 
             STEPS = [
 
@@ -171,7 +171,7 @@ describe 'PhraseJob', ->
 
                 msg = MESSAGES.pop()
                 msg.state.should.equal 'run::complete'
-                msg.progress.should.eql { steps: 3, done: 3 }
+                msg.progress.should.eql { steps: 3, done: 3, failed: 0, skipped: 0 }
                 result.job.should.eql one: 1, two: 2, three: 3
                 done()
 
@@ -217,13 +217,13 @@ describe 'PhraseJob', ->
 
             )
 
-        xit 'does not run steps that are flagged as done', (done) -> 
+        it 'does not run steps that are flagged as skip', (done) -> 
 
             RAN   = false
             STEPS = [
 
                 ref: fn: -> RAN = true
-                done: true
+                skip: true
 
             ]
             job = new PhraseJob steps: STEPS, deferral: DEFER
@@ -342,7 +342,7 @@ describe 'PhraseJob', ->
 
 
 
-        xit 'sets each step to done', (done) -> 
+        it 'sets each step to done', (done) -> 
 
             STEPS = [
 
@@ -358,7 +358,7 @@ describe 'PhraseJob', ->
                 done()
 
 
-        xit 'notifies parent deferral on each step completion', (done) -> 
+        it 'notifies parent deferral on each step completion', (done) -> 
 
             STEPS = [
 
@@ -379,18 +379,18 @@ describe 'PhraseJob', ->
                     state: m.state, progress: m.progress
 
                 ).should.eql [ 
-                    { state: 'run::starting', progress: { steps: 3, done: 0, failed: 0, skipped: 0 } }
+                    { state: 'run::starting',  progress: { steps: 3, done: 0, failed: 0, skipped: 0 } }
                     { state: 'run::step:done', progress: { steps: 3, done: 1, failed: 0, skipped: 0 } }
                     { state: 'run::step:done', progress: { steps: 3, done: 2, failed: 0, skipped: 0 } }
                     { state: 'run::step:done', progress: { steps: 3, done: 3, failed: 0, skipped: 0 } }
-                    { state: 'run::complete', progress: { steps: 3, done: 3, failed: 0, skipped: 0 } }
+                    { state: 'run::complete',  progress: { steps: 3, done: 3, failed: 0, skipped: 0 } }
                 ]
                 done()
 
 
 
 
-    xcontext 'run() calls each step asynchronously', ->  
+    context 'run() calls each step asynchronously', ->  
 
         it 'each step is passed through the injector', (done) -> 
 
@@ -437,37 +437,47 @@ describe 'PhraseJob', ->
 
         it 'injects the resolver if arg1 is "done" and notifies on timeout', (done) -> 
 
+            MESSAGES = []
+            DEFER.notify = (msg) -> MESSAGES.push msg
+
             (new PhraseJob 
                 deferral: DEFER
-                steps: [ ref: 
+                steps: [ 
 
-                    timeout: 10
-                    fn: (done) -> 
+                    set:   1
+                    depth: 0
 
-                        #
-                        # step.ref.fn signature has done at arg1
-                        # ...custom resolver should have been injected
-                        #
+                    ref: 
+                        timeout: 10
+                        fn: (done) -> 
 
-                        done.should.be.an.instanceof Function
-                        done.toString().should.match /clearTimeout/
+                            #
+                            # step.ref.fn signature has done at arg1
+                            # ...custom resolver should have been injected
+                            #
 
-                        #
-                        # let it timeout
-                        #   
+                            done.should.be.an.instanceof Function
+                            done.toString().should.match /clearTimeout/
+
+                            #
+                            # let it timeout
+                            #   
 
                 ]
 
-            ).run().then(
+            ).run().then ->
 
-                ->
-                ->
-                (notify) -> 
+                MESSAGES.map( (m) -> state: m.state, progress: m.progress ).should.eql [ 
 
-                    notify.event.should.equal 'timeout'
-                    done()
+                    { state: 'run::starting',    progress: { steps: 1, done: 0, failed: 0, skipped: 0 } }
+                    { state: 'run::step:failed', progress: { steps: 1, done: 0, failed: 1, skipped: 0 } }
+                    { state: 'run::complete',    progress: { steps: 1, done: 0, failed: 1, skipped: 0 } }
 
-            )
+                ]
+
+                done()
+
+
 
         it 'always injects resolver into leaf phrases', (done) -> 
 
