@@ -104,6 +104,8 @@ exports.create = (root) ->
             #  )
             #
 
+            console.log 'todo: rename to jobUUID'
+
             @deferral.notify 
 
                 state:   'run::starting'
@@ -127,7 +129,19 @@ exports.create = (root) ->
                 # a previous step in this set errored or timed out
                 #
 
-                if step.done then return -> 
+                if step.done then return => 
+
+                    if step.type == 'leaf'
+
+                        @deferral.notify 
+
+                            event:    'skip'
+                            class:    @constructor.name
+                            uuid:     @uuid
+                            progress: @progress()
+                            at:       Date.now()
+                            step:     step
+
 
 
 

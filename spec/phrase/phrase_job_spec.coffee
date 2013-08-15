@@ -234,10 +234,37 @@ describe 'PhraseJob', ->
                     RAN.should.equal false
                     done()
 
-
                 ->
                 ->
 
+            )
+
+        it 'notifies parent on skipped leaf', (done) -> 
+
+
+            RAN   = false
+            STEPS = [
+
+                ref: fn: -> RAN = true
+                done: true
+                type: 'leaf'
+
+            ]
+
+            MESSAGES = []
+            DEFER.notify = (notify) -> MESSAGES.push notify
+
+
+            job = new PhraseJob steps: STEPS, deferral: DEFER
+            job.run().then(
+
+                (result) -> 
+
+                    MESSAGES[1].event.should.equal 'skip'
+                    done()
+
+                ->
+                ->
 
             )
 
