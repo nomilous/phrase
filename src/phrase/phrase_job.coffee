@@ -71,25 +71,18 @@ exports.create = (root) ->
                             opts.deferral.reject new Error "Cannot assign reserved property: #{property}(=#{value})"
 
 
-        handleError: (error, done) -> 
-
-            errored  = undefined
-            nextleaf = undefined
+        handleError: (error, deferral, step) -> 
 
 
-            @steps.map (s) -> 
+            console.log HANDLE_ERROR:
 
-                if s.done then errored = s
-                else if errored? and not nextleaf?
-                        nextleaf = s if s.type == 'leaf'
+                error:      error
+                deferral:   deferral
+                step:       step
 
-            # #if errored.type == 'hook' 
 
-            console.log HANDLE_ERROR_HOOK: errored
-            console.log NEXT_LEAF: nextleaf
-            
-
-            done()
+            deferral.resolve()
+    
                 
 
         run: ->
@@ -143,6 +136,8 @@ exports.create = (root) ->
 
 
 
+
+
                 #
                 # each job step is called through the async injector
                 #
@@ -163,7 +158,6 @@ exports.create = (root) ->
                     # 
 
                     context: this
-                    notifyOnError: true
 
                     beforeEach: (done, control) => 
 
@@ -218,32 +212,37 @@ exports.create = (root) ->
                         # start timeout as defined on step
                         # 
 
-                        timeout = setTimeout (=>
+                        console.log 'TODO: timeout as error'
 
-                            #
-                            # notify on the promise
-                            # 
-
-                            targetDefer.notify 
-
-                                event: 'timeout'
-                                class: @constructor.name
-                                jobUUID:  @uuid
-                                at:    Date.now()
-                                defer: targetDefer
+                        # timeout = setTimeout (=>
 
 
-                        ), step.ref.timeout || 2000
+                            
 
-                        control.args[0] = -> 
+                        #     # #
+                        #     # # notify on the promise
+                        #     # # 
 
-                            #
-                            # custom resolver passed as (done, ...) to
-                            # the target function
-                            #
+                        #     # targetDefer.notify 
 
-                            clearTimeout timeout
-                            targetDefer.resolve()
+                        #     #     event: 'timeout'
+                        #     #     class: @constructor.name
+                        #     #     jobUUID:  @uuid
+                        #     #     at:    Date.now()
+                        #     #     defer: targetDefer
+
+
+                        # ), step.ref.timeout || 2000
+
+                        # control.args[0] = -> 
+
+                        #     #
+                        #     # custom resolver passed as (done, ...) to
+                        #     # the target function
+                        #     #
+
+                        #     clearTimeout timeout
+                        #     targetDefer.resolve()
 
                         done()
                         return
@@ -262,6 +261,12 @@ exports.create = (root) ->
                             at:       Date.now()
 
                         done()
+
+
+                    onError: (type, error, deferral) => 
+
+                        @handleError error, deferral, step
+
 
 
                     #
@@ -293,15 +298,17 @@ exports.create = (root) ->
 
                 (error)  -> console.log 'ERROR_IN_PHRASE_JOB', error.stack
 
-                (notify) => 
+                (notify) -> 
 
-                    if notify.event == 'error' or notify.event == 'timeout'
-
-                        @handleError notify, -> 
-
-                            notify.defer.resolve()
-                            delete notify.defer
-                            running.notify notify
+                    #
+                    # cannot suspend 'flow of execution' into the next steps
+                    # (and needs to - to skip the next steps in the erroring set)
+                    #
+                    # if notify.event == 'error' or notify.event == 'timeout'
+                    #     @handleError notify, -> 
+                    #         notify.defer.resolve()
+                    #         delete notify.defer
+                    #         running.notify notify
 
             )
 

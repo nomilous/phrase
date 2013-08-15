@@ -217,7 +217,7 @@ describe 'PhraseJob', ->
 
             )
 
-        it 'does not run steps that are flagged as done', (done) -> 
+        xit 'does not run steps that are flagged as done', (done) -> 
 
             RAN   = false
             STEPS = [
@@ -239,7 +239,7 @@ describe 'PhraseJob', ->
 
             )
 
-        it 'notifies parent on skipped leaf', (done) -> 
+        xit 'notifies parent on skipped leaf', (done) -> 
 
 
             RAN   = false
@@ -270,12 +270,44 @@ describe 'PhraseJob', ->
 
 
 
-        it 'error in beforeEach causes job to skip all remaining steps in the set that are at the same depth or deeper'
+        it 'error in beforeEach causes job to skip all remaining steps in the set that are at the same depth or deeper', (done) ->
 
             #
             # ie. if a beforeEach at depth 2 fails, the afterEach at depth 1 should still proceed
             #     all other steps leafing to and from the leaf should be skipped
             #
+
+            STEPS = [
+
+                { type: 'hook', set: 1, depth: 0, ref: { type: 'beforeEach', fn: -> } }
+                { type: 'hook', set: 1, depth: 1, ref: { type: 'beforeEach', fn: -> throw new Error 'error' } }
+
+                { type: 'leaf', set: 1, depth: 2, ref: { fn: (done) -> console.log '===========1'; done() } }
+
+                { type: 'hook', set: 1, depth: 1, ref: { type: 'afterEach', fn: -> console.log '==========2' } }
+                { type: 'hook', set: 1, depth: 0, ref: { type: 'afterEach', fn: -> console.log '==========3'} }
+                
+
+            ]
+
+            #DEFER.notify = (notify) -> console.log notify
+
+            job = new PhraseJob steps: STEPS, deferral: DEFER
+            
+            job.run().then(
+
+                (result) ->
+                    console.log RESULT: result
+
+                (error) ->
+                    console.log ERROR: error
+
+                (notify) -> 
+                    console.log NOTICE: notify
+
+            )
+
+
 
         it 'error in beforeEach notifies the set leaf'
         it 'error in beforeAll causes job to skip all sets which depend on it'
