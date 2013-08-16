@@ -174,14 +174,15 @@ exports.create = (root) ->
 
                             @deferral.notify
 
-                                state:    state
-                                class:    @constructor.name
-                                jobUUID:  @uuid
-                                progress: @progress()
-                                at:       Date.now()
-                                error:    error
-                                step:     step
-                                
+                                state:      state
+                                class:      @constructor.name
+                                jobUUID:    @uuid
+                                progress:   @progress()
+                                at:         Date.now()
+                                error:      error
+                                step:       step
+                                originator: s == step
+
 
                         done()
 

@@ -20,6 +20,7 @@ describe 'PhraseRecursor', ->
                         return asyncInjectionFn
 
             opts = 
+                title: 'Title'
                 leaf: ['end']
                 timeout: 1000
 
@@ -34,11 +35,22 @@ describe 'PhraseRecursor', ->
             PhraseRecursorHooks.bind = (rooot, parent) -> 
 
                 rooot.should.equal root
-                parent.phraseToken.name.should.equal 'root'
                 done()
                 throw 'go no further'
 
             try PhraseRecursor.create root, opts
+
+
+        it 'assigns root token name from branch title', (done) -> 
+
+            PhraseRecursorHooks.bind = (rooot, parent) -> 
+
+                parent.phraseToken.name.should.equal 'Title'
+                done()
+                throw 'go no further'
+
+            try PhraseRecursor.create root, opts
+
 
 
         it 'configures the injection decorator and assigns recursion control hooks', (done) -> 

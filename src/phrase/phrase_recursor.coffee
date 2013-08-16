@@ -66,7 +66,7 @@ exports.create = (root, opts) ->
 
     return recursor 'ROOT', 
 
-        phraseToken: name: 'root'
+        phraseToken: name: opts.title
         timeout: opts.timeout
         leaf: opts.leaf
 

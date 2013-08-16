@@ -29,28 +29,30 @@ describe 'integrations', ->
                         uuid
                     )[0]
 
-                    token.run( uuid: root ).then( 
+                    console.log token.graph.vertices
 
-                        (result) -> 
-                            console.log '\n', 'RESULT', '\n', result
+                    # token.run( uuid: root ).then( 
+
+                    #     (result) -> 
+                    #         console.log '\n', 'RESULT', '\n', result
 
                             
-                            result.job.ultraviolet.should.equal 234
-                            done()
+                    #         result.job.ultraviolet.should.equal 234
+                    #         done()
 
-                        (error) -> 
-                            console.log '\n', 'ERROR',  '\n', error
+                    #     (error) -> 
+                    #         console.log '\n', 'ERROR',  '\n', error
 
-                        (update) -> 
-                            console.log '\n', 'UPDATE', '\n', 
-                                update.state || update.event, JSON.stringify update, null, 2
+                    #     (update) -> 
+                    #         console.log '\n', 'UPDATE', '\n', 
+                    #             update.state || update.event, JSON.stringify update, null, 2
 
-                    )
+                    # )
 
       
         falcon 'Generic', (system) -> 
 
-            before all:  (done) -> throw new Error 'mooo'
+            before all:  (done) -> done()
             before each: -> 
             after  each: ->  
             after  all:  ->  
