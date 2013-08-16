@@ -23,7 +23,13 @@ describe 'integrations', ->
                         setTimeout next, msg.waitForNotice
                         return
 
+                    if msg.context.title == 'progress'
+
+                        console.log msg
+
                     next()
+
+
 
                 token.on 'ready', -> 
 
@@ -107,8 +113,10 @@ describe 'integrations', ->
 
                 subsystem 'right wing', (end) -> 
 
-                    console.log 'right wing'
-                    setTimeout end, 300
+                    @notice.info( 'progress', @progress() ).then -> 
+
+                        console.log 'right wing'
+                        end()
 
             # system 'navigation', (subsystem) -> 
 

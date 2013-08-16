@@ -446,7 +446,7 @@ describe 'PhraseJob', ->
             )
 
 
-        it 'notifies the message bus on step failure', (done) -> 
+        it 'notifies the message bus on step failure and step done', (done) -> 
 
 
             EVENTS = {}
@@ -470,12 +470,15 @@ describe 'PhraseJob', ->
             job = new PhraseJob notice: NOTICE, steps: STEPS , deferral: DEFER
             job.run().then -> 
 
-                # console.log EVENTS['run::step:failed']
+                # console.log EVENTS
 
                 EVENTS['run::step:failed'].progress.should.eql { steps: 5, done: 1, failed: 1, skipped: 2 }
                 EVENTS['run::step:failed'].error.should.match /error/
                 EVENTS['run::step:failed'].step.should.equal STEPS[1]
                 EVENTS['run::step:failed'].skipped.should.eql STEPS[2..3]
+
+
+                EVENTS['run::step:done'].step.should.equal STEPS[4]
                 done()
 
 

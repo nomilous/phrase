@@ -126,20 +126,35 @@ exports.create = (root) ->
 
                     #
                     # each job step is called through the async injector
+                    # --------------------------------------------------
                     #
+                    # * step.ref.fn is the injection target
+                    # 
+                    # * it will be called with arguments as determined 
+                    #   by this injector
+                    # 
+                    # * it is run with this (PhraseJob instance) as context
+                    # 
+                    #      eg. this... 
+                    # 
+                    #          
+                    #          phrase 'root title', (nested) -> 
+                    # 
+                    #              before each: (done) -> 
+                    # 
+                    #                  @variable = 'VALUE'
+                    #                  done()
+                    # 
+                    #              nested 'nested title', (end) -> 
+                    # 
+                    #                  console.log @variable   #=> 'VALUE'
+                    #                  end()
+                    # 
+                    #          ...is possible
+                    # 
+
 
                     injectionConfig =  
-
-                        #
-                        # step.ref.fn is the injection target
-                        # -----------------------------------
-                        # console.log step 
-                        # 
-                        # * and will be called with arguments as determined 
-                        #   by this injector
-                        # 
-                        # * and is run on this as context
-                        # 
 
                         context: this
 
@@ -153,13 +168,12 @@ exports.create = (root) ->
                             # * the injector is awaiting the call to done() before
                             #   it proceeds onto the next step in the job
                             # 
-                            # * this error handler marks to skip all remaining (affected) 
-                            #   steps in the set
+                            # * this error handler flags all remaining (affected) 
+                            #   steps in the set to be skipped
                             # 
                             #      eg. if a beforeAll fails on some node in the 
                             #          phrase tree, all nested nodes are skipped.
-                            #          
-                            #
+                            # 
 
                             skipped = []
 
@@ -348,13 +362,19 @@ exports.create = (root) ->
 
                                 step.done = true
 
-                                @deferral.notify
+                                message = 
 
                                     state:   'run::step:done'
                                     class:    @constructor.name
                                     jobUUID:  @uuid
                                     progress: @progress()
                                     at:       Date.now()
+                                    step:     step
+
+                                return @notice.event( message.state, message ).then => 
+
+                                    @deferral.notify message
+                                    done()
 
                             done()
 
