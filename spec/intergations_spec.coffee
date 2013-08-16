@@ -42,15 +42,15 @@ describe 'integrations', ->
                             console.log '\n', 'ERROR',  '\n', error
 
                         (update) -> 
-                            # console.log '\n', 'UPDATE', '\n', 
-                            #     update.state || update.event, JSON.stringify update, null, 2
+                            console.log '\n', 'UPDATE', '\n', 
+                                update.state || update.event, JSON.stringify update, null, 2
 
                     )
 
       
         falcon 'Generic', (system) -> 
 
-            before all:  (done) -> done()
+            before all:  (done) -> throw new Error 'mooo'
             before each: -> 
             after  each: ->  
             after  all:  ->  
@@ -82,7 +82,7 @@ describe 'integrations', ->
 
             system 'flight', (subsystem) ->
 
-                before each: -> 1.should.equal 2
+                before each: (done) -> done() 
 
                 subsystem 'left wing', (end) -> 
 

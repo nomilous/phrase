@@ -19,7 +19,7 @@ describe 'PhraseJob', ->
         root      = inject: inject
         PhraseJob = phraseJob.create root
 
-    context 'general', -> 
+    xcontext 'general', -> 
 
         it 'is a class', -> 
 
@@ -76,7 +76,7 @@ describe 'PhraseJob', ->
     context 'run()', -> 
 
 
-        it 'notifies the deferral on running state', (done) -> 
+        xit 'notifies the deferral on running state', (done) -> 
 
             MESSAGES = []
 
@@ -99,14 +99,14 @@ describe 'PhraseJob', ->
                 done()
 
 
-        it 'returns a promise', (done) -> 
+        xit 'returns a promise', (done) -> 
 
             job = new PhraseJob steps: STEPS, deferral: DEFER
             job.run().then.should.be.an.instanceof Function
             done()
 
 
-        it 'runs each step.fn on phraseJob instance context', (done) -> 
+        xit 'runs each step.fn on phraseJob instance context', (done) -> 
 
             STEPS = [
 
@@ -121,7 +121,7 @@ describe 'PhraseJob', ->
                 done()
 
 
-        it 'ties into the reserved property rejection', (done) -> 
+        xit 'ties into the reserved property rejection', (done) -> 
 
             STEPS = [
 
@@ -137,7 +137,7 @@ describe 'PhraseJob', ->
             (new PhraseJob steps: STEPS, deferral: DEFER).run()
 
 
-        it 'runs all steps', (done) -> 
+        xit 'runs all steps', (done) -> 
 
             STEPS = [
 
@@ -154,7 +154,7 @@ describe 'PhraseJob', ->
                 done()
 
 
-        it 'resolves with object containing the job instance and notified state succeeded', (done) -> 
+        xit 'resolves with object containing the job instance and notified state succeeded', (done) -> 
 
             STEPS = [
 
@@ -217,7 +217,7 @@ describe 'PhraseJob', ->
 
             )
 
-        it 'does not run steps that are flagged as skip', (done) -> 
+        xit 'does not run steps that are flagged as skip', (done) -> 
 
             RAN   = false
             STEPS = [
@@ -270,7 +270,7 @@ describe 'PhraseJob', ->
 
 
 
-        it 'error in beforeEach causes job to skip all remaining steps in the set that are at the same depth or deeper', (done) ->
+        xit 'error in beforeEach causes job to skip all remaining steps in the set that are at the same depth or deeper', (done) ->
 
             #
             # ie. if a beforeEach at depth 2 fails, the afterEach at depth 1 should still proceed
@@ -330,11 +330,57 @@ describe 'PhraseJob', ->
 
 
         it 'error in beforeEach notifies the set leaf'
-        it 'error in beforeAll causes job to skip all sets which depend on it'
+        it 'error in beforeAll causes job to skip all deeper steps which depend on it', (done) -> 
 
-            #
-            # same with the depth
-            #
+
+
+            STEPS = [
+
+                { type: 'hook', set:   1,    depth: 1, ref: { type: 'beforeEach', fn: (done) -> @one   = 1; done() } }
+                { type: 'hook', sets: [1,2], depth: 2, ref: { type: 'beforeAll',  fn: (done) -> @two   = 2; throw new Error 'error' } }
+                { type: 'leaf', set:   1,    depth: 3, ref: {                     fn: (done) -> } }
+                { type: 'hook', set:   1,    depth: 1, ref: { type: 'afterEach',  fn: (done) -> done() } }
+
+                { type: 'hook', set:   2,    depth: 1, ref: { type: 'beforeEach', fn: (done) ->  done() } }
+                { type: 'leaf', set:   2,    depth: 3, ref: {                     fn: (done) ->  done() } }
+                { type: 'hook', sets: [1,2], depth: 2, ref: { type: 'afterAll',   fn: (done) ->  done() } }
+                { type: 'hook', set:   2,    depth: 1, ref: { type: 'afterEach',  fn: (done) ->  done() } }
+
+
+            ]
+
+            MESSAGES     = []
+            DEFER.notify = (notify) -> MESSAGES.push notify
+
+            job = new PhraseJob steps: STEPS, deferral: DEFER
+            
+            job.run().then(
+
+                (result) ->
+                    
+                    MESSAGES.map( (m) -> state: m.state, progress: m.progress ).should.eql [ 
+
+                        { state: 'run::starting',     progress: { steps: 8, done: 0, failed: 0, skipped: 0 } }
+                        { state: 'run::step:done',    progress: { steps: 8, done: 1, failed: 0, skipped: 0 } }
+                        { state: 'run::step:failed',  progress: { steps: 8, done: 1, failed: 1, skipped: 0 } }
+                        { state: 'run::step:skipped', progress: { steps: 8, done: 1, failed: 1, skipped: 1 } }
+                        { state: 'run::step:skipped', progress: { steps: 8, done: 1, failed: 1, skipped: 2 } }
+                        { state: 'run::step:skipped', progress: { steps: 8, done: 1, failed: 1, skipped: 3 } }
+                        { state: 'run::step:done',    progress: { steps: 8, done: 2, failed: 1, skipped: 3 } }
+                        { state: 'run::step:done',    progress: { steps: 8, done: 3, failed: 1, skipped: 3 } }
+                        { state: 'run::step:done',    progress: { steps: 8, done: 4, failed: 1, skipped: 3 } }
+                        { state: 'run::complete',     progress: { steps: 8, done: 4, failed: 1, skipped: 3 } }
+
+                    ]
+
+                    done()
+
+                ->
+                ->
+
+            )
+
+
 
         it 'error in beforeAll notifies all affected leaves'
         it 'error in afterAll notifies'
@@ -342,7 +388,7 @@ describe 'PhraseJob', ->
 
 
 
-        it 'sets each step to done', (done) -> 
+        xit 'sets each step to done', (done) -> 
 
             STEPS = [
 
@@ -358,7 +404,7 @@ describe 'PhraseJob', ->
                 done()
 
 
-        it 'notifies parent deferral on each step completion', (done) -> 
+        xit 'notifies parent deferral on each step completion', (done) -> 
 
             STEPS = [
 
@@ -390,7 +436,7 @@ describe 'PhraseJob', ->
 
 
 
-    context 'run() calls each step asynchronously', ->  
+    xcontext 'run() calls each step asynchronously', ->  
 
         it 'each step is passed through the injector', (done) -> 
 

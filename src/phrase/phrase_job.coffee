@@ -132,16 +132,41 @@ exports.create = (root) ->
                         # error or timeout in leaf or hook
                         # --------------------------------
                         # 
-                        # skip all remaining steps in the set
+                        # skip all remaining (affected) steps in the set
                         #
 
                         for s in @steps
 
-                            continue unless s.set == step.set
-                            continue unless s.depth >= step.depth
+                            continue if s.depth < step.depth
+
+                            if step.set? 
+
+                                if s.set? then continue unless s.set == step.set
+
+                            else
+
+                                if s.set? 
+
+                                    intersect = (
+                                        step.sets.filter (skipSet) -> 
+                                            s.set == skipSet
+                                    )
+
+                                    continue unless intersect.length > 0
+
+                                else 
+
+                                    intersect = (
+                                        step.sets.filter (skipSet) -> 
+                                            for hasSet in s.sets
+                                                return true if hasSet == skipSet
+                                    )
+
+                                    continue unless intersect.length > 0
+                            
 
                             if s is step 
-                                s.fail = true  
+                                s.fail = true 
                                 state  = 'run::step:failed'  
                             else 
                                 s.skip = true
