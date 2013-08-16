@@ -125,7 +125,7 @@ exports.create = (root) ->
 
                     context: this
 
-                    onError: (type, error, deferral) => 
+                    onError: (done, context, error) => 
 
 
                         #
@@ -155,7 +155,7 @@ exports.create = (root) ->
                                 progress: @progress()
                                 at:       Date.now()
 
-                        deferral.resolve()
+                        done()
 
 
                     beforeEach: (done, control) => 
@@ -249,7 +249,7 @@ exports.create = (root) ->
 
 
                             hasTimedOut = true
-                            injectionConfig.onError null, new Error( 'timeout' ), targetDefer
+                            injectionConfig.onError targetDefer.resolve, {}, new Error 'timeout'
 
 
                         ), step.ref.timeout || 2000
