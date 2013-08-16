@@ -179,6 +179,9 @@ exports.create = (root) ->
                                 jobUUID:  @uuid
                                 progress: @progress()
                                 at:       Date.now()
+                                error:    error
+                                step:     step
+                                
 
                         done()
 
