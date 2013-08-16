@@ -140,8 +140,6 @@ exports.create = (root) ->
                         # 
                         # * and is run on this as context
                         # 
-                        # * and is set to notifiy instead of reject on error
-                        # 
 
                         context: this
 
@@ -152,8 +150,18 @@ exports.create = (root) ->
                             # error or timeout in leaf or hook
                             # --------------------------------
                             # 
-                            # skip all remaining (affected) steps in the set
+                            # * the injector is awaiting the call to done() before
+                            #   it proceeds onto the next step in the job
+                            # 
+                            # * this error handler marks to skip all remaining (affected) 
+                            #   steps in the set
+                            # 
+                            #      eg. if a beforeAll fails on some node in the 
+                            #          phrase tree, all nested nodes are skipped.
+                            #          
                             #
+
+                            skipped = []
 
                             for s in @steps
 
@@ -191,6 +199,8 @@ exports.create = (root) ->
                                 else 
                                     s.skip = true
                                     state  = 'run::step:skipped'
+                                    skipped.push s
+
 
                                 @deferral.notify
 
@@ -204,7 +214,18 @@ exports.create = (root) ->
                                     originator: s == step
 
 
-                            done()
+                            @notice.event( 'run::step:failed',  
+
+                                    state:      'run::step:failed'
+                                    class:      @constructor.name
+                                    jobUUID:    @uuid
+                                    progress:   @progress()
+                                    at:         Date.now()
+                                    error:      error
+                                    step:       step
+                                    skipped:    skipped
+
+                            ).then done
 
 
                         beforeEach: (done, control) => 

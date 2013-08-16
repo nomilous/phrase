@@ -446,6 +446,39 @@ describe 'PhraseJob', ->
             )
 
 
+        it 'notifies the message bus on step failure', (done) -> 
+
+
+            EVENTS = {}
+            NOTICE.event = (event, message) -> 
+
+                EVENTS[event] = message
+                then: (fn) -> fn()
+
+            STEPS = [
+
+
+                { type: 'hook', set: 1, depth: 1  , ref: { type: 'beforeEach', fn: (done) -> @one   = 1; done() } }
+                { type: 'hook', set: 1, depth: 2  , ref: { type: 'beforeEach', fn: (done) -> @two   = 2; throw new Error 'error' } }
+                { type: 'leaf', set: 1, depth: 3  , ref: {                     fn: (done) -> @three = 3; done() } }
+                { type: 'hook', set: 1, depth: 2  , ref: { type: 'afterEach',  fn: (done) -> @four  = 4; done() } }
+                { type: 'hook', set: 1, depth: 1  , ref: { type: 'afterEach',  fn: (done) -> @five  = 5; done() } }
+
+
+            ]
+
+            job = new PhraseJob notice: NOTICE, steps: STEPS , deferral: DEFER
+            job.run().then -> 
+
+                # console.log EVENTS['run::step:failed']
+
+                EVENTS['run::step:failed'].progress.should.eql { steps: 5, done: 1, failed: 1, skipped: 2 }
+                EVENTS['run::step:failed'].error.should.match /error/
+                EVENTS['run::step:failed'].step.should.equal STEPS[1]
+                EVENTS['run::step:failed'].skipped.should.eql STEPS[2..3]
+                done()
+
+
 
         it 'error in beforeAll notifies all affected leaves'
         it 'error in afterAll notifies'
