@@ -101,6 +101,11 @@ exports.create = (root, parentControl) ->
 
             text:     phraseText
             token:    parentControl.phraseToken
+            uuid:     if stack.length == 0 then parentControl.phraseToken.uuid else undefined
+                                    #
+                                    # only assign parent token uuid as 
+                                    # phrase uuid on root node
+                                    # 
 
             #
             # TODO: configurable timeout on phraseNode

@@ -21,6 +21,7 @@ describe 'PhraseRecursor', ->
 
             opts = 
                 title: 'Title'
+                uuid:  '00000'
                 leaf: ['end']
                 timeout: 1000
 
@@ -41,11 +42,12 @@ describe 'PhraseRecursor', ->
             try PhraseRecursor.create root, opts
 
 
-        it 'assigns root token name from branch title', (done) -> 
+        it 'assigns root token name and uuid from branch title', (done) -> 
 
             PhraseRecursorHooks.bind = (rooot, parent) -> 
 
                 parent.phraseToken.name.should.equal 'Title'
+                parent.phraseToken.uuid.should.equal '00000'
                 done()
                 throw 'go no further'
 

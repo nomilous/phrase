@@ -62,7 +62,7 @@ describe 'RecursorBeforeEach', ->
 
         injectionControl.args = [ 'phrase text', { key: 'VALUE' }, nestedPhraseFn ]
         PhraseLeaf.create = -> detect: (phrase, isLeaf) -> isLeaf true
-        parent.phraseToken = name: 'it'
+        parent.phraseToken = name: 'it', uuid: 'uuid'
         injectionControl.beforeEach = phraseHookFn
         
         injectionControl.defer = 
@@ -88,11 +88,34 @@ describe 'RecursorBeforeEach', ->
             root.context.stack[0].should.be.an.instanceof PhraseNode
 
             root.context.stack[0].text.should.equal 'phrase text'
+            root.context.stack[0].uuid.should.equal 'uuid'  # only in case of root phrase
             #root.context.stack[0].control.key.should.equal 'VALUE'
             root.context.stack[0].fn.should.equal nestedPhraseFn
             root.context.stack[0].token.name.should.equal 'it'
             root.context.stack[0].hooks.beforeEach.should.equal phraseHookFn
 
+
+        ), injectionControl
+
+    it 'does not assign uuid from parent phraseToken if not root phrase', (done) -> 
+
+        injectionControl.args = [ 'phrase text', { key: 'VALUE' }, -> ]
+        PhraseLeaf.create = -> detect: (phrase, isLeaf) -> isLeaf true
+        parent.phraseToken = name: 'it', uuid: 'UUID'
+        root.context.stack[0] = new PhraseNode
+
+            token: name: 'describe'
+            text: 'use case one'
+            uuid: '000000'
+            fn: ->
+
+        injectionControl.defer = resolve: ->
+
+        hook = RecursorBeforeEach.create root, parent
+        hook (->
+
+            root.context.stack[1].uuid.should.not.equal 'UUID'
+            done()
 
         ), injectionControl
 

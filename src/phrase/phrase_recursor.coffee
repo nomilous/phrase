@@ -66,8 +66,15 @@ exports.create = (root, opts) ->
 
     return recursor 'ROOT', 
 
-        phraseToken: name: opts.title
+        phraseToken: 
+
+            #
+            # root phrase token contains title and uuid 
+            # of phrase tree, from phrase.createRoot()
+            # 
+
+            name: opts.title
+            uuid: opts.uuid
+
         timeout: opts.timeout
         leaf: opts.leaf
-
-                

@@ -12,5 +12,5 @@ module.exports = class PhraseNode
     constructor: (properties) -> 
 
         @[property] = properties[property] for property of properties
-        @uuid       = v1()
+        @uuid     ||= v1()
         # console.log "[#{ @token.name }] #{ @text }"
