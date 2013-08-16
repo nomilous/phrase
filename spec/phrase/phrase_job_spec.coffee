@@ -225,6 +225,23 @@ describe 'PhraseJob', ->
                 result.job.should.eql one: 1, two: 2, three: 3
                 done()
 
+
+        it 'notifies the message bus on completion', (done) -> 
+
+            EVENT = undefined
+            NOTICE.event = (event, message) -> 
+
+                EVENT = message
+                then: (fn) -> fn()
+
+            job = new PhraseJob notice: NOTICE, steps: [], deferral: DEFER
+            job.run().then -> 
+
+                EVENT.state.should.equal 'run::complete'
+                done()
+
+
+
         it 'notifies parent on error', (done) -> 
 
             STEPS = [

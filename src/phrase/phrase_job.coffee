@@ -345,7 +345,7 @@ exports.create = (root) ->
 
                      => 
 
-                        @deferral.notify 
+                        message = 
 
                             state:   'run::complete'
                             class:    @constructor.name
@@ -353,14 +353,19 @@ exports.create = (root) ->
                             progress: @progress()
                             at:       Date.now()
 
-                        running.resolve 
+                        @notice.event( message.state, message ).then => 
 
-                            #
-                            # job instance on subkey leaves room for 
-                            # metadata (necessary later...)
-                            # 
+                            @deferral.notify message
 
-                            job: this
+                            running.resolve 
+
+                                #
+                                # job instance on subkey leaves room for 
+                                # metadata (necessary later...)
+                                # 
+
+                                job: this
+
 
                     (error)  -> console.log 'ERROR_IN_PHRASE_JOB', error.stack
 
