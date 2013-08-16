@@ -9,7 +9,7 @@ describe 'integrations', ->
         falcon = PhraseRoot.createRoot 
 
             title: 'Falcon'
-            uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
+            uuid:  '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
             #leaf: ['end', 'done']
             timeout: 1000
 
@@ -18,36 +18,30 @@ describe 'integrations', ->
                 token.on 'ready', -> 
 
                     #
-                    # TODO: this following is obviously not a particularly
-                    #       sensible way to get things running...
+                    # TODO: a way to call runs on branch or leaf
+                    #       (While the uuid is not known)
                     #
+                    
 
-                    vertices = token.graph.vertices
-                    root = (for uuid of vertices
-                        v = vertices[uuid]
-                        continue unless v.text == 'Generic'
-                        uuid
-                    )[0]
+                    # console.log token.graph.vertices
 
-                    console.log token.graph.vertices
+                    token.run( uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a' ).then( 
 
-                    # token.run( uuid: root ).then( 
-
-                    #     (result) -> 
-                    #         console.log '\n', 'RESULT', '\n', result
+                        (result) -> 
+                            console.log '\n', 'RESULT', '\n', result
 
                             
-                    #         result.job.ultraviolet.should.equal 234
-                    #         done()
+                            result.job.ultraviolet.should.equal 234
+                            done()
 
-                    #     (error) -> 
-                    #         console.log '\n', 'ERROR',  '\n', error
+                        (error) -> 
+                            console.log '\n', 'ERROR',  '\n', error
 
-                    #     (update) -> 
-                    #         console.log '\n', 'UPDATE', '\n', 
-                    #             update.state || update.event, JSON.stringify update, null, 2
+                        (update) -> 
+                            # console.log '\n', 'UPDATE', '\n', 
+                            #     update.state || update.event, JSON.stringify update, null, 2
 
-                    # )
+                    )
 
       
         falcon 'Generic', (system) -> 
