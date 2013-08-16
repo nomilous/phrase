@@ -8,6 +8,8 @@ describe 'PhraseJob', ->
     STEPS     = undefined
     root      = undefined
     PhraseJob = undefined
+    NOTICE    = undefined
+    opts      = undefined
 
     beforeEach -> 
         
@@ -19,26 +21,28 @@ describe 'PhraseJob', ->
         root      = inject: inject
         PhraseJob = phraseJob.create root
 
+        NOTICE = {}
+        opts   = notice: NOTICE
 
 
     context 'general', -> 
 
+        it 'requires opts.notice', (done) -> 
 
-
-
-        it 'USES NOTICE MESSABE BUS INSTEAD OF PROMISE NOTIFICATION FOR FAILED STEPS'
-
-
-
+            try new PhraseJob
+            catch error
+                error.should.match /PhraseJob requires opts.notice/
+                done()
 
         it 'is a class', -> 
 
-            (new PhraseJob).should.be.an.instanceof PhraseJob
+            (new PhraseJob opts).should.be.an.instanceof PhraseJob
 
         it 'is initialized with deferral and steps array', (done) -> 
 
             job = new PhraseJob
 
+                notice: NOTICE
                 deferral: DEFER
                 steps: STEPS
 
@@ -55,7 +59,7 @@ describe 'PhraseJob', ->
         it 'rejects the deferral on assignment of reserved property', (done) -> 
 
             job = new PhraseJob
-
+                notice: NOTICE
                 steps: STEPS
                 deferral: reject: (error) -> 
 
@@ -68,7 +72,7 @@ describe 'PhraseJob', ->
         it 'throws on assignment of reserved property without deferral', (done) -> 
 
             job = new PhraseJob
-
+                notice: NOTICE
                 steps: STEPS
 
             try job.uuid = 'a'
@@ -91,7 +95,7 @@ describe 'PhraseJob', ->
             MESSAGES = []
 
             job = new PhraseJob
-
+                notice: NOTICE
                 steps: STEPS
                 deferral: 
                     notify: (msg) -> 
@@ -111,7 +115,7 @@ describe 'PhraseJob', ->
 
         it 'returns a promise', (done) -> 
 
-            job = new PhraseJob steps: STEPS, deferral: DEFER
+            job = new PhraseJob steps: STEPS, deferral: DEFER, notice: NOTICE
             job.run().then.should.be.an.instanceof Function
             done()
 
@@ -124,18 +128,18 @@ describe 'PhraseJob', ->
 
             ]
 
-            job = new PhraseJob steps: STEPS, deferral: DEFER
+            job = new PhraseJob steps: STEPS, deferral: DEFER, notice: NOTICE
             job.run().then -> 
 
                 job.new_property.should.equal 'CREATED ON JOB INSTANCE'
                 done()
 
 
-        it 'ties into the reserved property rejection', (done) -> 
+        it 'has constant properties', (done) -> 
 
             STEPS = [
 
-                ref: fn: -> @uuid = '0000000000000000000000000000006.62606957'
+                ref: fn: -> @notice = "Planck's constant"
 
             ]
 
@@ -144,7 +148,7 @@ describe 'PhraseJob', ->
                 error.should.match /Cannot assign reserved property/
                 done()
 
-            (new PhraseJob steps: STEPS, deferral: DEFER).run()
+            (new PhraseJob steps: STEPS, deferral: DEFER, notice: NOTICE).run()
 
 
         it 'runs all steps', (done) -> 
@@ -157,11 +161,31 @@ describe 'PhraseJob', ->
 
             ]
 
-            job = new PhraseJob steps: STEPS, deferral: DEFER
+            job = new PhraseJob steps: STEPS, deferral: DEFER, notice: NOTICE
             job.run().then -> 
 
                 job.should.eql one: 1, two: 2, three: 3
                 done()
+
+
+        it 'enables steps to call the notifier inline', (done) -> 
+
+            STEPS = [
+
+                { ref: fn: -> @notice.info "buds know better than books don't grow" }
+
+            ]
+
+            NOTICE.info = (msg) -> 
+
+                msg.should.equal "buds know better than books don't grow"
+                done()
+
+
+            job = new PhraseJob steps: STEPS, deferral: DEFER, notice: NOTICE
+            job.run()
+
+
 
 
         it 'resolves with object containing the job instance and notified state succeeded', (done) -> 
@@ -176,7 +200,7 @@ describe 'PhraseJob', ->
             MESSAGES     = []
             DEFER.notify = (msg) -> MESSAGES.push msg
 
-            job = new PhraseJob steps: STEPS, deferral: DEFER
+            job = new PhraseJob steps: STEPS, deferral: DEFER, notice: NOTICE
             job.run().then (result) -> 
 
                 msg = MESSAGES.pop()
@@ -194,7 +218,7 @@ describe 'PhraseJob', ->
             ]
             MESSAGES     = []
             DEFER.notify = (notify) -> MESSAGES.push notify
-            job = new PhraseJob steps: STEPS, deferral: DEFER
+            job = new PhraseJob steps: STEPS, deferral: DEFER, notice: NOTICE
             job.run().then(
 
                 -> 
@@ -216,7 +240,7 @@ describe 'PhraseJob', ->
             ]
             MESSAGES     = []
             DEFER.notify = (notify) -> MESSAGES.push notify
-            job = new PhraseJob steps: STEPS, deferral: DEFER
+            job = new PhraseJob steps: STEPS, deferral: DEFER, notice: NOTICE
             job.run().then(
 
                 -> 
@@ -241,7 +265,7 @@ describe 'PhraseJob', ->
 
             MESSAGES     = []
             DEFER.notify = (notify) -> MESSAGES.push notify
-            job = new PhraseJob steps: STEPS, deferral: DEFER
+            job = new PhraseJob steps: STEPS, deferral: DEFER, notice: NOTICE
             job.run().then(
 
                 -> 
@@ -263,7 +287,7 @@ describe 'PhraseJob', ->
                 skip: true
 
             ]
-            job = new PhraseJob steps: STEPS, deferral: DEFER
+            job = new PhraseJob steps: STEPS, deferral: DEFER, notice: NOTICE
             job.run().then(
 
                 (result) -> 
@@ -298,7 +322,7 @@ describe 'PhraseJob', ->
             MESSAGES     = []
             DEFER.notify = (notify) -> MESSAGES.push notify
 
-            job = new PhraseJob steps: STEPS, deferral: DEFER
+            job = new PhraseJob steps: STEPS, deferral: DEFER, notice: NOTICE
             
             job.run().then(
 
@@ -359,7 +383,7 @@ describe 'PhraseJob', ->
             MESSAGES     = []
             DEFER.notify = (notify) -> MESSAGES.push notify
 
-            job = new PhraseJob steps: STEPS, deferral: DEFER
+            job = new PhraseJob steps: STEPS, deferral: DEFER, notice: NOTICE
             
             job.run().then(
 
@@ -405,7 +429,7 @@ describe 'PhraseJob', ->
                 { ref: fn: -> }
 
             ]
-            job = new PhraseJob steps: STEPS, deferral: DEFER
+            job = new PhraseJob steps: STEPS, deferral: DEFER, notice: NOTICE
             job.run().then -> 
 
                 STEPS.map (s) -> s.done.should.equal true
@@ -425,7 +449,7 @@ describe 'PhraseJob', ->
             MESSAGES = []
             DEFER.notify = (notify) -> MESSAGES.push notify
 
-            job = new PhraseJob steps: STEPS, deferral: DEFER
+            job = new PhraseJob steps: STEPS, deferral: DEFER, notice: NOTICE
             job.run().then ->
 
                 MESSAGES.map( (m) -> 
@@ -464,7 +488,7 @@ describe 'PhraseJob', ->
                 FUNCTIONS.push fn
                 ->
 
-            job = new PhraseJob steps: STEPS, deferral: DEFER
+            job = new PhraseJob steps: STEPS, deferral: DEFER, notice: NOTICE
             job.run().then -> 
 
                 inject.async = swap
@@ -474,6 +498,7 @@ describe 'PhraseJob', ->
         it 'injects no args when none are specified', (done) ->
 
             (new PhraseJob 
+                notice: NOTICE
                 deferral: DEFER
                 steps: [ ref: fn: -> 
 
@@ -495,6 +520,7 @@ describe 'PhraseJob', ->
             DEFER.notify = (msg) -> MESSAGES.push msg
 
             (new PhraseJob 
+                notice: NOTICE
                 deferral: DEFER
                 steps: [ 
 
@@ -538,6 +564,7 @@ describe 'PhraseJob', ->
 
             (new PhraseJob 
                 deferral: DEFER
+                notice: NOTICE
                 steps: [ 
 
                     type: 'leaf'

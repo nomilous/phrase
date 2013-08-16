@@ -17,6 +17,8 @@ exports.create = (root) ->
 
         constructor: (opts = {}) -> 
 
+            throw new Error 'PhraseJob requires opts.notice' unless opts.notice?
+
             #
             # job uuid can be assigned (allows resume, later...)
             #
@@ -46,7 +48,7 @@ exports.create = (root) ->
             # reserved / silent properties
             #
 
-            for property in ['uuid', 'steps', 'deferral', 'progress']
+            for property in ['notice', 'uuid', 'steps', 'deferral', 'progress']
 
                 do (property) =>
 
@@ -98,6 +100,8 @@ exports.create = (root) ->
             #
             # a local deferral for the promise of this step run
             #
+
+
 
             running = defer()
 

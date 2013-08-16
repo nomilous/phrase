@@ -7,9 +7,9 @@ api =
     
     run: (root, opts) -> 
 
-        {context} = root
-        {graph}   = context
-        {uuid}    = opts
+        {context}       = root
+        {graph, notice} = context
+        {uuid}          = opts
 
         #
         # defer and promise the running phrase node
@@ -43,6 +43,7 @@ api =
                 job = new context.PhraseJob
 
                     steps: steps
+                    notice: notice
                     deferral: running
 
                 job.run()

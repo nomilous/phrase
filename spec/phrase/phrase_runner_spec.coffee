@@ -32,6 +32,10 @@ describe 'PhraseRunner', ->
                 NOTICE = notice
                 GRAPH  = token.graph
 
+                # token.on 'ready', -> 
+
+                #     console.log token.graph.vertices
+
                 notice.use (msg, next) -> 
 
                     return done() if LEAF_TWO?
@@ -312,7 +316,7 @@ describe 'PhraseRunner', ->
             tick     = 0 
             Date.now = -> tick++
             root     = context: graph: GRAPH
-            opts     = uuid: PHRASE_ROOT
+            opts     = uuid: NEST_ONE
             UPDATES  = []
             deferral = notify: (update) -> UPDATES.push update
 
@@ -322,7 +326,7 @@ describe 'PhraseRunner', ->
                 # console.log UPDATES
                 UPDATES.should.eql [
                     { state: 'scan::starting', at: 0 }
-                    { state: 'scan::complete', at: 1, steps: 26, leaves: 4 }
+                    { state: 'scan::complete', at: 1, steps: 23, leaves: 3 }
                 ]
                 done()
 

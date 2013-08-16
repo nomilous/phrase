@@ -15,6 +15,16 @@ describe 'integrations', ->
 
             (token, notice) -> 
 
+                notice.use (msg, next) -> 
+
+                    if msg.context.title == 'inline notification'
+
+                        console.log MESSAGE: msg
+                        setTimeout next, msg.waitForNotice
+                        return
+
+                    next()
+
                 token.on 'ready', -> 
 
                     #
@@ -82,8 +92,18 @@ describe 'integrations', ->
 
                 subsystem 'left wing', (end) -> 
 
-                    console.log 'left wing'
-                    setTimeout end, 300
+                    console.log 'left wing start'
+
+                    @notice.info( 'inline notification',
+
+                        handy: true
+                        waitForNotice:  1900
+
+                    ).then -> 
+
+                        console.log 'left wing done'
+                        end()
+
 
                 subsystem 'right wing', (end) -> 
 
