@@ -77,17 +77,14 @@ exports.create = (root) ->
 
         run: ->
 
+
             #
-            # notifies onto parent's deferral
-            # 
-            #  token.run( ... ).then(
-            #     (result) -> 
-            #     (error)  -> 
-            #     (notify) ->   # HERE
-            #  )
+            # a local deferral for the promise of this step run
             #
 
-            @deferral.notify 
+            running = defer()
+
+            message = 
 
                 state:   'run::starting'
                 class:    @constructor.name
@@ -95,275 +92,296 @@ exports.create = (root) ->
                 progress: @progress()
                 at:       Date.now()
 
+            @notice.event( message.state, message ).then => 
 
+                            #
+                            # asynchronous notification
+                            # -------------------------
+                            # 
+                            # * traverses this phrase tree's message bus 
+                            # 
+                            # * job is not started until the message has 
+                            #   traversed the middleware pipeline
+                            #
 
-            #
-            # a local deferral for the promise of this step run
-            #
-
-
-
-            running = defer()
-
-            sequence( @steps.map (step) => 
-
-
-                #
-                # each job step is called through the async injector
-                #
-
-                injectionConfig =  
+               
+                @deferral.notify message
 
                     #
-                    # step.ref.fn is the injection target
-                    # -----------------------------------
-                    # console.log step 
+                    # synchronous notification
+                    # ------------------------
                     # 
-                    # * and will be called with arguments as determined 
-                    #   by this injector
+                    # * notifies onto parent's deferral
                     # 
-                    # * and is run on this as context
-                    # 
-                    # * and is set to notifiy instead of reject on error
-                    # 
+                    #     token.run( ... ).then(
+                    #        (result) -> 
+                    #        (error)  -> 
+                    #        (notify) ->   # HERE
+                    #     )
+                    #
 
-                    context: this
 
-                    onError: (done, context, error) => 
+                sequence( @steps.map (step) => 
 
+
+                    #
+                    # each job step is called through the async injector
+                    #
+
+                    injectionConfig =  
 
                         #
-                        # error or timeout in leaf or hook
-                        # --------------------------------
+                        # step.ref.fn is the injection target
+                        # -----------------------------------
+                        # console.log step 
                         # 
-                        # skip all remaining (affected) steps in the set
-                        #
+                        # * and will be called with arguments as determined 
+                        #   by this injector
+                        # 
+                        # * and is run on this as context
+                        # 
+                        # * and is set to notifiy instead of reject on error
+                        # 
 
-                        for s in @steps
+                        context: this
 
-                            continue if s.depth < step.depth
+                        onError: (done, context, error) => 
 
-                            if step.set? 
 
-                                if s.set? then continue unless s.set == step.set
+                            #
+                            # error or timeout in leaf or hook
+                            # --------------------------------
+                            # 
+                            # skip all remaining (affected) steps in the set
+                            #
 
-                            else
+                            for s in @steps
 
-                                if s.set? 
+                                continue if s.depth < step.depth
 
-                                    intersect = (
-                                        step.sets.filter (skipSet) -> 
-                                            s.set == skipSet
-                                    )
+                                if step.set? 
 
-                                    continue unless intersect.length > 0
+                                    if s.set? then continue unless s.set == step.set
 
+                                else
+
+                                    if s.set? 
+
+                                        intersect = (
+                                            step.sets.filter (skipSet) -> 
+                                                s.set == skipSet
+                                        )
+
+                                        continue unless intersect.length > 0
+
+                                    else 
+
+                                        intersect = (
+                                            step.sets.filter (skipSet) -> 
+                                                for hasSet in s.sets
+                                                    return true if hasSet == skipSet
+                                        )
+
+                                        continue unless intersect.length > 0
+                                
+
+                                if s is step 
+                                    s.fail = true 
+                                    state  = 'run::step:failed'  
                                 else 
+                                    s.skip = true
+                                    state  = 'run::step:skipped'
 
-                                    intersect = (
-                                        step.sets.filter (skipSet) -> 
-                                            for hasSet in s.sets
-                                                return true if hasSet == skipSet
-                                    )
+                                @deferral.notify
 
-                                    continue unless intersect.length > 0
-                            
-
-                            if s is step 
-                                s.fail = true 
-                                state  = 'run::step:failed'  
-                            else 
-                                s.skip = true
-                                state  = 'run::step:skipped'
-
-                            @deferral.notify
-
-                                state:      state
-                                class:      @constructor.name
-                                jobUUID:    @uuid
-                                progress:   @progress()
-                                at:         Date.now()
-                                error:      error
-                                step:       step
-                                originator: s == step
+                                    state:      state
+                                    class:      @constructor.name
+                                    jobUUID:    @uuid
+                                    progress:   @progress()
+                                    at:         Date.now()
+                                    error:      error
+                                    step:       step
+                                    originator: s == step
 
 
-                        done()
-
-
-                    beforeEach: (done, control) => 
-
-
-                        #
-                        # an error or timeout in preceding step
-                        # -------------------------------------
-                        # 
-                        # * skip this step
-                        # 
-
-                        if step.skip
-
-                            control.skip()
                             done()
 
-                        #
-                        # Timeout initiates async errorHandler, if it fires 
-                        # then the resolution that could concievably still 
-                        # occurr while the timeout handler is running must
-                        # be ignored.
-                        # 
-                        # Ordinarilly this sort of thing would be handled 
-                        # by rejecting or resolving the promise that timed
-                        # out, but it is that same promise that is being 
-                        # used by the timeout handler to stop the flow
-                        # of execution from from proceeding into the next 
-                        # step. 
-                        # 
-                        # If the promise is resolved before the timeout 
-                        # handler completes that will lead to undesired
-                        # concurrencies.
-                        #
 
-                        hasTimedOut = false
+                        beforeEach: (done, control) => 
 
-
-                        #
-                        # extract the deferral that the injector has associated
-                        # with the running of the injection target
-                        #
-
-                        targetDefer = control.defer
-
-                        unless (
 
                             #
-                            # leaves always have the resolver injected
+                            # an error or timeout in preceding step
+                            # -------------------------------------
+                            # 
+                            # * skip this step
                             # 
 
-                            step.type == 'leaf' || 
+                            if step.skip
 
-                            #
-                            # hardcoded resolver signature for hooks 
-                            # 
-
-                            control.signature[0] == 'done'
-
-                        )
+                                control.skip()
+                                done()
 
                             #
-                            # this step is not async
-                            # ----------------------
+                            # Timeout initiates async errorHandler, if it fires 
+                            # then the resolution that could concievably still 
+                            # occurr while the timeout handler is running must
+                            # be ignored.
                             # 
-                            # the promise therefore needs to be maually resolved
+                            # Ordinarilly this sort of thing would be handled 
+                            # by rejecting or resolving the promise that timed
+                            # out, but it is that same promise that is being 
+                            # used by the timeout handler to stop the flow
+                            # of execution from from proceeding into the next 
+                            # step. 
+                            # 
+                            # If the promise is resolved before the timeout 
+                            # handler completes that will lead to undesired
+                            # concurrencies.
                             #
+
+                            hasTimedOut = false
+
+
+                            #
+                            # extract the deferral that the injector has associated
+                            # with the running of the injection target
+                            #
+
+                            targetDefer = control.defer
+
+                            unless (
+
+                                #
+                                # leaves always have the resolver injected
+                                # 
+
+                                step.type == 'leaf' || 
+
+                                #
+                                # hardcoded resolver signature for hooks 
+                                # 
+
+                                control.signature[0] == 'done'
+
+                            )
+
+                                #
+                                # this step is not async
+                                # ----------------------
+                                # 
+                                # the promise therefore needs to be maually resolved
+                                #
+                                # 
+                                # BUG: Non async steps to don't notify on error
+                                # process.nextTick -> targetDefer.resolve()
+                                # 
+                                # nasty fix...
+                                # 
+                                setTimeout targetDefer.resolve, 1
+                                done()
+                                return
+                                #
+                                # target function is now called (by the injector)
+                                #
+
+
+
+                            #
+                            # this step is async
+                            # ------------------
                             # 
-                            # BUG: Non async steps to don't notify on error
-                            # process.nextTick -> targetDefer.resolve()
+                            # start timeout as defined on step
                             # 
-                            # nasty fix...
-                            # 
-                            setTimeout targetDefer.resolve, 1
+
+                            timeout = setTimeout (=>
+
+
+                                hasTimedOut = true
+                                injectionConfig.onError targetDefer.resolve, {}, new Error 'timeout'
+
+
+                            ), step.ref.timeout || 2000
+
+                            control.args[0] = -> 
+
+                                #
+                                # custom resolver passed as (done, ...) to
+                                # the target function
+                                #
+
+                                clearTimeout timeout
+
+                                #
+                                # if the timeout has already fired 
+                                # this resolver is too late...
+                                # 
+
+                                return if hasTimedOut
+                                targetDefer.resolve()
+
+
                             done()
                             return
+
+
+                        afterEach: (done) => 
+                            
+                            unless step.skip or step.fail
+
+                                step.done = true
+
+                                @deferral.notify
+
+                                    state:   'run::step:done'
+                                    class:    @constructor.name
+                                    jobUUID:  @uuid
+                                    progress: @progress()
+                                    at:       Date.now()
+
+                            done()
+
+
+                    inject.async injectionConfig, step.ref.fn
+
+
+                ).then(
+
+                     => 
+
+                        @deferral.notify 
+
+                            state:   'run::complete'
+                            class:    @constructor.name
+                            jobUUID:  @uuid
+                            progress: @progress()
+                            at:       Date.now()
+
+                        running.resolve 
+
                             #
-                            # target function is now called (by the injector)
-                            #
-
-
-
-                        #
-                        # this step is async
-                        # ------------------
-                        # 
-                        # start timeout as defined on step
-                        # 
-
-                        timeout = setTimeout (=>
-
-
-                            hasTimedOut = true
-                            injectionConfig.onError targetDefer.resolve, {}, new Error 'timeout'
-
-
-                        ), step.ref.timeout || 2000
-
-                        control.args[0] = -> 
-
-                            #
-                            # custom resolver passed as (done, ...) to
-                            # the target function
-                            #
-
-                            clearTimeout timeout
-
-                            #
-                            # if the timeout has already fired 
-                            # this resolver is too late...
+                            # job instance on subkey leaves room for 
+                            # metadata (necessary later...)
                             # 
 
-                            return if hasTimedOut
-                            targetDefer.resolve()
+                            job: this
 
+                    (error)  -> console.log 'ERROR_IN_PHRASE_JOB', error.stack
 
-                        done()
-                        return
-
-
-                    afterEach: (done) => 
-                        
-                        unless step.skip or step.fail
-
-                            step.done = true
-
-                            @deferral.notify
-
-                                state:   'run::step:done'
-                                class:    @constructor.name
-                                jobUUID:  @uuid
-                                progress: @progress()
-                                at:       Date.now()
-
-                        done()
-
-
-                inject.async injectionConfig, step.ref.fn
-
-
-            ).then(
-
-                 => 
-
-                    @deferral.notify 
-
-                        state:   'run::complete'
-                        class:    @constructor.name
-                        jobUUID:  @uuid
-                        progress: @progress()
-                        at:       Date.now()
-
-                    running.resolve 
+                    (notify) -> 
 
                         #
-                        # job instance on subkey leaves room for 
-                        # metadata (necessary later...)
-                        # 
+                        # cannot suspend 'flow of execution' into the next steps
+                        # (and needs to - to skip the next steps in the erroring set)
+                        #
+                        # if notify.event == 'error' or notify.event == 'timeout'
+                        #     @handleError notify, -> 
+                        #         notify.defer.resolve()
+                        #         delete notify.defer
+                        #         running.notify notify
 
-                        job: this
-
-                (error)  -> console.log 'ERROR_IN_PHRASE_JOB', error.stack
-
-                (notify) -> 
-
-                    #
-                    # cannot suspend 'flow of execution' into the next steps
-                    # (and needs to - to skip the next steps in the erroring set)
-                    #
-                    # if notify.event == 'error' or notify.event == 'timeout'
-                    #     @handleError notify, -> 
-                    #         notify.defer.resolve()
-                    #         delete notify.defer
-                    #         running.notify notify
-
-            )
+                )
 
             return running.promise
+
+

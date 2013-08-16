@@ -21,7 +21,8 @@ describe 'PhraseJob', ->
         root      = inject: inject
         PhraseJob = phraseJob.create root
 
-        NOTICE = {}
+        NOTICE = 
+            event: -> then: (fn) -> fn()
         opts   = notice: NOTICE
 
 
@@ -88,6 +89,21 @@ describe 'PhraseJob', ->
 
 
     context 'run()', -> 
+
+
+        it 'notifies the message bus on starting', (done) -> 
+
+            NOTICE.event = (event, message) -> 
+
+                event.should.equal 'run::starting'
+                message.progress.should.eql steps: 2, done: 0, failed: 0, skipped: 0
+                done()
+                throw 'go no further'
+
+            job = new PhraseJob notice: NOTICE, steps: [  {},{}  ], deferral: DEFER
+
+            try job.run()
+
 
 
         it 'notifies the deferral on running state', (done) -> 
