@@ -273,12 +273,8 @@ exports.create = (root) ->
                                 # the promise therefore needs to be maually resolved
                                 #
                                 # 
-                                # BUG: Non async steps to don't notify on error
-                                # process.nextTick -> targetDefer.resolve()
-                                # 
-                                # nasty fix...
-                                # 
-                                setTimeout targetDefer.resolve, 1
+
+                                process.nextTick -> targetDefer.resolve()
                                 done()
                                 return
                                 #
