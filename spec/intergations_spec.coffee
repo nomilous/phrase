@@ -1,5 +1,4 @@
 should         = require 'should'
-coffee         = require 'coffee-script'
 PhraseRoot     = require '../lib/phrase_root'
 
 describe 'integrations', -> 
