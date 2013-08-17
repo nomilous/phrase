@@ -47,7 +47,7 @@ Noc    = require( '../lib/phrase_root' ).createRoot
                         # An alert has arrived, call the phrase branch
                         #
 
-                        token.run( uuid: alert.uuid ).then(
+                        tree.run( uuid: alert.uuid ).then(
 
                             (resolve) ->
                             (error)   -> 
