@@ -30,10 +30,10 @@ describe 'RecursorBeforeAll', ->
 
         hook = RecursorBeforeAll.create root
 
-        root.context.hooks.beforeAll.push  new PhraseHook -> 
-        root.context.hooks.beforeEach.push new PhraseHook ->
-        root.context.hooks.afterEach.push  new PhraseHook -> 
-        root.context.hooks.afterAll.push   new PhraseHook -> 
+        root.context.hooks.beforeAll.push  new PhraseHook root, 'beforeAll',  all:  -> 
+        root.context.hooks.beforeEach.push new PhraseHook root, 'beforeEach', each: -> 
+        root.context.hooks.afterEach.push  new PhraseHook root, 'afterEach',  each: -> 
+        root.context.hooks.afterAll.push   new PhraseHook root, 'afterAll',   all:  -> 
 
         injectionControl = {}
 
