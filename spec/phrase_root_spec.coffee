@@ -38,9 +38,9 @@ describe 'phrase', ->
         context 'phrase root registrar', -> 
 
 
-            beforeEach (done) -> 
+            before (done) -> 
 
-                @linkFn = (token, notice) ->  
+                @linked = undefined
 
                 #
                 # create rootFn
@@ -55,21 +55,52 @@ describe 'phrase', ->
                     title: 'Phrase Title'
                     uuid:  '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
 
-
                     #
                     # linkFn
                     #
 
-                    @linkFn
+                    (token, notice) => 
 
+                        @linked = 
+
+                            token:  token
+                            notice: notice
 
                 done()
+
+            beforeEach -> 
+
+                @linked = undefined
 
 
             it 'is a function', (done) -> 
 
                 @rootFn.should.be.an.instanceof Function
                 done()
+
+
+            it 'creates a PhraseRecursor with root context', (done) -> 
+
+                PhraseRecursor.create = (root, opts) -> 
+
+                    should.exist root.context
+                    done()
+
+                
+                @rootFn {}, -> 
+
+
+            it 'calls linkFn', (done) -> 
+
+                should.not.exist @linked
+
+                @rootFn {}, -> 
+
+                should.exist @linked.token
+                should.exist @linked.notice
+                done()
+
+
 
 
 

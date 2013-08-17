@@ -147,12 +147,6 @@ require( 'also' ) exports, {}, (root) ->
 
             root.timeout = opts.timeout
 
-            #
-            # * callback with token and messenger
-            #
-
-            linkFn context.token, context.notice
-
 
             #
             # return phrase root registrar
@@ -160,8 +154,13 @@ require( 'also' ) exports, {}, (root) ->
          
             return (opts, phraseFn) -> 
 
+                #
+                # * callback with token and messenger
+                #
+
+                linkFn context.token, context.notice
+
+                
                 PhraseRecursor.create root, opts
-
-
 
 
