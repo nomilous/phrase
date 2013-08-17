@@ -3,7 +3,7 @@
 #
 # Exploring some ideas here... despite the 'possible' dissarangement 
 # of having an inprocess state machine managing incident lifecycle 
-# without any 'sign' of a persistance layer.
+# without any 'sign' of a persis†ance layer.
 #
 
 
@@ -13,9 +13,9 @@ Noc    = require( '../lib/phrase_root' ).createRoot
     title: 'Network Operations Center'
     uuid:  '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
 
-    (tree, notice) -> 
+    (token, notice) -> 
 
-        tree.on 'ready', -> 
+        token.on 'ready', -> 
 
             #
             # NOC Phrase Tree is initialized
@@ -47,13 +47,13 @@ Noc    = require( '../lib/phrase_root' ).createRoot
                         # An alert has arrived, call the phrase branch
                         #
 
-                        tree.run( uuid: alert.uuid ).then(
+                        token.run( uuid: alert.uuid ).then(
 
                             (resolve) ->
                             (error)   -> 
                             (notify)  ->
 
-                                if notify.state 'run::step:failed' 
+                                if notify.state 'alert::escalate' 
 
                                     #
                                     # escalate
@@ -73,7 +73,7 @@ Noc    = require( '../lib/phrase_root' ).createRoot
 Noc 'Duties', (duty) -> 
 
     
-    duty 'System Alerts (Front line)', (alert, KnowledgeBase, TeamHubs) -> 
+    duty 'System Alerts (Front line)', (alert, KnowledgeBase, TeamHubs, Escalate) -> 
 
         #
         # KnowledgeBase and TeamHub are local libs injected by the 'first walk' of
@@ -82,20 +82,36 @@ Noc 'Duties', (duty) ->
 
         KnowledgeBase.SystemAlerts.find().map (a) -> 
 
-                            
+                                    # 
                                     #
                                     # insert a branch for each known alert and 
                                     # associate with the alert's assigned uuid 
+                                    # 
+                                    #  `token.run( uuid: alert.uuid ).then...`
+                                    #        
+                                    #        from above, at alert time,     
+            before all: ->          #        finds and runs this 
+                                    #        phrase branch
+                                    # 
+                #
+                # create array storage to log the notification 
+                # chatter generated throughout the handling 
+                # of this alert process
+                #
+                # @variables are stored on the PhraseJob instance
+                # that is created at token.run(...)
+                # 
+                                    # 
+                @log = []           # 
                                     #
-                                    # 
-                                    # 
-                                    # 
+                                    #
             alert a.title, uuid: a.uuid, (step) -> 
 
 
                                                 #
                                                 # each step may have a breech time
-                                                #
+                                                # defined in the knowledge base
+                                                # 
                                                 # 
                                                 #
                 step 'acknowledge', timeout: a.SLA1, (acknowledge) -> 
@@ -110,10 +126,12 @@ Noc 'Duties', (duty) ->
 
                             alert: a
 
-                        ).then (acknowledgement) ->  
+                        ).then (acknowledgement) =>  
 
                             #
-                            # received acknowledgement from someone on the noc team
+                            # received acknowledgement from someone on the noc team web
+                            # app / mobile client,
+                            # 
                             # assign respondent messenger to `this` (PhraseJob instance)
                             #
 
@@ -130,17 +148,40 @@ Noc 'Duties', (duty) ->
 
                     resolve a.uuid, (done) -> 
 
-                        @assigned.use (msg, next) -> 
+                        @assigned.use (msg, next) => 
 
                             #
-                            # listen to notifications from the assigned respondent
+                            # log all notification / status updates from 
+                            # the respondent onto `this` (PhraseJob instance)
                             #
 
-                            return next() unless msg.context.title == 'alert::resolved'
+                            @log.push msg.content  # probably needs a deep copy!
+
 
                             #
-                            # received the alert resolution message
+                            # monitor for specific events
                             #
 
-                            done()
+                            switch msg.context.title
 
+                                when 'alert::resolved' 
+
+                                    done()
+
+                                when 'alert::escalate'
+
+                                    #
+                                    # initialize a new Escalation 
+                                    # from `this` (PhraseJob instance)
+                                    #
+
+                                    done new Escalation @
+
+
+
+
+
+# 
+# † persistance could be an integrated plugin, it would need to 
+#   re-initialize all state after service hups / crashes
+# 
