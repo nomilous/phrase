@@ -33,10 +33,14 @@ hotswap = require( '../lib/phrase_root' ).createRoot
                 """
 
                 #
-                # modify beforeEach hook to migrate context data from version 1 to version 2
+                # modify beforeEach of can/remain/running to migrate context data from version 1 to version 2
                 # 
 
-                vertices['63e2d6b0-f242-11e2-85ef-03366e5fcf9a'].hooks.beforeEach.fn = eval coffee.compile """ 
+                for uuid of vertices
+
+                    continue unless vertices[uuid].text == 'remain'
+
+                    vertices[uuid].hooks.beforeEach.fn = eval coffee.compile """ 
 
                     -> 
 
@@ -65,22 +69,21 @@ hotswap = require( '../lib/phrase_root' ).createRoot
             next()
 
 
-
-before 
-
-    each: -> 
-    
-        @version  = 1
-        @interval = 1500
-
-        #
-        # version 1 was discovered to be leaning a little in paper's favour
-        #
-
-        @choices = ['rock', 'paper']
-
-
 hotswap 'the process containing this phrase', (can) -> 
+
+    before 
+
+        each: -> 
+        
+            @version  = 1
+            @interval = 1500
+
+            #
+            # version 1 was discovered to be leaning a little in paper's favour
+            #
+
+            @choices = ['rock', 'paper']
+
 
     can 'remain', (running) -> 
 
