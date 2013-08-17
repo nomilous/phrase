@@ -86,21 +86,38 @@ describe 'phrase', ->
                     should.exist root.context
                     done()
 
-                
-                @rootFn {}, -> 
+                @rootFn 'phrase text', -> 
 
 
             it 'calls linkFn', (done) -> 
 
                 should.not.exist @linked
 
-                @rootFn {}, -> 
-
+                @rootFn 'phrase text', -> 
                 should.exist @linked.token
                 should.exist @linked.notice
                 done()
 
 
+
+            it 'does the first walk', (done) -> 
+
+
+                @rootFn 'phrase text', (nested) ->  
+
+                    nested 'nested', (end) -> 
+
+                        'NESTED PHRASE FN'
+
+                        end()
+
+                graph = @linked.token.graph
+
+                @linked.token.on 'ready', -> 
+
+                    vertex = graph.vertices[ graph.leaves[0] ]
+                    vertex.fn.toString().should.match /NESTED PHRASE FN/
+                    done()
 
 
 

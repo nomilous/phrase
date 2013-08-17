@@ -152,7 +152,10 @@ require( 'also' ) exports, {}, (root) ->
             # return phrase root registrar
             # 
          
-            return (opts, phraseFn) -> 
+            return (phraseRootString, phraseRootFn) -> 
+
+                PhraseRecursor.create root, opts, phraseRootString, phraseRootFn
+
 
                 #
                 # * callback with token and messenger
@@ -161,6 +164,6 @@ require( 'also' ) exports, {}, (root) ->
                 linkFn context.token, context.notice
 
                 
-                PhraseRecursor.create root, opts
+                
 
 

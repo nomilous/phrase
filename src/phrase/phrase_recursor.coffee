@@ -9,7 +9,7 @@ PhraseHooks    = require './phrase_hooks'
 # run any of the hooks or leaf nodes.
 # 
 
-exports.create = (root, opts) ->
+exports.create = (root, opts, rootString, rootFn) ->
 
     {context, inject} = root
     {stack, notice}   = context
@@ -17,13 +17,7 @@ exports.create = (root, opts) ->
 
     recursor = (parentPhraseString, parentPhraseControl) -> 
 
-        # console.log arguments
 
-        #
-        # create recursion control hooks 
-        # 
-
-        #parent = control: parentPhraseControl
         recursionControl = RecursorHooks.bind root, parentPhraseControl
 
         #
@@ -38,6 +32,7 @@ exports.create = (root, opts) ->
             beforeEach: recursionControl.beforeEach
             afterEach:  recursionControl.afterEach
             afterAll:   recursionControl.afterAll
+
 
             (phraseString, phraseControl, nestedPhraseFn) -> 
 
@@ -59,12 +54,7 @@ exports.create = (root, opts) ->
         return injectionFn
 
 
-
-    #
-    # return root recursor (injectionFn)
-    #
-
-    return recursor 'ROOT', 
+    injector = recursor 'ROOT', 
 
         phraseToken: 
 
@@ -78,3 +68,13 @@ exports.create = (root, opts) ->
 
         timeout: opts.timeout
         leaf: opts.leaf
+
+    if rootString? and rootFn?
+
+        #
+        # perform the first injection
+        #
+
+        injector rootString, rootFn
+
+    return injector
