@@ -42,9 +42,9 @@ exports.create = (root, parentControl) ->
 
             done()
 
-        return run() if context['first walk']?
+        return run() if context.walking?
         
         notice.event( 'phrase::recurse:start' ).then -> 
 
-            context['first walk'] = startedAt: Date.now()
+            context.walking = startedAt: Date.now()
             run()

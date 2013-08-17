@@ -71,7 +71,7 @@ describe 'RecursorBeforeAll', ->
         hook (->
 
             EVENT.should.equal 'phrase::recurse:start'
-            root.context['first walk'].startedAt.should.equal 1
+            root.context.walking.startedAt.should.equal 1
             done()
 
         ), {}

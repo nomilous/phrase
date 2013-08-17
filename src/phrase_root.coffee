@@ -139,6 +139,11 @@ require( 'also' ) exports, {}, (root) ->
          
             return (phraseRootString, phraseRootFn) -> 
 
+                if context.walking?
+
+                    throw new Error 'Phrase root registrar cannot perform concurrent walks'
+
+
                 #
                 # token
                 # -----

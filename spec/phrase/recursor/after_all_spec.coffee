@@ -22,7 +22,7 @@ describe 'RecursorAfterAll', ->
         root = 
             context: 
                 stack: []
-                'first walk': startedAt: 1
+                walking: startedAt: 1
                 notice: event: (title, payload) -> 
 
                     title.should.equal 'phrase::recurse:end'

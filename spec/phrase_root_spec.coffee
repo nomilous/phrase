@@ -17,12 +17,12 @@ describe 'phrase', ->
 
     context 'create()', ->
 
-        it 'is a function', (done) ->  
+        xit 'is a function', (done) ->  
 
             PhraseRoot.createRoot.should.be.an.instanceof Function
             done()
 
-        it 'expects opts and linkFn', (done) -> 
+        xit 'expects opts and linkFn', (done) -> 
 
             try PhraseRoot.createRoot 
 
@@ -39,72 +39,74 @@ describe 'phrase', ->
         context 'phrase root registrar', -> 
 
 
-            before (done) -> 
+            it 'is a function', (done) -> 
 
-                @linked = undefined
-
-                #
-                # create rootFn
-                #  
-            
-                @rootFn = PhraseRoot.createRoot
-
-                    #
-                    # opts
-                    #
+                registrar = PhraseRoot.createRoot
 
                     title: 'Phrase Title'
                     uuid:  '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
 
-                    #
-                    # linkFn
-                    #
-
-                    (token, notice) => 
-
-                        @linked = 
-
-                            token:  token
-                            notice: notice
-
-                done()
-
-            beforeEach -> 
-
-                @linked = undefined
+                    (token, notice) ->
 
 
-            it 'is a function', (done) -> 
-
-                @rootFn.should.be.an.instanceof Function
+                registrar.should.be.an.instanceof Function
                 done()
 
 
             it 'creates a PhraseRecursor with root context', (done) -> 
+
+                registrar = PhraseRoot.createRoot
+
+                    title: 'Phrase Title'
+                    uuid:  '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
+
+                    (token, notice) ->
+
 
                 PhraseRecursor.create = (root, opts) -> 
 
                     should.exist root.context
                     done()
 
-                @rootFn 'phrase text', -> 
+
+                registrar 'phrase text', -> 
 
 
             it 'calls linkFn', (done) -> 
+                
+                registrar = PhraseRoot.createRoot
 
-                should.not.exist @linked
+                    title: 'Phrase Title'
+                    uuid:  '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
 
-                @rootFn 'phrase text', -> 
-                should.exist @linked.token
-                should.exist @linked.notice
-                done()
+                    (token, notice) -> 
+
+                        token.on 'ready', done
+
+                
+                registrar 'phrase text', (end) -> 
 
 
 
             it 'does the first walk', (done) -> 
 
+                registrar = PhraseRoot.createRoot
 
-                @rootFn 'phrase text', (nested) ->  
+                    title: 'Phrase Title'
+                    uuid:  '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
+
+                    (token, notice) ->
+
+                        token.on 'ready', -> 
+
+                            
+
+                            vertex = token.graph.vertices[ token.graph.leaves[0] ]
+                            vertex.fn.toString().should.match /NESTED PHRASE FN/
+                            done()
+
+
+                registrar 'phrase text', (nested) ->  
 
                     nested 'nested', (end) -> 
 
@@ -112,15 +114,25 @@ describe 'phrase', ->
 
                         end()
 
-                graph = @linked.token.graph
 
-                @linked.token.on 'ready', -> 
+            it 'does not allow a second walk', (done) -> 
 
-                    vertex = graph.vertices[ graph.leaves[0] ]
-                    vertex.fn.toString().should.match /NESTED PHRASE FN/
-                    done()
+                registrar = PhraseRoot.createRoot
 
+                    title: 'Phrase Title'
+                    uuid:  '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
 
+                    (token, notice) ->
+     
+
+                registrar 'phrase text', (nested) ->  
+
+                    try registrar 'phrase text', (nested) ->  
+
+                    catch error
+
+                        error.should.match /Phrase root registrar cannot perform concurrent walks/
+                        done()
 
 
 
