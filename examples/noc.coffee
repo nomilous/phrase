@@ -59,6 +59,8 @@ Noc    = require( '../lib/phrase_root' ).createRoot
                                                         # assigns @data for use in the
                                                         # resulting PhraseJob instance
                                                         # 
+                                                        # TODO: This very useful feature
+                                                        # 
                             (resolve) ->   
                             (error)   ->   
                             (notify)  ->   
@@ -82,7 +84,10 @@ Noc    = require( '../lib/phrase_root' ).createRoot
 # 
 
 Noc 'Duties', (duty) -> 
-
+                                            #
+                                            # TODO: these injections
+                                            #
+                                            #
     
     duty 'Handle System Alerts', (alert, KnowledgeBase, TeamHubs, Escalate) -> 
 
