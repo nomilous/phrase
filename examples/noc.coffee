@@ -53,6 +53,14 @@ Noc    = require( '../lib/phrase_root' ).createRoot
                             (error)   -> 
                             (notify)  ->
 
+                                if notify.state 'run::step:failed' 
+
+                                    #
+                                    # escalate
+                                    #
+
+                           
+
                         )
 
                         next()
@@ -65,10 +73,10 @@ Noc    = require( '../lib/phrase_root' ).createRoot
 Noc 'Duties', (duty) -> 
 
     
-    duty 'System Alerts (Front line)', (alert, KnowledgeBase) -> 
+    duty 'System Alerts (Front line)', (alert, KnowledgeBase, TeamHubs) -> 
 
         #
-        # KnowledgeBase is injected by the 'first walk' of
+        # KnowledgeBase and TeamHub are local libs injected by the 'first walk' of
         # the Phrase Tree (at initialization)
         #
 
@@ -92,19 +100,47 @@ Noc 'Duties', (duty) ->
                                                 #
                 step 'acknowledge', timeout: a.SLA1, (acknowledge) -> 
   
-                    acknowledge a.uuid, (end) -> 
+                    acknowledge a.uuid, (done) -> 
+
+                        TeamHubs.Noc.event( 'new alert', 
+
+                            #
+                            # send the alert to the noc 
+                            # 
+
+                            alert: a
+
+                        ).then (acknowledgement) ->  
+
+                            #
+                            # received acknowledgement from someone on the noc team
+                            # assign respondent messenger to `this` (PhraseJob instance)
+                            #
+
+                            @assigned = acknowledgement.source
+
+                            #
+                            # and proceed to next step.
+                            #
+
+                            done()
 
 
+                step 'resolve', timeout: a.SLA3, (resolve) -> 
 
+                    resolve a.uuid, (done) -> 
 
-                step 'escalate', timeout: a.SLA2, (escalate) -> 
+                        @assigned.use (msg, next) -> 
 
-                    escalate a.uuid, (end) -> 
+                            #
+                            # listen to notifications from the assigned respondent
+                            #
 
+                            return next() unless msg.context.title == 'alert::resolved'
 
+                            #
+                            # received the alert resolution message
+                            #
 
-
-                step.or 'resolve', timeout: a.SLA3, (resolve) -> 
-
-                    resolve a.uuid, (end) -> 
+                            done()
 
