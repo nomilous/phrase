@@ -47,11 +47,22 @@ Noc    = require( '../lib/phrase_root' ).createRoot
                         # An alert has arrived, call the phrase branch
                         #
 
-                        token.run( uuid: alert.uuid ).then(
+                        token.run( uuid: alert.uuid, data: alert  ).then(
+                                     #                  #
+                                     #                  #
+                                     #                  #
+                                     # 
+                                     # finds and runs the branch on the tree 
+                                     # that was created with this uuid 
+                                     #
+                                                        #
+                                                        # assigns @data for use in the
+                                                        # resulting PhraseJob instance
+                                                        # 
+                            (resolve) ->   
+                            (error)   ->   
+                            (notify)  ->   
 
-                            (resolve) ->
-                            (error)   -> 
-                            (notify)  ->
 
                                 if notify.state 'alert::escalate' 
 
@@ -122,9 +133,17 @@ Noc 'Duties', (duty) ->
 
                             #
                             # send the alert to the noc 
+                            # -------------------------
                             # 
+                            # alert - contains the alert definition per the knowledge base, 
+                            #         hopefully with some guidance / memory jog notes.
+                            # 
+                            # data  - contains the 'instance of' the alert, ie. related data
+                            #         that arrived when the alert was received from the 
+                            #         alert.aggregator hub
 
-                            alert: a
+                            alert: a 
+                            data:  @data
 
                         ).then (acknowledgement) =>  
 
@@ -132,7 +151,8 @@ Noc 'Duties', (duty) ->
                             # received acknowledgement from someone on the noc team web
                             # app / mobile client,
                             # 
-                            # assign respondent messenger to `this` (PhraseJob instance)
+                            # assign respondent messenger onto `this` (PhraseJob instance)
+                            # ---------------------------
                             #
 
                             @assigned = acknowledgement.source
