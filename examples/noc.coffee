@@ -31,7 +31,7 @@ Noc    = require( '../lib/phrase_root' ).createRoot
 
                     secret:      '◊'
                     port:       10101
-                    address: '10.0.0.10'
+                    address:    alerts.aggregator.local
                     transport: 'https'
 
 
