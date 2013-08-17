@@ -39,28 +39,46 @@ describe 'phrase', ->
         context 'phrase root registrar', -> 
 
 
-            it 'is a function', (done) -> 
+            before -> 
 
-                registrar = PhraseRoot.createRoot
+                @count = 0
+
+                @registrar = PhraseRoot.createRoot
 
                     title: 'Phrase Title'
                     uuid:  '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
 
-                    (token, notice) ->
+                    (token, notice) =>
+
+                        @count++
+                        @token  = token
+                        @notice = notice
+
+                @registrar 'phrase text', (end) -> 
 
 
-                registrar.should.be.an.instanceof Function
+            after -> 
+
+                @token.removeAllListeners()
+
+
+            it 'calls linkFn', (done) -> 
+
+                # 
+                # @registrar 'phrase text', (end) -> 
+                #
+
+                should.exist @token
+                done()
+
+
+            it 'calls linkFn only once', (done) -> 
+
+                @count.should.equal 1
                 done()
 
 
             it 'creates a PhraseRecursor with root context', (done) -> 
-
-                registrar = PhraseRoot.createRoot
-
-                    title: 'Phrase Title'
-                    uuid:  '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
-
-                    (token, notice) ->
 
 
                 PhraseRecursor.create = (root, opts) -> 
@@ -69,44 +87,20 @@ describe 'phrase', ->
                     done()
 
 
-                registrar 'phrase text', -> 
-
-
-            it 'calls linkFn', (done) -> 
-                
-                registrar = PhraseRoot.createRoot
-
-                    title: 'Phrase Title'
-                    uuid:  '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
-
-                    (token, notice) -> 
-
-                        token.on 'ready', done
-
-                
-                registrar 'phrase text', (end) -> 
+                @registrar 'phrase text', -> 
 
 
 
             it 'does the first walk', (done) -> 
 
-                registrar = PhraseRoot.createRoot
+                @token.on 'ready', => 
 
-                    title: 'Phrase Title'
-                    uuid:  '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
-
-                    (token, notice) ->
-
-                        token.on 'ready', -> 
-
-                            
-
-                            vertex = token.graph.vertices[ token.graph.leaves[0] ]
-                            vertex.fn.toString().should.match /NESTED PHRASE FN/
-                            done()
+                    vertex = @token.graph.vertices[ @token.graph.leaves[0] ]
+                    vertex.fn.toString().should.match /NESTED PHRASE FN/
+                    done()
 
 
-                registrar 'phrase text', (nested) ->  
+                @registrar 'phrase text', (nested) ->  
 
                     nested 'nested', (end) -> 
 
@@ -115,19 +109,12 @@ describe 'phrase', ->
                         end()
 
 
-            it 'does not allow a second walk', (done) -> 
-
-                registrar = PhraseRoot.createRoot
-
-                    title: 'Phrase Title'
-                    uuid:  '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
-
-                    (token, notice) ->
+            it 'does not allow concurrent walks', (done) -> 
      
 
-                registrar 'phrase text', (nested) ->  
+                @registrar 'phrase text', (nested) =>  
 
-                    try registrar 'phrase text', (nested) ->  
+                    try @registrar 'phrase text', (nested) ->  
 
                     catch error
 

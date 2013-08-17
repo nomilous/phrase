@@ -11,7 +11,9 @@ describe 'PhraseToken', ->
     LEAF_TWO   = undefined
     NEST_ONE   = undefined
 
-    beforeEach (done) -> 
+    # console.log before.toString()
+
+    before (done) -> 
 
         root = PhraseRoot.createRoot
 
@@ -24,7 +26,7 @@ describe 'PhraseToken', ->
                 NOTICE = notice
                 done()
 
-        root 'phrase', (nest) -> 
+        root 'phrase', (end) -> end()
 
 
     context 'run()', -> 

@@ -144,29 +144,45 @@ require( 'also' ) exports, {}, (root) ->
                     throw new Error 'Phrase root registrar cannot perform concurrent walks'
 
 
+                unless context.token?
+
+                    #
+                    # this is the first walk
+                    # ----------------------
+                    #
+                    # * Create the root token
+                    # 
+
+                    context.token = PhraseToken.create root
+
+                    #
+                    # * Start 'first walk' to load the phrase tree
+                    #
+
+                    PhraseRecursor.create root, opts, phraseRootString, phraseRootFn
+
+                    # 
+                    # * Call the linker to assign external access to the 
+                    #   phrase tree (via the token) and the message bus
+                    #   
+
+                    linkFn context.token, context.notice
+
+                    #
+                    # * Rotate the chaos manifold
+                    #
+
+                    return
+
+
                 #
-                # token
-                # -----
-                #
-                # * A control / attachmant point to initiate actions into 
-                #   this phrase tree.
+                # not the first walk
+                # ------------------
                 # 
-
-                context.token = PhraseToken.create root
-
-
-                #
-                # * Start 'first walk' to load the phrase tree
-                #
 
                 PhraseRecursor.create root, opts, phraseRootString, phraseRootFn
 
-                # 
-                # * Call the linker to assign external access to the 
-                #   phrase tree (via the token) and the message bus
-                #   
 
-                linkFn context.token, context.notice
 
 
 
