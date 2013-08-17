@@ -57,7 +57,7 @@ describe 'phrase', ->
                 @registrar 'phrase text', (end) -> 
 
 
-            after -> 
+            afterEach -> 
 
                 @token.removeAllListeners()
 
@@ -110,7 +110,8 @@ describe 'phrase', ->
 
 
             it 'does not allow concurrent walks', (done) -> 
-     
+                
+                ERROR = undefined
 
                 @registrar 'phrase text', (nested) =>  
 
@@ -118,9 +119,41 @@ describe 'phrase', ->
 
                     catch error
 
-                        error.should.match /Phrase root registrar cannot perform concurrent walks/
-                        done()
+                        ERROR = error
 
+
+                    nested 'n', (end) ->
+
+                        
+                @token.on 'ready', -> 
+
+                    ERROR.should.match /Phrase root registrar cannot perform concurrent walks/
+                    done()
+
+
+
+            it 'has accumulated dead leaves', (done) -> 
+
+
+                #
+                # and should not have...
+                #
+
+
+                @token.on 'ready', => 
+
+                    console.log @token.graph.tree.leaves
+                    console.log @token.graph.leaves
+
+                    @token.graph.leaves.length.should.equal 3
+                    done()
+
+
+                @registrar 'entirely new tree', (that) -> 
+
+                    that 'has one leaf', (end) ->
+
+                        end()
 
 
 
