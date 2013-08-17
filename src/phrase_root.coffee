@@ -28,16 +28,6 @@ require( 'also' ) exports, {}, (root) ->
   
 
     #
-    # token
-    # -----
-    #
-    # * A control / attachmant point to initiate actions into 
-    #   this phrase tree.
-    # 
-
-    context.token = PhraseToken.create root
-
-    #
     # PhraseJob (closured class)
     # --------------------------
     #
@@ -135,11 +125,6 @@ require( 'also' ) exports, {}, (root) ->
 
             context.notice.use context.graph.assembler
 
-            #
-            # * second middleware is root token event emitter proxy 
-            #
-
-            context.notice.use context.token.eventProxy
 
             #
             # * used in hooks (TEMPORARY)
@@ -154,12 +139,27 @@ require( 'also' ) exports, {}, (root) ->
          
             return (phraseRootString, phraseRootFn) -> 
 
+                #
+                # token
+                # -----
+                #
+                # * A control / attachmant point to initiate actions into 
+                #   this phrase tree.
+                # 
+
+                context.token = PhraseToken.create root
+
+
+                #
+                # * Start 'first walk' to load the phrase tree
+                #
+
                 PhraseRecursor.create root, opts, phraseRootString, phraseRootFn
 
-
-                #
-                # * callback with token and messenger
-                #
+                # 
+                # * Call the linker to assign external access to the 
+                #   phrase tree (via the token) and the message bus
+                #   
 
                 linkFn context.token, context.notice
 

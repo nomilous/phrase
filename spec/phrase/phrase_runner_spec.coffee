@@ -63,11 +63,12 @@ describe 'PhraseRunner', ->
 
                     next()
 
-        before all:  ->  'BEFORE-ALL-OUTSIDE'
-        before each: -> 'BEFORE-EACH-OUTSIDE'
-        after  each: ->  'AFTER-EACH-OUTSIDE'
-        after  all:  ->   'AFTER-ALL-OUTSIDE'
+
         root 'PHRASE_ROOT', (nested) -> 
+            before all:  ->  'BEFORE-ALL-OUTSIDE'
+            before each: -> 'BEFORE-EACH-OUTSIDE'
+            after  each: ->  'AFTER-EACH-OUTSIDE'
+            after  all:  ->   'AFTER-ALL-OUTSIDE'
             nested 'NEST_ONE', (deeper) -> 
                 before all:  ->  'BEFORE-ALL-NESTED'
                 before each: -> 'BEFORE-EACH-NESTED'
@@ -282,15 +283,15 @@ describe 'PhraseRunner', ->
 
                 i = 0
 
-                steps[i++].depth.should.equal 0 # first all
-                steps[i++].depth.should.equal 0
+                steps[i++].depth.should.equal 1 # first all
+                steps[i++].depth.should.equal 1
                 steps[i++].depth.should.equal 2 # first all
                 steps[i++].depth.should.equal 2
                 steps[i++].depth.should.equal 3 # /RUN_LEAF_ONE/
                 steps[i++].depth.should.equal 2
-                steps[i++].depth.should.equal 0
+                steps[i++].depth.should.equal 1
 
-                steps[i++].depth.should.equal 0
+                steps[i++].depth.should.equal 1
                 steps[i++].depth.should.equal 2
                 steps[i++].depth.should.equal 4  # first all
                 steps[i++].depth.should.equal 4
@@ -298,15 +299,15 @@ describe 'PhraseRunner', ->
                 steps[i++].depth.should.equal 4
                 steps[i++].depth.should.equal 4  # last all
                 steps[i++].depth.should.equal 2
-                steps[i++].depth.should.equal 0
+                steps[i++].depth.should.equal 1
                 
-                steps[i++].depth.should.equal 0
+                steps[i++].depth.should.equal 1
                 steps[i++].depth.should.equal 2
                 steps[i++].depth.should.equal 3 # /RUN_LEAF_THREE/
                 steps[i++].depth.should.equal 2
                 steps[i++].depth.should.equal 2 # last all
-                steps[i++].depth.should.equal 0
-                steps[i++].depth.should.equal 0 # last all
+                steps[i++].depth.should.equal 1
+                steps[i++].depth.should.equal 1 # last all
 
                 done()
 

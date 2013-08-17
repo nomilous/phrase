@@ -13,7 +13,7 @@ describe 'PhraseToken', ->
 
     beforeEach (done) -> 
 
-        PhraseRoot.createRoot
+        root = PhraseRoot.createRoot
 
             title: 'Title'
             uuid:  'ROOT-UUID'
@@ -24,12 +24,7 @@ describe 'PhraseToken', ->
                 NOTICE = notice
                 done()
 
-    context 'eventProxy', (done) -> 
-
-        it 'proxies phrase::recurse:end from the message bus to local token event "ready"', (done) -> 
-
-            TOKEN.on 'ready', -> done()
-            NOTICE.event 'phrase::recurse:end'
+        root 'phrase', (nest) -> 
 
 
     context 'run()', -> 
