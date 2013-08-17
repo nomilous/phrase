@@ -155,7 +155,13 @@ require( 'also' ) exports, {}, (root) ->
 
 
             #
-            # return phrase recursor (root registrar)
+            # return phrase root registrar
             # 
          
-            return PhraseRecursor.create root, opts
+            return (opts, phraseFn) -> 
+
+                PhraseRecursor.create root, opts
+
+
+
+

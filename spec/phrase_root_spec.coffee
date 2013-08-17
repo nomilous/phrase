@@ -14,6 +14,7 @@ describe 'phrase', ->
 
         PhraseRecursor.create = phraseRecursor_swap
 
+
     context 'create()', ->
 
         it 'is a function', (done) ->  
@@ -34,7 +35,47 @@ describe 'phrase', ->
                 done()
 
 
-        it 'returns the root phrase recursor ', (done) -> 
+        context 'phrase root registrar', -> 
+
+
+            beforeEach (done) -> 
+
+                @linkFn = (token, notice) ->  
+
+                #
+                # create rootFn
+                #  
+            
+                @rootFn = PhraseRoot.createRoot
+
+                    #
+                    # opts
+                    #
+
+                    title: 'Phrase Title'
+                    uuid:  '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
+
+
+                    #
+                    # linkFn
+                    #
+
+                    @linkFn
+
+
+                done()
+
+
+            it 'is a function', (done) -> 
+
+                @rootFn.should.be.an.instanceof Function
+                done()
+
+
+
+
+
+        xit 'returns the root phrase recursor ', (done) -> 
 
             PhraseRecursor.create = -> -> done()
 
@@ -47,7 +88,7 @@ describe 'phrase', ->
             root()
 
 
-        it 'calls linkFn', (done) -> 
+        xit 'calls linkFn', (done) -> 
 
             PhraseRoot.createRoot 
 
@@ -57,7 +98,7 @@ describe 'phrase', ->
                 -> done()
 
 
-        it 'passes rootToken into linkFn', (done) -> 
+        xit 'passes rootToken into linkFn', (done) -> 
 
             PhraseRoot.createRoot 
 
@@ -70,7 +111,7 @@ describe 'phrase', ->
                     done()
 
 
-        it 'passes notifier into linkFn', (done) -> 
+        xit 'passes notifier into linkFn', (done) -> 
 
             PhraseRoot.createRoot 
 
@@ -83,7 +124,7 @@ describe 'phrase', ->
                     done()
 
 
-        it 'passes opts into the root phrase recursor', (done) -> 
+        xit 'passes opts into the root phrase recursor', (done) -> 
 
             PhraseRecursor.create = (root, opts) -> -> 
 
