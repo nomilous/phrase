@@ -123,28 +123,6 @@ describe 'phrase', ->
 
 
 
-        xit 'returns the root phrase recursor ', (done) -> 
-
-            PhraseRecursor.create = -> -> done()
-
-            root = PhraseRoot.createRoot 
-
-                title: 'Phrase Title'
-                uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
-                -> 
-
-            root()
-
-
-        xit 'calls linkFn', (done) -> 
-
-            PhraseRoot.createRoot 
-
-                title: 'Phrase Title'
-                uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
-
-                -> done()
-
 
         xit 'passes rootToken into linkFn', (done) -> 
 

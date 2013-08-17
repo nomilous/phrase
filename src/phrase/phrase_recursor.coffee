@@ -69,12 +69,5 @@ exports.create = (root, opts, rootString, rootFn) ->
         timeout: opts.timeout
         leaf: opts.leaf
 
-    if rootString? and rootFn?
 
-        #
-        # perform the first injection
-        #
-
-        injector rootString, rootFn
-
-    return injector
+    injector rootString, rootFn
