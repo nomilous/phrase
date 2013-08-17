@@ -89,14 +89,14 @@ Noc 'Duties', (duty) ->
                                             #
                                             #
     
-    duty 'Handle System Alerts', (alert, KnowledgeBase, TeamHubs, Escalate) -> 
+    duty 'Handle System Alerts', (handle, KnowledgeBase, TeamHubs, Escalate) -> 
 
         #
         # KnowledgeBase and TeamHub are local libs injected by the 'first walk' of
         # the Phrase Tree (at initialization)
         #
 
-        KnowledgeBase.SystemAlerts.find().map (a) -> 
+        KnowledgeBase.SystemAlerts.find().map (alert) -> 
 
                                     # 
                                     #
@@ -121,7 +121,7 @@ Noc 'Duties', (duty) ->
                 @log = []           # TODO: use (if present) uuid for PhraseNode
                                     #
                                     #
-            alert a.title, uuid: a.uuid, (step) -> 
+            handle alert.title, uuid: alert.uuid, (step) -> 
 
 
                                                 #
@@ -130,9 +130,9 @@ Noc 'Duties', (duty) ->
                                                 # 
                                                 # 
                                                 #
-                step 'acknowledge', timeout: a.SLA1, (acknowledge) -> 
+                step 'acknowledge', timeout: alert.SLA1, (acknowledge) -> 
   
-                    acknowledge a.uuid, (done) -> 
+                    acknowledge alert.uuid, (done) -> 
 
                         TeamHubs.Noc.event( 'new alert', 
 
@@ -140,14 +140,14 @@ Noc 'Duties', (duty) ->
                             # send the alert to the noc 
                             # -------------------------
                             # 
-                            # alert - contains the alert definition per the knowledge base, 
+                            # meta  - contains the 'definition of' the alert per the knowledge base, 
                             #         hopefully with some guidance / memory jog notes.
                             # 
                             # data  - contains the 'instance of' the alert, ie. related data
                             #         that arrived when the alert was received from the 
                             #         alert.aggregator hub
 
-                            alert: a 
+                            meta:  alert
                             data:  @data
 
                         ).then (acknowledgement) =>  
@@ -169,9 +169,9 @@ Noc 'Duties', (duty) ->
                             done()
 
 
-                step 'resolve', timeout: a.SLA3, (resolve) -> 
+                step 'resolve', timeout: alert.SLA3, (resolve) -> 
 
-                    resolve a.uuid, (done) -> 
+                    resolve alert.uuid, (done) -> 
 
                         @assigned.use (msg, next) => 
 
