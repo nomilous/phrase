@@ -10,8 +10,15 @@ hotswap = require( '../lib/phrase_root' ).createRoot
 
         token.on 'ready', -> 
 
+            #
+            # start first player on version 1
+            #
+
             token.run uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
 
+            #
+            # perform upgrade after 1 second
+            #
 
             vertices = token.graph.vertices
             setTimeout (->
@@ -39,9 +46,23 @@ hotswap = require( '../lib/phrase_root' ).createRoot
 
 
                 """, bare: true
+
+                #
+                # start second player on version 2
+                #
+
                 token.run uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
 
             ), 1000
+
+
+        notice.use (msg, next) -> 
+
+            if msg.context.title == 'choice'
+
+                console.log "Choice: #{ msg.choice }    \tPlayer: #{msg.player} (version: #{msg.version})"
+
+            next()
 
 
 
@@ -53,7 +74,7 @@ before
         @interval = 1500
 
         #
-        # version 1 was discovered to be leaning little in paper's favour
+        # version 1 was discovered to be leaning a little in paper's favour
         #
 
         @choices = ['rock', 'paper']
@@ -79,8 +100,12 @@ hotswap 'the process containing this phrase', (can) ->
 
             setTimeout done, @interval
 
-        running 'a second step', (end) -> 
+        running 'a second step', (done) -> 
 
-            console.log "Player: #{@uuid} Choice: #{ @choices[  Math.floor Math.random() * @choices.length  ] }  \t(version #{@version})"
-                
-            end()
+            @notice.event( 'choice', 
+
+                player:  @uuid
+                choice:  @choices[  Math.floor Math.random() * @choices.length  ]
+                version: @version
+
+            ).then done
