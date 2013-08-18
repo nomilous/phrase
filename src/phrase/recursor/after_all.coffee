@@ -58,7 +58,7 @@ exports.create = (root, parentControl) ->
                     context.walks     = []
                     context.firstWalk = context.walking
 
-                context.walks.push context.walking
-                if context.walks.length > 5 then context.walks.shift()
+                context.walks.unshift context.walking
+                if context.walks.length > 5 then context.walks.pop()
                 process.nextTick -> delete context.walking
                 process.nextTick done

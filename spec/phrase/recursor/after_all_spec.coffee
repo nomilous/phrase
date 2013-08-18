@@ -76,7 +76,7 @@ describe 'RecursorAfterAll', ->
             done()
 
 
-        it 'keeps a limited length history', (done) -> 
+        it 'keeps a limited length history with most recent in front', (done) -> 
 
             @root.context.walks = undefined
 
@@ -98,9 +98,10 @@ describe 'RecursorAfterAll', ->
             @root.context.walking = startedAt: 12
             @hook (->), {}
 
-            @root.context.walking = startedAt: 14
+            @root.context.walking = startedAt: 14, mark: 'MOST RECENT'
             @hook (->), {}
 
             @root.context.walks.length.should.equal 5   # arb choice
+            @root.context.walks[0].mark.should.equal 'MOST RECENT'
 
             done()

@@ -15,29 +15,6 @@ require( 'also' ) exports, {}, (root) ->
 
     {context, validate} = root
 
-    #
-    # graph
-    # -----
-    # 
-    # * Houses the set of vertexes and edges that define the phrase tree
-    # 
-    # * Assembled by the 'first walk' of the phrase recursor.
-    #
-
-    context.graph = PhraseGraph.create root
-  
-
-    #
-    # PhraseJob (closured class)
-    # --------------------------
-    #
-    # * PhraseJob instances are created with each call to token.run.
-    # 
-    # * The class definition is instanciated here to enable root access
-    # 
-    # 
-
-    context.PhraseJob = PhraseJob.create root
 
     #
     # stack
@@ -119,12 +96,6 @@ require( 'also' ) exports, {}, (root) ->
 
             context.notice = Notice.create opts.uuid
 
-            #
-            # * first middleware is graph assembler
-            #
-
-            context.notice.use context.graph.assembler
-
 
             #
             # * used in hooks (TEMPORARY)
@@ -146,20 +117,52 @@ require( 'also' ) exports, {}, (root) ->
 
                 unless context.token?
 
+
                     #
                     # this is the first walk
-                    # ----------------------
+                    # 
+
+                    # 
                     #
-                    # * Create the root token
+                    # create graph
+                    # ------------
+                    # 
+                    # * Houses the set of vertexes and edges that define the phrase tree
+                    # * Assembled by the 'first walk' of the phrase recursor
+                    # 
+
+                    context.graph = PhraseGraph.create root
+                    context.notice.use context.graph.assembler
+                  
+
+                    #
+                    # create PhraseJob (class definition)
+                    # -----------------------------------
+                    #
+                    # * PhraseJob instances are created with each call to token.run
+                    # * The class definition is instanciated here to enable root access
+                    # 
+                    # 
+
+                    context.PhraseJob = PhraseJob.create root
+
+
+                    #
+                    # create PhraseToken (root instance)
+                    # ----------------------------------
+                    # 
+                    # * This token is the primary interface into the phrase tree
                     # 
 
                     context.token = PhraseToken.create root
+
 
                     #
                     # * Start 'first walk' to load the phrase tree
                     #
 
                     PhraseRecursor.create root, opts, phraseRootString, phraseRootFn
+
 
                     # 
                     # * Call the linker to assign external access to the 
@@ -168,11 +171,28 @@ require( 'also' ) exports, {}, (root) ->
 
                     linkFn context.token, context.notice
 
+
                     #
-                    # * Rotate the chaos manifold
+                    # impart the return
+                    # -----------------
+                    # 
+                    # * activate 'uncertainty shields'
+                    # * activate 'duality field'
+                    # * activate 'supersymmetry sensor array'
+                    # * activate 'entanglment phase array'
+                    # * activate 'causality phase array'
                     #
 
-                    return
+                    return 
+
+                    #
+                    # the quantum flux has stabalized
+                    # -------------------------------
+                    #
+                    # * rotate the 'chaos manifold'
+                    # 
+
+                    ;
 
 
                 #

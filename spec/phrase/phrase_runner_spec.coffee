@@ -13,13 +13,10 @@ describe 'PhraseRunner', ->
     PHRASE_ROOT = undefined
     NEST_ONE    = undefined
     JOB_RUN     = undefined 
-
-    afterEach (done) -> 
-
-        done()
     
+    # console.log before.toString()
 
-    beforeEach (done) -> 
+    before (done) -> 
 
         root = PhraseRoot.createRoot
 
