@@ -20,7 +20,7 @@ exports.createClass = (root) ->
         # 
         #    thisThing 'is a token', (end) -> 
         #         
-        #    the resulting phrase: 
+        #    the resulting phraseNode: 
         # 
         #    token: 
         #        name: 'thisThing'
