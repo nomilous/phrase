@@ -84,7 +84,8 @@ describe 'PhraseGraph', ->
 
                 @Graph.assembler
 
-                    context: title: 'phrase::edge:create' 
+                    context: title: 'phrase::edge:create'
+                    ->
 
 
             it 'creates vertices', (done) -> 
@@ -194,7 +195,7 @@ describe 'PhraseGraph', ->
             it 'stores a list of leaves if tree', (done) -> 
 
                 #
-                # vertexes are flaggeg a leaf by the PhraseRecursor
+                # vertices are flagged a leaf by the PhraseRecursor
                 #
 
                 graph.registerEdge type: 'tree', vertices: [
@@ -217,9 +218,26 @@ describe 'PhraseGraph', ->
                 done()
 
 
-    xcontext 'register leaf', -> 
+
+    context 'register leaf', -> 
+
+
+        it 'is called by the assember at phrase::edge:create', (done) -> 
+
+            graph = new @Graph
+
+            graph.registerLeaf = -> done()
+
+            @Graph.assembler
+
+                context: title: 'phrase::leaf:create' 
+                ->
+
+
 
         it 'stores registered leaves and provides access to the list via tree.leaves', (done) ->
+
+            graph = new @Graph
 
             graph.registerLeaf 
 
@@ -227,12 +245,13 @@ describe 'PhraseGraph', ->
                 path: ['UUID1', 'UUID2']
 
                 -> 
-                    graph.tree.leaves.UUID3.should.eql 
+                
+            graph.tree.leaves.UUID3.should.eql 
 
-                        uuid: 'UUID3'
-                        path: ['UUID1', 'UUID2']
+                uuid: 'UUID3'
+                path: ['UUID1', 'UUID2']
 
-                    done()
+            done()
 
 
     xcontext 'leavesOf(uuid)', -> 

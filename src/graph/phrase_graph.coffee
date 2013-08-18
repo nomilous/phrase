@@ -41,6 +41,10 @@ exports.createClass = (root) ->
 
                 graphs.latest.registerEdge msg, next
 
+            when 'phrase::leaf:create'
+
+                graphs.latest.registerLeaf msg, next
+
 
             else next()
 
@@ -68,10 +72,18 @@ exports.createClass = (root) ->
                 # * `parent`   - index to parent   ( parent[ UUID ] = parentUUID
                 # * `children` - index to children ( children[ parentUUID ] = [uuid1, uuid2, ...] )
                 # * `leaves`   - array of leaf uuids
+                # 
 
                 parent:    {}
                 children:  {}
                 leaves:    []
+
+                #
+                # TEMPORARY (likely)
+                # Specific list of leaves as accumulated by phrase::leaf:create payloads.
+                # 
+
+                tree: leaves: {}
 
 
             graphs.list[ localOpts.uuid ] = this
@@ -82,7 +94,7 @@ exports.createClass = (root) ->
             # immutables
             # 
 
-            for property in ['uuid', 'vertices', 'edges', 'parent', 'children', 'leaves']
+            for property in ['uuid', 'vertices', 'edges', 'parent', 'children', 'leaves', 'tree']
 
                 do (property) => 
 
@@ -127,6 +139,12 @@ exports.createClass = (root) ->
                 @leaves.push vertex2.uuid if vertex2.leaf
 
 
+            next()
+
+
+        registerLeaf: (msg, next) -> 
+
+            @tree.leaves[msg.uuid] = msg
             next()
 
 
