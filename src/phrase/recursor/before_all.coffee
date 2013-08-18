@@ -47,4 +47,5 @@ exports.create = (root, parentControl) ->
         notice.event( 'phrase::recurse:start' ).then -> 
 
             context.walking = startedAt: Date.now()
+            context.walking.first = not context.walks? 
             run()

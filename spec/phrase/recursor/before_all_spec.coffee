@@ -58,7 +58,7 @@ describe 'RecursorBeforeAll', ->
         ), injectionControl
 
 
-    it 'generates "phrase::recurse:start" at the beginning of the "first walk" and marks the start', (done) -> 
+    it 'generates "phrase::recurse:start" at the beginning of the first walk and flags as first', (done) -> 
 
         EVENT = undefined 
         Date.now = -> 1
@@ -72,6 +72,29 @@ describe 'RecursorBeforeAll', ->
 
             EVENT.should.equal 'phrase::recurse:start'
             root.context.walking.startedAt.should.equal 1
+            root.context.walking.first.should.equal true
             done()
 
         ), {}
+
+    it 'flags and not first walk if context.walks has acucmulated a history', (done) -> 
+
+
+        EVENT = undefined 
+        Date.now = -> 1
+        root.context.notice.event = (title) -> 
+
+            EVENT = title
+            then: (resolve) -> resolve()
+
+        root.context.walks = []
+        hook = RecursorBeforeAll.create root
+        hook (->
+
+            EVENT.should.equal 'phrase::recurse:start'
+            root.context.walking.startedAt.should.equal 1
+            root.context.walking.first.should.equal false
+            done()
+
+        ), {}
+

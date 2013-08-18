@@ -40,7 +40,10 @@ exports.create = (root) ->
 
     notice.use (msg, next) -> 
 
-        emitter.emit 'ready' if msg.context.title == 'phrase::recurse:end'
+        if msg.context.title == 'phrase::recurse:end'
+
+            return emitter.emit 'ready' if msg.first
+
         next()
 
 

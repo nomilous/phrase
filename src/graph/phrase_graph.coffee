@@ -50,8 +50,6 @@ exports.createClass = (root) ->
 
 
 
-
-
     class PhraseGraph
 
         constructor: (opts = {}) -> 

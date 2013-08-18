@@ -20,8 +20,8 @@ exports.walk = (root, opts, rootString, rootFn) ->
     if graph? 
 
         # 
-        # root graph is already define
-        # ----------------------------
+        # root graph is already defined
+        # -----------------------------
         # 
         # * create a new (orphaned) graph
         # * accessable at context.graphs.latest

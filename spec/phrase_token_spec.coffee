@@ -49,3 +49,50 @@ describe 'PhraseToken', ->
                 done()
 
             TOKEN.run()
+
+
+    context 'events', (done) -> 
+
+        before -> 
+            @token = PhraseToken.create 
+                context: 
+                    notice: 
+                        use: (@middleware) =>
+
+        afterEach -> 
+
+            @token.removeAllListeners() 
+
+
+        context 'event "ready"', ->
+
+
+            it 'is proxied from phrase::recurse:end', (done) -> 
+
+                @token.on 'ready', done
+
+                @middleware
+
+                    #
+                    # send mock phrase::recurse:end
+                    #
+
+                    context: title: 'phrase::recurse:end'
+                    first: true
+                    ->
+
+
+            it 'is only proxied on the first walk', (done) ->
+
+                @token.on 'ready', -> 
+
+                    throw 'SHOULD NOT RUN'
+
+                @middleware
+
+                    context: title: 'phrase::recurse:end'
+                    first: false
+                    
+                    done
+
+
