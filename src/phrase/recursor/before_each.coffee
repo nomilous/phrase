@@ -126,7 +126,7 @@ exports.create = (root, parentControl) ->
             # 
 
             #
-            # TODO: make these less exposed
+            console.log 'TODO: make these less exposed'
             #
 
             hooks: 

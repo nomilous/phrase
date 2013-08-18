@@ -1,4 +1,5 @@
 {v1} = require 'node-uuid'
+seq  = 0
 
 exports.createClass = (root) -> 
 
@@ -57,6 +58,7 @@ exports.createClass = (root) ->
             localOpts = 
 
                 uuid:      opts.uuid || v1()
+                version:   opts.version || ++seq
                 vertices:  {}
                 edges:     {}
 
@@ -92,7 +94,7 @@ exports.createClass = (root) ->
             # immutables
             # 
 
-            for property in ['uuid', 'vertices', 'edges', 'parent', 'children', 'leaves', 'tree']
+            for property in ['uuid', 'version', 'vertices', 'edges', 'parent', 'children', 'leaves', 'tree']
 
                 do (property) => 
 

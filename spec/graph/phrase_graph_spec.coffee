@@ -19,6 +19,11 @@ describe 'PhraseGraph', ->
         should.exist graph.uuid
         done()
 
+    it 'has a version', (done) -> 
+
+        should.exist graph.version
+        done()
+
 
     it 'is added to the graphs collection on the root context', (done) -> 
 

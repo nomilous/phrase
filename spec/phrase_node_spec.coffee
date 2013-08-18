@@ -13,4 +13,7 @@ describe 'PhraseNode', ->
 
     it 'has READ ONLY uuid, runCount and createdAt'
 
-    
+    context 'isChanged()', ->
+
+    context 'merge()', -> 
+
