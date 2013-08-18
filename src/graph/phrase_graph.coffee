@@ -1,4 +1,4 @@
-
+{v1} = require 'node-uuid'
 
 exports.createClass = (root) -> 
 
@@ -11,37 +11,32 @@ exports.createClass = (root) ->
     # ===========================
     #
     # Container to house all vertexes and edges of the phrase tree
-    # that is assembled by the phrase recursor's 'first walk'
     # 
 
     return class PhraseGraph
 
         constructor: (opts = {}) -> 
 
+            localOpts = 
+
+                uuid:     opts.uuid || v1()
+                vertices: {}
+                edges:    {}
 
 
+            #
+            # immutables
+            # 
 
+            for property in ['uuid', 'vertices', 'edges']
 
+                do (property) => 
 
+                    Object.defineProperty this, property, 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                        get: -> localOpts[property]
+                        enumerable: true
+                        
 
 
 
