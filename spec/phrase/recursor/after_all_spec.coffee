@@ -22,6 +22,11 @@ describe 'RecursorAfterAll', ->
         root = 
             context: 
                 stack: []
+
+                #
+                # walking is flagged by recursor/before_all 
+                #
+
                 walking: startedAt: 1
                 notice: event: (title, payload) -> 
 
@@ -44,3 +49,58 @@ describe 'RecursorAfterAll', ->
 
         hook = RecursorAfterAll.create root, {}
         hook (->), {}
+
+
+    context 'walk history', -> 
+
+        before ->
+
+            @root = 
+                context: 
+                    stack: []
+                    walking: startedAt: 1
+                    notice: event: -> then: (fn) -> fn()
+
+            @hook = RecursorAfterAll.create @root, {}
+
+            @hook (->), {}
+
+            @first = @root.context.firstWalk
+        
+
+        it 'remembers the first walk', (done) -> 
+
+            @root.context.walking = startedAt: 2
+            @hook (->), {}
+            @root.context.firstWalk.should.equal @first
+            done()
+
+
+        it 'keeps a limited length history', (done) -> 
+
+            @root.context.walks = undefined
+
+            @root.context.walking = startedAt: 2
+            @hook (->), {}
+
+            @root.context.walking = startedAt: 4
+            @hook (->), {}
+
+            @root.context.walking = startedAt: 6
+            @hook (->), {}
+
+            @root.context.walking = startedAt: 8
+            @hook (->), {}
+
+            @root.context.walking = startedAt: 10
+            @hook (->), {}
+
+            @root.context.walking = startedAt: 12
+            @hook (->), {}
+
+            @root.context.walking = startedAt: 14
+            @hook (->), {}
+
+            @root.context.walks.length.should.equal 5   # arb choice
+
+            done()
