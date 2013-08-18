@@ -128,11 +128,10 @@ require( 'also' ) exports, {}, (root) ->
                     # ------------
                     # 
                     # * Houses the set of vertexes and edges that define the phrase tree
-                    # * Assembled by the 'first walk' of the phrase recursor
+                    # * Assembled (via message bus) by the 'first walk' of the phrase recursor
                     # 
 
                     context.graph = PhraseGraph.create root
-                    context.notice.use context.graph.assembler
                   
 
                     #

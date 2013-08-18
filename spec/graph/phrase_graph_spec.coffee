@@ -8,7 +8,7 @@ describe 'PhraseGraph', ->
 
     beforeEach -> 
 
-        root  = {}
+        root  = context: notice: use: (middleware) => @using = middleware 
         graph = PhraseGraph.create root
 
     it 'provides access to vertices list as property', (done) -> 
@@ -18,6 +18,18 @@ describe 'PhraseGraph', ->
 
 
     context 'assembler middleware', -> 
+
+        it 'registers on the message bus', (done) -> 
+
+            # 
+            # @using.should.equal graph.assembler
+            # 
+            # odd... 
+            # 
+
+            @using.toString().should.equal graph.assembler.toString()
+            done()
+
 
         it 'registers edges', (done) ->
 
