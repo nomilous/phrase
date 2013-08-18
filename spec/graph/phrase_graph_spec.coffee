@@ -73,95 +73,102 @@ describe 'PhraseGraph', ->
 
 
 
-        xit 'registers edges', (done) ->
+        context 'registerEdge()', ->
 
-            graph.assembler 
 
-                #
-                # mock 'phrase::edge:create' message
-                #
+            it 'is called by the assember at phrase::edge:create', (done) -> 
 
-                context: title: 'phrase::edge:create'
-                vertices: [
-                    { uuid: 'UUID1', key: 'value1' }
-                    { uuid: 'UUID2', key: 'value2' }
-                ]
+                graph = new @Graph
 
-                -> 
+                graph.registerEdge = -> done()
 
-                    should.exist graph.vertices.UUID1
-                    should.exist graph.vertices.UUID2
-                    done()
+                @Graph.assembler
+
+                    context: title: 'phrase::edge:create' 
+
+
+            it 'creates vertices', (done) -> 
+
+                graph = new @Graph
+
+                graph.registerEdge 
+
+                    #
+                    # mock 'phrase::edge:create' message
+                    #
+
+                    context: title: 'phrase::edge:create'
+                    vertices: [
+                        { uuid: 'UUID1', key: 'value1' }
+                        { uuid: 'UUID2', key: 'value2' }
+                    ]
+
+                    -> 
+
+                        graph.vertices.should.eql 
+
+                            UUID1: uuid: 'UUID1', key: 'value1'
+                            UUID2: uuid: 'UUID2', key: 'value2'
+                        
+                        done()
+
+
+
+            it 'creates edges' , (done) ->
+
+                graph = new @Graph
+
+                graph.registerEdge 
+
+                    #
+                    # mock 'phrase::edge:create' message
+                    #
+
+                    context: title: 'phrase::edge:create'
+                    vertices: [
+                        { uuid: 'UUID1', key: 'value1' }
+                        { uuid: 'UUID2', key: 'value2' }
+                    ]
+
+                    -> 
+
+                        graph.edges.should.eql 
+
+                            UUID1: [ { to: 'UUID2' } ]
+                            UUID2: [ { to: 'UUID1' } ]
+                        
+                        done()
+
+
+            it 'allows multiple edges per vertex', (done) -> 
+
+                graph = new @Graph
+
+                graph.registerEdge vertices: [
+                        { uuid: 'UUID1', key: 'value1' }
+                        { uuid: 'UUID2', key: 'value2' }
+                    ],  ->
+
+                graph.registerEdge vertices: [
+                        { uuid: 'UUID1', key: 'value1' }
+                        { uuid: 'UUID3', key: 'value3' }
+                    ],  ->
+
+                graph.edges.should.eql 
+
+                    UUID1: [   { to: 'UUID2' }, { to: 'UUID3' }   ]
+                    UUID2: [   { to: 'UUID1' }                    ]
+                    UUID3: [   { to: 'UUID1' }                    ]
+
+                
+                done()
+
 
 
     xcontext 'register edge', -> 
 
-        it 'registers vertices into the list', (done) -> 
-
-            graph.registerEdge
-
-                vertices: [
-
-                    { uuid: 'UUID1', key: 'value1' }
-                    { uuid: 'UUID2', key: 'value2' }
-
-                ]
-
-                ->
-
-            graph.vertices.should.eql 
-
-                UUID1: uuid: 'UUID1', key: 'value1'
-                UUID2: uuid: 'UUID2', key: 'value2'
-
-            done()
 
         
-        it 'registers edges into the list', (done) -> 
-
-            graph.registerEdge
-
-                vertices: [
-
-                    { uuid: 'UUID1', key: 'value1' }
-                    { uuid: 'UUID2', key: 'value2' }
-
-                ]
-
-                ->
-
-
-            graph.edges.should.eql 
-
-                UUID1: [ connect: 'UUID2' ]
-                UUID2: [ connect: 'UUID1' ]
-
-            done()
-
-
-        it 'allows multiple edges per vertex', (done) -> 
-
-            graph.registerEdge vertices: [
-                    { uuid: 'UUID1', key: 'value1' }
-                    { uuid: 'UUID2', key: 'value2' }
-                ],  ->
-
-            graph.registerEdge vertices: [
-                    { uuid: 'UUID1', key: 'value1' }
-                    { uuid: 'UUID3', key: 'value3' }
-                ],  ->
-
-            graph.edges.should.eql 
-
-                UUID1: [ { connect: 'UUID2' }, { connect: 'UUID3' }]
-                UUID2: [ { connect: 'UUID1' }                      ]
-                UUID3: [ { connect: 'UUID1' }                      ]
-
-            
-
-            done()
-
-
         it 'stores parent and child relations if tree', (done) -> 
 
             graph.registerEdge type: 'tree', vertices: [

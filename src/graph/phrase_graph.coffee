@@ -35,6 +35,15 @@ exports.createClass = (root) ->
 
         return next() unless graphs.latest?
 
+        switch msg.context.title
+
+            when 'phrase::edge:create'
+
+                graphs.latest.registerEdge msg, next
+
+
+            else next()
+
 
 
 
@@ -69,15 +78,68 @@ exports.createClass = (root) ->
 
 
 
+        registerEdge: (msg, next) -> 
+
+            [vertex1, vertex2] = msg.vertices
+
+            @vertices[vertex1.uuid] = vertex1
+            @vertices[vertex2.uuid] = vertex2
+
+            #
+            # TODO: non tree edges / weight / direction / etcetera
+            #
+
+            @edges[ vertex1.uuid ] ||= []
+            @edges[ vertex1.uuid ].push to: vertex2.uuid
+
+            @edges[ vertex2.uuid ] ||= []
+            @edges[ vertex2.uuid ].push to: vertex1.uuid
+
+
+
+            next()
+
+
+
+
     #
     # expose the graph assembler as classmethod
-    # (hidden, for testing)
+    # (hidden, exposed for testing)
     # 
 
     Object.defineProperty PhraseGraph, 'assembler',
 
         enumerable: false
         get: -> assembler
+
+
+
+    #
+    # impart the return
+    # -----------------
+    # 
+    # * it has been too obscurely implied by the fact that
+    #   defineProperty returns the object upon which the 
+    #   property was defined.
+    #
+
+    return PhraseGraph
+
+    #
+    # * rotate the 'chaos manifold'
+    #
+
+    ;
+
+
+
+
+
+
+
+
+
+
 
 
 
