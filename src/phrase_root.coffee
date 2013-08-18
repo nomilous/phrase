@@ -1,5 +1,6 @@
 Notice         = require 'notice'
 PhraseToken    = require './phrase_token'
+PhraseNode     = require './phrase_node'
 PhraseGraph    = require './graph/phrase_graph'
 PhraseRecursor = require './phrase/phrase_recursor'
 PhraseJob      = require './phrase/phrase_job'
@@ -134,6 +135,18 @@ require( 'also' ) exports, {}, (root) ->
                     # 
 
                     context.PhraseGraph = PhraseGraph.createClass root
+
+
+                    #
+                    # create PhraseNode (class definition)
+                    # ------------------------------------
+                    # 
+                    # * A PhraseNode instance is created for each vertex (Node) 
+                    #   in the phrase tree. 
+                    # * They are stored in a collection in the PhraseGraph  
+                    #
+
+                    context.PhraseNode = PhraseNode.createClass root
                   
 
                     #
