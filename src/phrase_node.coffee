@@ -16,11 +16,44 @@ exports.createClass = (root) ->
 
     class PhraseNode
 
-        constructor: (properties) -> 
+        constructor: (opts = {}) -> 
 
-            @[property] = properties[property] for property of properties
-            @uuid     ||= v1()
-            # console.log "[#{ @token.name }] #{ @text }"
+            localOpts = 
+
+                #
+                # enumarable
+                #
+
+                uuid:      opts.uuid  || v1()
+                token:     opts.token
+                text:      opts.text
+
+
+                #
+                # not enumarable
+                #
+
+                fn:        opts.fn
+                timeout:   opts.timeout || 2000
+                hooks:     opts.hooks
+                deferral:  opts.deferral
+                queue:     opts.queue
+
+
+
+            for property in ['uuid', 'token', 'text']
+                do (property) => 
+                    Object.defineProperty this, property, 
+                        get: -> localOpts[property]
+                        enumerable: true
+
+
+            for property in ['fn', 'timeout', 'deferral', 'queue']
+                do (property) => 
+                    Object.defineProperty this, property, 
+                        get: -> localOpts[property]
+                        enumerable: false
+
 
 
 
