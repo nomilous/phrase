@@ -1,6 +1,7 @@
 should              = require 'should'
 PhraseRecursor      = require '../../lib/phrase/phrase_recursor'
 PhraseRecursorHooks = require '../../lib/phrase/recursor/hooks'
+PhraseGraph         = require '../../lib/graph/phrase_graph'
 
 describe 'PhraseRecursor', -> 
 
@@ -21,7 +22,10 @@ describe 'PhraseRecursor', ->
                 stack:  []
                 notice: 
                     event: -> then: (fn) -> fn()
-                    info:  -> then: (fn) -> fn()     
+                    info:  -> then: (fn) -> fn()
+                    use:   -> 
+
+            root.context.PhraseGraph = PhraseGraph.createClass root
 
             opts = 
                 title: 'Title'
@@ -42,7 +46,33 @@ describe 'PhraseRecursor', ->
                 done()
                 throw 'go no further'
 
-            try PhraseRecursor.create root, opts
+            try PhraseRecursor.walk root, opts
+
+
+        it 'creates root graph only once', (done) -> 
+
+            delete root.context.graph
+            PhraseRecursor.walk root, opts, 'phrase string', (nest) ->
+            graph = root.context.graph
+            should.exist graph
+
+            PhraseRecursor.walk root, opts, 'phrase string', (nest) ->
+            graph.should.equal root.context.graph
+            done()
+
+
+        it 'creates an orphaned graph on subsequent calls', (done) -> 
+
+            delete root.context.graph
+            PhraseRecursor.walk root, opts, 'phrase string', (nest) ->
+            rootGraph = root.context.graph
+
+            PhraseRecursor.walk root, opts, 'phrase string', (nest) ->
+            newGraph = root.context.graphs.latest
+
+            should.exist newGraph
+            newGraph.should.not.equal rootGraph
+            done()
 
 
         it 'assigns root token name and uuid from branch title', (done) -> 
@@ -54,19 +84,19 @@ describe 'PhraseRecursor', ->
                 done()
                 throw 'go no further'
 
-            try PhraseRecursor.create root, opts, 'phrase string', (nest) ->
+            try PhraseRecursor.walk root, opts, 'phrase string', (nest) ->
 
 
         it 'assigns access to registered phrase hooks', (done) -> 
    
-            PhraseRecursor.create root, opts, 'phrase string', (nest) ->
+            PhraseRecursor.walk root, opts, 'phrase string', (nest) ->
             before each: -> done()
             root.context.hooks.beforeEach[0].fn()
 
 
-        xit 'TEMPORARY provides assess to stack', (done) -> 
+        it 'TEMPORARY provides assess to stack', (done) -> 
             
-            PhraseRecursor.create root, opts, 'phrase', (nested) -> 
+            PhraseRecursor.walk root, opts, 'phrase', (nested) -> 
 
                 nested.stack.should.equal root.context.stack
                 done()
@@ -83,7 +113,7 @@ describe 'PhraseRecursor', ->
                 args[2] = args[1] unless args[2]?
                 decoratedFn.apply this, args
 
-            PhraseRecursor.create root, opts, 'outer phrase string', (nested) ->
+            PhraseRecursor.walk root, opts, 'outer phrase string', (nested) ->
 
                 nested 'nested phrase string', {}, (deeper) -> 
 

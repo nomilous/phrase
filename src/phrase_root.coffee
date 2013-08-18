@@ -134,17 +134,6 @@ require( 'also' ) exports, {}, (root) ->
                     # 
 
                     context.PhraseGraph = PhraseGraph.createClass root
-
-                    #
-                    # TEMPORARY
-                    # 
-                    #   - move root (live) graph creation into recursor first walk
-                    #   - all subsequent walks build graph into sandbox
-                    #   - merge sandbox into live graph and notify on add/remove/change vertex
-                    #   - keep original vertex instances
-                    #
-
-                    context.graph = new context.PhraseGraph
                   
 
                     #
@@ -173,7 +162,7 @@ require( 'also' ) exports, {}, (root) ->
                     # * Start 'first walk' to load the phrase tree
                     #
 
-                    PhraseRecursor.create root, opts, phraseRootString, phraseRootFn
+                    PhraseRecursor.walk root, opts, phraseRootString, phraseRootFn
 
 
                     # 
@@ -212,7 +201,7 @@ require( 'also' ) exports, {}, (root) ->
                 # ------------------
                 # 
 
-                PhraseRecursor.create root, opts, phraseRootString, phraseRootFn
+                PhraseRecursor.walk root, opts, phraseRootString, phraseRootFn
 
 
 

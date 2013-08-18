@@ -8,21 +8,21 @@ describe 'phrase', ->
     
     beforeEach -> 
 
-        phraseRecursor_swap = PhraseRecursor.create 
+        phraseRecursor_swap = PhraseRecursor.walk 
 
     afterEach -> 
 
-        PhraseRecursor.create = phraseRecursor_swap
+        PhraseRecursor.walk = phraseRecursor_swap
 
 
-    context 'create()', ->
+    context 'createRoot()', ->
 
-        xit 'is a function', (done) ->  
+        it 'is a function', (done) ->  
 
             PhraseRoot.createRoot.should.be.an.instanceof Function
             done()
 
-        xit 'expects opts and linkFn', (done) -> 
+        it 'expects opts and linkFn', (done) -> 
 
             try PhraseRoot.createRoot 
 
@@ -81,7 +81,7 @@ describe 'phrase', ->
             it 'creates a PhraseRecursor with root context', (done) -> 
 
 
-                PhraseRecursor.create = (root, opts) -> 
+                PhraseRecursor.walk = (root, opts) -> 
 
                     should.exist root.context
                     done()
@@ -91,7 +91,7 @@ describe 'phrase', ->
 
 
 
-            it 'does the first walk', (done) -> 
+            xit 'does the first walk', (done) -> 
 
                 @token.on 'ready', => 
 
@@ -132,7 +132,7 @@ describe 'phrase', ->
 
 
 
-            it 'has accumulated dead leaves', (done) -> 
+            xit 'has accumulated dead leaves', (done) -> 
 
 
                 #
@@ -189,7 +189,7 @@ describe 'phrase', ->
 
         xit 'passes opts into the root phrase recursor', (done) -> 
 
-            PhraseRecursor.create = (root, opts) -> -> 
+            PhraseRecursor.walk = (root, opts) -> -> 
 
                 opts.title.should.equal 'Phrase Title'
                 opts.uuid.should.equal '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'

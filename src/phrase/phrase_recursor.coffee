@@ -9,11 +9,41 @@ PhraseHooks    = require './phrase_hooks'
 # run any of the hooks or leaf nodes.
 # 
 
-exports.create = (root, opts, rootString, rootFn) ->
+exports.walk = (root, opts, rootString, rootFn) ->
 
-    {context, inject} = root
-    {stack, notice}   = context
-    context.hooks     = PhraseHooks.bind root
+    {context, inject}                   = root
+    {stack, notice, graph, PhraseGraph} = context
+
+    context.hooks  = PhraseHooks.bind root
+
+
+    if graph? 
+
+        # 
+        # root graph is already define
+        # ----------------------------
+        # 
+        # * create a new (orphaned) graph
+        # * accessable at context.graphs.latest
+        # 
+
+        new PhraseGraph
+
+    else
+
+        #
+        # create root graph
+        # -----------------
+        # 
+        # * This graph houses the PhraseTree
+        # * It is only ever created on the 'first walk'
+        # TODO * Subsequent walks assemble a second graph
+        # TODO * Second graph is merged into the first
+        # TODO * Merge generates appropriate add/remove/change events on the root token
+        # 
+
+        context.graph = new PhraseGraph
+
 
     recursor = (parentPhraseString, parentPhraseControl) -> 
 
