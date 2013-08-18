@@ -12,9 +12,9 @@ describe 'integrations', ->
             #leaf: ['end', 'done']
             timeout: 1000
 
-            (token, notice) -> 
+            (token, @notice) => 
 
-                notice.use (msg, next) -> 
+                @notice.use (msg, next) -> 
 
                     if msg.context.title == 'inline notification'
 
@@ -47,7 +47,7 @@ describe 'integrations', ->
 
                             
                             result.job.ultraviolet.should.equal 234
-                            done()
+                            # done()
 
                         (error) -> 
                             console.log '\n', 'ERROR',  '\n', error
@@ -67,7 +67,7 @@ describe 'integrations', ->
             after  all:  ->  
 
                 console.log 'afterall'
-                setTimeout done, 500
+                #setTimeout done, 500
 
             system 'sensory', (subsystem) -> 
 
@@ -77,17 +77,17 @@ describe 'integrations', ->
 
                         console.log 'left eye'
                         @ultraviolet = 234
-                        setTimeout end, 300
+                        setTimeout end, 10
 
 
                     component 'right eye', (end) ->
 
                         #throw new Error 'mooo'
 
-                        #1.should.equal 2
+                        # 1.should.equal 2
 
                         console.log 'left eye'
-                        setTimeout end, 300
+                        setTimeout end, 10
 
 
 
@@ -102,7 +102,7 @@ describe 'integrations', ->
                     @notice.info( 'inline notification',
 
                         handy: true
-                        waitForNotice:  1900
+                        waitForNotice:  10
 
                     ).then -> 
 
@@ -129,5 +129,29 @@ describe 'integrations', ->
             # system 'hunt', (subsystem) -> 
 
             #     subsystem 'prey detection', (end) ->
+
+
+        setTimeout (=>
+
+            console.log 'redefine falcon'
+
+
+            falcon 'Generic', (system) -> 
+
+                system 'sensory', (subsystem) -> 
+
+                    subsystem 'vision', (component) -> 
+
+                        component 'left eye', (end) ->
+
+                            end()
+
+                        component 'right eye', (end) ->
+
+                            end()
+
+
+        ), 500
+
 
 

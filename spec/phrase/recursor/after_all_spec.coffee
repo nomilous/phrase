@@ -60,6 +60,8 @@ describe 'RecursorAfterAll', ->
                     stack: []
                     walking: startedAt: 1
                     notice: event: -> then: (fn) -> fn()
+                    graph:  version: 1, vertices: {}
+                    graphs: latest: version: 2, vertices: {}
 
             @hook = RecursorAfterAll.create @root, {}
 

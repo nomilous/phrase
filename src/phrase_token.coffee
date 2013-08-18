@@ -42,7 +42,7 @@ exports.create = (root) ->
 
         if msg.context.title == 'phrase::recurse:end'
 
-            return emitter.emit 'ready' if msg.first
+            emitter.emit 'ready' if msg.first
 
         next()
 

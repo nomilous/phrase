@@ -59,8 +59,31 @@ exports.create = (root, parentControl) ->
 
                     context.walks     = []
                     context.firstWalk = context.walking
+                    firstwalk         = true
 
                 context.walks.unshift context.walking
                 if context.walks.length > 5 then context.walks.pop()
-                process.nextTick -> delete context.walking
+
+                unless firstwalk?
+
+                    console.log '\nCHANGED_GRAPH'
+                    console.log 'ORIGINAL', JSON.stringify context.graph.vertices, null, 2
+                    console.log 'NEW', JSON.stringify context.graphs.latest.vertices, null, 2
+
+                    #
+                    # pending changescan and update
+                    #
+
+
+                    delete context.walking
+                    return process.nextTick done
+
+                
+                # 
+                # cant remember why, don't like it...
+                # 
+                delete context.walking
+                console.log WALKING: context.walking
                 process.nextTick done
+
+                

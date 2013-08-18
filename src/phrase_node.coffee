@@ -1,10 +1,3 @@
-#
-# phrase node
-# ===========
-# 
-# A vertex in the phrase graph / tree
-#
-
 {v1} = require 'node-uuid'
 
 exports.createClass = (root) -> 
@@ -141,3 +134,5 @@ exports.createClass = (root) ->
                 set: (value) -> 
                     return if localOpts.leaf?
                     localOpts.leaf = value
+
+
