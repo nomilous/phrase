@@ -7,9 +7,9 @@ describe 'PhraseGraph', ->
     Graph = undefined
     graph = undefined
 
-    beforeEach -> 
+    before -> 
 
-        root  = context: notice: use: (middleware) => @using = middleware 
+        root = context: notice: use: ->
         Graph = PhraseGraph.createClass root
         graph = new Graph
 
@@ -41,7 +41,6 @@ describe 'PhraseGraph', ->
         done()
 
 
-
     it 'provides access to vertices and edges lists', (done) -> 
 
         graph.vertices.should.eql {}
@@ -49,21 +48,32 @@ describe 'PhraseGraph', ->
         done()
 
 
-    xcontext 'assembler middleware', -> 
+    context 'assembler middleware', -> 
+
+        before -> 
+
+            @Graph = PhraseGraph.createClass context: notice: use: (@middleware) =>
+
 
         it 'registers on the message bus', (done) -> 
 
-            # 
-            # @using.should.equal graph.assembler
-            # 
-            # odd... 
-            # 
+                # 
+                # odd... Seems like a function returned by a property
+                #        no longer appears to have a the same prototype
+                #        instance as the function itself.
+                # 
+                # middleware.should.equal Graph.assembler
+                # console.log middleware is Graph.assembler
+                #
 
-            @using.toString().should.equal graph.assembler.toString()
-            done()
+                @middleware.toString().should.equal @Graph.assembler.toString()
+                done()          # 
+                                # marginally pointless...
+                                # 
 
 
-        it 'registers edges', (done) ->
+
+        xit 'registers edges', (done) ->
 
             graph.assembler 
 

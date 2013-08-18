@@ -7,6 +7,7 @@ exports.createClass = (root) ->
     # ===========================
     #
     # * Creates a root context container to house the list of graphs
+    # 
     # * Returns the PhraseGraph class definition 
     # 
 
@@ -16,11 +17,29 @@ exports.createClass = (root) ->
 
         latest: null
         list:   {} 
-        
+    
+    #
+    # Graph Assembler (middleware)
+    # ----------------------------
+    # 
+    # * PhraseRecursor walks the phrase tree and transmits all vertex and 
+    #   edge data onto the message bus.
+    # 
+    # * This middleware constructs the graph from that data.
+    # 
+    # * It assembles into the latest gragh only. All previously created graphs
+    #   remain unchanged. 
+    #
+
+    notice.use assembler = (msg, next) -> 
+
+        return next() unless graphs.latest?
 
 
 
-    return class PhraseGraph
+
+
+    class PhraseGraph
 
         constructor: (opts = {}) -> 
 
@@ -47,7 +66,18 @@ exports.createClass = (root) ->
 
                         get: -> localOpts[property]
                         enumerable: true
-                        
+
+
+
+    #
+    # expose the graph assembler as classmethod
+    # (hidden, for testing)
+    # 
+
+    Object.defineProperty PhraseGraph, 'assembler',
+
+        enumerable: false
+        get: -> assembler
 
 
 
