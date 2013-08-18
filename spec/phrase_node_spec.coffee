@@ -31,6 +31,7 @@ describe 'PhraseNode', ->
             uuid:      '123'
             token:     name: 'it'
             text:      'is a leaf phrase'
+            leaf:      true
 
             #
             # not enumarable
@@ -40,9 +41,8 @@ describe 'PhraseNode', ->
             hooks:    {}
             deferral: {}
             queue:    {}
-
             
-        JSON.stringify( node ).should.equal '{"uuid":"123","token":{"name":"it"},"text":"is a leaf phrase"}'
+        JSON.stringify( node ).should.equal '{"uuid":"123","token":{"name":"it"},"text":"is a leaf phrase","leaf":true}'
         done()
 
 
@@ -67,6 +67,21 @@ describe 'PhraseNode', ->
         node.hooks.beforeAll.fn().should.equal 0
         done()
 
+
+    it 'leaf flag can only be set once', (done) -> 
+
+        node = new @Node
+
+            uuid:      '123'
+            token:     name: 'it'
+            text:      'is a leaf phrase'
+
+
+        should.not.exist node.leaf
+        node.leaf = true
+        node.leaf = false
+        node.leaf.should.equal true
+        done()
 
 
 

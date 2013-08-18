@@ -96,34 +96,30 @@ exports.create = (root, parentControl) ->
         # inject new phrase into stack
         #
 
+        if stack.length == 0 
+
+            #
+            # root node is assigned uuid of the phrase tree
+            #
+
+            uuid = parentControl.phraseToken.uuid 
+
+        else 
+
+            #
+            # others can optionally be set on the phraseControl
+            # 
+            #    nested 'phrase text', uuid: '123', (end) -> 
+            #
+
+            uuid = phraseControl.uuid
+
         stack.push phrase = new PhraseNode 
 
             text:     phraseText
             token:    parentControl.phraseToken
-            uuid:     if stack.length == 0 then parentControl.phraseToken.uuid else phraseControl.uuid
-                                    #
-                                    # only assign parent token uuid as 
-                                    # phrase uuid on root node
-                                    # 
-
-            #
-            # TODO: configurable timeout on phraseNode
-            #
-
-            timeout: phraseControl.timeout
-            
-            #
-            # TODO: determine phrase line in source file
-            #       
-            #       1. IDE plugins could then interact
-            #          directly with phrases
-            # 
-            #          eg. nez - test results in sublime furrow
-            #                  - running single tests or context
-            #                    groups by click or keystroke on
-            #                    active line
-            # 
-
+            uuid:     uuid
+            timeout:  phraseControl.timeout
             hooks: 
 
                 beforeAll:  injectionControl.beforeAll

@@ -16,12 +16,14 @@ describe 'RecursorLeaf', ->
 
                 util: require('also').util
 
+            @Node = PhraseNode.createClass root
+
             control = 
                 leaf: ['end', 'done', 'slurp']
 
         it 'detects leaf phrases when phrase fn arg1 is in control.leaf', (done) -> 
 
-            phrase = new PhraseNode fn: (slurp) -> 
+            phrase = new @Node fn: (slurp) -> 
             leaf   = RecursorLeaf.create root, control
             leaf.detect phrase, (isLeaf) ->
 
@@ -30,7 +32,7 @@ describe 'RecursorLeaf', ->
 
         it 'detects not leaf when phrase fn arg1 is not in control.leaf', (done) ->
 
-            phrase = new PhraseNode fn: (other) -> 
+            phrase = new @Node fn: (other) -> 
             leaf   = RecursorLeaf.create root, control
             leaf.detect phrase, (isLeaf) ->
 
@@ -40,7 +42,7 @@ describe 'RecursorLeaf', ->
 
         it 'marks the phrase as a leaf', (done) -> 
 
-            phrase = new PhraseNode fn: (end) -> 
+            phrase = new @Node fn: (end) -> 
             leaf   = RecursorLeaf.create root, control
             leaf.detect phrase, (isLeaf) ->
 
@@ -49,7 +51,7 @@ describe 'RecursorLeaf', ->
 
         it 'marks the phrase as not a leaf', (done) -> 
 
-            phrase = new PhraseNode fn: (other) -> 
+            phrase = new @Node fn: (other) -> 
             leaf   = RecursorLeaf.create root, control
             leaf.detect phrase, (isLeaf) ->
 
