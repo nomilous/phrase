@@ -1,4 +1,3 @@
-PhraseNode = require '../../phrase_node'
 PhraseLeaf = require './leaf'
 sequence   = require 'when/sequence'
 
@@ -9,7 +8,7 @@ sequence   = require 'when/sequence'
 exports.create = (root, parentControl) -> 
 
     {context, util}  = root
-    {stack, notice}  = context
+    {stack, notice, PhraseNode} = context
 
     phraseLeaf = PhraseLeaf.create root, parentControl
 
@@ -124,10 +123,6 @@ exports.create = (root, parentControl) ->
             #                    groups by click or keystroke on
             #                    active line
             # 
-
-            #
-            console.log 'TODO: make these less exposed'
-            #
 
             hooks: 
 

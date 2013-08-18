@@ -3,9 +3,13 @@ PhraseNode = require '../lib/phrase_node'
 
 describe 'PhraseNode', -> 
 
+    before -> 
+
+        @Node = PhraseNode.createClass {}
+
     it 'has a uuid, runCount and createdAt', (done) -> 
 
-        node = new PhraseNode
+        node = new @Node
 
         should.exist node.uuid
         done()

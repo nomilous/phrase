@@ -22,6 +22,8 @@ describe 'RecursorBeforeEach', ->
                     info: -> then: (resolve) -> resolve()
                     event: -> then: (resolve) -> resolve()
 
+                PhraseNode: PhraseNode.createClass root
+
             util: require('also').util
 
         injectionControl = 
@@ -85,7 +87,7 @@ describe 'RecursorBeforeEach', ->
 
         hook (-> 
 
-            root.context.stack[0].should.be.an.instanceof PhraseNode
+            root.context.stack[0].should.be.an.instanceof root.context.PhraseNode
 
             root.context.stack[0].text.should.equal 'phrase text'
             root.context.stack[0].uuid.should.equal 'uuid'  # only in case of root phrase
@@ -102,7 +104,7 @@ describe 'RecursorBeforeEach', ->
         injectionControl.args = [ 'phrase text', { key: 'VALUE' }, -> ]
         PhraseLeaf.create = -> detect: (phrase, isLeaf) -> isLeaf true
         parent.phraseToken = name: 'it', uuid: 'UUID'
-        root.context.stack[0] = new PhraseNode
+        root.context.stack[0] = new root.context.PhraseNode
 
             token: name: 'describe'
             text: 'use case one'
@@ -126,13 +128,13 @@ describe 'RecursorBeforeEach', ->
         # existing stack elements
         #
 
-        root.context.stack.push parent = new PhraseNode
+        root.context.stack.push parent = new root.context.PhraseNode
 
             token: name: 'describe'
             text: 'use case one'
             fn: ->
 
-        root.context.stack.push parent = new PhraseNode
+        root.context.stack.push parent = new root.context.PhraseNode
 
             token: name: 'context'
             text: 'the parent phrase'
