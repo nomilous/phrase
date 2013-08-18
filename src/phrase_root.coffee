@@ -124,12 +124,23 @@ require( 'also' ) exports, {}, (root) ->
 
                     # 
                     #
-                    # create graph
-                    # ------------
+                    # create PhraseGraph (class definition)
+                    # -------------------------------------
                     # 
                     # * Houses the set of vertexes and edges that define the phrase tree
                     # * Assembled (via message bus) by the 'first walk' of the phrase recursor
                     # 
+
+                    context.PhraseGraph = PhraseGraph.createClass root
+
+                    #
+                    # TEMPORARY
+                    # 
+                    #   - move root (live) graph creation into recursor first walk
+                    #   - all subsequent walks build graph into sandbox
+                    #   - merge sandbox into live graph and notify on add/remove/change vertex
+                    #   - keep original vertex instances
+                    #
 
                     context.graph = PhraseGraph.create root
                   

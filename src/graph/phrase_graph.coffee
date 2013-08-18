@@ -1,15 +1,56 @@
-#
-# phrase graph
-# ============
-#
-# Container to house all vertexes and edges of the phrase tree
-# that is assembled by the phrase recursor's 'first walk'
-# 
+
+
+exports.createClass = (root) -> 
+
+    {context} = root
+    {notice}  = context
+
+
+    #
+    # PhraseGraph (class factory)
+    # ===========================
+    #
+    # Container to house all vertexes and edges of the phrase tree
+    # that is assembled by the phrase recursor's 'first walk'
+    # 
+
+    return class PhraseGraph
+
+        constructor: (opts = {}) -> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 exports.create = (root) -> 
 
     {context} = root
     {notice}  = context
+
+
 
     vertices = {}
     edges    = {}
