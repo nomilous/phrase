@@ -100,7 +100,7 @@ exports.create = (root, parentControl) ->
 
             text:     phraseText
             token:    parentControl.phraseToken
-            uuid:     if stack.length == 0 then parentControl.phraseToken.uuid else undefined
+            uuid:     if stack.length == 0 then parentControl.phraseToken.uuid else phraseControl.uuid
                                     #
                                     # only assign parent token uuid as 
                                     # phrase uuid on root node

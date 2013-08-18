@@ -99,6 +99,27 @@ describe 'RecursorBeforeEach', ->
 
         ), injectionControl
 
+
+    it 'can assign uuid from phraseControl for non root phrases', (done) -> 
+
+        root.context.stack.push parent = new root.context.PhraseNode
+
+            token: name: 'context'
+            text: 'the parent phrase'
+            fn: ->
+
+        injectionControl.args = [ 'is a leaf phrase', { uuid: 'UUID' }, (end) -> ]
+        parent.phraseToken = name: 'it'
+        hook = RecursorBeforeEach.create root, parent
+
+        hook (-> 
+
+            root.context.stack[1].uuid.should.equal 'UUID'
+            done()
+
+        ), injectionControl
+
+
     it 'does not assign uuid from parent phraseToken if not root phrase', (done) -> 
 
         injectionControl.args = [ 'phrase text', { key: 'VALUE' }, -> ]

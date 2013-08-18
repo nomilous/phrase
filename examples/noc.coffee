@@ -118,7 +118,7 @@ Noc 'Duties', (duty) ->
                 # that is created at token.run(...)
                 # 
                                     # 
-                @log = []           # TODO: use (if present) uuid for PhraseNode
+                @log = []           # use (if present) uuid for PhraseNode
                                     #
                                     #
             handle alert.title, uuid: alert.uuid, (step) -> 
