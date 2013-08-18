@@ -46,6 +46,31 @@ describe 'PhraseNode', ->
         done()
 
 
+    it 'immutable properties', (done) -> 
+
+
+        node = new @Node
+
+            uuid:      '123'
+            token:     name: 'it'
+            text:      'is a leaf phrase'
+
+            hooks: beforeAll: fn: -> 0
+
+        node.token.name.should.equal 'it'
+        node.token.name = 'Pepin of Landen'
+        node.token.name.should.not.equal 'Pepin of Landen'
+
+
+        node.hooks.beforeAll.fn().should.equal 0
+        node.hooks.beforeAll = fn: -> 1
+        node.hooks.beforeAll.fn().should.equal 0
+        done()
+
+
+
+
+
     context 'isChanged()', ->
 
         it 'changed hook needs to mark parent node as changed'
