@@ -163,50 +163,59 @@ describe 'PhraseGraph', ->
                 
                 done()
 
+            it 'stores parent and child relations (if tree)', (done) -> 
 
+                graph = new @Graph
 
-    xcontext 'register edge', -> 
-
-
-        
-        it 'stores parent and child relations if tree', (done) -> 
-
-            graph.registerEdge type: 'tree', vertices: [
+                graph.registerEdge type: 'tree', vertices: [
                     { uuid: 'UUID1', key: 'value1' }
                     { uuid: 'UUID2', key: 'value2' }
                 ],  ->
 
-            graph.registerEdge type: 'tree', vertices: [
-                    { uuid: 'UUID1', key: 'value1' }
-                    { uuid: 'UUID3', key: 'value3' }
-                ],  ->
+                graph.registerEdge type: 'tree', vertices: [
+                        { uuid: 'UUID1', key: 'value1' }
+                        { uuid: 'UUID3', key: 'value3' }
+                    ],  ->
 
-            graph.parent.should.eql 
 
-                UUID3: 'UUID1'
-                UUID2: 'UUID1'
+                graph.parent.should.eql 
 
-            graph.children.should.eql 
+                    UUID3: 'UUID1'
+                    UUID2: 'UUID1'
 
-                UUID1: ['UUID2', 'UUID3']
+                graph.children.should.eql 
 
-            done()
+                    UUID1: ['UUID2', 'UUID3']
 
-        it 'stores a list of leaves if tree', (done) -> 
 
-            graph.registerEdge type: 'tree', vertices: [
-                    { uuid: 'UUID1', key: 'value1' }
-                    { uuid: 'UUID2', key: 'value2', leaf: true }
-                ],  ->
+                done()
 
-            graph.registerEdge type: 'tree', vertices: [
-                    { uuid: 'UUID1', key: 'value1' }
-                    { uuid: 'UUID3', key: 'value3' }
-                ],  ->
 
-            graph.leaves.should.eql ['UUID2']
+            it 'stores a list of leaves if tree', (done) -> 
 
-            done()
+                #
+                # vertexes are flaggeg a leaf by the PhraseRecursor
+                #
+
+                graph.registerEdge type: 'tree', vertices: [
+                        { uuid: 'UUID1', key: 'value1' }
+                        { uuid: 'UUID2', key: 'value2', leaf: true }
+                    ],  ->
+
+                graph.registerEdge type: 'tree', vertices: [
+                        { uuid: 'UUID1', key: 'value1' }
+                        { uuid: 'UUID3', key: 'value3' }
+                    ],  ->
+
+                graph.registerEdge type: 'tree', vertices: [
+                        { uuid: 'UUID3', key: 'value3' }
+                        { uuid: 'UUID4', key: 'value4', leaf: true }
+                    ],  ->
+
+                graph.leaves.should.eql ['UUID2', 'UUID4']
+
+                done()
+
 
     xcontext 'register leaf', -> 
 

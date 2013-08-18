@@ -58,6 +58,21 @@ exports.createClass = (root) ->
                 vertices:  {}
                 edges:     {}
 
+                #
+                # tree (as special case graph)
+                # ----------------------------
+                # 
+                # These may later move onto the vertex objects themselves
+                # instead of being in an index.
+                # 
+                # * `parent`   - index to parent   ( parent[ UUID ] = parentUUID
+                # * `children` - index to children ( children[ parentUUID ] = [uuid1, uuid2, ...] )
+                # * `leaves`   - array of leaf uuids
+
+                parent:    {}
+                children:  {}
+                leaves:    []
+
 
             graphs.list[ localOpts.uuid ] = this
             graphs.latest = this
@@ -67,7 +82,7 @@ exports.createClass = (root) ->
             # immutables
             # 
 
-            for property in ['uuid', 'vertices', 'edges']
+            for property in ['uuid', 'vertices', 'edges', 'parent', 'children', 'leaves']
 
                 do (property) => 
 
@@ -82,6 +97,13 @@ exports.createClass = (root) ->
 
             [vertex1, vertex2] = msg.vertices
 
+            #
+            # TODO: these will be created and overwritten multiple times
+            #       as the phrase recursor transmits the edge definitions
+            # 
+            #       consider not doing so
+            #
+
             @vertices[vertex1.uuid] = vertex1
             @vertices[vertex2.uuid] = vertex2
 
@@ -95,6 +117,14 @@ exports.createClass = (root) ->
             @edges[ vertex2.uuid ] ||= []
             @edges[ vertex2.uuid ].push to: vertex1.uuid
 
+
+
+            if msg.type == 'tree'
+
+                @children[ vertex1.uuid ]  ||= []
+                @children[ vertex1.uuid ].push vertex2.uuid
+                @parent[   vertex2.uuid ]    = vertex1.uuid
+                @leaves.push vertex2.uuid if vertex2.leaf
 
 
             next()
