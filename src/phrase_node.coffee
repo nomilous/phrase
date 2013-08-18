@@ -25,7 +25,14 @@ exports.createClass = (root) ->
         # * Comes into play later (PhraseWalkers)
         # * For now only carries name 
         # 
-        #     thisThing 'is a token', (end) -> end()
+        #    thisThing 'is a token', (end) -> 
+        #         
+        #    the resulting phrase: 
+        # 
+        #    token: 
+        #        name: 'thisThing'
+        #    test:  'is a token'
+        #    fn:    (end) ->   
         # 
 
         class PhraseToken 
