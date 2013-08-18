@@ -145,13 +145,17 @@ describe 'phrase', ->
                     console.log @token.graph.tree.leaves
                     console.log @token.graph.leaves
 
-                    @token.graph.leaves.length.should.equal 3
+                    @token.graph.leaves.length.should.equal 2
                     done()
 
 
                 @registrar 'entirely new tree', (that) -> 
 
                     that 'has one leaf', (end) ->
+
+                        end()
+
+                    that 'has another leaf', (end) ->
 
                         end()
 

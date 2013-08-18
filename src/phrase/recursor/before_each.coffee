@@ -166,7 +166,9 @@ exports.create = (root, parentControl) ->
 
             run = sequence [
 
-                ->  notice.event 'phrase::edge:create',
+                ->  
+
+                    notice.event 'phrase::edge:create',
 
                         #
                         # trees as special case of graph, edge needs to know
@@ -182,7 +184,9 @@ exports.create = (root, parentControl) ->
                         vertices: stack[ -2.. ]
 
 
-                ->  if leaf then notice.event 'phrase::leaf:create',
+                ->  
+
+                    if leaf then notice.event 'phrase::leaf:create',
 
                         uuid:  phrase.uuid
                         path:  stack.map( (p) -> p.uuid ) # .filter (uuid) -> uuid != phrase.uuid

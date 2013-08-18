@@ -29,10 +29,6 @@ describe 'PhraseRunner', ->
                 NOTICE = notice
                 GRAPH  = token.graph
 
-                # token.on 'ready', -> 
-
-                #     console.log token.graph.vertices
-
                 notice.use (msg, next) -> 
 
                     return done() if LEAF_TWO?

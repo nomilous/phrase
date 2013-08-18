@@ -144,7 +144,7 @@ require( 'also' ) exports, {}, (root) ->
                     #   - keep original vertex instances
                     #
 
-                    context.graph = PhraseGraph.create root
+                    context.graph = new context.PhraseGraph
                   
 
                     #
