@@ -143,7 +143,7 @@ require( 'also' ) exports, {}, (root) ->
                     # 
                     # 
 
-                    context.PhraseJob = PhraseJob.create root
+                    context.PhraseJob = PhraseJob.createClass root
 
 
                     #

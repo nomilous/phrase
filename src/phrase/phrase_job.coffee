@@ -2,7 +2,7 @@
 {defer}      = require 'when'
 sequence     = require 'when/sequence'
 
-exports.create = (root) -> 
+exports.createClass = (root) -> 
 
     #
     # PhraseJob (class factory)
@@ -11,13 +11,12 @@ exports.create = (root) ->
     # Has root access factory create() scope
     #
 
-    {inject} = root
+    {inject, context} = root
+    {notice}          = context
 
-    class PhraseJob
+    return class PhraseJob
 
         constructor: (opts = {}) -> 
-
-            throw new Error 'PhraseJob requires opts.notice' unless opts.notice?
 
             #
             # job uuid can be assigned (allows resume, later...)
@@ -35,6 +34,8 @@ exports.create = (root) ->
                 notify: (update) -> console.log 'PhraseJob:', JSON.stringify update
 
             localOpts =
+
+                notice: notice
 
                 progress: -> 
 

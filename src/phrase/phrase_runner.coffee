@@ -43,7 +43,6 @@ api =
                 job = new context.PhraseJob
 
                     steps: steps
-                    notice: notice
                     deferral: running
 
                 job.run()

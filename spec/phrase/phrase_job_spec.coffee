@@ -18,26 +18,23 @@ describe 'PhraseJob', ->
             notify: -> 
             reject: ->
 
-        root      = inject: inject
-        PhraseJob = phraseJob.create root
-
         NOTICE = 
             event: -> then: (fn) -> fn()
-        opts   = notice: NOTICE
+
+        root      = 
+            inject: inject
+            context: notice: NOTICE
+
+        PhraseJob = phraseJob.createClass root
 
 
     context 'general', -> 
 
-        it 'requires opts.notice', (done) -> 
-
-            try new PhraseJob
-            catch error
-                error.should.match /PhraseJob requires opts.notice/
-                done()
 
         it 'is a class', -> 
 
             (new PhraseJob opts).should.be.an.instanceof PhraseJob
+
 
         it 'is initialized with deferral and steps array', (done) -> 
 
@@ -81,6 +78,14 @@ describe 'PhraseJob', ->
 
                 error.should.match /Cannot assign reserved property: uuid/
                 done()
+
+
+        it 'uses the root message bus', (done) -> 
+
+            job = new PhraseJob notice: NOTICE, steps: STEPS
+            NOTICE.event = (event, message) -> then: -> done()
+            job.run()
+
 
         it 'logs to console if running deferral is not defined', -> 
 
