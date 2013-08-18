@@ -245,7 +245,7 @@ describe 'PhraseGraph', ->
                 path: ['UUID1', 'UUID2']
 
                 -> 
-                
+
             graph.tree.leaves.UUID3.should.eql 
 
                 uuid: 'UUID3'
@@ -254,9 +254,11 @@ describe 'PhraseGraph', ->
             done()
 
 
-    xcontext 'leavesOf(uuid)', -> 
+    context 'leavesOf(uuid)', -> 
 
         it 'returns the vertex at uuid if it is a leaf', (done) -> 
+
+            graph = new @Graph
 
             graph.registerEdge type: 'tree', vertices: [
                     { uuid: 'UUID1', key: 'value1' }
@@ -282,6 +284,8 @@ describe 'PhraseGraph', ->
             #      8: leaf
             # 
             #
+
+            graph = new @Graph
 
             graph.registerEdge type: 'tree', vertices: [
                     { uuid: 'UUID1', key: 'value1' }

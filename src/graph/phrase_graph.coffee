@@ -142,6 +142,32 @@ exports.createClass = (root) ->
             next()
 
 
+        #
+        # leavesOf(uuid)
+        # --------------
+        # 
+        # Return array of vertexes that are leaves of the specified
+        # vertex (opts.uuid). Returns the vertex itself if it is a
+        # leaf. 
+        # 
+
+        leavesOf: (uuid, found = []) -> 
+
+            return found unless @vertices[uuid]?
+
+            if @vertices[uuid].leaf
+
+                found.push @vertices[uuid]
+                return found
+
+            @leavesOf child_uuid, found for child_uuid in @children[uuid]
+            return found
+            
+
+
+
+
+
         registerLeaf: (msg, next) -> 
 
             @tree.leaves[msg.uuid] = msg
