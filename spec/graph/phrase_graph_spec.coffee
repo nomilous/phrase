@@ -4,6 +4,7 @@ PhraseGraph = require '../../lib/graph/phrase_graph'
 describe 'PhraseGraph', -> 
 
     root  = undefined
+    Graph = undefined
     graph = undefined
 
     beforeEach -> 
@@ -17,6 +18,28 @@ describe 'PhraseGraph', ->
 
         should.exist graph.uuid
         done()
+
+
+    it 'is added to the graphs collection on the root context', (done) -> 
+
+        g = new Graph
+        g.should.equal root.context.graphs.list[ g.uuid ]
+        done()
+
+
+    it 'most recently created graph is set as latest in the graphs collection', (done) -> 
+
+        one = new Graph
+        root.context.graphs.latest.touch1 = 1
+        two = new Graph
+        root.context.graphs.latest.touch2 = 2
+
+        should.exist one.touch1
+        should.exist two.touch2
+        should.not.exist one.touch2
+
+        done()
+
 
 
     it 'provides access to vertices and edges lists', (done) -> 

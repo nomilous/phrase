@@ -2,16 +2,23 @@
 
 exports.createClass = (root) -> 
 
-    {context} = root
-    {notice}  = context
-
-
     #
     # PhraseGraph (class factory)
     # ===========================
     #
-    # Container to house all vertexes and edges of the phrase tree
+    # * Creates a root context container to house the list of graphs
+    # * Returns the PhraseGraph class definition 
     # 
+
+    {context}      = root
+    {notice}       = context
+    context.graphs = graphs = 
+
+        latest: null
+        list:   {} 
+        
+
+
 
     return class PhraseGraph
 
@@ -19,9 +26,13 @@ exports.createClass = (root) ->
 
             localOpts = 
 
-                uuid:     opts.uuid || v1()
-                vertices: {}
-                edges:    {}
+                uuid:      opts.uuid || v1()
+                vertices:  {}
+                edges:     {}
+
+
+            graphs.list[ localOpts.uuid ] = this
+            graphs.latest = this
 
 
             #
