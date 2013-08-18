@@ -129,6 +129,8 @@ require( 'also' ) exports, {}, (root) ->
                     # 
                     # * Houses the set of vertexes and edges that define the phrase tree
                     # * Assembled (via message bus) by the 'first walk' of the phrase recursor
+                    # * This is the PhraseGraph definition (class)
+                    # * Instance is managed in PhraseRecursor
                     # 
 
                     context.PhraseGraph = PhraseGraph.createClass root
