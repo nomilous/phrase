@@ -1,5 +1,6 @@
-{v1} = require 'node-uuid'
-seq  = 0
+{v1}    = require 'node-uuid'
+seq     = 0
+{defer} = require 'when'
 
 exports.createClass = (root) -> 
 
@@ -139,9 +140,75 @@ exports.createClass = (root) ->
 
             next()
 
+
         update: -> 
 
-            then: (done) -> done()
+            doing = defer()
+
+            created = []
+            updated = []
+            deleted = []
+
+            runningGraph = context.graph
+            newGraph     = context.graphs.latest
+
+            for path of runningGraph.paths
+
+                runningUUID   = runningGraph.paths[path]
+                runningVertex = runningGraph.vertices[runningUUID]
+                newUUID       = newGraph.paths[path]
+
+                unless newUUID?
+
+                    deleted.push vertex: runningVertex, path: path
+                    continue
+
+                #
+                # in both
+                #
+
+                if runningVertex.leaf
+
+                    #
+                    # * only leaf vertexes are eligable to be updated directly
+                    # * TODO: changed hooks mark the parent as updated
+                    #
+
+                    if runningVertex.wasUpdatedBy newGraph.vertices[newUUID]
+
+                        updated.push vertex: runningVertex, path: path
+
+
+            for path of newGraph.paths 
+
+                unless runningGraph.paths[path]?
+                    uuid   = newGraph.paths[path]
+                    vertex = newGraph.vertices[uuid]
+
+                    created.push vertex: vertex, path: path  
+                    continue
+
+            for create in created
+
+                console.log '\nCREATED'
+                console.log create.path
+                console.log create.vertex.fn.toString()
+                    
+
+            for update in updated
+                
+                console.log '\nUPDATED'
+                console.log update.path
+                console.log update.vertex.fn.toString()
+
+            for deletes in deleted
+
+                console.log '\nDELETED'
+                console.log deletes.path
+                console.log deletes.vertex.fn.toString()
+
+
+            doing.promise
 
         registerEdge: (msg, next) -> 
 

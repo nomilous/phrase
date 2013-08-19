@@ -133,9 +133,33 @@ exports.createClass = (root) ->
                         enumerable: false
 
             Object.defineProperty this, 'leaf',
+
                 enumerable: true
                 get: -> localOpts.leaf
                 set: (value) -> 
                     return if localOpts.leaf?
                     localOpts.leaf = value
+
+
+
+
+
+
+            Object.defineProperty this, 'update', 
+
+                enumerable: false
+                set: (opts) -> 
+
+                    localOpts.fn = opts.fn || localOpts.fn
+
+
+        wasUpdatedBy: (vertex) -> 
+
+            if @fn.toString() != vertex.fn.toString()
+                
+                @update = fn: vertex.fn
+
+                return true
+
+            return false
 

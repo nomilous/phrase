@@ -346,14 +346,14 @@ describe 'PhraseGraph', ->
 
     context 'createIndexes', -> 
 
-        it 'creates paths index and appends it onto phrase::recurse:end for token.ready event', (done) -> 
+        xit 'creates paths index and appends it onto phrase::recurse:end for token.ready event', (done) -> 
 
             i = 1
             Date.now = -> i++
 
             Phrase = require '../../lib/phrase_root'
 
-            root = Phrase.createRoot
+            phrase = Phrase.createRoot
 
                 title: 'Test'
                 uuid:  'UUID'
@@ -379,7 +379,7 @@ describe 'PhraseGraph', ->
                         done()
 
 
-            root 'outer phrase', (nested) ->
+            phrase 'outer phrase', (nested) ->
 
                 nested 'inner phrase 1', (deep1) -> 
 
@@ -387,11 +387,74 @@ describe 'PhraseGraph', ->
 
                         deep2 'even deeper', (end) -> 
 
-                        #nested 'overlapping', (end) ->
+                        #
+                        # THING HERE....
+                        #
+                        # nested 'overlapping', (end) ->
+                        # 
 
                 nested 'inner phrase 2', (end) -> 
 
                 
+    context 'update()', -> 
+
+        before (done) -> 
+
+            @root = require('../../lib/phrase_root').createRoot
+
+                title: 'Test'
+                uuid:  'UUID'
+
+                (@token, notice) => 
+
+                    @token.on 'ready', -> done()
+
+            @root 'root phrase', (nested) -> 
+
+                nested 'nested phrase 1', (end) -> 
+
+                    'ORIGINAL UNCHANGED 1'
+                    end()
+
+                nested 'nested phrase 2', (end) -> 
+
+                    'ORIGINAL 2'
+                    end()
+
+                nested 'nested phrase 3', (end) -> 
+
+                    'DELETED 3'
+                    end()
+
+                nested 'nested phrase 5', (end) -> 
+
+                    'DELETED 5'
+                    end()
+
+        after -> 
+
+            @token.removeAllListeners()
+
+
+        it 'updates from the latest graph', (done) -> 
+
+            @root 'root phrase', (nested) -> 
+
+                nested 'nested phrase 1', (end) -> 
+
+                    'ORIGINAL UNCHANGED 1'
+                    end()
+
+                nested 'nested phrase 2', (end) -> 
+
+                    'UPDATED 2'
+                    end()
+
+                nested 'nested phrase 4', (end) -> 
+
+                    'CREATED 4'
+                    end()
+
 
 
 

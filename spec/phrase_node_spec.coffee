@@ -86,14 +86,13 @@ describe 'PhraseNode', ->
 
 
 
-    context 'isChanged()', ->
+    context 'wasUpdatedBy()', ->
+
+        it '' , -> throw 'wasUpdatedBy()'
 
         it 'changed hook needs to mark parent node as changed'
 
             #
             # this may be handled in graph merge and not here
             #
-
-
-    context 'merge()', -> 
 
