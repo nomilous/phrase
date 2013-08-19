@@ -139,6 +139,10 @@ exports.createClass = (root) ->
 
             next()
 
+        update: -> 
+
+            then: (done) -> done()
+
         registerEdge: (msg, next) -> 
 
             [vertex1, vertex2] = msg.vertices

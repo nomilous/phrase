@@ -54,14 +54,14 @@ describe 'RecursorAfterAll', ->
 
     context 'walk history', -> 
 
-        before ->
-
+        beforeEach ->
+            @updated = 0
             @root = 
                 context: 
                     stack: []
                     walking: startedAt: 1
                     notice: event: -> then: (fn) -> fn()
-                    graph:  version: 1, vertices: {}
+                    graph:  version: 1, vertices: {}, update: => then: (done) => @updated++; done()
                     graphs: latest: version: 2, vertices: {}
 
             @hook = RecursorAfterAll.create @root, {}
@@ -71,12 +71,63 @@ describe 'RecursorAfterAll', ->
             @first = @root.context.firstWalk
         
 
-        it 'remembers the first walk', (done) -> 
+        xit 'remembers the first walk', (done) -> 
 
             @root.context.walking = startedAt: 2
             @hook (->), {}
             @root.context.firstWalk.should.equal @first
             done()
+
+        it 'does not call update() on the root graph on first walk', (done) -> 
+
+            @root.context.walks = undefined
+            @root.context.walking = startedAt: 2
+            @hook (=>
+
+                @updated.should.equal 0
+                done()
+
+            ), {}
+
+        it 'calls update on each subsequent walk', (done) -> 
+
+            @root.context.walks = undefined
+            @root.context.walking = startedAt: 2
+            @hook (->), {}
+
+            @root.context.walking = startedAt: 4
+            @hook (->), {}
+
+            @root.context.walking = startedAt: 6
+            @hook (=>
+
+                @updated.should.equal 2
+                done()
+
+            ), {}
+
+        it 'afterAll hook waits for update', (done) -> 
+
+            recurseDone = false
+            @root.context.graph.update = -> then: (resolve) -> 
+
+                process.nextTick -> 
+
+                    recurseDone.should.equal false
+                    resolve()
+
+                    process.nextTick -> 
+
+                        recurseDone.should.equal true
+                        done()
+
+            @root.context.walking = startedAt: 2
+            @hook (->
+
+                recurseDone = true
+
+            ), {}
+
 
 
         it 'keeps a limited length history with most recent in front', (done) -> 

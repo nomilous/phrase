@@ -13,7 +13,7 @@ describe 'PhraseGraph', ->
         Graph = PhraseGraph.createClass root
         graph = new Graph
 
-    xcontext 'general', ->
+    context 'general', ->
 
         it 'has a uuid', (done) -> 
 
@@ -54,7 +54,7 @@ describe 'PhraseGraph', ->
             done()
 
 
-    xcontext 'assembler middleware', -> 
+    context 'assembler middleware', -> 
 
         before -> 
 
@@ -224,7 +224,7 @@ describe 'PhraseGraph', ->
 
 
 
-    xcontext 'register leaf', -> 
+    context 'register leaf', -> 
 
 
         it 'is called by the assember at phrase::edge:create', (done) -> 
@@ -259,7 +259,7 @@ describe 'PhraseGraph', ->
             done()
 
 
-    xcontext 'leavesOf(uuid)', -> 
+    context 'leavesOf(uuid)', -> 
 
         it 'returns the vertex at uuid if it is a leaf', (done) -> 
 
