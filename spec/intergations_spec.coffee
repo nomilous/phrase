@@ -30,7 +30,10 @@ describe 'integrations', ->
 
 
 
-                token.on 'ready', -> 
+                token.on 'ready', (data) -> 
+
+                    console.log JSON.stringify data.tokens, null, 2
+                    done()
 
                     #
                     # TODO: a way to call runs on branch or leaf
@@ -40,23 +43,23 @@ describe 'integrations', ->
 
                     # console.log token.graph.vertices
 
-                    token.run( uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a' ).then( 
+                    # token.run( uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a' ).then( 
 
-                        (result) -> 
-                            console.log '\n', 'RESULT', '\n', result
+                    #     (result) -> 
+                    #         console.log '\n', 'RESULT', '\n', result
 
                             
-                            result.job.ultraviolet.should.equal 234
-                            # done()
+                    #         result.job.ultraviolet.should.equal 234
+                    #         # done()
 
-                        (error) -> 
-                            console.log '\n', 'ERROR',  '\n', error
+                    #     (error) -> 
+                    #         console.log '\n', 'ERROR',  '\n', error
 
-                        (update) -> 
-                            # console.log '\n', 'UPDATE', '\n', 
-                            #     update.state || update.event, JSON.stringify update, null, 2
+                    #     (update) -> 
+                    #         # console.log '\n', 'UPDATE', '\n', 
+                    #         #     update.state || update.event, JSON.stringify update, null, 2
 
-                    )
+                    # )
 
       
         falcon 'Generic', (system) -> 
@@ -131,27 +134,27 @@ describe 'integrations', ->
             #     subsystem 'prey detection', (end) ->
 
 
-        setTimeout (=>
+        # setTimeout (=>
 
-            console.log 'redefine falcon'
-
-
-            falcon 'Generic', (system) -> 
-
-                system 'sensory', (subsystem) -> 
-
-                    subsystem 'vision', (component) -> 
-
-                        component 'left eye', (end) ->
-
-                            end()
-
-                        component 'right eye', (end) ->
-
-                            end()
+        #     console.log 'redefine falcon'
 
 
-        ), 500
+        #     falcon 'Generic', (system) -> 
+
+        #         system 'sensory', (subsystem) -> 
+
+        #             subsystem 'vision', (component) -> 
+
+        #                 component 'left eye', (end) ->
+
+        #                     end()
+
+        #                 component 'right eye', (end) ->
+
+        #                     end()
+
+
+        # ), 500
 
 
 

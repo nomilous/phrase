@@ -69,7 +69,7 @@ describe 'PhraseToken', ->
 
             it 'is proxied from phrase::recurse:end', (done) -> 
 
-                @token.on 'ready', done
+                @token.on 'ready', (data) -> done()
 
                 @middleware
 
@@ -78,7 +78,7 @@ describe 'PhraseToken', ->
                     #
 
                     context: title: 'phrase::recurse:end'
-                    first: true
+                    walk: first: true
                     ->
 
 
@@ -91,7 +91,7 @@ describe 'PhraseToken', ->
                 @middleware
 
                     context: title: 'phrase::recurse:end'
-                    first: false
+                    walk: first: false
                     
                     done
 

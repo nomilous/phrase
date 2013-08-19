@@ -13,47 +13,48 @@ describe 'PhraseGraph', ->
         Graph = PhraseGraph.createClass root
         graph = new Graph
 
+    xcontext 'general', ->
 
-    it 'has a uuid', (done) -> 
+        it 'has a uuid', (done) -> 
 
-        should.exist graph.uuid
-        done()
+            should.exist graph.uuid
+            done()
 
-    it 'has a version', (done) -> 
+        it 'has a version', (done) -> 
 
-        should.exist graph.version
-        done()
-
-
-    it 'is added to the graphs collection on the root context', (done) -> 
-
-        g = new Graph
-        g.should.equal root.context.graphs.list[ g.uuid ]
-        done()
+            should.exist graph.version
+            done()
 
 
-    it 'most recently created graph is set as latest in the graphs collection', (done) -> 
+        it 'is added to the graphs collection on the root context', (done) -> 
 
-        one = new Graph
-        root.context.graphs.latest.touch1 = 1
-        two = new Graph
-        root.context.graphs.latest.touch2 = 2
-
-        should.exist one.touch1
-        should.exist two.touch2
-        should.not.exist one.touch2
-
-        done()
+            g = new Graph
+            g.should.equal root.context.graphs.list[ g.uuid ]
+            done()
 
 
-    it 'provides access to vertices and edges lists', (done) -> 
+        it 'most recently created graph is set as latest in the graphs collection', (done) -> 
 
-        graph.vertices.should.eql {}
-        graph.edges.should.eql {}
-        done()
+            one = new Graph
+            root.context.graphs.latest.touch1 = 1
+            two = new Graph
+            root.context.graphs.latest.touch2 = 2
+
+            should.exist one.touch1
+            should.exist two.touch2
+            should.not.exist one.touch2
+
+            done()
 
 
-    context 'assembler middleware', -> 
+        it 'provides access to vertices and edges lists', (done) -> 
+
+            graph.vertices.should.eql {}
+            graph.edges.should.eql {}
+            done()
+
+
+    xcontext 'assembler middleware', -> 
 
         before -> 
 
@@ -117,7 +118,6 @@ describe 'PhraseGraph', ->
                             UUID2: uuid: 'UUID2', key: 'value2'
                         
                         done()
-
 
 
             it 'creates edges' , (done) ->
@@ -224,7 +224,7 @@ describe 'PhraseGraph', ->
 
 
 
-    context 'register leaf', -> 
+    xcontext 'register leaf', -> 
 
 
         it 'is called by the assember at phrase::edge:create', (done) -> 
@@ -259,7 +259,7 @@ describe 'PhraseGraph', ->
             done()
 
 
-    context 'leavesOf(uuid)', -> 
+    xcontext 'leavesOf(uuid)', -> 
 
         it 'returns the vertex at uuid if it is a leaf', (done) -> 
 
@@ -341,9 +341,57 @@ describe 'PhraseGraph', ->
                 { uuid: 'UUID8', key: 'value8', leaf: true }
             ]
 
-
-
             done()
+
+
+    context 'createIndexes', -> 
+
+        it 'creates paths index and appends it onto phrase::recurse:end for token.ready event', (done) -> 
+
+            i = 1
+            Date.now = -> i++
+
+            Phrase = require '../../lib/phrase_root'
+
+            root = Phrase.createRoot
+
+                title: 'Test'
+                uuid:  'UUID'
+
+                (token, notice) -> 
+
+                    token.on 'ready', (data) -> 
+
+                        #console.log JSON.stringify data, null, 2
+
+                        data.walk.should.eql 
+
+                            startedAt: 1
+                            first:     true
+                            duration:  1
+
+                        should.exist data.tokens[  "/Test/outer phrase"   ].uuid
+                        should.exist data.tokens[  "/Test/outer phrase/nested/inner phrase 1"   ].uuid
+                        should.exist data.tokens[  "/Test/outer phrase/nested/inner phrase 1/deep1/deeper phrase"   ].uuid
+                        should.exist data.tokens[  "/Test/outer phrase/nested/inner phrase 1/deep1/deeper phrase/deep2/even deeper"   ].uuid
+                        should.exist data.tokens[  "/Test/outer phrase/nested/inner phrase 2"   ].uuid
+
+                        done()
+
+
+            root 'outer phrase', (nested) ->
+
+                nested 'inner phrase 1', (deep1) -> 
+
+                    deep1 'deeper phrase', (deep2) ->
+
+                        deep2 'even deeper', (end) -> 
+
+                        #nested 'overlapping', (end) ->
+
+                nested 'inner phrase 2', (end) -> 
+
+                
 
 
 

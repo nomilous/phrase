@@ -38,6 +38,10 @@ exports.createClass = (root) ->
 
         switch msg.context.title
 
+            when 'phrase::recurse:start'
+
+                next()
+
             when 'phrase::edge:create'
 
                 graphs.latest.registerEdge msg, next
@@ -45,6 +49,10 @@ exports.createClass = (root) ->
             when 'phrase::leaf:create'
 
                 graphs.latest.registerLeaf msg, next
+
+            when 'phrase::recurse:end'
+
+                graphs.latest.createIndexes msg, next
 
 
             else next()
@@ -61,6 +69,7 @@ exports.createClass = (root) ->
                 version:   opts.version || ++seq
                 vertices:  {}
                 edges:     {}
+                paths:     {}
 
                 #
                 # tree (as special case graph)
@@ -94,7 +103,7 @@ exports.createClass = (root) ->
             # immutables
             # 
 
-            for property in ['uuid', 'version', 'vertices', 'edges', 'parent', 'children', 'leaves', 'tree']
+            for property in ['uuid', 'version', 'vertices', 'edges', 'paths', 'parent', 'children', 'leaves', 'tree']
 
                 do (property) => 
 
@@ -103,13 +112,38 @@ exports.createClass = (root) ->
                         get: -> localOpts[property]
                         enumerable: true
 
+        createIndexes: (msg, next) -> 
 
+            return next() unless @leaves.length > 0
+
+            msg.tokens = {}
+
+            recurse = (vertex, stack = []) => 
+
+                tokenName = vertex.token.name
+                text      = vertex.text
+
+                stack.push "/#{  tokenName  }/#{  text  }"
+
+                path = stack.join ''
+                @paths[    path ]  = vertex.uuid
+                msg.tokens[ path ] = vertex.token
+
+                if @children[ vertex.uuid ]?
+
+                    recurse @vertices[uuid], stack for uuid in @children[ vertex.uuid ]
+
+                stack.pop()
+            
+            recurse @vertices[ @tree.leaves[ @leaves[0] ].path[0] ]
+
+            next()
 
         registerEdge: (msg, next) -> 
 
             [vertex1, vertex2] = msg.vertices
 
-            return next() unless vertex2?
+            
 
             #
             # TODO: these will be created and overwritten multiple times
@@ -119,6 +153,8 @@ exports.createClass = (root) ->
             #
 
             @vertices[vertex1.uuid] = vertex1
+
+            return next() unless vertex2?
             @vertices[vertex2.uuid] = vertex2
 
             #
@@ -165,10 +201,6 @@ exports.createClass = (root) ->
             @leavesOf child_uuid, found for child_uuid in @children[uuid]
             return found
             
-
-
-
-
 
         registerLeaf: (msg, next) -> 
 

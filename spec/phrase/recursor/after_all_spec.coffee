@@ -34,8 +34,9 @@ describe 'RecursorAfterAll', ->
                     
                     payload.should.eql 
 
-                        startedAt: 1
-                        duration:  9
+                        walk:
+                            startedAt: 1
+                            duration:  9
 
                     then: ->
 

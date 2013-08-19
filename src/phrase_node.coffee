@@ -34,7 +34,7 @@ exports.createClass = (root) ->
 
                 localOpts = {}
 
-                for property in ['name']
+                for property in ['name', 'uuid']
 
                     do (property) => 
 
@@ -94,10 +94,8 @@ exports.createClass = (root) ->
                 #
 
                 uuid:      opts.uuid  || v1()
-                token:     new PhraseToken opts.token
                 text:      opts.text
                 leaf:      opts.leaf
-
 
                 #
                 # not enumarable
@@ -109,6 +107,12 @@ exports.createClass = (root) ->
                 deferral:  opts.deferral
                 queue:     opts.queue
 
+            #
+            # copy uuid into token
+            #
+
+            opts.token.uuid = localOpts.uuid
+            localOpts.token = new PhraseToken opts.token
 
 
             for property in ['uuid', 'token', 'text']
@@ -134,5 +138,4 @@ exports.createClass = (root) ->
                 set: (value) -> 
                     return if localOpts.leaf?
                     localOpts.leaf = value
-
 

@@ -47,11 +47,9 @@ exports.create = (root, parentControl) ->
             startedAt = context.walking.startedAt
             context.walking.duration = Date.now() - startedAt
 
-
-
             notice.event( 'phrase::recurse:end' 
 
-                context.walking
+                walk: context.walking
 
             ).then -> 
 
@@ -74,7 +72,6 @@ exports.create = (root, parentControl) ->
                     # pending changescan and update
                     #
 
-
                     delete context.walking
                     return process.nextTick done
 
@@ -83,7 +80,6 @@ exports.create = (root, parentControl) ->
                 # cant remember why, don't like it...
                 # 
                 delete context.walking
-                console.log WALKING: context.walking
                 process.nextTick done
 
                 

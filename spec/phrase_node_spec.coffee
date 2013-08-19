@@ -10,14 +10,14 @@ describe 'PhraseNode', ->
 
     it 'has a uuid', (done) -> 
 
-        node = new @Node {}
+        node = new @Node token: {}
         should.exist node.uuid
         done()
 
 
     it 'assign a uuid', (done) -> 
 
-        node = new @Node uuid: '123'
+        node = new @Node uuid: '123', token: {}
         node.uuid.should.equal '123'
         node.uuid = '            it cannot be changed'
         node.uuid.should.equal '123'
@@ -42,7 +42,7 @@ describe 'PhraseNode', ->
             deferral: {}
             queue:    {}
             
-        JSON.stringify( node ).should.equal '{"uuid":"123","token":{"name":"it"},"text":"is a leaf phrase","leaf":true}'
+        JSON.stringify( node ).should.equal '{"uuid":"123","token":{"name":"it","uuid":"123"},"text":"is a leaf phrase","leaf":true}'
         done()
 
 
