@@ -196,8 +196,10 @@ exports.createClass = (root) ->
 
                                     #
                                     # * only leaf vertexes are eligable for fn update
-                                    #   branch vertex fns contains all leaf vertexes
-                                    #   and should have no body (other than hooks)
+                                    #   branch vertex fns contains all nested leaf vertexes
+                                    # 
+                                    # * they and should have no body of their own 
+                                    #   (other than hooks)
                                     #
 
                                     updateSet.updated ||= {}
