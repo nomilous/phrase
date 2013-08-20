@@ -1,7 +1,8 @@
-{v1}     = require 'node-uuid'
-seq      = 0
-{defer}  = require 'when'
-pipeline = require 'when/pipeline'
+{v1}                 = require 'node-uuid'
+{defer}              = require 'when'
+pipeline             = require 'when/pipeline'
+PhraseGraphChangeSet = require './phrase_graph_change_set'
+seq                                                                = 0 # couldn't resist
 
 exports.createClass = (root) -> 
 
@@ -20,6 +21,23 @@ exports.createClass = (root) ->
 
         latest: null
         list:   {} 
+
+    #
+    # ChangeSet 
+    # ---------
+    # 
+    # * Generated when the PhraseRecursor is called to re-walk the 
+    #   phrase tree.
+    # 
+    # * Builds the delta that, when applied, would advance the root.context.graph 
+    #   to the new definition in root.context.graphs.latest
+    # 
+    # * It is a class factory so that the class definition can reside inside a 
+    #   a closure with access to the root context.
+    # 
+
+    ChangeSet = PhraseGraphChangeSet.createClass root
+
     
     #
     # Graph Assembler (middleware)
