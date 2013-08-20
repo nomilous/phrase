@@ -441,7 +441,7 @@ describe 'PhraseGraph', ->
                     'CHANGED BECAUSE OF TIMEOUT ON LEAF'
                     end()
 
-                nested 'nested phrase 6 (changed for timeout)', timeout: 5000, (deeper) -> 
+                nested 'nested phrase 6 (changed for timeout)', timeout: 5001, (deeper) -> 
 
                     deeper 'deeper', (end) -> 
 
@@ -533,6 +533,9 @@ describe 'PhraseGraph', ->
 
 
                 nested 'nested phrase 6 (changed for timeout)', (deeper) -> 
+                                                        #
+                                                        # back to default
+                                                        #
 
                     deeper 'deeper', (end) -> 
 
