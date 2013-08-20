@@ -70,7 +70,7 @@ require( 'also' ) exports, {}, (root) ->
                     before each: (done) -> 
 
                         #
-                        # has 2 seconds to call done() or it will timeout
+                        # has the default 2 seconds to call done() or it will timeout
                         #
 
                 """
@@ -211,7 +211,6 @@ require( 'also' ) exports, {}, (root) ->
 
                 #
                 # not the first walk
-                # ------------------
                 # 
 
                 PhraseRecursor.walk root, opts, phraseRootString, phraseRootFn

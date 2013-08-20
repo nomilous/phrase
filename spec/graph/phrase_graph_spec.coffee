@@ -395,8 +395,18 @@ describe 'PhraseGraph', ->
 
                 nested 'inner phrase 2', (end) -> 
 
+
+    context 'change set', ->
+
+        it 'is created ahead of graph update'
+
+        it 'informs messenger of readyness to swich version'
+
+        it 'enables rolling version forward and back'
+
                 
     context 'update()', -> 
+
 
         before (done) -> 
 

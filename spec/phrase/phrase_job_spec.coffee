@@ -539,7 +539,10 @@ describe 'PhraseJob', ->
                 ]
                 done()
 
+    context 'async job creation', -> 
 
+        it 'enables job persistance (store on create)'
+        it 'retreive on resume / retry'
 
 
     context 'run() calls each step asynchronously', ->  

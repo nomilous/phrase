@@ -114,6 +114,9 @@ exports.create = (root, parentControl) ->
 
             uuid = phraseControl.uuid
 
+
+        console.log TODO: 'allow no / in phraseString'
+
         stack.push phrase = new PhraseNode 
 
             text:     phraseText
