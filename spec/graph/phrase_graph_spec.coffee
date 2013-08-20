@@ -438,7 +438,7 @@ describe 'PhraseGraph', ->
 
                 nested 'nested phrase 5', (end) -> 
 
-                    'DELETED 5'
+                    'ORIGINAL 5'
                     end()
 
         after -> 
@@ -463,6 +463,11 @@ describe 'PhraseGraph', ->
                 nested 'nested phrase 4', (end) -> 
 
                     'CREATED 4'
+                    end()
+
+                nested 'nested phrase 5', (end) -> 
+
+                    'CHANGED 5'
                     end()
 
 

@@ -192,6 +192,17 @@ exports.createClass = (root) ->
                     created.push vertex: vertex, path: path  
                     continue
 
+            #
+            # TODO: consider only reporting changed parent if both the 
+            #       parent and the child changed
+            # 
+            #       observers that are performing action on change would 
+            #       otherwise need to perform that summary so as not to
+            #       run the changed child twice (once of which as a con-
+            #       sequence of the changed parent)
+            #       
+            #
+
             for create in created
 
                 console.log '\nCREATED'
