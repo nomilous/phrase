@@ -415,7 +415,7 @@ describe 'PhraseGraph', ->
                 title: 'Test'
                 uuid:  'UUID'
 
-                (@token, notice) => 
+                (@token, @notice) => 
 
                     @token.on 'ready', -> done()
 
@@ -446,7 +446,25 @@ describe 'PhraseGraph', ->
             @token.removeAllListeners()
 
 
-        it 'updates from the latest graph', (done) -> 
+        it 'transmits events on the message bus', (done) -> 
+
+            #
+            # 'graph::compare:start', null
+            # 
+
+            MESSAGES = {}
+
+            @notice.use (msg, next) -> 
+
+                MESSAGES[msg.context.title] = msg
+
+                if msg.context.title == 'graph::compare:end'
+                
+                    should.exist MESSAGES['graph::compare:start']
+                    console.log MESSAGES['graph::compare:end']
+
+                next()
+
 
             @root 'root phrase', (nested) -> 
 
