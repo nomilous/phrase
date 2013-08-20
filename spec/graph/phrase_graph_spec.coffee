@@ -443,9 +443,28 @@ describe 'PhraseGraph', ->
 
                 nested 'nested phrase 6 (changed for timeout)', timeout: 5001, (deeper) -> 
 
-                    deeper 'deeper', (end) -> 
+                    deeper 'deeper 6', (end) -> 
 
                         end()
+
+
+                nested 'nested phrase 7 (changed for hook on branch vertex)', (deeper) -> 
+
+                    #
+                    # since entering @root() the hooks registrars before() and after()
+                    # no longer refer to mocha's before(All) and after(All), the have
+                    # been overridden by phrase hook registrars
+                    #
+
+                    before each: -> 'UNCHANGED'
+                    after  each: -> 'ORIGINAL AFTER EACH'
+
+                    deeper 'deeper 7', (end) -> 
+
+                        end()
+
+
+                
 
         after -> 
 
@@ -488,7 +507,9 @@ describe 'PhraseGraph', ->
 
 
                     console.log changed_timeout: changes.updated['/Test/root phrase/nested/nested phrase 6 (changed for timeout)'].timeout
-                    console.log inherited_changed_timeout: changes.updated['/Test/root phrase/nested/nested phrase 6 (changed for timeout)/deeper/deeper'].timeout
+                    console.log inherited_changed_timeout: changes.updated['/Test/root phrase/nested/nested phrase 6 (changed for timeout)/deeper/deeper 6'].timeout
+
+                    console.log changed_hooks: changes.updated['/Test/root phrase/nested/nested phrase 7 (changed for hook on branch vertex)']
 
 
                     #
@@ -537,7 +558,19 @@ describe 'PhraseGraph', ->
                                                         # back to default
                                                         #
 
-                    deeper 'deeper', (end) -> 
+                    deeper 'deeper 6', (end) -> 
 
                         end()
+
+
+                nested 'nested phrase 7 (changed for hook on branch vertex)', (deeper) -> 
+
+                    before each: -> 'UNCHANGED'
+                    after  each: -> 'CHANGED AFTER EACH'
+
+                    deeper 'deeper 7', (end) -> 
+
+                        end()
+
+
 

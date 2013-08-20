@@ -116,15 +116,19 @@ describe 'PhraseNode', ->
                 fn: newFn
 
             
-            node1.getChanges(  node2  ).should.eql 
+            changes = node1.getChanges node2
 
-                fn: 
+            changes.target.uuid.should.equal 'UUID1'
+
+            changes.fn.should.eql 
                     from: oldFn
                     to:   newFn
-                timeout:
+
+            changes.timeout.should.eql 
                     from: 2000
                     to:   5000
-                hooks:
+                    
+            changes.hooks.should.eql 
                     beforeAll: 
                         from: oldBeforeAll
                         to:   undefined

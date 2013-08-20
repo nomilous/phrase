@@ -203,7 +203,8 @@ exports.createClass = (root) ->
                                     #
 
                                     updateSet.updated ||= {}
-                                    updateSet.updated[path] = changes
+                                    updateSet.updated[path] ||= {}
+                                    updateSet.updated[path].fn = changes.fn
 
 
                             if changes.timeout?
@@ -211,13 +212,33 @@ exports.createClass = (root) ->
                                 #
                                 # if runningVertex.leaf # and newVertex.leaf
                                 # 
-                                # timeout change on a branch vertex should be applied,
-                                #  (all nested phrases inherit it)
+                                # * timeout change on a branch vertex should be applied
+                                #   (all nested phrases inherit it)
                                 #
 
                                 updateSet.updated ||= {}
                                 updateSet.updated[path] ||= {}
                                 updateSet.updated[path].timeout = changes.timeout
+
+
+                            if changes.hooks? 
+
+                                #
+                                # * hooks are discovered on branch vertices (by the recursor), but 
+                                #   not stored there, instead a reference to the hooks is inserted 
+                                #   into each nested phrase
+                                # 
+                                # * therefore, when a hook is found changed on a phrase, it is
+                                #   a hook common across all phrases, and the vertex that should
+                                #   be reported as changed is the parent because observers will
+                                #   want to re-run all leaves affected by the change in a single
+                                #   run (per calling the parent to run)
+                                #
+
+                                parentPath = path.split('/')[..-3].join '/'
+                                updateSet.updated ||= {}
+                                updateSet.updated[parentPath] ||= {}
+                                updateSet.updated[parentPath].hooks = changes.hooks
 
 
                     #
