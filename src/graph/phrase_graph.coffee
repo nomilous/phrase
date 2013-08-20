@@ -155,7 +155,7 @@ exports.createClass = (root) ->
 
                 stack.pop()
             
-            recurse @vertices[ @tree.leaves[ @leaves[0] ].path[0] ]
+            recurse rootVertex = @vertices[ @tree.leaves[ @leaves[0] ].path[0] ]
 
             next()
 
