@@ -170,7 +170,7 @@ exports.createClass = (root) ->
                         unless newUUID?
 
                             #
-                            # missing from latest (new graph)
+                            # missing from newGraph
                             #
 
                             updateSet.deleted ||= {}
@@ -181,23 +181,73 @@ exports.createClass = (root) ->
                         # in both graphs
                         #
 
-                        if runningVertex.leaf
+                        newVertex = newGraph.vertices[newUUID]
 
-                            #
-                            # * only leaf vertexes are eligable to be updated directly
-                            #
+                        if changes = runningVertex.getChanges newVertex
 
-                            if changes = runningVertex.getChanges newGraph.vertices[newUUID]
+                            if changes.fn?
 
-                                if changes.fn? or changes.timeout?
+                                if runningVertex.leaf # and newVertex.leaf
+                                                      # 
+                                                      # would prevent leaf that is becoming
+                                                      # vertex with nested leaf(s) from 
+                                                      # reporting as updated
+                                                      # 
+
+                                    #
+                                    # * only leaf vertexes are eligable for fn update
+                                    #   branch vertex fns contains all leaf vertexes
+                                    #   and should have no body (other than hooks)
+                                    #
 
                                     updateSet.updated ||= {}
                                     updateSet.updated[path] = changes
 
 
+                            if changes.timeout?
+
+                                #
+                                # if runningVertex.leaf # and newVertex.leaf
+                                # 
+                                # timeout change on a branch vertex should be applied,
+                                #  (all nested phrases inherit it)
+                                #
+
+                                updateSet.updated ||= {}
+                                updateSet.updated[path] ||= {}
+                                updateSet.updated[path].timeout = changes.timeout
+
+
                     #
                     # created
                     #
+
+                    for path of newGraph.paths 
+
+                        unless runningGraph.paths[path]?
+
+                            #
+                            # missing from runningGraph
+                            #
+
+                            uuid   = newGraph.paths[path]
+                            vertex = newGraph.vertices[uuid]
+
+                            updateSet.created ||= {}
+                            updateSet.created[path] = vertex
+                            continue
+
+                    #
+                    # TODO: consider only reporting changed parent if both the 
+                    #       parent and the child changed
+                    # 
+                    #       observers that are performing action on change would 
+                    #       otherwise need to perform that summary so as not to
+                    #       run the changed child twice (once of which as a con-
+                    #       sequence of the changed parent)
+                    #       
+                    #
+
 
                     return updateSet
 
@@ -208,89 +258,7 @@ exports.createClass = (root) ->
 
             ]
             
-                
 
-
-
-            # created = []
-            # updated = []
-            # deleted = []
-
-            # runningGraph = context.graph
-            # newGraph     = context.graphs.latest
-
-            # for path of runningGraph.paths
-
-            #     runningUUID   = runningGraph.paths[path]
-            #     runningVertex = runningGraph.vertices[runningUUID]
-            #     newUUID       = newGraph.paths[path]
-
-            #     unless newUUID?
-
-            #         deleted.push vertex: runningVertex, path: path
-            #         continue
-
-            #     #
-            #     # in both
-            #     #
-
-            #     if runningVertex.leaf
-
-            #         #
-            #         # * only leaf vertexes are eligable to be updated directly
-            #         # * TODO: changed hooks mark the parent as updated
-            #         #
-
-            #         if changes = runningVertex.getChanges newGraph.vertices[newUUID]
-
-            #             console.log CHANGED: changes
-
-            #             # 
-            #             # updated.push vertex: runningVertex, path: path
-            #             #
-
-
-            # for path of newGraph.paths 
-
-            #     unless runningGraph.paths[path]?
-            #         uuid   = newGraph.paths[path]
-            #         vertex = newGraph.vertices[uuid]
-
-            #         created.push vertex: vertex, path: path  
-            #         continue
-
-            #
-            # TODO: consider only reporting changed parent if both the 
-            #       parent and the child changed
-            # 
-            #       observers that are performing action on change would 
-            #       otherwise need to perform that summary so as not to
-            #       run the changed child twice (once of which as a con-
-            #       sequence of the changed parent)
-            #       
-            #
-
-            # for create in created
-
-            #     console.log '\nCREATED'
-            #     console.log create.path
-            #     console.log create.vertex.fn.toString()
-                    
-
-            # for update in updated
-                
-            #     console.log '\nUPDATED'
-            #     console.log update.path
-            #     console.log update.vertex.fn.toString()
-
-            # for deletes in deleted
-
-            #     console.log '\nDELETED'
-            #     console.log deletes.path
-            #     console.log deletes.vertex.fn.toString()
-
-
-            #doing.promise
 
         registerEdge: (msg, next) -> 
 

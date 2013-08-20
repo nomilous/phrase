@@ -438,8 +438,14 @@ describe 'PhraseGraph', ->
 
                 nested 'nested phrase 5', (end) -> 
 
-                    'CHANGED BECAUSE OF TIMEOUT'
+                    'CHANGED BECAUSE OF TIMEOUT ON LEAF'
                     end()
+
+                nested 'nested phrase 6 (changed for timeout)', timeout: 5000, (deeper) -> 
+
+                    deeper 'deeper', (end) -> 
+
+                        end()
 
         after -> 
 
@@ -481,6 +487,15 @@ describe 'PhraseGraph', ->
                     console.log changes.updated['/Test/root phrase/nested/nested phrase 5'].timeout
 
 
+                    console.log changed_timeout: changes.updated['/Test/root phrase/nested/nested phrase 6 (changed for timeout)'].timeout
+                    console.log inherited_changed_timeout: changes.updated['/Test/root phrase/nested/nested phrase 6 (changed for timeout)/deeper/deeper'].timeout
+
+
+                    #
+                    # created
+                    #
+
+                    console.log CREATED: changes.created['/Test/root phrase/nested/nested phrase 4']
 
                     done()
 
@@ -489,10 +504,17 @@ describe 'PhraseGraph', ->
 
             @root 'root phrase', (nested) -> 
 
-                nested 'nested phrase 1', (end) -> 
+                nested 'nested phrase 1', (deeper) ->
 
-                    'ORIGINAL UNCHANGED 1'
-                    end()
+                    deeper 'deeper phrase 2', (end) -> 
+
+                        'ORIGINAL UNCHANGED 1'
+                        end()
+
+                    deeper 'deeper phrase 3', (end) -> 
+
+                        'ORIGINAL UNCHANGED 1'
+                        end()
 
                 nested 'nested phrase 2', (end) -> 
 
@@ -506,9 +528,13 @@ describe 'PhraseGraph', ->
 
                 nested 'nested phrase 5', timeout: 5000, (end) -> 
 
-                    'CHANGED BECAUSE OF TIMEOUT'
+                    'CHANGED BECAUSE OF TIMEOUT ON LEAF'
                     end()
 
 
+                nested 'nested phrase 6 (changed for timeout)', (deeper) -> 
 
+                    deeper 'deeper', (end) -> 
+
+                        end()
 
