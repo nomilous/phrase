@@ -229,10 +229,10 @@ exports.createClass = (root) ->
                                 #   into each nested phrase
                                 # 
                                 # * therefore, when a hook is found changed on a phrase, it is
-                                #   a hook common across all phrases, and the vertex that should
-                                #   be reported as changed is the parent because observers will
-                                #   want to re-run all leaves affected by the change in a single
-                                #   run (per calling the parent to run)
+                                #   a hook common across all nested phrases, and the vertex that 
+                                #   should be reported as changed is the parent because observers 
+                                #   will want to re-run all leaves affected by the change in a 
+                                #   single run (per calling the parent to run)
                                 #
 
                                 parentPath = path.split('/')[..-3].join '/'

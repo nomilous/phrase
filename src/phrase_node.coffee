@@ -176,14 +176,14 @@ exports.createClass = (root) ->
             # 
             #   } 
             # 
-            # * The target is included to privide a direct reference to the
-            #   the change destination (the results of function are used by
-            #   the PhraseGraph to assemble a changeSet, which could likely
+            # * The target is included to provide a direct reference to the
+            #   the change destination (the results of this function are used
+            #   by the PhraseGraph to assemble a changeSet, which could likely
             #   be queued and applied onto the graph by later instruction)
             # 
             # * The target is specifically used for cases where the change
             #   is a hook. In these cases the changeset refers to the parent
-            #   vertex (where teh hook is more logically resident) as the 
+            #   vertex (where the hook is more logically resident) as the 
             #   changed resource. Without the target still pointing at the
             #   child vertex the process applying the change would have no
             #   access to the hook to change. 
