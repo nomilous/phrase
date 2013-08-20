@@ -175,12 +175,13 @@ exports.createClass = (root) ->
             #   } 
             # 
 
-            changes = {}
+            changes = undefined
 
             for property in ['fn', 'timeout']
 
                 if @[property].toString() != vertex[property].toString()
-                
+                    
+                    changes ||= {}
                     changes[property] = 
                         from: @[property]
                         to: vertex[property]
@@ -192,6 +193,7 @@ exports.createClass = (root) ->
 
                 if current != latest
 
+                    changes ||= {}
                     changes.hooks ||= {}
                     changes.hooks[hookType] = 
                         from: try @hooks[hookType].fn

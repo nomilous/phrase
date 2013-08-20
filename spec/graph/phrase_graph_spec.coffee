@@ -438,7 +438,7 @@ describe 'PhraseGraph', ->
 
                 nested 'nested phrase 5', (end) -> 
 
-                    'ORIGINAL 5'
+                    'CHANGED BECAUSE OF TIMEOUT'
                     end()
 
         after -> 
@@ -461,7 +461,28 @@ describe 'PhraseGraph', ->
                 if msg.context.title == 'graph::compare:end'
                 
                     should.exist MESSAGES['graph::compare:start']
-                    console.log MESSAGES['graph::compare:end']
+                    changes = MESSAGES['graph::compare:end'].changes
+
+                    console.log JSON.stringify changes, null, 2 
+
+                    #
+                    # deleted
+                    #
+                    
+                    console.log DELETED: changes.deleted['/Test/root phrase/nested/nested phrase 3']
+
+
+                    #
+                    # updated
+                    #
+
+                    console.log FROM: changes.updated['/Test/root phrase/nested/nested phrase 2'].fn.from.toString()
+                    console.log TO: changes.updated['/Test/root phrase/nested/nested phrase 2'].fn.to.toString()
+                    console.log changes.updated['/Test/root phrase/nested/nested phrase 5'].timeout
+
+
+
+                    done()
 
                 next()
 
@@ -483,9 +504,9 @@ describe 'PhraseGraph', ->
                     'CREATED 4'
                     end()
 
-                nested 'nested phrase 5', (end) -> 
+                nested 'nested phrase 5', timeout: 5000, (end) -> 
 
-                    'CHANGED 5'
+                    'CHANGED BECAUSE OF TIMEOUT'
                     end()
 
 

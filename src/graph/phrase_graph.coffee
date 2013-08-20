@@ -144,7 +144,7 @@ exports.createClass = (root) ->
 
         update: -> 
 
-            changes = {}
+            
 
 
 
@@ -153,10 +153,53 @@ exports.createClass = (root) ->
                 (       ) => notice.event 'graph::compare:start'
                 (       ) => 
 
+                    updateSet    = {}
+                    runningGraph = context.graph
+                    newGraph     = context.graphs.latest
+                    
+                    #
+                    # updated or deleted
+                    #
+
+                    for path of runningGraph.paths
+
+                        runningUUID   = runningGraph.paths[path]
+                        runningVertex = runningGraph.vertices[runningUUID]
+                        newUUID       = newGraph.paths[path]
+
+                        unless newUUID?
+
+                            #
+                            # missing from latest (new graph)
+                            #
+
+                            updateSet.deleted ||= {}
+                            updateSet.deleted[path] = runningVertex
+                            continue
+
+                        #
+                        # in both graphs
+                        #
+
+                        if runningVertex.leaf
+
+                            #
+                            # * only leaf vertexes are eligable to be updated directly
+                            #
+
+                            if changes = runningVertex.getChanges newGraph.vertices[newUUID]
+
+                                if changes.fn? or changes.timeout?
+
+                                    updateSet.updated ||= {}
+                                    updateSet.updated[path] = changes
 
 
-                    {} 
+                    #
+                    # created
+                    #
 
+                    return updateSet
 
 
                 (changes) => notice.event 'graph::compare:end', 

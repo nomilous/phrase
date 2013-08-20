@@ -135,3 +135,27 @@ describe 'PhraseNode', ->
 
             done()
 
+        it 'returns undefined if no changes', (done) -> 
+
+            node1 = new @Node
+
+                uuid:      'UUID1'
+                token:     name: 'it'
+                text:      'is a leaf phrase'
+                timeout:   2000
+
+                hooks: beforeAll: fn: ->
+                fn: ->
+
+            node2 = new @Node
+
+                uuid:      'UUID1'
+                token:     name: 'it'
+                text:      'is a leaf phrase'
+                timeout:   2000
+
+                hooks: beforeAll: fn: ->
+                fn: ->
+
+            should.not.exist node1.getChanges node2  
+            done()
