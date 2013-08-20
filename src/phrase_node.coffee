@@ -153,13 +153,49 @@ exports.createClass = (root) ->
                     localOpts.fn = opts.fn || localOpts.fn
 
 
-        wasUpdatedBy: (vertex) -> 
+        getChanges: (vertex) -> 
 
-            if @fn.toString() != vertex.fn.toString()
+            #
+            # * reports only on changes
+            # * returns {} or {  
+            #       
+            #       # approximately: 
+            #  
+            #       fn: 
+            #          from: [function]
+            #          to:   [function]
+            #
+            #  
+            #       hooks:
+            #          beforeAll: 
+            #              from: [function]
+            #              to:   [function]
+            # 
+            # 
+            #   } 
+            # 
+
+            changes = {}
+
+            for property in ['fn', 'timeout']
+
+                if @[property].toString() != vertex[property].toString()
                 
-                @update = fn: vertex.fn
+                    changes[property] = 
+                        from: @[property]
+                        to: vertex[property]
 
-                return true
+            for hookType in ['beforeAll', 'beforeEach', 'afterEach', 'afterAll']
 
-            return false
+                current = try @hooks[hookType].fn.toString()
+                latest  = try vertex.hooks[hookType].fn.toString()
+
+                if current != latest
+
+                    changes.hooks ||= {}
+                    changes.hooks[hookType] = 
+                        from: try @hooks[hookType].fn
+                        to: try vertex.hooks[hookType].fn
+
+            return changes
 

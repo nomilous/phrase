@@ -22,7 +22,11 @@ exports.create = (root) ->
     # TEMPORARY: direct access to graph
     # =========
     #
-    emitter.graph = graph
+    Object.defineProperty emitter, 'graph', 
+
+        enumerable: false
+        get: -> context.graph
+    
 
 
 

@@ -174,9 +174,13 @@ exports.createClass = (root) ->
                     # * TODO: changed hooks mark the parent as updated
                     #
 
-                    if runningVertex.wasUpdatedBy newGraph.vertices[newUUID]
+                    if changes = runningVertex.getChanges newGraph.vertices[newUUID]
 
-                        updated.push vertex: runningVertex, path: path
+                        console.log CHANGED: changes
+
+                        # 
+                        # updated.push vertex: runningVertex, path: path
+                        #
 
 
             for path of newGraph.paths 

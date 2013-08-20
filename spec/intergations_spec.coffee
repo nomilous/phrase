@@ -32,8 +32,16 @@ describe 'integrations', ->
 
                 token.on 'ready', (data) -> 
 
-                    console.log JSON.stringify data.tokens, null, 2
-                    #done()
+                    # console.log JSON.stringify data.tokens, null, 2
+                    # done()
+
+                    vertex1 = token.graph.vertices[  data.tokens['/Falcon/Generic/system/sensory'].uuid  ]
+                    vertex2 = token.graph.vertices[  data.tokens['/Falcon/Generic/system/flight'].uuid  ]
+
+                    vertex1.hooks.beforeAll.uuid.should.equal vertex2.hooks.beforeAll.uuid
+                    done()
+
+
 
                     #
                     # TODO: a way to call runs on branch or leaf
@@ -134,27 +142,27 @@ describe 'integrations', ->
             #     subsystem 'prey detection', (end) ->
 
 
-        setTimeout (=>
+        # setTimeout (=>
 
-            console.log 'redefine falcon'
-
-
-            falcon 'Generic', (system) -> 
-
-                system 'sensory', (subsystem) -> 
-
-                    subsystem 'vision', (component) -> 
-
-                        component 'left eye', (end) ->
-
-                            end()
-
-                        component 'right eye', (end) ->
-
-                            end()
+        #     console.log 'redefine falcon'
 
 
-        ), 500
+        #     falcon 'Generic', (system) -> 
+
+        #         system 'sensory', (subsystem) -> 
+
+        #             subsystem 'vision', (component) -> 
+
+        #                 component 'left eye', (end) ->
+
+        #                     end()
+
+        #                 component 'right eye', (end) ->
+
+        #                     end()
+
+
+        # ), 500
 
 
 
