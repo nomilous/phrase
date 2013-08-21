@@ -167,17 +167,7 @@ exports.createClass = (root) ->
                 (       ) -> notice.event 'graph::compare:start'
                 (       ) -> new ChangeSet( context.graph, context.graphs.latest ).changeSet
                 (changes) -> notice.event 'graph::compare:end', changes: changes
-                (respond) -> 
-
-                    #
-                    #       make notice to this on the message promise
-                    #       ------------------------------------------
-                    # 
-                    #       (msg, next) -> 
-                    # 
-                    #            msg.reply 'response'
-                    #            next()
-                    #
+                (message) -> ChangeSet.applyChanges message.changes.uuid
 
             ]
 

@@ -1,3 +1,5 @@
+{v1} = require 'node-uuid'
+
 exports.createClass = (root) -> 
 
     #
@@ -24,13 +26,17 @@ exports.createClass = (root) ->
     #                too big... )
     # 
 
+    changeSets = {}
+
     class PhraseGraphChangeSet
 
         constructor: (@graphA, @graphB) -> 
 
-            @changeSet    = {}
-            runningGraph  = @graphA
-            newGraph      = @graphB
+            @uuid             = v1()
+            @changeSet        = uuid: @uuid
+            changeSets[@uuid] = this
+            runningGraph      = @graphA
+            newGraph          = @graphB
             
             #
             # updated or deleted
@@ -148,7 +154,11 @@ exports.createClass = (root) ->
             #       
             #
 
-            console.log @changeSet
 
-            #return @changeSet
+    Object.defineProperty PhraseGraphChangeSet, 'applyChanges', 
+        enumarable: true
+        get: -> (uuid) -> 
+
+            changeSet = changeSets[uuid]
+            console.log APPLY: changeSet
 
