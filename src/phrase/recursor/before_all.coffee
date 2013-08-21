@@ -6,6 +6,7 @@ exports.create = (root, parentControl) ->
 
     {context}       = root
     {notice, hooks} = context
+    context.stack ||= []
 
     #
     # send notification of 'first walk' starting if 

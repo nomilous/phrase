@@ -79,9 +79,7 @@ describe 'PhraseGraphChangeSet', ->
                 #
 
                 root                     = also
-                #root.timeout             = 1000
                 root.context             = {}
-                root.context.stack       = []
                 root.context.notice      = Notice.create opts.uuid
                 root.context.PhraseGraph = PhraseGraph.createClass root
                 root.context.PhraseNode  = PhraseNode.createClass root

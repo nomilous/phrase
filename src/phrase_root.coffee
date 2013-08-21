@@ -17,17 +17,6 @@ require( 'also' ) exports, {}, (root) ->
     {context, validate} = root
 
 
-    #
-    # stack
-    # -----
-    # 
-    # * The stack of elements (sub phrases) that is pushed and popped
-    #   as the 'first walk' traverses the phrase tree.
-    # 
-
-    context.stack = []
-
-
 
     #
     # Phrase.createRoot( opts, linkFn )
