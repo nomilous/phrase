@@ -24,9 +24,8 @@ exports.create = (root, parentControl) ->
         # 
         # * This first hook pops any phrase hooks that may have been 
         #   registered ahead of this phrase being called and places 
-        #   them onto the injection control object so that they can
-        #   be accumulated untill the 'flow of control' encounters
-        #   a leaf phrase in the tree.
+        #   a reference into each child phrase. PhraseRunner assembles
+        #   them into the PhraseJob step sequence.
         # 
 
         run = -> 
