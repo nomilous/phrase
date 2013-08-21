@@ -72,7 +72,7 @@ describe 'PhraseGraphChangeSet', ->
                     title:   'TEST'
                     uuid:    '0001'
                     leaf:    ['end']
-                    timeout: 1000
+                    timeout: 2000
 
                 #
                 # load runtime
@@ -268,6 +268,50 @@ describe 'PhraseGraphChangeSet', ->
                     should.not.exist update.hooks.afterAll.from
                     update.hooks.afterAll.to().should.equal 3
                     done()
+
+
+        it 'timeout changes all affected', (done) -> 
+
+            Test
+
+                phrase1: (nested) -> 
+                    nested 'nested phrase 1', (end) -> 
+                        end()
+
+                    nested 'updates this', timeout: 10000, (more) ->
+                        more '1', (end) ->  #
+                        more '2', (end) ->  # local timeout override on branch
+                                            #
+
+                phrase2: (nested) -> 
+                    nested 'nested phrase 1', (end) -> 
+                        end()
+
+                    nested 'updates this', (more) ->
+                        more '1', (end) ->  #
+                                            # timeouts return to default
+                                            #
+
+                        more '2',  timeout: 10000, (end) ->
+                                            #
+                                            # more focussed local override
+                                            # leaves leaf unchanged
+                                            #
+
+
+                (graph1, graph2) -> 
+
+                    set = new ChangeSet graph1, graph2
+
+                    updates = set.changes.updated
+                    should.not.exist updates['/TEST/phrase/nested/updates this/more/2']
+                    updates['/TEST/phrase/nested/updates this'].timeout.should.eql        from: 10000, to: 2000
+                    updates['/TEST/phrase/nested/updates this/more/1'].timeout.should.eql from: 10000, to: 2000
+                    done()
+
+
+
+        it 'timeout on hook changes all affected' 
 
                     
 
