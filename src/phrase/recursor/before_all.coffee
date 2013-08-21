@@ -23,9 +23,8 @@ exports.create = (root, parentControl) ->
         # of the recursion control hooks.
         # 
         # * This first hook pops any phrase hooks that may have been 
-        #   registered ahead of this phrase being called and places 
-        #   a reference into each child phrase. PhraseRunner assembles
-        #   them into the PhraseJob step sequence.
+        #   registered ahead of this phrase being called. A reference
+        #   is placed into each child be the beforeEach recursor hook.
         # 
 
         run = -> 
