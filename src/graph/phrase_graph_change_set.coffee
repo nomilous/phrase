@@ -1,4 +1,5 @@
-{v1} = require 'node-uuid'
+{v1}    = require 'node-uuid'
+{defer} = require 'when'
 
 exports.createClass = (root) -> 
 
@@ -154,11 +155,22 @@ exports.createClass = (root) ->
             #       
             #
 
+        AtoB: -> 
+
+            doing = defer()
+
+            console.log A_to_B: 
+                from: @graphA
+                to: @graphB
+
+            process.nextTick doing.resolve
+            doing.promise
+
 
     Object.defineProperty PhraseGraphChangeSet, 'applyChanges', 
         enumarable: true
-        get: -> (uuid) -> 
+        get: -> (uuid, direction) -> 
 
             changeSet = changeSets[uuid]
-            console.log APPLY: changeSet
+            changeSet[ direction || 'AtoB' ]()
 

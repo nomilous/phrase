@@ -1,5 +1,4 @@
 {v1}                 = require 'node-uuid'
-{defer}              = require 'when'
 pipeline             = require 'when/pipeline'
 PhraseGraphChangeSet = require './phrase_graph_change_set'
 seq                                                                = 0 # couldn't resist
@@ -167,6 +166,11 @@ exports.createClass = (root) ->
                 (       ) -> notice.event 'graph::compare:start'
                 (       ) -> new ChangeSet( context.graph, context.graphs.latest ).changeSet
                 (changes) -> notice.event 'graph::compare:end', changes: changes
+
+                    #
+                    # TODO: pend change apply per later instruction
+                    # 
+
                 (message) -> ChangeSet.applyChanges message.changes.uuid
 
             ]
