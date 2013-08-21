@@ -34,7 +34,7 @@ exports.createClass = (root) ->
         constructor: (@graphA, @graphB) -> 
 
             @uuid             = v1()
-            @changeSet        = uuid: @uuid
+            @changes          = uuid: @uuid
             changeSets[@uuid] = this
             runningGraph      = @graphA
             newGraph          = @graphB
@@ -57,8 +57,8 @@ exports.createClass = (root) ->
                     # missing from newGraph
                     #
 
-                    @changeSet.deleted ||= {}
-                    @changeSet.deleted[path] = runningVertex
+                    @changes.deleted ||= {}
+                    @changes.deleted[path] = runningVertex
                     continue
 
                 #
@@ -86,9 +86,9 @@ exports.createClass = (root) ->
                             #   (other than hooks)
                             #
 
-                            @changeSet.updated ||= {}
-                            @changeSet.updated[path] ||= {}
-                            @changeSet.updated[path].fn = changes.fn
+                            @changes.updated ||= {}
+                            @changes.updated[path] ||= {}
+                            @changes.updated[path].fn = changes.fn
 
 
                     if changes.timeout?
@@ -100,9 +100,9 @@ exports.createClass = (root) ->
                         #   (all nested phrases inherit it)
                         #
 
-                        @changeSet.updated ||= {}
-                        @changeSet.updated[path] ||= {}
-                        @changeSet.updated[path].timeout = changes.timeout
+                        @changes.updated ||= {}
+                        @changes.updated[path] ||= {}
+                        @changes.updated[path].timeout = changes.timeout
 
 
                     if changes.hooks? 
@@ -120,9 +120,9 @@ exports.createClass = (root) ->
                         #
 
                         parentPath = path.split('/')[..-3].join '/'
-                        @changeSet.updated ||= {}
-                        @changeSet.updated[parentPath] ||= {}
-                        @changeSet.updated[parentPath].hooks = changes.hooks
+                        @changes.updated ||= {}
+                        @changes.updated[parentPath] ||= {}
+                        @changes.updated[parentPath].hooks = changes.hooks
 
 
             #
@@ -140,8 +140,8 @@ exports.createClass = (root) ->
                     uuid   = newGraph.paths[path]
                     vertex = newGraph.vertices[uuid]
 
-                    @changeSet.created ||= {}
-                    @changeSet.created[path] = vertex
+                    @changes.created ||= {}
+                    @changes.created[path] = vertex
                     continue
 
             #

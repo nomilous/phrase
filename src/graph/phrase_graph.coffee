@@ -164,7 +164,7 @@ exports.createClass = (root) ->
             return pipeline [
 
                 (       ) -> notice.event 'graph::compare:start'
-                (       ) -> new ChangeSet( context.graph, context.graphs.latest ).changeSet
+                (       ) -> new ChangeSet( context.graph, context.graphs.latest ).changes
                 (changes) -> notice.event 'graph::compare:end', changes: changes
 
                     #
