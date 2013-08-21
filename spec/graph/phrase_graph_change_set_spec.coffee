@@ -134,7 +134,35 @@ describe 'PhraseGraphChangeSet', ->
                     set = new ChangeSet graph1, graph2
                     should.exist set.changes.deleted['/TEST/phrase/nested/deletes this']
                     done()
-            
+
+
+        it 'detectes removed branches', (done) -> 
+
+            Test
+
+                phrase1: (nested) -> 
+                    nested 'nested phrase 1', (end) -> 
+                        end()
+
+
+                    nested 'deletes this', (more) -> 
+                        more '1', (end) ->
+                        more '2', (end) ->
+
+
+                phrase2: (nested) -> 
+                    nested 'nested phrase 1', (end) -> 
+                        end()
+
+
+                (graph1, graph2) -> 
+
+                    set = new ChangeSet graph1, graph2
+                    should.exist set.changes.deleted['/TEST/phrase/nested/deletes this']
+                    should.exist set.changes.deleted['/TEST/phrase/nested/deletes this/more/1']
+                    should.exist set.changes.deleted['/TEST/phrase/nested/deletes this/more/2']
+                    done()
+
 
 
 
@@ -156,6 +184,31 @@ describe 'PhraseGraphChangeSet', ->
 
                     set = new ChangeSet graph1, graph2
                     should.exist set.changes.created['/TEST/phrase/nested/creates this']
+                    done()
+
+        it 'detectes created branches', (done) -> 
+
+            Test
+
+                phrase1: (nested) -> 
+                    nested 'nested phrase 1', (end) -> 
+                        end()
+
+                phrase2: (nested) -> 
+                    nested 'nested phrase 1', (end) -> 
+                        end()
+
+                    nested 'created this', (more) -> 
+                        more '1', (end) ->
+                        more '2', (end) ->
+
+
+                (graph1, graph2) -> 
+
+                    set = new ChangeSet graph1, graph2
+                    should.exist set.changes.created['/TEST/phrase/nested/created this']
+                    should.exist set.changes.created['/TEST/phrase/nested/created this/more/1']
+                    should.exist set.changes.created['/TEST/phrase/nested/created this/more/2']
                     done()
 
 
