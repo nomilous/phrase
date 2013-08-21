@@ -99,5 +99,4 @@ exports.walk = (root, opts, rootString, rootFn) ->
         timeout: opts.timeout
         leaf: opts.leaf
 
-
     injector rootString, rootFn

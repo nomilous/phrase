@@ -1,6 +1,9 @@
 should               = require 'should'
 PhraseGraphChangeSet = require '../../lib/graph/phrase_graph_change_set'
 PhraseGraph          = require '../../lib/graph/phrase_graph'
+PhraseToken          = require '../../lib/phrase_token'
+PhraseNode           = require '../../lib/phrase_node'
+Notice               = require 'notice'
 
 describe 'PhraseGraphChangeSet', -> 
 
@@ -13,26 +16,71 @@ describe 'PhraseGraphChangeSet', ->
                     use: ->
 
         @ChangeSet  = PhraseGraphChangeSet.createClass @root
-        Graph       = PhraseGraph.createClass @root
-        @graphA     = new Graph
-        @graphB     = new Graph
+        @Graph      = PhraseGraph.createClass @root
+        @Node       = PhraseNode.createClass @root
+        @graphA     = new @Graph
+        @graphB     = new @Graph
+
+    context 'general', ->
+
+        it 'creates a changeSet with uuid', (done) -> 
+
+            set1 = new @ChangeSet @graphA, @graphB
+            set2 = new @ChangeSet @graphA, @graphB
+
+            should.exist = set1.changes.uuid
+            should.exist = set2.changes.uuid
+            set1.changes.uuid.should.not.equal set2.changes.uuid
+            done()
+
+        it 'can have no changes', (done) -> 
+
+            set1 = new @ChangeSet @graphA, @graphB
+
+            should.not.exist set1.changes.created
+            should.not.exist set1.changes.updated
+            should.not.exist set1.changes.deleted
+            done()
 
 
-    it 'creates a changeSet with uuid', (done) -> 
+    context 'change detection', -> 
 
-        set1 = new @ChangeSet @graphA, @graphB
-        set2 = new @ChangeSet @graphA, @graphB
+        #
+        # some laziness here (building graph by hand is laborious)
+        # these tests depend heavilly on functionlity of the rest of the system
+        # 
 
-        should.exist = set1.changes.uuid
-        should.exist = set2.changes.uuid
-        set1.changes.uuid.should.not.equal set2.changes.uuid
-        done()
+        before (done) -> 
 
-    it 'can have no changes', (done) -> 
 
-        set1 = new @ChangeSet @graphA, @graphB
+            @buildPair = (phrase1, phrase2) -> 
 
-        should.not.exist set1.changes.created
-        should.not.exist set1.changes.updated
-        should.not.exist set1.changes.deleted
-        done()
+                #
+                # assemble graph pair from each phrase
+                #
+
+                ['graph1', 'graph2']
+
+            done()
+
+
+
+
+        it 'detects removed leaves', (done) -> 
+
+            [graph1, graph2] = @buildPair(
+
+                
+
+            )
+
+            graph1.should.equal 'graph1'
+            graph2.should.equal 'graph2'
+            done()
+
+
+    context 'collection', -> 
+
+        it 'removes old changesets from the collection'
+
+

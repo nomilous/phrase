@@ -84,11 +84,12 @@ exports.createClass = (root) ->
 
             localOpts = 
 
-                uuid:      opts.uuid || v1()
-                version:   opts.version || ++seq
-                vertices:  {}
-                edges:     {}
-                paths:     {}
+                uuid:       opts.uuid || v1()
+                version:    opts.version || ++seq
+                rootVertex: undefined
+                vertices:   {}
+                edges:      {}
+                paths:      {}
 
                 #
                 # tree (as special case graph)
@@ -131,6 +132,17 @@ exports.createClass = (root) ->
                         get: -> localOpts[property]
                         enumerable: true
 
+            #
+            # invisible
+            #
+
+            Object.defineProperty this, 'rootVertex',
+
+                enumerable: false
+                get: -> localOpts.rootVertex
+                set: (value) -> localOpts.rootVertex = value unless localOpts.rootVertex?
+
+
         createIndexes: (msg, next) -> 
 
             return next() unless @leaves.length > 0
@@ -154,7 +166,7 @@ exports.createClass = (root) ->
 
                 stack.pop()
             
-            recurse rootVertex = @vertices[ @tree.leaves[ @leaves[0] ].path[0] ]
+            recurse @rootVertex
 
             next()
 
@@ -171,7 +183,7 @@ exports.createClass = (root) ->
                     # TODO: pend change apply per later instruction
                     # 
 
-                (message) -> ChangeSet.applyChanges message.changes.uuid
+                #(message) -> ChangeSet.applyChanges message.changes.uuid
 
             ]
 
@@ -188,7 +200,7 @@ exports.createClass = (root) ->
             #
 
             @vertices[vertex1.uuid] = vertex1
-
+            @rootVertex = vertex1 unless @rootVertex?
             return next() unless vertex2?
             @vertices[vertex2.uuid] = vertex2
 
