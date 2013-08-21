@@ -16,6 +16,14 @@
       "remote.origin.url": "git@github.com:nomilous/also.git",
       "HEAD": "refs/heads/develop",
       "version": "09e1a4f79d4d5ab1ea210eea4b14c4ec673d5d99"
+    },
+    {
+      "root": false,
+      "workDir": "./node_modules/notice",
+      "packageManager": "npm",
+      "remote.origin.url": "git@github.com:nomilous/notice.git",
+      "HEAD": "refs/heads/develop",
+      "version": "ab725dee62d130ee69c0a4e058115a94373d2ead"
     }
   ]
 }

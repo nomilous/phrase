@@ -13,7 +13,7 @@
   "repository": "git@github.com:nomilous/phrase.git",
   "dependencies": {
     "also": "0.0.7",
-    "notice": "0.0.7",
+    "notice": "0.0.8",
     "node-uuid": "~1.4.0",
     "when": "~2.3.0"
   },
