@@ -218,18 +218,57 @@ describe 'PhraseGraphChangeSet', ->
             Test
 
                 phrase1: (nested) -> 
-                    nested 'nested phrase 1', (end) -> 
-                        end()
+                    nested 'nested phrase 1', (end) -> 1
 
                 phrase2: (nested) -> 
-                    nested 'nested phrase 1', (end) ->
-                        end() + 1
+                    nested 'nested phrase 1', (end) -> 2
 
                 (graph1, graph2) -> 
 
                     set = new ChangeSet graph1, graph2
-                    should.exist set.changes.updated['/TEST/phrase/nested/nested phrase 1']
+                    
+                    update = set.changes.updated['/TEST/phrase/nested/nested phrase 1']
+                    update.fn.from().should.equal 1
+                    update.fn.to(  ).should.equal 2
                     done()
+
+
+        it 'detects changed hooks as parent vertex', (done) -> 
+
+            Test
+
+                phrase1: (nested) -> 
+                    nested 'nested phrase 1', (end) -> 
+                        end()
+
+                    nested 'updates this', (more) ->
+                        before each: -> 1
+                        more '1', (end) ->
+                        more '2', (end) ->
+
+                phrase2: (nested) -> 
+                    nested 'nested phrase 1', (end) -> 
+                        end()
+
+                    nested 'updates this', (more) ->
+                        before each: -> 2
+                        after  all:  -> 3
+                        more '1', (end) ->
+                        more '2', (end) ->
+
+
+                (graph1, graph2) -> 
+
+                    set = new ChangeSet graph1, graph2
+
+                    update = set.changes.updated['/TEST/phrase/nested/updates this']
+                    update.hooks.beforeEach.from().should.equal 1
+                    update.hooks.beforeEach.to(  ).should.equal 2
+
+                    should.not.exist update.hooks.afterAll.from
+                    update.hooks.afterAll.to().should.equal 3
+                    done()
+
                     
 
 
