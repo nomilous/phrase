@@ -47,7 +47,6 @@ exports.walk = (root, opts, rootString, rootFn) ->
 
     recursor = (parentPhraseString, parentPhraseControl) -> 
 
-
         recursionControl = RecursorHooks.bind root, parentPhraseControl
 
         #
