@@ -79,34 +79,22 @@ describe 'PhraseGraphChangeSet', ->
                 #
 
                 root                     = also
-                root.timeout             = 1000
+                #root.timeout             = 1000
                 root.context             = {}
                 root.context.stack       = []
                 root.context.notice      = Notice.create opts.uuid
                 root.context.PhraseGraph = PhraseGraph.createClass root
                 root.context.PhraseNode  = PhraseNode.createClass root
                 root.context.token       = PhraseToken.create root
-                ChangeSet               = PhraseGraphChangeSet.createClass root
-                graph1                   = undefined
-
-                root.context.notice.use (msg, next) -> 
-
-                    return next() unless msg.context.title == 'phrase::recurse:end'
-
-                    if graph1?
-
-                        graph2 = root.context.graphs.latest
-                        compare graph1, graph2
-                        return
-                            
-                    graph1 = root.context.graphs.latest 
-                    next()
-
-                    
+                ChangeSet                = PhraseGraphChangeSet.createClass root
 
                 PhraseRecursor.walk( root, opts, 'phrase', phrase1 ).then ->
+
+                    previousGraph = root.context.graphs.latest
                 
-                    PhraseRecursor.walk root, opts, 'phrase', phrase2
+                    PhraseRecursor.walk( root, opts, 'phrase', phrase2 ).then -> 
+
+                        compare previousGraph, root.context.graphs.latest
 
 
             done()
