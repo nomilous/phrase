@@ -55,15 +55,18 @@ describe 'PhraseGraphChangeSet', ->
 
         # console.log before.toString()
         ChangeSet = undefined
+        Test      = undefined
 
         before (done) -> 
 
 
-            @buildPair = (phrase1, phrase2, compare) => 
+            Test = (phrases, compare) => 
 
-            #
-            # assemble graph pair from each phrase
-            #
+                {phrase1, phrase2} = phrases
+
+                #
+                # assemble graph pair from each phrase
+                #
 
                 opts = 
                     title:   'TEST'
@@ -113,28 +116,68 @@ describe 'PhraseGraphChangeSet', ->
 
         it 'detects removed leaves', (done) -> 
 
-            compare = (graph1, graph2) -> 
+            Test
 
-                set = new ChangeSet graph1, graph2
-                should.exist set.changes.deleted['/TEST/phrase/nested/deletes this']
-                done()
-
-            
-            @buildPair(
-
-                (nested) -> 
+                phrase1: (nested) -> 
                     nested 'nested phrase 1', (end) -> 
                         end()
-
                     nested 'deletes this', (end) -> 
                         end()
 
-                (nested) -> 
+                phrase2: (nested) -> 
                     nested 'nested phrase 1', (end) -> 
                         end()
 
-                compare
-            )
+
+                (graph1, graph2) -> 
+
+                    set = new ChangeSet graph1, graph2
+                    should.exist set.changes.deleted['/TEST/phrase/nested/deletes this']
+                    done()
+            
+
+
+
+        it 'detects created leaves', (done) -> 
+
+            Test
+
+                phrase1: (nested) -> 
+                    nested 'nested phrase 1', (end) -> 
+                        end()
+
+                phrase2: (nested) -> 
+                    nested 'nested phrase 1', (end) -> 
+                        end()
+                    nested 'creates this', (end) -> 
+                        end()
+
+                (graph1, graph2) -> 
+
+                    set = new ChangeSet graph1, graph2
+                    should.exist set.changes.created['/TEST/phrase/nested/creates this']
+                    done()
+
+
+
+        it 'detects updated leaves', (done) -> 
+
+            Test
+
+                phrase1: (nested) -> 
+                    nested 'nested phrase 1', (end) -> 
+                        end()
+
+                phrase2: (nested) -> 
+                    nested 'nested phrase 1', (end) ->
+                        end() + 1
+
+                (graph1, graph2) -> 
+
+                    set = new ChangeSet graph1, graph2
+                    should.exist set.changes.updated['/TEST/phrase/nested/nested phrase 1']
+                    done()
+                    
 
 
     context 'collection', -> 
