@@ -64,7 +64,6 @@ exports.createClass = (root) ->
         #           Changing a hook should change all hooks 
         #           on the peer phrases.
         # 
-        #   TODO:   Ensure that this is the case.
         #             
         #
 

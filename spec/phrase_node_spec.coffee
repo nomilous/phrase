@@ -279,7 +279,7 @@ describe 'PhraseNode', ->
             # #GREP2
             #
             # hook changes are reported associated to parent vertex
-            # and will therefore be applied to parent by the when
+            # and will therefore be applied to parent when
             # the change set is run, 
             # 
 
