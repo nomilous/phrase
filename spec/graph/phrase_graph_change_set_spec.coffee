@@ -337,17 +337,17 @@ describe 'PhraseGraphChangeSet', ->
 
         context 'applying changes (A-B)', -> 
 
-            it 'applies changes into graphA', (done) ->
+            it 'applies changes into graphA and preserves vertex uuid', (done) ->
 
                 Test
 
                     phrase1: (nested) -> 
-                        nested 'nested phrase 1', (end) -> 
-                            1
+                        nested 'nested phrase 1', uuid: 1111,               (end) -> 1
+                        nested 'nested phrase 2', uuid: 2222, timeout: 100, (end) -> 1
 
                     phrase2: (nested) -> 
-                        nested 'nested phrase 1', (end) -> 
-                            2
+                        nested 'nested phrase 1',               (end) -> 'NEW'
+                        nested 'nested phrase 2', timeout: 200, (end) -> 2
 
                     (graphA, graphB) -> 
 
@@ -355,17 +355,10 @@ describe 'PhraseGraphChangeSet', ->
 
                         set.AtoB().then -> 
 
-
-
-
-
+                            graphA.vertices[1111].fn().should.equal 'NEW'
+                            graphA.vertices[2222].timeout.should.equal 200
                             done()
 
-
-
-
-
-            it 'preserves vertex reference / uuid'
 
             it 'preserves vertex order'
 

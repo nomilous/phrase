@@ -161,7 +161,11 @@ exports.createClass = (root) ->
 
             for path of @changes.updated
 
-                @graphA.vertices.update @changes.updated[path]
+                target = @graphA.vertices[ @graphA.paths[path] ]
+                target.update @changes.updated[path]
+
+
+            
 
             process.nextTick doing.resolve
             doing.promise
