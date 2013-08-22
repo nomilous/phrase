@@ -109,7 +109,7 @@ describe 'PhraseNode', ->
 
             node2 = new @Node
 
-                uuid:      'UUID1'
+                uuid:      'UUID2'
                 token:     name: 'it'
                 text:      'is a leaf phrase'
                 timeout:   5000
@@ -123,6 +123,7 @@ describe 'PhraseNode', ->
             changes = node1.getChanges node2
 
             changes.target.uuid.should.equal 'UUID1'
+            changes.source.uuid.should.equal 'UUID2'
 
             changes.fn.should.eql 
                     from: oldFn
@@ -276,7 +277,7 @@ describe 'PhraseNode', ->
 
             #
             # ONTO THE SPECIFIED TARGET
-            # #GREP2
+            # #GREP2 
             #
             # hook changes are reported associated to parent vertex
             # and will therefore be applied to parent when
@@ -298,7 +299,9 @@ describe 'PhraseNode', ->
             #node1.update changes
 
 
-        it 'creates new hook with uuid if creating hook'
+        it 'carries new hook uuid in on hook create', (done) -> 
+
+            done()  # tested in phrase_graph_change_set_spec
 
 
 

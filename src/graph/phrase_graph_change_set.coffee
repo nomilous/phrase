@@ -164,6 +164,8 @@ exports.createClass = (root) ->
 
             for path of @changes.updated
 
+                console.log APPLY: @changes.updated[path]
+
                 target = @graphA.vertices[ @graphA.paths[path] ]
                 target.update @changes.updated[path]
 

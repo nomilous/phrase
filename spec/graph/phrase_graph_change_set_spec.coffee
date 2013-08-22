@@ -108,7 +108,7 @@ describe 'PhraseGraphChangeSet', ->
             done()
 
 
-        context 'detecting changes', ->
+        xcontext 'detecting changes', ->
 
             it 'detects renamed branch vertices (token.name/text)'
 
@@ -351,14 +351,14 @@ describe 'PhraseGraphChangeSet', ->
                                     from: 100
                                     to: 200
 
-                        #GREP2
+                        #GREP2 
                         should.exist updates['/TEST/phrase/nested/updates this'].target
                         done()
                     
 
         context 'applying changes (A-B)', -> 
 
-            xit 'applies changes into graphA and preserves vertex uuid', (done) ->
+            it 'applies changes into graphA and preserves vertex uuid', (done) ->
 
                 Test
 
@@ -371,6 +371,7 @@ describe 'PhraseGraphChangeSet', ->
                         nested 'nested phrase 2', timeout: 200, (end) -> 2
 
                     (graphA, graphB) -> 
+
 
                         set = new ChangeSet graphA, graphB
 

@@ -170,8 +170,12 @@ exports.createClass = (root) ->
                 get: -> (changes) -> 
 
                     target = changes.target
+                    #
+                    # change being applied via parent vertex 
+                    # #GREP2
+                    #
+                    return target.update changes if target? and target isnt this
 
-                    return target.update changes unless target is this
 
                     for thing in ['fn', 'timeout']
 
@@ -207,7 +211,7 @@ exports.createClass = (root) ->
             # 
             #   } 
             # 
-            # #GREP2
+            # #GREP2 
             # 
             # * The target is included to provide a direct reference to the
             #   the change destination (the results of this function are used
@@ -231,7 +235,9 @@ exports.createClass = (root) ->
 
                 if @[property].toString() != vertex[property].toString()
                     
-                    changes ||= target: this
+                    changes ||= 
+                        target: this
+                        source: vertex
                     changes[property] = 
                         from: @[property]
                         to: vertex[property]
@@ -245,7 +251,9 @@ exports.createClass = (root) ->
 
                 if currentFn != latestFn
 
-                    changes ||= target: this
+                    changes ||= 
+                        target: this
+                        source: vertex
                     changes.hooks ||= {}
                     changes.hooks[hookType] ||= {}
                     changes.hooks[hookType].fn = 
@@ -254,7 +262,9 @@ exports.createClass = (root) ->
 
                 if currentTimeout != latestTimeout
 
-                    changes ||= target: this
+                    changes ||= 
+                        target: this
+                        source: vertex
                     changes.hooks ||= {}
                     changes.hooks[hookType] ||= {}
                     changes.hooks[hookType].timeout = 
