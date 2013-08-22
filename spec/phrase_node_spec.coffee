@@ -102,7 +102,9 @@ describe 'PhraseNode', ->
                 text:      'is a leaf phrase'
                 timeout:   2000
 
-                hooks: beforeAll: fn: oldBeforeAll
+                hooks: 
+                    beforeAll: fn: oldBeforeAll
+                    afterEach: timeout: 100, fn: ->
                 fn: oldFn
 
             node2 = new @Node
@@ -112,7 +114,9 @@ describe 'PhraseNode', ->
                 text:      'is a leaf phrase'
                 timeout:   5000
 
-                hooks: beforeEach: fn: newBeforeEach
+                hooks: 
+                    beforeEach: timeout: 1000, fn: newBeforeEach
+                    afterEach: timeout: 200, fn: ->
                 fn: newFn
 
             
@@ -130,11 +134,20 @@ describe 'PhraseNode', ->
                     
             changes.hooks.should.eql 
                     beforeAll: 
-                        from: oldBeforeAll
-                        to:   undefined
-                    beforeEach: 
-                        from: undefined
-                        to:   newBeforeEach
+                        fn:
+                            from: oldBeforeAll
+                            to:   undefined
+                    beforeEach:
+                        fn: 
+                            from: undefined
+                            to:   newBeforeEach
+                        timeout:
+                            from: undefined
+                            to:   1000
+                    afterEach:
+                        timeout:
+                            from: 100
+                            to:   200    
                     
 
             done()

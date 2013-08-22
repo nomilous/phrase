@@ -248,11 +248,11 @@ describe 'PhraseGraphChangeSet', ->
                     set = new ChangeSet graph1, graph2
 
                     update = set.changes.updated['/TEST/phrase/nested/updates this']
-                    update.hooks.beforeEach.from().should.equal 1
-                    update.hooks.beforeEach.to(  ).should.equal 2
+                    update.hooks.beforeEach.fn.from().should.equal 1
+                    update.hooks.beforeEach.fn.to(  ).should.equal 2
 
-                    should.not.exist update.hooks.afterAll.from
-                    update.hooks.afterAll.to().should.equal 3
+                    should.not.exist update.hooks.afterAll.fn.from
+                    update.hooks.afterAll.fn.to().should.equal 3
                     done()
 
 
@@ -297,8 +297,41 @@ describe 'PhraseGraphChangeSet', ->
 
 
 
-        it 'timeout on hook changes all affected' 
+        it 'timeout on hook changes all affected', (done) -> 
 
+
+            Test
+
+                phrase1: (nested) -> 
+                    nested 'nested phrase 1', (end) -> 
+                        end()
+
+                    nested 'updates this', (more) ->
+                        before timeout: 100, all: (done) ->
+                        more '1', (end) -> 
+                        more '2', (end) -> 
+
+                phrase2: (nested) -> 
+                    nested 'nested phrase 1', (end) -> 
+                        end()
+
+                    nested 'updates this', (more) ->
+                        before timeout: 200, all: (done) ->
+                        more '1', (end) -> 
+                        more '2', (end) -> 
+
+
+                (graph1, graph2) -> 
+
+                    set = new ChangeSet graph1, graph2
+                    updates = set.changes.updated
+                    updates['/TEST/phrase/nested/updates this'].hooks.should.eql
+                        beforeAll:
+                            timeout: 
+                                from: 100
+                                to: 200
+
+                    done()
                     
 
 

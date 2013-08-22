@@ -205,16 +205,28 @@ exports.createClass = (root) ->
 
             for hookType in ['beforeAll', 'beforeEach', 'afterEach', 'afterAll']
 
-                current = try @hooks[hookType].fn.toString()
-                latest  = try vertex.hooks[hookType].fn.toString()
+                currentFn      = try @hooks[hookType].fn.toString()
+                currentTimeout = try @hooks[hookType].timeout
+                latestFn       = try vertex.hooks[hookType].fn.toString()
+                latestTimeout  = try vertex.hooks[hookType].timeout
 
-                if current != latest
+                if currentFn != latestFn
 
                     changes ||= target: this
                     changes.hooks ||= {}
-                    changes.hooks[hookType] = 
+                    changes.hooks[hookType] ||= {}
+                    changes.hooks[hookType].fn = 
                         from: try @hooks[hookType].fn
                         to: try vertex.hooks[hookType].fn
+
+                if currentTimeout != latestTimeout
+
+                    changes ||= target: this
+                    changes.hooks ||= {}
+                    changes.hooks[hookType] ||= {}
+                    changes.hooks[hookType].timeout = 
+                        from: try @hooks[hookType].timeout
+                        to: try vertex.hooks[hookType].timeout
 
             return changes
 

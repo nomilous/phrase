@@ -24,7 +24,7 @@ exports.create = (root, parentControl) ->
         # 
         # * This first hook pops any phrase hooks that may have been 
         #   registered ahead of this phrase being called. A reference
-        #   is placed into each child be the beforeEach recursor hook.
+        #   is placed into each child by the beforeEach recursor hook.
         # 
 
         run = -> 
