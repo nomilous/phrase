@@ -142,15 +142,16 @@ exports.createClass = (root) ->
 
 
 
-
-
-
             Object.defineProperty this, 'update', 
 
                 enumerable: false
-                set: (opts) -> 
+                get: -> (changes) -> 
 
-                    localOpts.fn = opts.fn || localOpts.fn
+                    for thing in ['fn', 'timeout']
+
+                        if changes[thing]? 
+
+                            localOpts[thing] = changes[thing].to
 
 
         getChanges: (vertex) -> 
@@ -229,4 +230,5 @@ exports.createClass = (root) ->
                         to: try vertex.hooks[hookType].timeout
 
             return changes
+
 

@@ -159,9 +159,9 @@ exports.createClass = (root) ->
 
             doing = defer()
 
-            console.log A_to_B: 
-                from: @graphA
-                to: @graphB
+            for path of @changes.updated
+
+                @graphA.vertices.update @changes.updated[path]
 
             process.nextTick doing.resolve
             doing.promise

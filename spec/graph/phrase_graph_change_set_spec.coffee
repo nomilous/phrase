@@ -116,9 +116,9 @@ describe 'PhraseGraphChangeSet', ->
                             end()
 
 
-                    (graph1, graph2) -> 
+                    (graphA, graphB) -> 
 
-                        set = new ChangeSet graph1, graph2
+                        set = new ChangeSet graphA, graphB
                         should.exist set.changes.deleted['/TEST/phrase/nested/deletes this']
                         done()
 
@@ -142,9 +142,9 @@ describe 'PhraseGraphChangeSet', ->
                             end()
 
 
-                    (graph1, graph2) -> 
+                    (graphA, graphB) -> 
 
-                        set = new ChangeSet graph1, graph2
+                        set = new ChangeSet graphA, graphB
                         should.exist set.changes.deleted['/TEST/phrase/nested/deletes this']
                         should.exist set.changes.deleted['/TEST/phrase/nested/deletes this/more/1']
                         should.exist set.changes.deleted['/TEST/phrase/nested/deletes this/more/2']
@@ -167,9 +167,9 @@ describe 'PhraseGraphChangeSet', ->
                         nested 'creates this', (end) -> 
                             end()
 
-                    (graph1, graph2) -> 
+                    (graphA, graphB) -> 
 
-                        set = new ChangeSet graph1, graph2
+                        set = new ChangeSet graphA, graphB
                         should.exist set.changes.created['/TEST/phrase/nested/creates this']
                         done()
 
@@ -190,9 +190,9 @@ describe 'PhraseGraphChangeSet', ->
                             more '2', (end) ->
 
 
-                    (graph1, graph2) -> 
+                    (graphA, graphB) -> 
 
-                        set = new ChangeSet graph1, graph2
+                        set = new ChangeSet graphA, graphB
                         should.exist set.changes.created['/TEST/phrase/nested/created this']
                         should.exist set.changes.created['/TEST/phrase/nested/created this/more/1']
                         should.exist set.changes.created['/TEST/phrase/nested/created this/more/2']
@@ -210,9 +210,9 @@ describe 'PhraseGraphChangeSet', ->
                     phrase2: (nested) -> 
                         nested 'nested phrase 1', (end) -> 2
 
-                    (graph1, graph2) -> 
+                    (graphA, graphB) -> 
 
-                        set = new ChangeSet graph1, graph2
+                        set = new ChangeSet graphA, graphB
                         
                         update = set.changes.updated['/TEST/phrase/nested/nested phrase 1']
                         update.fn.from().should.equal 1
@@ -244,9 +244,9 @@ describe 'PhraseGraphChangeSet', ->
                             more '2', (end) ->
 
 
-                    (graph1, graph2) -> 
+                    (graphA, graphB) -> 
 
-                        set = new ChangeSet graph1, graph2
+                        set = new ChangeSet graphA, graphB
 
                         update = set.changes.updated['/TEST/phrase/nested/updates this']
                         update.hooks.beforeEach.fn.from().should.equal 1
@@ -286,9 +286,9 @@ describe 'PhraseGraphChangeSet', ->
                                                 #
 
 
-                    (graph1, graph2) -> 
+                    (graphA, graphB) -> 
 
-                        set = new ChangeSet graph1, graph2
+                        set = new ChangeSet graphA, graphB
 
                         updates = set.changes.updated
                         should.not.exist updates['/TEST/phrase/nested/updates this/more/2']
@@ -322,9 +322,9 @@ describe 'PhraseGraphChangeSet', ->
                             more '2', (end) -> 
 
 
-                    (graph1, graph2) -> 
+                    (graphA, graphB) -> 
 
-                        set = new ChangeSet graph1, graph2
+                        set = new ChangeSet graphA, graphB
                         updates = set.changes.updated
                         updates['/TEST/phrase/nested/updates this'].hooks.should.eql
                             beforeAll:
@@ -337,7 +337,33 @@ describe 'PhraseGraphChangeSet', ->
 
         context 'applying changes (A-B)', -> 
 
-            it 'applies changes into graphA'
+            it 'applies changes into graphA', (done) ->
+
+                Test
+
+                    phrase1: (nested) -> 
+                        nested 'nested phrase 1', (end) -> 
+                            1
+
+                    phrase2: (nested) -> 
+                        nested 'nested phrase 1', (end) -> 
+                            2
+
+                    (graphA, graphB) -> 
+
+                        set = new ChangeSet graphA, graphB
+
+                        set.AtoB().then -> 
+
+
+
+
+
+                            done()
+
+
+
+
 
             it 'preserves vertex reference / uuid'
 

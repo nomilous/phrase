@@ -152,6 +152,7 @@ describe 'PhraseNode', ->
 
             done()
 
+
         it 'returns undefined if no changes', (done) -> 
 
             node1 = new @Node
@@ -176,3 +177,64 @@ describe 'PhraseNode', ->
 
             should.not.exist node1.getChanges node2  
             done()
+
+
+
+
+    context 'update()', -> 
+
+        it 'applies change to fn', (done) -> 
+
+            node1 = new @Node
+
+                uuid:      'UUID1'
+                token:     name: 'it'
+                text:      'is a leaf phrase'
+                
+                fn: ->  'old'
+
+            node2 = new @Node
+
+                uuid:      'UUID1'
+                token:     name: 'it'
+                text:      'is a leaf phrase'
+                
+                fn: -> 'new'
+
+            changes = node1.getChanges node2
+            node1.update changes
+
+
+            node1.fn().should.equal 'new'
+            done()
+
+
+
+        it 'applies change to timeout', (done) ->
+
+
+            node1 = new @Node
+
+                uuid:      'UUID1'
+                token:     name: 'it'
+                text:      'is a leaf phrase'
+                timeout:   100
+                fn: ->  'unchanged'
+
+            node2 = new @Node
+
+                uuid:      'UUID1'
+                token:     name: 'it'
+                text:      'is a leaf phrase'
+                fn: -> 'unchanged'
+
+            changes = node1.getChanges node2
+            node1.update changes
+
+            
+            node1.timeout.should.equal 2000  # default was restored
+            done()
+
+
+
+
