@@ -3,6 +3,24 @@
 exports.createClass = (root) -> 
 
     #
+    # ### PhraseHook
+    # 
+    # TODO: after merge (and enlightenment)
+    #
+
+    class PhraseHook
+
+        constructor: (opts) -> 
+
+            #GREP3 duplicate definition
+
+            @fn        = opts.fn 
+            @uuid      = v1()
+            @timeout   = opts.timeout || root.timeout || 2000
+
+
+
+    #
     # PhraseNode (class factory)
     # ==========================
     # 
@@ -44,13 +62,6 @@ exports.createClass = (root) ->
                             get: -> localOpts[property]
                             enumerable: true
 
-        #
-        # ### PhraseHook
-        # 
-        # TODO: after merge (and enlightenment)
-        #
-
-        class PhraseHook
 
         #
         # ### PhraseHooks 
@@ -63,6 +74,7 @@ exports.createClass = (root) ->
         # 
         #           Changing a hook should change all hooks 
         #           on the peer phrases.
+        # 
         # 
         #             
         #
@@ -81,6 +93,7 @@ exports.createClass = (root) ->
 
                         Object.defineProperty this, property, 
                             get: -> localOpts[property]
+                            set: (value) -> localOpts[property] = value
                             enumerable: true
 
                 Object.defineProperty this, 'update', 
@@ -103,7 +116,8 @@ exports.createClass = (root) ->
                                     continue
 
                             for thing of changes[type]
-                            
+
+                                localOpts[type] ||= {}
                                 localOpts[type][thing] = changes[type][thing].to
 
 
@@ -237,7 +251,7 @@ exports.createClass = (root) ->
                     
                     changes ||= 
                         target: this
-                        source: vertex
+                        #source: vertex
                     changes[property] = 
                         from: @[property]
                         to: vertex[property]
@@ -253,7 +267,7 @@ exports.createClass = (root) ->
 
                     changes ||= 
                         target: this
-                        source: vertex
+                        #source: vertex
                     changes.hooks ||= {}
                     changes.hooks[hookType] ||= {}
                     changes.hooks[hookType].fn = 
@@ -264,7 +278,7 @@ exports.createClass = (root) ->
 
                     changes ||= 
                         target: this
-                        source: vertex
+                        #source: vertex
                     changes.hooks ||= {}
                     changes.hooks[hookType] ||= {}
                     changes.hooks[hookType].timeout = 
@@ -274,3 +288,9 @@ exports.createClass = (root) ->
             return changes
 
 
+    Object.defineProperty PhraseNode, 'PhraseHook',
+        enumerable: true
+        get: -> PhraseHook
+
+
+    return PhraseNode

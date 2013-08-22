@@ -162,12 +162,68 @@ exports.createClass = (root) ->
 
             doing = defer()
 
-            for path of @changes.updated
+            #
+            # TODO: created and deleted ( must be before updated to ensure
+            #       all phrases are present 
+            #
 
-                console.log APPLY: @changes.updated[path]
+            if @changes.updated?
 
-                target = @graphA.vertices[ @graphA.paths[path] ]
-                target.update @changes.updated[path]
+                for path of @changes.updated
+
+                    target = @graphA.vertices[ @graphA.paths[path] ]
+                    target.update @changes.updated[path]
+
+
+                    #
+                    # HAC! - Result of having implementing phrase hooks as nested shared
+                    #        by reference into each affected PhraseNode, 
+                    # 
+                    #      - If the change is creating a hook, then ref to the new  hook
+                    #        needs to copied into all peer phrases. 
+                    # 
+                    #      - AND a uuid needs to be assigned, normally happens here #GREP3
+                    #      
+                    #      - AND the one that did happen there belongs to the other tree
+                    #                                          best to keep it that way!
+                    # 
+                    #      - alternatively the change detector could include the entire 
+                    #        list of leaves that the created hook affects.
+                    # 
+                    #             will then need a mechanism for the observer to
+                    #             identify overlap in the reported changes to
+                    #             allow the simplest call to re-apply / hup
+                    #            
+
+                    if @changes.updated[path].hooks?
+
+                        for type in ['beforeAll', 'beforeEach', 'afterEach', 'afterAll']
+
+                            hook = @changes.updated[path].hooks[type]
+
+                            if hook? and not ( hook.fn.from? or hook.timeout.from? )
+
+                                #
+                                # create new hook on all children
+                                #
+
+                                newHook = new root.context.PhraseNode.PhraseHook
+
+                                    #
+                                    # should have had   change.from.propety
+                                    # instead of        change.property.from
+                                    #
+
+                                    timeout: hook.timeout.to
+                                    fn:      hook.fn.to
+
+                                parentUUID = @graphA.paths[path]
+
+                                for childUUID in @graphA.children[parentUUID]
+
+                                    @graphA.vertices[childUUID].hooks[type] = newHook
+
+                                  
 
 
 

@@ -33,7 +33,7 @@ describe 'PhraseGraphChangeSet', ->
         @graphA     = new @Graph
         @graphB     = new @Graph
 
-    xcontext 'general', ->
+    context 'general', ->
 
         it 'creates a changeSet with uuid', (done) -> 
 
@@ -108,7 +108,7 @@ describe 'PhraseGraphChangeSet', ->
             done()
 
 
-        xcontext 'detecting changes', ->
+        context 'detecting changes', ->
 
             it 'detects renamed branch vertices (token.name/text)'
 
@@ -395,6 +395,38 @@ describe 'PhraseGraphChangeSet', ->
 
                     phrase2: (nested) -> 
 
+                        before all: -> 'UPDATED'
+
+                        nested 'nested phrase 1', (end) -> 
+                        nested 'nested phrase 2', (end) -> 
+
+                    (graphA, graphB) -> 
+
+                        set = new ChangeSet graphA, graphB
+
+                        set.AtoB().then -> 
+
+                            graphA.vertices[1111].hooks.beforeAll.fn().should.equal 'UPDATED'
+                            graphA.vertices[2222].hooks.beforeAll.fn().should.equal 'UPDATED'
+                            done()
+
+                
+            it 'created hooks are assigned uuid, timeout, fn and copied into all children', (done) -> 
+
+                #
+                # pending constructor moved from here  #GREP3
+                #
+
+                Test
+
+                    phrase1: (nested) -> 
+
+
+                        nested 'nested phrase 1', uuid: 1111, (end) -> 
+                        nested 'nested phrase 2', uuid: 2222, (end) -> 
+
+                    phrase2: (nested) -> 
+
                         before all: -> 'NEW'
 
                         nested 'nested phrase 1', (end) -> 
@@ -406,12 +438,11 @@ describe 'PhraseGraphChangeSet', ->
 
                         set.AtoB().then -> 
 
+                            # console.log graphA.vertices[1111].hooks.beforeAll
+                            # console.log graphA.vertices[2222].hooks.beforeAll
                             graphA.vertices[1111].hooks.beforeAll.fn().should.equal 'NEW'
-                            graphA.vertices[2222].hooks.beforeAll.fn().should.equal 'NEW'
+                            graphA.vertices[2222].hooks.beforeAll.should.equal graphA.vertices[2222].hooks.beforeAll
                             done()
-
-                
-
 
 
 

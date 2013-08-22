@@ -124,7 +124,17 @@ exports.create = (root, parentControl) ->
             uuid:     uuid
             timeout:  phraseControl.timeout
             hooks: 
-
+                                        #
+                                        # copying the same instance of the phase hooks 
+                                        # into each nested phase has lead to some 
+                                        # undesired complexity  #GREP3
+                                        #
+                                        # correcting it will affect how the PhraseRunner
+                                        # assembels the step sequence to pass to the
+                                        # PhraseJob, specifically the mechanisms for 
+                                        # not repeating the 'All' hooks.
+                                        #
+                                        
                 beforeAll:  injectionControl.beforeAll
                 beforeEach: injectionControl.beforeEach
                 afterEach:  injectionControl.afterEach

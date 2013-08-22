@@ -4,6 +4,8 @@ exports.PhraseHook = class PhraseHook
 
     constructor: (root, @type, opts) -> 
 
+        #GREP3
+
         #
         # TODO: get control timeout from parent node
         #
