@@ -9,6 +9,16 @@ also                 = require 'also'
 
 describe 'PhraseGraphChangeSet', -> 
 
+    context 'collection', -> 
+
+        # 
+        # IMPORTANT
+        # 
+
+        it 'removes old changesets from the collection'
+
+
+
     beforeEach -> 
 
         @root = 
@@ -99,6 +109,15 @@ describe 'PhraseGraphChangeSet', ->
 
 
         context 'detecting changes', ->
+
+            it 'detects renamed branch vertices (token.name/text)'
+
+                #
+                # instead of reporting deleted and created for all nested vertices
+                # with the resulting new path.
+                # 
+                # later...
+                #
 
 
             it 'detects removed leaves', (done) -> 
@@ -410,9 +429,5 @@ describe 'PhraseGraphChangeSet', ->
             it 'can undo the  changes applies in A-B'
 
 
-
-    context 'collection', -> 
-
-        it 'removes old changesets from the collection'
 
 

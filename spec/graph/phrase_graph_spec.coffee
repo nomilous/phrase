@@ -3,6 +3,16 @@ PhraseGraph = require '../../lib/graph/phrase_graph'
 
 describe 'PhraseGraph', -> 
 
+
+    context 'collection', -> 
+
+        # 
+        # IMPORTANT
+        # 
+
+        it 'removes old graphs from the collection'
+
+
     root  = undefined
     Graph = undefined
     graph = undefined
@@ -395,10 +405,6 @@ describe 'PhraseGraph', ->
 
                 nested 'inner phrase 2', (end) -> 
 
-
-    context 'collection', -> 
-
-        it 'removes old graphs from the collection'
 
     context 'change set', ->
 
