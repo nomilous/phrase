@@ -495,11 +495,13 @@ describe 'PhraseGraphChangeSet', ->
                         set = new ChangeSet graphA, graphB
                         set.AtoB()
                         graphA.vertices[1111].fn().should.equal 1
+
+                        console.log 'ORPHAN...': graphA.parent[2222]
                         graphA.vertices[2222].fn().should.equal 2
                         done()
 
 
-
+            it 'creates vertices (branch)'
 
             it 'preserves vertex order (indexes, not literals) after create'
 
