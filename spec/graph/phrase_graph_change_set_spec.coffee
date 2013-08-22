@@ -46,7 +46,7 @@ describe 'PhraseGraphChangeSet', ->
             done()
 
 
-    context 'change detection', -> 
+    context 'change', -> 
 
         #
         # some laziness here (building graph by hand is laborious)
@@ -98,241 +98,263 @@ describe 'PhraseGraphChangeSet', ->
             done()
 
 
+        context 'detecting changes', ->
 
 
-        it 'detects removed leaves', (done) -> 
+            it 'detects removed leaves', (done) -> 
 
-            Test
+                Test
 
-                phrase1: (nested) -> 
-                    nested 'nested phrase 1', (end) -> 
-                        end()
-                    nested 'deletes this', (end) -> 
-                        end()
+                    phrase1: (nested) -> 
+                        nested 'nested phrase 1', (end) -> 
+                            end()
+                        nested 'deletes this', (end) -> 
+                            end()
 
-                phrase2: (nested) -> 
-                    nested 'nested phrase 1', (end) -> 
-                        end()
-
-
-                (graph1, graph2) -> 
-
-                    set = new ChangeSet graph1, graph2
-                    should.exist set.changes.deleted['/TEST/phrase/nested/deletes this']
-                    done()
+                    phrase2: (nested) -> 
+                        nested 'nested phrase 1', (end) -> 
+                            end()
 
 
-        it 'detectes removed branches', (done) -> 
+                    (graph1, graph2) -> 
 
-            Test
-
-                phrase1: (nested) -> 
-                    nested 'nested phrase 1', (end) -> 
-                        end()
+                        set = new ChangeSet graph1, graph2
+                        should.exist set.changes.deleted['/TEST/phrase/nested/deletes this']
+                        done()
 
 
-                    nested 'deletes this', (more) -> 
-                        more '1', (end) ->
-                        more '2', (end) ->
+            it 'detectes removed branches', (done) -> 
+
+                Test
+
+                    phrase1: (nested) -> 
+                        nested 'nested phrase 1', (end) -> 
+                            end()
 
 
-                phrase2: (nested) -> 
-                    nested 'nested phrase 1', (end) -> 
-                        end()
+                        nested 'deletes this', (more) -> 
+                            more '1', (end) ->
+                            more '2', (end) ->
 
 
-                (graph1, graph2) -> 
-
-                    set = new ChangeSet graph1, graph2
-                    should.exist set.changes.deleted['/TEST/phrase/nested/deletes this']
-                    should.exist set.changes.deleted['/TEST/phrase/nested/deletes this/more/1']
-                    should.exist set.changes.deleted['/TEST/phrase/nested/deletes this/more/2']
-                    done()
+                    phrase2: (nested) -> 
+                        nested 'nested phrase 1', (end) -> 
+                            end()
 
 
+                    (graph1, graph2) -> 
 
-
-        it 'detects created leaves', (done) -> 
-
-            Test
-
-                phrase1: (nested) -> 
-                    nested 'nested phrase 1', (end) -> 
-                        end()
-
-                phrase2: (nested) -> 
-                    nested 'nested phrase 1', (end) -> 
-                        end()
-                    nested 'creates this', (end) -> 
-                        end()
-
-                (graph1, graph2) -> 
-
-                    set = new ChangeSet graph1, graph2
-                    should.exist set.changes.created['/TEST/phrase/nested/creates this']
-                    done()
-
-        it 'detectes created branches', (done) -> 
-
-            Test
-
-                phrase1: (nested) -> 
-                    nested 'nested phrase 1', (end) -> 
-                        end()
-
-                phrase2: (nested) -> 
-                    nested 'nested phrase 1', (end) -> 
-                        end()
-
-                    nested 'created this', (more) -> 
-                        more '1', (end) ->
-                        more '2', (end) ->
-
-
-                (graph1, graph2) -> 
-
-                    set = new ChangeSet graph1, graph2
-                    should.exist set.changes.created['/TEST/phrase/nested/created this']
-                    should.exist set.changes.created['/TEST/phrase/nested/created this/more/1']
-                    should.exist set.changes.created['/TEST/phrase/nested/created this/more/2']
-                    done()
+                        set = new ChangeSet graph1, graph2
+                        should.exist set.changes.deleted['/TEST/phrase/nested/deletes this']
+                        should.exist set.changes.deleted['/TEST/phrase/nested/deletes this/more/1']
+                        should.exist set.changes.deleted['/TEST/phrase/nested/deletes this/more/2']
+                        done()
 
 
 
-        it 'detects updated leaves', (done) -> 
 
-            Test
+            it 'detects created leaves', (done) -> 
 
-                phrase1: (nested) -> 
-                    nested 'nested phrase 1', (end) -> 1
+                Test
 
-                phrase2: (nested) -> 
-                    nested 'nested phrase 1', (end) -> 2
+                    phrase1: (nested) -> 
+                        nested 'nested phrase 1', (end) -> 
+                            end()
 
-                (graph1, graph2) -> 
+                    phrase2: (nested) -> 
+                        nested 'nested phrase 1', (end) -> 
+                            end()
+                        nested 'creates this', (end) -> 
+                            end()
 
-                    set = new ChangeSet graph1, graph2
+                    (graph1, graph2) -> 
+
+                        set = new ChangeSet graph1, graph2
+                        should.exist set.changes.created['/TEST/phrase/nested/creates this']
+                        done()
+
+            it 'detectes created branches', (done) -> 
+
+                Test
+
+                    phrase1: (nested) -> 
+                        nested 'nested phrase 1', (end) -> 
+                            end()
+
+                    phrase2: (nested) -> 
+                        nested 'nested phrase 1', (end) -> 
+                            end()
+
+                        nested 'created this', (more) -> 
+                            more '1', (end) ->
+                            more '2', (end) ->
+
+
+                    (graph1, graph2) -> 
+
+                        set = new ChangeSet graph1, graph2
+                        should.exist set.changes.created['/TEST/phrase/nested/created this']
+                        should.exist set.changes.created['/TEST/phrase/nested/created this/more/1']
+                        should.exist set.changes.created['/TEST/phrase/nested/created this/more/2']
+                        done()
+
+
+
+            it 'detects updated leaves', (done) -> 
+
+                Test
+
+                    phrase1: (nested) -> 
+                        nested 'nested phrase 1', (end) -> 1
+
+                    phrase2: (nested) -> 
+                        nested 'nested phrase 1', (end) -> 2
+
+                    (graph1, graph2) -> 
+
+                        set = new ChangeSet graph1, graph2
+                        
+                        update = set.changes.updated['/TEST/phrase/nested/nested phrase 1']
+                        update.fn.from().should.equal 1
+                        update.fn.to(  ).should.equal 2
+                        done()
+
+
+            it 'detects changed hooks as parent vertex', (done) -> 
+
+                Test
+
+                    phrase1: (nested) -> 
+                        nested 'nested phrase 1', (end) -> 
+                            end()
+
+                        nested 'updates this', (more) ->
+                            before each: -> 1
+                            more '1', (end) ->
+                            more '2', (end) ->
+
+                    phrase2: (nested) -> 
+                        nested 'nested phrase 1', (end) -> 
+                            end()
+
+                        nested 'updates this', (more) ->
+                            before each: -> 2
+                            after  all:  -> 3
+                            more '1', (end) ->
+                            more '2', (end) ->
+
+
+                    (graph1, graph2) -> 
+
+                        set = new ChangeSet graph1, graph2
+
+                        update = set.changes.updated['/TEST/phrase/nested/updates this']
+                        update.hooks.beforeEach.fn.from().should.equal 1
+                        update.hooks.beforeEach.fn.to(  ).should.equal 2
+
+                        should.not.exist update.hooks.afterAll.fn.from
+                        update.hooks.afterAll.fn.to().should.equal 3
+                        done()
+
+
+            it 'timeout changes all affected', (done) -> 
+
+                Test
+
+                    phrase1: (nested) -> 
+                        nested 'nested phrase 1', (end) -> 
+                            end()
+
+                        nested 'updates this', timeout: 10000, (more) ->
+                            more '1', (end) ->  #
+                            more '2', (end) ->  # local timeout override on branch
+                                                #
+
+                    phrase2: (nested) -> 
+                        nested 'nested phrase 1', (end) -> 
+                            end()
+
+                        nested 'updates this', (more) ->
+                            more '1', (end) ->  #
+                                                # timeouts return to default
+                                                #
+
+                            more '2',  timeout: 10000, (end) ->
+                                                #
+                                                # more focussed local override
+                                                # leaves leaf unchanged
+                                                #
+
+
+                    (graph1, graph2) -> 
+
+                        set = new ChangeSet graph1, graph2
+
+                        updates = set.changes.updated
+                        should.not.exist updates['/TEST/phrase/nested/updates this/more/2']
+                        updates['/TEST/phrase/nested/updates this'].timeout.should.eql        from: 10000, to: 2000
+                        updates['/TEST/phrase/nested/updates this/more/1'].timeout.should.eql from: 10000, to: 2000
+                        done()
+
+
+
+            it 'timeout on hook changes all affected', (done) -> 
+
+
+                Test
+
+                    phrase1: (nested) -> 
+                        nested 'nested phrase 1', (end) -> 
+                            end()
+
+                        nested 'updates this', (more) ->
+                            before timeout: 100, all: (done) ->
+                            more '1', (end) -> 
+                            more '2', (end) -> 
+
+                    phrase2: (nested) -> 
+                        nested 'nested phrase 1', (end) -> 
+                            end()
+
+                        nested 'updates this', (more) ->
+                            before timeout: 200, all: (done) ->
+                            more '1', (end) -> 
+                            more '2', (end) -> 
+
+
+                    (graph1, graph2) -> 
+
+                        set = new ChangeSet graph1, graph2
+                        updates = set.changes.updated
+                        updates['/TEST/phrase/nested/updates this'].hooks.should.eql
+                            beforeAll:
+                                timeout: 
+                                    from: 100
+                                    to: 200
+
+                        done()
                     
-                    update = set.changes.updated['/TEST/phrase/nested/nested phrase 1']
-                    update.fn.from().should.equal 1
-                    update.fn.to(  ).should.equal 2
-                    done()
 
+        context 'applying changes (A-B)', -> 
 
-        it 'detects changed hooks as parent vertex', (done) -> 
+            it 'applies changes into graphA'
 
-            Test
+            it 'preserves vertex reference / uuid'
 
-                phrase1: (nested) -> 
-                    nested 'nested phrase 1', (end) -> 
-                        end()
+            it 'preserves vertex order'
 
-                    nested 'updates this', (more) ->
-                        before each: -> 1
-                        more '1', (end) ->
-                        more '2', (end) ->
-
-                phrase2: (nested) -> 
-                    nested 'nested phrase 1', (end) -> 
-                        end()
-
-                    nested 'updates this', (more) ->
-                        before each: -> 2
-                        after  all:  -> 3
-                        more '1', (end) ->
-                        more '2', (end) ->
-
-
-                (graph1, graph2) -> 
-
-                    set = new ChangeSet graph1, graph2
-
-                    update = set.changes.updated['/TEST/phrase/nested/updates this']
-                    update.hooks.beforeEach.fn.from().should.equal 1
-                    update.hooks.beforeEach.fn.to(  ).should.equal 2
-
-                    should.not.exist update.hooks.afterAll.fn.from
-                    update.hooks.afterAll.fn.to().should.equal 3
-                    done()
-
-
-        it 'timeout changes all affected', (done) -> 
-
-            Test
-
-                phrase1: (nested) -> 
-                    nested 'nested phrase 1', (end) -> 
-                        end()
-
-                    nested 'updates this', timeout: 10000, (more) ->
-                        more '1', (end) ->  #
-                        more '2', (end) ->  # local timeout override on branch
-                                            #
-
-                phrase2: (nested) -> 
-                    nested 'nested phrase 1', (end) -> 
-                        end()
-
-                    nested 'updates this', (more) ->
-                        more '1', (end) ->  #
-                                            # timeouts return to default
-                                            #
-
-                        more '2',  timeout: 10000, (end) ->
-                                            #
-                                            # more focussed local override
-                                            # leaves leaf unchanged
-                                            #
-
-
-                (graph1, graph2) -> 
-
-                    set = new ChangeSet graph1, graph2
-
-                    updates = set.changes.updated
-                    should.not.exist updates['/TEST/phrase/nested/updates this/more/2']
-                    updates['/TEST/phrase/nested/updates this'].timeout.should.eql        from: 10000, to: 2000
-                    updates['/TEST/phrase/nested/updates this/more/1'].timeout.should.eql from: 10000, to: 2000
-                    done()
+            context 'updates indexes', -> 
 
 
 
-        it 'timeout on hook changes all affected', (done) -> 
+        context 'applying changes (B-A)', -> 
 
+            #
+            # later...
+            #
 
-            Test
+            it 'can undo the  changes applies in A-B'
 
-                phrase1: (nested) -> 
-                    nested 'nested phrase 1', (end) -> 
-                        end()
-
-                    nested 'updates this', (more) ->
-                        before timeout: 100, all: (done) ->
-                        more '1', (end) -> 
-                        more '2', (end) -> 
-
-                phrase2: (nested) -> 
-                    nested 'nested phrase 1', (end) -> 
-                        end()
-
-                    nested 'updates this', (more) ->
-                        before timeout: 200, all: (done) ->
-                        more '1', (end) -> 
-                        more '2', (end) -> 
-
-
-                (graph1, graph2) -> 
-
-                    set = new ChangeSet graph1, graph2
-                    updates = set.changes.updated
-                    updates['/TEST/phrase/nested/updates this'].hooks.should.eql
-                        beforeAll:
-                            timeout: 
-                                from: 100
-                                to: 200
-
-                    done()
-                    
 
 
     context 'collection', -> 
