@@ -23,7 +23,7 @@ describe 'PhraseGraphChangeSet', ->
         @graphA     = new @Graph
         @graphB     = new @Graph
 
-    context 'general', ->
+    xcontext 'general', ->
 
         it 'creates a changeSet with uuid', (done) -> 
 
@@ -332,12 +332,14 @@ describe 'PhraseGraphChangeSet', ->
                                     from: 100
                                     to: 200
 
+                        #GREP2
+                        should.exist updates['/TEST/phrase/nested/updates this'].target
                         done()
                     
 
         context 'applying changes (A-B)', -> 
 
-            it 'applies changes into graphA and preserves vertex uuid', (done) ->
+            xit 'applies changes into graphA and preserves vertex uuid', (done) ->
 
                 Test
 
@@ -358,6 +360,39 @@ describe 'PhraseGraphChangeSet', ->
                             graphA.vertices[1111].fn().should.equal 'NEW'
                             graphA.vertices[2222].timeout.should.equal 200
                             done()
+
+
+            it 'applies hook changes to all affected vertexes', (done) -> 
+
+                Test
+
+                    phrase1: (nested) -> 
+
+                        before all: -> 1
+
+                        nested 'nested phrase 1', uuid: 1111, (end) -> 
+                        nested 'nested phrase 2', uuid: 2222, (end) -> 
+
+                    phrase2: (nested) -> 
+
+                        before all: -> 'NEW'
+
+                        nested 'nested phrase 1', (end) -> 
+                        nested 'nested phrase 2', (end) -> 
+
+                    (graphA, graphB) -> 
+
+                        set = new ChangeSet graphA, graphB
+
+                        set.AtoB().then -> 
+
+                            graphA.vertices[1111].hooks.beforeAll.fn().should.equal 'NEW'
+                            graphA.vertices[2222].hooks.beforeAll.fn().should.equal 'NEW'
+                            done()
+
+                
+
+
 
 
             it 'preserves vertex order'

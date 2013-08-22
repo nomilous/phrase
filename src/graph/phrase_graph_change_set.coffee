@@ -108,6 +108,8 @@ exports.createClass = (root) ->
                     if changes.hooks? 
 
                         #
+                        # #GREP2
+                        # 
                         # * hooks are discovered on branch vertices (by the recursor), but 
                         #   not stored there, instead a reference to the hooks is inserted 
                         #   into each nested phrase
@@ -122,7 +124,8 @@ exports.createClass = (root) ->
                         parentPath = path.split('/')[..-3].join '/'
                         @changes.updated ||= {}
                         @changes.updated[parentPath] ||= {}
-                        @changes.updated[parentPath].hooks = changes.hooks
+                        @changes.updated[parentPath].hooks  = changes.hooks
+                        @changes.updated[parentPath].target = changes.target
 
 
             #
@@ -165,7 +168,7 @@ exports.createClass = (root) ->
                 target.update @changes.updated[path]
 
 
-            
+
 
             process.nextTick doing.resolve
             doing.promise

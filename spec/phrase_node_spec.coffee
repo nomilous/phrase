@@ -236,5 +236,70 @@ describe 'PhraseNode', ->
             done()
 
 
+        it 'applies changes to hooks (ONTO THE SPECIFIED TARGET)', (done) -> 
+
+
+            node1 = new @Node
+
+                uuid:      'UUID1'
+                token:     name: 'it'
+                text:      'is a leaf phrase'
+                hooks: 
+                    beforeAll:                fn: -> 1
+                    beforeEach: timeout: 100, fn: -> 1
+                    afterAll:                 fn: -> 1
+
+                fn: ->  'unchanged'
+
+
+            node2 = new @Node
+
+                uuid:      'UUID1'
+                token:     name: 'it'
+                text:      'is a leaf phrase'
+                hooks: 
+                    beforeAll:                fn: -> 'UPDATED'
+                    beforeEach: timeout: 200, fn: -> 1
+
+                fn: -> 'unchanged'
+
+            parentNode = new @Node
+
+                uuid: 'parent'
+                token:  name: 'context'
+                text:  'parent phrase'
+                fn: ->
+
+
+            changes = node1.getChanges node2
+
+
+            #
+            # ONTO THE SPECIFIED TARGET
+            # #GREP2
+            #
+            # hook changes are reported associated to parent vertex
+            # and will therefore be applied to parent by the when
+            # the change set is run, 
+            # 
+
+            parentNode.update changes
+
+            #
+            # applied onto parent, changed node 1
+            #
+
+            node1.hooks.beforeAll.fn().should.equal 'UPDATED'
+            node1.hooks.beforeEach.timeout.should.equal 200
+            should.not.exist node1.hooks.afterAll
+            done()
+
+
+            #node1.update changes
+
+
+        it 'creates new hook with uuid if creating hook'
+
+
 
 

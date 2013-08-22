@@ -84,6 +84,29 @@ exports.createClass = (root) ->
                             get: -> localOpts[property]
                             enumerable: true
 
+                Object.defineProperty this, 'update', 
+
+                    enumerable: false
+                    get: -> (changes) -> 
+
+                        for type of changes
+
+                            if changes[type].fn?
+
+                                unless changes[type].fn.to?
+
+                                    #
+                                    # changes fn without destination, 
+                                    # ie. delete
+                                    #
+
+                                    delete localOpts[type]
+                                    continue
+
+                            for thing of changes[type]
+                            
+                                localOpts[type][thing] = changes[type][thing].to
+
 
         constructor: (opts = {}) -> 
 
@@ -147,11 +170,19 @@ exports.createClass = (root) ->
                 enumerable: false
                 get: -> (changes) -> 
 
+                    target = changes.target
+
+                    return target.update changes unless target is this
+
                     for thing in ['fn', 'timeout']
 
                         if changes[thing]? 
 
                             localOpts[thing] = changes[thing].to
+
+                    if changes.hooks?
+
+                        localOpts.hooks.update changes.hooks
 
 
         getChanges: (vertex) -> 
@@ -176,6 +207,8 @@ exports.createClass = (root) ->
             # 
             # 
             #   } 
+            # 
+            # #GREP2
             # 
             # * The target is included to provide a direct reference to the
             #   the change destination (the results of this function are used
