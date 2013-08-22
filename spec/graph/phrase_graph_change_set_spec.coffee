@@ -375,11 +375,11 @@ describe 'PhraseGraphChangeSet', ->
 
                         set = new ChangeSet graphA, graphB
 
-                        set.AtoB().then -> 
+                        set.AtoB()
 
-                            graphA.vertices[1111].fn().should.equal 'NEW'
-                            graphA.vertices[2222].timeout.should.equal 200
-                            done()
+                        graphA.vertices[1111].fn().should.equal 'NEW'
+                        graphA.vertices[2222].timeout.should.equal 200
+                        done()
 
 
             it 'applies hook changes to all affected vertexes', (done) -> 
@@ -404,18 +404,14 @@ describe 'PhraseGraphChangeSet', ->
 
                         set = new ChangeSet graphA, graphB
 
-                        set.AtoB().then -> 
+                        set.AtoB()
 
-                            graphA.vertices[1111].hooks.beforeAll.fn().should.equal 'UPDATED'
-                            graphA.vertices[2222].hooks.beforeAll.fn().should.equal 'UPDATED'
-                            done()
+                        graphA.vertices[1111].hooks.beforeAll.fn().should.equal 'UPDATED'
+                        graphA.vertices[2222].hooks.beforeAll.fn().should.equal 'UPDATED'
+                        done()
 
                 
             it 'created hooks are assigned uuid, timeout, fn and copied into all children', (done) -> 
-
-                #
-                # pending constructor moved from here  #GREP3
-                #
 
                 Test
 
@@ -436,17 +432,79 @@ describe 'PhraseGraphChangeSet', ->
 
                         set = new ChangeSet graphA, graphB
 
-                        set.AtoB().then -> 
+                        set.AtoB() 
 
-                            # console.log graphA.vertices[1111].hooks.beforeAll
-                            # console.log graphA.vertices[2222].hooks.beforeAll
-                            graphA.vertices[1111].hooks.beforeAll.fn().should.equal 'NEW'
-                            graphA.vertices[2222].hooks.beforeAll.should.equal graphA.vertices[2222].hooks.beforeAll
-                            done()
+                        # console.log graphA.vertices[1111].hooks.beforeAll
+                        # console.log graphA.vertices[2222].hooks.beforeAll
+                        graphA.vertices[1111].hooks.beforeAll.fn().should.equal 'NEW'
+                        graphA.vertices[2222].hooks.beforeAll.should.equal graphA.vertices[2222].hooks.beforeAll
+                        done()
+
+
+            it 'deletes vertices (leaf)', (done) -> 
+
+
+                Test
+
+                    phrase1: (nested) -> 
+
+                        nested 'nested phrase 1', uuid: 1111, (end) -> 
+                        nested 'nested phrase 2', uuid: 2222, (end) -> 
+
+                    phrase2: (nested) -> 
+
+                        nested 'nested phrase 2', uuid: 9999, (end) -> 'not allowing uuid re-assign for now'
+                                                         #
+                                                         # consider allowing reassignment of uuid
+                                                         # on existing phrase,
+                                                         # this one is already uuid: 2222
+                                                         # 
+
+                    (graphA, graphB) -> 
+
+                        set = new ChangeSet graphA, graphB
+                        set.AtoB()
+                        should.not.exist graphA.vertices[1111]
+                        should.not.exist graphA.vertices[9999]
+                        graphA.vertices[2222].fn().should.equal 'not allowing uuid re-assign for now'
+                        done()
+
+
+            it 'deletes vertices (branch)'
+
+            it 'preserves vertex order (indexes, not literals) after delete'
+
+
+            it 'creates vertices (leaf)', (done) -> 
+
+                Test
+
+                    phrase1: (nested) -> 
+
+                        nested 'nested phrase 1', uuid: 1111, (end) -> 0
+                        
+
+                    phrase2: (nested) -> 
+
+                        nested 'nested phrase 1',             (end) -> 1
+                        nested 'nested phrase 2', uuid: 2222, (end) -> 2
+
+
+                    (graphA, graphB) -> 
+
+                        set = new ChangeSet graphA, graphB
+                        set.AtoB()
+                        graphA.vertices[1111].fn().should.equal 1
+                        graphA.vertices[2222].fn().should.equal 2
+                        done()
 
 
 
-            it 'preserves vertex order'
+
+            it 'preserves vertex order (indexes, not literals) after create'
+
+
+
 
             context 'updates indexes', -> 
 

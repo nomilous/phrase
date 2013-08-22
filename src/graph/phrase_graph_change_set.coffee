@@ -1,5 +1,4 @@
 {v1}    = require 'node-uuid'
-{defer} = require 'when'
 
 exports.createClass = (root) -> 
 
@@ -160,16 +159,35 @@ exports.createClass = (root) ->
 
         AtoB: -> 
 
-            doing = defer()
-
             #
-            # IMPORTANT - no breakout in this update 
+            # IMPORTANT - no breakout in this update
             #
 
+            if @changes.deleted?
+
+                for path of @changes.deleted
+
+                    #
+                    # consider keeping it for BtoA (later)
+                    #
+
+                    uuid   = @graphA.paths[path]
+                    delete @graphA.vertices[uuid]
+
+
+            if @changes.created?
+
+                for path of @changes.created
+
+                    uuid = @changes.created[path].uuid
+                    @graphA.vertices[uuid] = @changes.created[path]
+
+
             #
-            # TODO: created and deleted ( must be before updated to ensure
-            #       all phrases are present 
+            # TODO: rebuild (or adjust) indexes for new and removed uuids
+            #       preserve created order
             #
+
 
             if @changes.updated?
 
@@ -189,7 +207,9 @@ exports.createClass = (root) ->
                     #      - AND a uuid needs to be assigned, normally happens here #GREP3
                     #      
                     #      - AND the one that did happen there belongs to the other tree
-                    #                                          best to keep it that way!
+                    #                                          best to keep it that way!...?
+                    #                                          same object lives in both graphs on create
+                    #                                     
                     # 
                     #      - alternatively the change detector could include the entire 
                     #        list of leaves that the created hook affects.
@@ -227,13 +247,6 @@ exports.createClass = (root) ->
 
                                     @graphA.vertices[childUUID].hooks[type] = newHook
 
-                                  
-
-
-
-
-            process.nextTick doing.resolve
-            doing.promise
 
 
     Object.defineProperty PhraseGraphChangeSet, 'applyChanges', 

@@ -108,7 +108,7 @@ exports.createClass = (root) ->
                 leaves:    []
 
                 #
-                # TEMPORARY (likely)
+                # TEMPORARY (likely) (pending messy, to preserve it beyond update)
                 # Specific list of leaves as accumulated by phrase::leaf:create payloads.
                 # 
 
