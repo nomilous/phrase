@@ -188,13 +188,43 @@ exports.createClass = (root) ->
             # rebuild indexes 
             # ---------------
             #
-            # TODO: This is very inefficient. It rebuilds the entire index according
-            #       to the contents of the new graph, but preserving the uuids from 
-            #       the old graph for updated vertexes.
+            # TODO: This is very inefficient. It rebuilds the indexes in graphA according 
+            #       to the contents of the new graphB, but preserving the uuids from 
+            #       the uuids of graphA.
             # 
             #       It would be better (for large graphs), to only modify the indexes
             #       where necessary.
+            # 
+            #       Preserving the order is important 
+            #       (not always, make preserving order a configurable)
             #
+
+            stillParent = {}
+            for parentUUID of @graphB.children
+                parent = @graphA.path2uuid[ @graphB.uuid2path[parentUUID] ] || parentUUID
+                @graphA.children[parent] = []
+                #
+                # translated graphB parentUUID to corresponding uuid in graphA
+                # and created a new children index with it
+                #
+
+                stillParent[parent] = true unless @graphB.vertices[parentUUID].leaf
+
+                for childUUID in @graphB.children[parentUUID] 
+                    child = @graphA.path2uuid[ @graphB.uuid2path[childUUID] ] || childUUID
+                    @graphA.children[parent].push child
+                    #
+                    # translated graphB childUUID to corresponding uuid in graphA
+                    # and pushed it into the new children record
+                    #
+            
+            for parentUUID of @graphA.children
+                unless stillParent[parentUUID]
+                    delete @graphA.children[parentUUID] 
+
+
+
+                    
 
             
 

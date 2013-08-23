@@ -564,7 +564,7 @@ describe 'PhraseGraphChangeSet', ->
 
         context 'updates indexes', -> 
 
-            it 'ammends path2uuid and uuid2path indexes (not in order)', (done) ->
+            xit 'ammends path2uuid and uuid2path indexes (not in order)', (done) ->
 
                 Test
 
@@ -577,7 +577,7 @@ describe 'PhraseGraphChangeSet', ->
                             #
 
                             deeper 'deleted',  uuid: 'deleted', (end) ->
-                                
+
                         nested 'nested phrase 2', uuid: 2222, (deeper) ->
                             deeper 'one', uuid: 3333, (end) ->
                             deeper 'two', uuid: 4444, (end) ->  
@@ -634,8 +634,62 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'updates children index and preserves vertex order'
-            it 'updates parents array and preserves vertex order'
+            it 'updates children index and preserves vertex order', (done) -> 
+
+                Test
+
+                    phrase1: (nested) -> 
+
+                        nested 'nested phrase 1', uuid: 1111, (deeper) -> 
+
+                            deeper 'deleted',  uuid: 'deleted', (end) ->
+
+                        nested 'nested phrase 2', uuid: 2222, (deeper) ->
+                            deeper 'one', uuid: 3333, (end) ->
+                            deeper 'two', uuid: 4444, (end) ->  
+                        
+
+                    phrase2: (nested) -> 
+
+                        nested 'nested phrase 1', (end) -> 
+                        nested 'nested phrase 2', (deeper) -> 
+
+                            deeper 'created', uuid: 9999, (end) -> 
+                            deeper 'one',                 (end) ->
+                            deeper 'two',                 (end) ->  
+
+                    (graphA, graphB) -> 
+
+                        set = new ChangeSet graphA, graphB
+
+                        # console.log PARENT: graphA.parent
+                        # console.log LEAVES: graphA.leaves
+
+                        set.AtoB()
+
+                        children = {}
+                        for parent of graphA.children
+                            children[parent] = []
+                            for child in graphA.children[parent]
+                                children[parent].push child
+
+                        children.should.eql 
+
+                                        #
+                                        # preserved child vertex order
+                                        #
+
+                            '0001': [ 1111, 2222 ]
+                            '2222': [ 9999, 3333, 4444 ]
+
+                        should.not.exist children[1111] # no longer a parent
+
+
+ 
+                        done()
+
+
+            it 'updates parents index and preserves vertex order'
             it 'preserves vertex order in leaves array'
             it 'preserves vertex edges'
 
