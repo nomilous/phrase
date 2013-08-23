@@ -558,13 +558,33 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'preserves vertex order (indexes, not literals) after create'
 
-                
+        xcontext 'updates indexes', -> 
 
+            it 'preserves vertex order (indexes, not literals) after create', (done) ->
 
+                Test
 
-            context 'updates indexes', -> 
+                    phrase1: (nested) -> 
+
+                        nested 'nested phrase 1', uuid: 1111, (end) -> 
+                        nested 'nested phrase 2', uuid: 2222, (deeper) ->
+                            deeper 'one', uuid: 3333, (end) ->
+                            deeper 'two', uuid: 4444, (end) ->  
+                        
+
+                    phrase2: (nested) -> 
+
+                        nested 'nested phrase 1', (end) -> 
+                        nested 'nested phrase 2', uuid: 2222, (deeper) ->
+                            deeper 'one', uuid: 3333, (end) ->
+                            deeper 'two', uuid: 4444, (end) ->  
+
+                    (graphA, graphB) -> 
+
+                        set = new ChangeSet graphA, graphB
+                        
+                        done()
 
 
 

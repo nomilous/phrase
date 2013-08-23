@@ -184,9 +184,18 @@ exports.createClass = (root) ->
 
 
             #
-            # TODO: rebuild (or adjust) indexes for new and removed uuids
-            #       preserve created order
+            # rebuild indexes 
+            # ---------------
             #
+            # TODO: This is very inefficient. It rebuilds the entire index according
+            #       to the contents of the new graph, but preserving the uuids from 
+            #       the old graph for updated vertexes.
+            # 
+            #       It would be better (for large graphs), to only modify the indexes
+            #       where necessary.
+            #
+
+            
 
 
             if @changes.updated?
@@ -246,6 +255,8 @@ exports.createClass = (root) ->
                                 for childUUID in @graphA.children[parentUUID]
 
                                     @graphA.vertices[childUUID].hooks[type] = newHook
+
+
 
 
 

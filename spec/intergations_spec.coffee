@@ -35,11 +35,13 @@ describe 'integrations', ->
                     # console.log JSON.stringify data.tokens, null, 2
                     # done()
 
-                    vertex1 = token.graph.vertices[  data.tokens['/Falcon/Generic/system/sensory'].uuid  ]
-                    vertex2 = token.graph.vertices[  data.tokens['/Falcon/Generic/system/flight'].uuid  ]
+                    # vertex1 = token.graph.vertices[  data.tokens['/Falcon/Generic/system/sensory'].uuid  ]
+                    # vertex2 = token.graph.vertices[  data.tokens['/Falcon/Generic/system/flight'].uuid  ]
 
-                    vertex1.hooks.beforeAll.uuid.should.equal vertex2.hooks.beforeAll.uuid
-                    done()
+                    # vertex1.hooks.beforeAll.uuid.should.equal vertex2.hooks.beforeAll.uuid
+                    # done()
+
+
 
 
 
@@ -51,23 +53,21 @@ describe 'integrations', ->
 
                     # console.log token.graph.vertices
 
-                    # token.run( uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a' ).then( 
+                    token.run( uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a' ).then( 
 
-                    #     (result) -> 
-                    #         console.log '\n', 'RESULT', '\n', result
+                        (result) -> 
+                            console.log '\n', 'RESULT', '\n', result
+                            result.job.ultraviolet.should.equal 234
+                            done()
 
-                            
-                    #         result.job.ultraviolet.should.equal 234
-                    #         # done()
+                        (error) -> 
+                            console.log '\n', 'ERROR',  '\n', error
 
-                    #     (error) -> 
-                    #         console.log '\n', 'ERROR',  '\n', error
+                        (update) -> 
+                            # console.log '\n', 'UPDATE', '\n', 
+                            #     update.state || update.event, JSON.stringify update, null, 2
 
-                    #     (update) -> 
-                    #         # console.log '\n', 'UPDATE', '\n', 
-                    #         #     update.state || update.event, JSON.stringify update, null, 2
-
-                    # )
+                    )
 
       
         falcon 'Generic', (system) -> 
@@ -88,7 +88,7 @@ describe 'integrations', ->
 
                         console.log 'left eye'
                         @ultraviolet = 234
-                        setTimeout end, 10
+                        setTimeout end, 100
 
 
                     component 'right eye', (end) ->
@@ -98,7 +98,7 @@ describe 'integrations', ->
                         # 1.should.equal 2
 
                         console.log 'left eye'
-                        setTimeout end, 10
+                        setTimeout end, 100
 
 
 
@@ -113,7 +113,7 @@ describe 'integrations', ->
                     @notice.info( 'inline notification',
 
                         handy: true
-                        waitForNotice:  10
+                        waitForNotice:  100
 
                     ).then -> 
 

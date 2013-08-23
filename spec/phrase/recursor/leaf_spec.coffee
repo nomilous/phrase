@@ -23,7 +23,11 @@ describe 'RecursorLeaf', ->
 
         it 'detects leaf phrases when phrase fn arg1 is in control.leaf', (done) -> 
 
-            phrase = new @Node fn: (slurp) -> 
+            phrase = new @Node 
+                token: {}
+                uuid: '1111'
+                fn: (slurp) -> 
+
             leaf   = RecursorLeaf.create root, control
             leaf.detect phrase, (isLeaf) ->
 
@@ -32,7 +36,10 @@ describe 'RecursorLeaf', ->
 
         it 'detects not leaf when phrase fn arg1 is not in control.leaf', (done) ->
 
-            phrase = new @Node fn: (other) -> 
+            phrase = new @Node 
+                token: {}
+                uuid: '1111'
+                fn: (other) -> 
             leaf   = RecursorLeaf.create root, control
             leaf.detect phrase, (isLeaf) ->
 
@@ -42,7 +49,9 @@ describe 'RecursorLeaf', ->
 
         it 'marks the phrase as a leaf', (done) -> 
 
-            phrase = new @Node fn: (end) -> 
+            phrase = new @Node 
+                token: uuid: '1111'
+                fn: (end) -> 
             leaf   = RecursorLeaf.create root, control
             leaf.detect phrase, (isLeaf) ->
 
@@ -51,7 +60,10 @@ describe 'RecursorLeaf', ->
 
         it 'marks the phrase as not a leaf', (done) -> 
 
-            phrase = new @Node fn: (other) -> 
+            phrase = new @Node 
+                token: {}
+                uuid: '1111'
+                fn: (other) -> 
             leaf   = RecursorLeaf.create root, control
             leaf.detect phrase, (isLeaf) ->
 

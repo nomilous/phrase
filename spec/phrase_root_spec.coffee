@@ -91,24 +91,6 @@ describe 'phrase', ->
 
 
 
-            xit 'does the first walk', (done) -> 
-
-                @token.on 'ready', => 
-
-                    vertex = @token.graph.vertices[ @token.graph.leaves[0] ]
-                    vertex.fn.toString().should.match /NESTED PHRASE FN/
-                    done()
-
-
-                @registrar 'phrase text', (nested) ->  
-
-                    nested 'nested', (end) -> 
-
-                        'NESTED PHRASE FN'
-
-                        end()
-
-
             it 'does not allow concurrent walks', (done) -> 
                 
                 ERROR = undefined
@@ -121,11 +103,9 @@ describe 'phrase', ->
 
                         ERROR = error
 
-
                     nested 'n', (end) ->
 
-                        
-                @token.on 'ready', -> 
+                @token.on 'changed', -> 
 
                     ERROR.should.match /Phrase root registrar cannot perform concurrent walks/
                     done()

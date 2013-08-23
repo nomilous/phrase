@@ -67,13 +67,6 @@ exports.walk = (root, opts, rootString, rootFn) ->
 
                 nestedPhraseFn recursor phraseString, phraseControl
 
-        #
-        # TEMPORARY: access stack as property of injector function
-        #
-
-        Object.defineProperty injectionFn, 'stack', 
-            enumarable: false
-            get: -> stack 
 
         #
         # recursor( phraseString, phraseControl ) 

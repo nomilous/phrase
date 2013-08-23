@@ -51,6 +51,13 @@ exports.create = (root) ->
                 walk:   msg.walk
                 tokens: msg.tokens
 
+            else 
+
+                console.log 'TODO: changed payload'
+                emitter.emit 'changed'
+
+
+
 
         next()
 

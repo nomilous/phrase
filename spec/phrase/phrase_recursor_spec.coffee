@@ -94,12 +94,12 @@ describe 'PhraseRecursor', ->
             root.context.hooks.beforeEach[0].fn()
 
 
-        it 'TEMPORARY provides assess to stack', (done) -> 
+        # it 'TEMPORARY provides assess to stack', (done) -> 
             
-            PhraseRecursor.walk root, opts, 'phrase', (nested) -> 
+        #     PhraseRecursor.walk root, opts, 'phrase', (nested) -> 
 
-                nested.stack.should.equal root.context.stack
-                done()
+        #         nested.stack.should.equal root.context.stack
+        #         done()
 
 
         it 'recurses via the injector', (done) -> 
