@@ -689,7 +689,48 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'updates parents index and preserves vertex order'
+            it 'updates parents index', (done) -> 
+
+                Test
+
+                    phrase1: (nested) -> 
+
+                        nested 'nested phrase 1', uuid: 1111, (deeper) -> 
+
+                            deeper 'deleted',  uuid: 'deleted', (end) ->
+
+                        nested 'nested phrase 2', uuid: 2222, (deeper) ->
+                            deeper 'one', uuid: 3333, (end) ->
+                            deeper 'two', uuid: 4444, (end) ->  
+                        
+
+                    phrase2: (nested) -> 
+
+                        nested 'nested phrase 1', (end) -> 
+                        nested 'nested phrase 2', (deeper) -> 
+
+                            deeper 'created', uuid: 9999, (end) -> 
+                            deeper 'one',                 (end) ->
+                            deeper 'two',                 (end) ->  
+
+                    (graphA, graphB) -> 
+
+                        set = new ChangeSet graphA, graphB
+
+                        # console.log LEAVES: graphA.leaves
+
+                        set.AtoB()
+
+                        graphA.parent.should.eql 
+
+                            '1111': '0001'
+                            '2222': '0001'
+                            '3333': 2222
+                            '4444': 2222
+                            '9999': 2222
+
+                        done()
+
             it 'preserves vertex order in leaves array'
             it 'preserves vertex edges'
 

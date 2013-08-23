@@ -173,6 +173,7 @@ exports.createClass = (root) ->
                     delete @graphA.vertices[uuid]
                     delete @graphA.path2uuid[path]
                     delete @graphA.uuid2path[uuid]
+                    delete @graphA.parent[uuid]
 
 
             if @changes.created?
@@ -200,6 +201,7 @@ exports.createClass = (root) ->
             #
 
             stillParent = {}
+            #stillChild  = {}
             for parentUUID of @graphB.children
                 parent = @graphA.path2uuid[ @graphB.uuid2path[parentUUID] ] || parentUUID
                 @graphA.children[parent] = []
@@ -208,19 +210,26 @@ exports.createClass = (root) ->
                 # and created a new children index with it
                 #
 
-                stillParent[parent] = true unless @graphB.vertices[parentUUID].leaf
+                stillParent[parent] = not @graphB.vertices[parentUUID].leaf
 
                 for childUUID in @graphB.children[parentUUID] 
                     child = @graphA.path2uuid[ @graphB.uuid2path[childUUID] ] || childUUID
                     @graphA.children[parent].push child
+                    @graphA.parent[child] = parent
                     #
                     # translated graphB childUUID to corresponding uuid in graphA
-                    # and pushed it into the new children record
+                    # and ammended parent / children indexes
                     #
+
+                    #stillChild[child] = true
             
             for parentUUID of @graphA.children
                 unless stillParent[parentUUID]
                     delete @graphA.children[parentUUID] 
+
+            # for childUUID of @graphA.parent
+            #     unless stillChild[childUUID]
+            #         delete @graphA.parent[childUUID] 
 
 
 
