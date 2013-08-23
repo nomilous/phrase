@@ -121,9 +121,9 @@ api =
 
 
             leaf     = leaves.shift()
-            path     = graph.tree.leaves[leaf.uuid].path
+            route    = graph.findRoute null, leaf.uuid
             outbound = []
-            inbound  = path.map (uuid) -> 
+            inbound  = route.map (uuid) -> 
 
                 outbound.unshift graph.vertices[uuid]
                 graph.vertices[uuid]

@@ -61,7 +61,7 @@ describe 'integrations', ->
                             done()
 
                         (error) -> 
-                            console.log '\n', 'ERROR',  '\n', error
+                            console.log '\n', 'ERROR',  '\n', error.stack
 
                         (update) -> 
                             # console.log '\n', 'UPDATE', '\n', 
