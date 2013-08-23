@@ -42,13 +42,11 @@ exports.createClass = (root) ->
             # updated or deleted
             #
 
-            
+            for path of runningGraph.path2uuid
 
-            for path of runningGraph.paths
-
-                runningUUID   = runningGraph.paths[path]
+                runningUUID   = runningGraph.path2uuid[path]
                 runningVertex = runningGraph.vertices[runningUUID]
-                newUUID       = newGraph.paths[path]
+                newUUID       = newGraph.path2uuid[path]
 
                 unless newUUID?
 
@@ -131,15 +129,15 @@ exports.createClass = (root) ->
             # created
             #
 
-            for path of newGraph.paths 
+            for path of newGraph.path2uuid 
 
-                unless runningGraph.paths[path]?
+                unless runningGraph.path2uuid[path]?
 
                     #
                     # missing from runningGraph
                     #
 
-                    uuid   = newGraph.paths[path]
+                    uuid   = newGraph.path2uuid[path]
                     vertex = newGraph.vertices[uuid]
 
                     @changes.created ||= {}
@@ -171,8 +169,10 @@ exports.createClass = (root) ->
                     # consider keeping it for BtoA (later)
                     #
 
-                    uuid   = @graphA.paths[path]
+                    uuid   = @graphA.path2uuid[path]
                     delete @graphA.vertices[uuid]
+                    delete @graphA.path2uuid[path]
+                    delete @graphA.uuid2path[uuid]
 
 
             if @changes.created?
@@ -180,8 +180,9 @@ exports.createClass = (root) ->
                 for path of @changes.created
 
                     uuid = @changes.created[path].uuid
-                    @graphA.vertices[uuid] = @changes.created[path]
-
+                    @graphA.vertices[uuid]  = @changes.created[path]
+                    @graphA.path2uuid[path] = @changes.created[path].uuid
+                    @graphA.uuid2path[uuid] = path
 
             #
             # rebuild indexes 
@@ -202,7 +203,7 @@ exports.createClass = (root) ->
 
                 for path of @changes.updated
 
-                    target = @graphA.vertices[ @graphA.paths[path] ]
+                    target = @graphA.vertices[ @graphA.path2uuid[path] ]
                     target.update @changes.updated[path]
 
 
@@ -250,7 +251,7 @@ exports.createClass = (root) ->
                                     timeout: hook.timeout.to
                                     fn:      hook.fn.to
 
-                                parentUUID = @graphA.paths[path]
+                                parentUUID = @graphA.path2uuid[path]
 
                                 for childUUID in @graphA.children[parentUUID]
 

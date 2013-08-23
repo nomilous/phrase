@@ -33,7 +33,7 @@ describe 'PhraseGraphChangeSet', ->
         @graphA     = new @Graph
         @graphB     = new @Graph
 
-    context 'general', ->
+    xcontext 'general', ->
 
         it 'creates a changeSet with uuid', (done) -> 
 
@@ -108,7 +108,7 @@ describe 'PhraseGraphChangeSet', ->
             done()
 
 
-        context 'detecting changes', ->
+        xcontext 'detecting changes', ->
 
             it 'detects renamed branch vertices (token.name/text)'
 
@@ -356,7 +356,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
                     
 
-        context 'applying changes (A-B)', -> 
+        xcontext 'applying changes (A-B)', -> 
 
             it 'applies changes into graphA and preserves vertex uuid', (done) ->
 
@@ -562,15 +562,22 @@ describe 'PhraseGraphChangeSet', ->
             it 'deletes vertices from ex branch (leaf flag becomes true)'
 
 
-        xcontext 'updates indexes', -> 
+        context 'updates indexes', -> 
 
-            it 'preserves vertex order (indexes, not literals) after create', (done) ->
+            it 'ammends path2uuid and uuid2path indexes (not in order)', (done) ->
 
                 Test
 
                     phrase1: (nested) -> 
 
-                        nested 'nested phrase 1', uuid: 1111, (end) -> 
+                        nested 'nested phrase 1', uuid: 1111, (deeper) -> 
+
+                            #
+                            # deletes first vertex in phrase 1
+                            #
+
+                            deeper 'deleted',  uuid: 'deleted', (end) ->
+                                
                         nested 'nested phrase 2', uuid: 2222, (deeper) ->
                             deeper 'one', uuid: 3333, (end) ->
                             deeper 'two', uuid: 4444, (end) ->  
@@ -579,16 +586,58 @@ describe 'PhraseGraphChangeSet', ->
                     phrase2: (nested) -> 
 
                         nested 'nested phrase 1', (end) -> 
-                        nested 'nested phrase 2', uuid: 2222, (deeper) ->
-                            deeper 'one', uuid: 3333, (end) ->
-                            deeper 'two', uuid: 4444, (end) ->  
+                        nested 'nested phrase 2', (deeper) -> 
+
+                            #
+                            # new first vertex in phrase 2
+                            #
+
+                            deeper 'created', uuid: 9999, (end) -> 
+                            deeper 'one',                 (end) ->
+                            deeper 'two',                 (end) ->  
 
                     (graphA, graphB) -> 
 
                         set = new ChangeSet graphA, graphB
+
+                        # console.log path2uuid: graphA.path2uuid
+                        # console.log uuid2path: graphA.uuid2path
+                        # console.log PARENT: graphA.parent
+                        # console.log CHILDS: graphA.children
+                        # console.log LEAVES: graphA.leaves
+
+                        set.AtoB()
+
+                        should.not.exist graphA.path2uuid['/TEST/phrase/nested/nested phrase 1/deeper/deleted']
+                        should.not.exist graphA.uuid2path['deleted']
+
+                        graphA.path2uuid.should.eql 
+
+                            '/TEST/phrase': '0001',
+                            '/TEST/phrase/nested/nested phrase 1': 1111
+                            '/TEST/phrase/nested/nested phrase 2': 2222
+                            '/TEST/phrase/nested/nested phrase 2/deeper/one': 3333
+                            '/TEST/phrase/nested/nested phrase 2/deeper/two': 4444
+
+                            '/TEST/phrase/nested/nested phrase 2/deeper/created': 9999
+
+                        graphA.uuid2path.should.eql 
+
+                            '0001': '/TEST/phrase'
+                            '1111': '/TEST/phrase/nested/nested phrase 1'
+                            '2222': '/TEST/phrase/nested/nested phrase 2'
+                            '3333': '/TEST/phrase/nested/nested phrase 2/deeper/one'
+                            '4444': '/TEST/phrase/nested/nested phrase 2/deeper/two'
+
+                            '9999': '/TEST/phrase/nested/nested phrase 2/deeper/created'                   
                         
                         done()
 
+
+            it 'updates children index and preserves vertex order'
+            it 'updates parents array and preserves vertex order'
+            it 'preserves vertex order in leaves array'
+            it 'preserves vertex edges'
 
 
         context 'applying changes (B-A)', -> 
