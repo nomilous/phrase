@@ -234,39 +234,39 @@ describe 'PhraseGraph', ->
 
 
 
-    context 'register leaf', -> 
+    # context 'register leaf', -> 
 
 
-        it 'is called by the assember at phrase::edge:create', (done) -> 
+    #     it 'is called by the assember at phrase::edge:create', (done) -> 
 
-            graph = new @Graph
+    #         graph = new @Graph
 
-            graph.registerLeaf = -> done()
+    #         graph.registerLeaf = -> done()
 
-            @Graph.assembler
+    #         @Graph.assembler
 
-                context: title: 'phrase::leaf:create' 
-                ->
+    #             context: title: 'phrase::leaf:create' 
+    #             ->
 
 
 
-        it 'stores registered leaves and provides access to the list via tree.leaves', (done) ->
+    #     it 'stores registered leaves and provides access to the list via tree.leaves', (done) ->
 
-            graph = new @Graph
+    #         graph = new @Graph
 
-            graph.registerLeaf 
+    #         graph.registerLeaf 
 
-                uuid: 'UUID3'
-                path: ['UUID1', 'UUID2']
+    #             uuid: 'UUID3'
+    #             path: ['UUID1', 'UUID2']
 
-                -> 
+    #             -> 
 
-            graph.tree.leaves.UUID3.should.eql 
+    #         graph.tree.leaves.UUID3.should.eql 
 
-                uuid: 'UUID3'
-                path: ['UUID1', 'UUID2']
+    #             uuid: 'UUID3'
+    #             path: ['UUID1', 'UUID2']
 
-            done()
+    #         done()
 
 
     context 'leavesOf(uuid)', -> 
@@ -356,54 +356,87 @@ describe 'PhraseGraph', ->
 
     context 'createIndexes', -> 
 
-        xit 'creates paths index and appends it onto phrase::recurse:end for token.ready event', (done) -> 
+        beforeEach -> 
 
-            i = 1
-            Date.now = -> i++
+            @graph = new @Graph
 
-            Phrase = require '../../lib/phrase_root'
+            @graph.registerEdge type: 'tree', vertices: [
+                    { uuid: 'PARENT', token: { name: 'context' }, text: 'the index' }
+                    { uuid: 'CHILD1', token: { name: 'it' }, text: 'has map from path to uuid', leaf: true }
+                ],  ->
+            @graph.registerEdge type: 'tree', vertices: [
+                    { uuid: 'PARENT', token: { name: 'context' }, text: 'the index' }
+                    { uuid: 'CHILD2', token: { name: 'it' }, text: 'has map from uuid to path', leaf: true }
+                ],  ->
 
-            phrase = Phrase.createRoot
-
-                title: 'Test'
-                uuid:  'UUID'
-
-                (token, notice) -> 
-
-                    token.on 'ready', (data) -> 
-
-                        #console.log JSON.stringify data, null, 2
-
-                        data.walk.should.eql 
-
-                            startedAt: 1
-                            first:     true
-                            duration:  1
-
-                        should.exist data.tokens[  "/Test/outer phrase"   ].uuid
-                        should.exist data.tokens[  "/Test/outer phrase/nested/inner phrase 1"   ].uuid
-                        should.exist data.tokens[  "/Test/outer phrase/nested/inner phrase 1/deep1/deeper phrase"   ].uuid
-                        should.exist data.tokens[  "/Test/outer phrase/nested/inner phrase 1/deep1/deeper phrase/deep2/even deeper"   ].uuid
-                        should.exist data.tokens[  "/Test/outer phrase/nested/inner phrase 2"   ].uuid
-
-                        done()
+                    
 
 
-            phrase 'outer phrase', (nested) ->
+        it 'creates index from path to uuid', (done) -> 
 
-                nested 'inner phrase 1', (deep1) -> 
+            @graph.createIndexes {}, =>
 
-                    deep1 'deeper phrase', (deep2) ->
+                @graph.paths.should.eql 
 
-                        deep2 'even deeper', (end) -> 
+                    '/context/the index':                               'PARENT'
+                    '/context/the index/it/has map from path to uuid':  'CHILD1'
+                    '/context/the index/it/has map from uuid to path':  'CHILD2'
 
-                        #
-                        # THING HERE....
-                        #
-                        # nested 'overlapping', (end) ->
-                        # 
+                done()
 
-                nested 'inner phrase 2', (end) -> 
+        it 'creates index from uuid to path', (done) -> 
+
+            @graph.createIndexes {}, =>
+
+                @graph.uuids.should.eql 
+
+                    'PARENT': '/context/the index'
+                    'CHILD1': '/context/the index/it/has map from path to uuid'
+                    'CHILD2': '/context/the index/it/has map from uuid to path'
+
+                done()
+
+        it 'creates index from parent to children', (done) -> 
+
+            @graph.createIndexes {}, =>
+
+                @graph.children['PARENT'].should.eql ['CHILD1', 'CHILD2']
+                done()
+
+
+        it 'creates index from children to parent', (done) -> 
+
+            @graph.createIndexes {}, =>
+
+                @graph.parent.should.eql
+                    CHILD1: 'PARENT'
+                    CHILD2: 'PARENT'
+
+                done()
+
+
+        it 'creates list of leaves', (done) -> 
+
+            @graph.createIndexes {}, =>
+
+                @graph.leaves.should.eql  ['CHILD1', 'CHILD2']
+                done()
+
+
+        it 'appends tokens to message', (done) -> 
+
+            msg = {}
+            @graph.createIndexes msg, =>
+
+                msg.should.eql 
+
+                    tokens: 
+                        '/context/the index': { name: 'context' }
+                        '/context/the index/it/has map from path to uuid': { name: 'it' }
+                        '/context/the index/it/has map from uuid to path': { name: 'it' }
+
+                done()
+
 
 
     context 'change set', ->

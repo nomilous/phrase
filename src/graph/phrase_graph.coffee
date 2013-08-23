@@ -89,7 +89,8 @@ exports.createClass = (root) ->
                 rootVertex: undefined
                 vertices:   {}
                 edges:      {}
-                paths:      {}
+                paths:      {}  # index from paths to uuids
+                uuids:      {}  # index from uuids to paths
 
                 #
                 # tree (as special case graph)
@@ -107,12 +108,12 @@ exports.createClass = (root) ->
                 children:  {}
                 leaves:    []
 
-                #
-                # TEMPORARY (likely) (pending messy, to preserve it beyond update)
-                # Specific list of leaves as accumulated by phrase::leaf:create payloads.
-                # 
+                # #
+                # # TEMPORARY (likely) (pending messy, to preserve it beyond update)
+                # # Specific list of leaves as accumulated by phrase::leaf:create payloads.
+                # # 
 
-                tree: leaves: {}
+                # tree: leaves: {}
 
 
             graphs.list[ localOpts.uuid ] = this
@@ -123,7 +124,7 @@ exports.createClass = (root) ->
             # immutables
             # 
 
-            for property in ['uuid', 'version', 'vertices', 'edges', 'paths', 'parent', 'children', 'leaves', 'tree']
+            for property in ['uuid', 'version', 'vertices', 'edges', 'paths', 'uuids', 'parent', 'children', 'leaves', 'tree']
 
                 do (property) => 
 
@@ -157,8 +158,9 @@ exports.createClass = (root) ->
                 stack.push "/#{  tokenName  }/#{  text  }"
 
                 path = stack.join ''
-                @paths[    path ]  = vertex.uuid
-                msg.tokens[ path ] = vertex.token
+                @paths[     path    ] = vertex.uuid
+                @uuids[ vertex.uuid ] = path
+                msg.tokens[   path  ] = vertex.token
 
                 if @children[ vertex.uuid ]?
 
@@ -249,10 +251,10 @@ exports.createClass = (root) ->
             return found
             
 
-        registerLeaf: (msg, next) -> 
+        # registerLeaf: (msg, next) -> 
 
-            @tree.leaves[msg.uuid] = msg
-            next()
+        #     @tree.leaves[msg.uuid] = msg
+        #     next()
 
 
 
