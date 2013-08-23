@@ -470,7 +470,31 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'deletes vertices (branch)'
+            it 'deletes vertices (branch)', (done) -> 
+
+                Test
+
+                    phrase1: (nested) -> 
+
+                        nested 'nested phrase 1', uuid: 1111, (end) -> 
+                        nested 'nested phrase 2', uuid: 2222, (deeper) ->
+                            deeper 'one', uuid: 3333, (end) ->
+                            deeper 'two', uuid: 4444, (end) ->  
+
+                    phrase2: (nested) -> 
+
+                        nested 'nested phrase 1', (end) -> 
+
+                    (graphA, graphB) -> 
+
+                        set = new ChangeSet graphA, graphB
+                        set.AtoB()
+
+                        should.exist     graphA.vertices[1111]
+                        should.not.exist graphA.vertices[2222]
+                        should.not.exist graphA.vertices[3333]
+                        should.not.exist graphA.vertices[4444]
+                        done()
 
             it 'preserves vertex order (indexes, not literals) after delete'
 
@@ -501,10 +525,42 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'creates vertices (branch)'
+            it 'creates vertices (branch)', (done) -> 
+
+                Test
+
+                    phrase1: (nested) -> 
+
+                        nested 'nested phrase 1', uuid: 1111, (end) -> 
+                        
+
+                    phrase2: (nested) -> 
+
+                        nested 'nested phrase 1', (end) -> 
+                        nested 'nested phrase 2', uuid: 2222, (deeper) ->
+                            deeper 'one', uuid: 3333, (end) ->
+                            deeper 'two', uuid: 4444, (end) ->  
+
+                    (graphA, graphB) -> 
+
+                        set = new ChangeSet graphA, graphB
+                        set.AtoB()
+
+                        should.exist     graphA.vertices[1111]
+                        should.exist     graphA.vertices[2222]
+                        should.exist     graphA.vertices[3333]
+                        should.exist     graphA.vertices[4444]
+
+                        console.log 'ORPHANs...': 
+                            2222: graphA.parent[2222]
+                            3333: graphA.parent[3333]
+                            4444: graphA.parent[4444]
+                        done()
+
 
             it 'preserves vertex order (indexes, not literals) after create'
 
+                
 
 
 
