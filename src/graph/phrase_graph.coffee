@@ -89,8 +89,8 @@ exports.createClass = (root) ->
                 rootVertex: undefined
                 vertices:   {}
                 edges:      {}
-                paths:      {}  # index from paths to uuids
-                uuids:      {}  # index from uuids to paths
+                path2uuid:  {}
+                uuid2path:  {}
 
                 #
                 # tree (as special case graph)
@@ -108,13 +108,6 @@ exports.createClass = (root) ->
                 children:  {}
                 leaves:    []
 
-                # #
-                # # TEMPORARY (likely) (pending messy, to preserve it beyond update)
-                # # Specific list of leaves as accumulated by phrase::leaf:create payloads.
-                # # 
-
-                # tree: leaves: {}
-
 
             graphs.list[ localOpts.uuid ] = this
             graphs.latest = this
@@ -124,7 +117,7 @@ exports.createClass = (root) ->
             # immutables
             # 
 
-            for property in ['uuid', 'version', 'vertices', 'edges', 'paths', 'uuids', 'parent', 'children', 'leaves', 'tree']
+            for property in ['uuid', 'version', 'vertices', 'edges', 'path2uuid', 'uuid2path', 'parent', 'children', 'leaves', 'tree']
 
                 do (property) => 
 
@@ -158,8 +151,8 @@ exports.createClass = (root) ->
                 stack.push "/#{  tokenName  }/#{  text  }"
 
                 path = stack.join ''
-                @paths[     path    ] = vertex.uuid
-                @uuids[ vertex.uuid ] = path
+                @path2uuid[     path    ] = vertex.uuid
+                @uuid2path[ vertex.uuid ] = path
                 msg.tokens[   path  ] = vertex.token
 
                 if @children[ vertex.uuid ]?
@@ -171,6 +164,21 @@ exports.createClass = (root) ->
             recurse @rootVertex
 
             next()
+
+
+        findRoute: (uuidA, uuidB) -> 
+
+            if uuidA?
+
+                throw new Error 'PhraseGraph.route(null, uuidB) only supports tree route calculation from root to uuidB'
+
+            recurse = (uuid, uuids = []) => 
+
+                return uuids unless uuid?
+                uuids.unshift uuid
+                recurse @parent[uuid], uuids
+
+            return recurse uuidB
 
 
         update: -> 
@@ -249,13 +257,6 @@ exports.createClass = (root) ->
 
             @leavesOf child_uuid, found for child_uuid in @children[uuid]
             return found
-            
-
-        # registerLeaf: (msg, next) -> 
-
-        #     @tree.leaves[msg.uuid] = msg
-        #     next()
-
 
 
 

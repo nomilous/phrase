@@ -143,7 +143,7 @@ describe 'RecursorBeforeEach', ->
         ), injectionControl
 
 
-    it 'emits "phrase::edge:create" and "phrase::leaf:create" in sequence into the middleware pipeline', (done) -> 
+    it 'emits "phrase::edge:create" into the middleware pipeline', (done) -> 
 
         #
         # existing stack elements
@@ -178,18 +178,13 @@ describe 'RecursorBeforeEach', ->
         hook = RecursorBeforeEach.create root, parent
         hook (->
 
-            SEQUENCE.should.eql [ 'phrase::edge:create', 'phrase::leaf:create' ]
+            SEQUENCE.should.eql [ 'phrase::edge:create' ]
 
             should.exist event1 = EVENTS['phrase::edge:create']
             event1.type.should.equal 'tree'
             event1.leaf.should.equal true
             event1.vertices[0].text.should.equal 'the parent phrase'
             event1.vertices[1].text.should.equal 'has this child in'
-
-            should.exist event2 = EVENTS['phrase::leaf:create']
-            should.exist event2.uuid
-            event2.path.length.should.equal 3
-            event2.convenience.should.equal '/describe/use case one/context/the parent phrase/it/has this child in'
 
             done()
 

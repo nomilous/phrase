@@ -233,42 +233,6 @@ describe 'PhraseGraph', ->
                 done()
 
 
-
-    # context 'register leaf', -> 
-
-
-    #     it 'is called by the assember at phrase::edge:create', (done) -> 
-
-    #         graph = new @Graph
-
-    #         graph.registerLeaf = -> done()
-
-    #         @Graph.assembler
-
-    #             context: title: 'phrase::leaf:create' 
-    #             ->
-
-
-
-    #     it 'stores registered leaves and provides access to the list via tree.leaves', (done) ->
-
-    #         graph = new @Graph
-
-    #         graph.registerLeaf 
-
-    #             uuid: 'UUID3'
-    #             path: ['UUID1', 'UUID2']
-
-    #             -> 
-
-    #         graph.tree.leaves.UUID3.should.eql 
-
-    #             uuid: 'UUID3'
-    #             path: ['UUID1', 'UUID2']
-
-    #         done()
-
-
     context 'leavesOf(uuid)', -> 
 
         it 'returns the vertex at uuid if it is a leaf', (done) -> 
@@ -376,7 +340,7 @@ describe 'PhraseGraph', ->
 
             @graph.createIndexes {}, =>
 
-                @graph.paths.should.eql 
+                @graph.path2uuid.should.eql 
 
                     '/context/the index':                               'PARENT'
                     '/context/the index/it/has map from path to uuid':  'CHILD1'
@@ -388,7 +352,7 @@ describe 'PhraseGraph', ->
 
             @graph.createIndexes {}, =>
 
-                @graph.uuids.should.eql 
+                @graph.uuid2path.should.eql 
 
                     'PARENT': '/context/the index'
                     'CHILD1': '/context/the index/it/has map from path to uuid'
@@ -435,6 +399,38 @@ describe 'PhraseGraph', ->
                         '/context/the index/it/has map from path to uuid': { name: 'it' }
                         '/context/the index/it/has map from uuid to path': { name: 'it' }
 
+                done()
+
+    context 'findRoute(uuidA, uuidB)', -> 
+
+        #
+        # only tree for now
+        #
+
+        beforeEach -> 
+
+            @graph = new @Graph
+
+            @graph.registerEdge type: 'tree', vertices: [
+                    { uuid: 'PARENT',      token: { name: 'context' }, text: 'the index' }
+                    { uuid: 'CHILD1',      token: { name: 'context' }, text: 'has indexes'}
+                ],  ->
+            @graph.registerEdge type: 'tree', vertices: [
+                    { uuid: 'PARENT',      token: { name: 'context' }, text: 'the index' }
+                    { uuid: 'CHILD2',      token: { name: 'it' }, text: 'has map from uuid to path', leaf: true }
+                ],  ->
+
+            @graph.registerEdge type: 'tree', vertices: [
+                    { uuid: 'CHILD1',      token: { name: 'context' }, text: 'has indexes'}
+                    { uuid: 'GRANDCHILD1', token: { name: 'it' }, text: 'can get route (array of uuids)', leaf: true }
+                ],  ->
+           
+
+        it 'returns array if vertex uuids from start to end (inclusive)', (done) ->
+
+            @graph.createIndexes {}, =>
+
+                @graph.findRoute( null, 'GRANDCHILD1' ).should.eql ['PARENT', 'CHILD1', 'GRANDCHILD1']
                 done()
 
 

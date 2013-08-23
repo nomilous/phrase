@@ -160,8 +160,6 @@ exports.create = (root, parentControl) ->
             # 
             # * emit 'phrase::edge:create' for the graph assembler
             # 
-            # * TEMPORARY emit 'phrase::leaf:create' with uuid path and convenience text path
-            # 
             # * resolve the phraseFn promise so that the recusrion 
             #   control thinks it was run
             # 
@@ -186,15 +184,6 @@ exports.create = (root, parentControl) ->
                         #
 
                         vertices: stack[ -2.. ]
-
-
-                ->  
-
-                    if leaf then notice.event 'phrase::leaf:create',
-
-                        uuid:  phrase.uuid
-                        path:  stack.map( (p) -> p.uuid ) # .filter (uuid) -> uuid != phrase.uuid
-                        convenience: stack.map( (p) -> "/#{ p.token.name }/#{ p.text }" ).join ''
 
             ]
 
