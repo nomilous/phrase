@@ -558,6 +558,9 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
+            it 'creates vertices into ex leaf (leaf flag becomes false)'
+            it 'deletes vertices from ex branch (leaf flag becomes true)'
+
 
         xcontext 'updates indexes', -> 
 
