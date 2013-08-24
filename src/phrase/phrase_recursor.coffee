@@ -94,7 +94,7 @@ exports.walk = (root, opts, rootString, rootFn) ->
                 #       ie. injectionControl.defer (is the 'parent' deferral)
                 # 
                 # * Calling injectionControl.defer.reject( error ) will terminate the
-                #   flow if the injection.
+                #   flow of this injection instance.
                 # 
                 # * BUT!!
                 #
@@ -123,11 +123,11 @@ exports.walk = (root, opts, rootString, rootFn) ->
                                     #   because the de-queue is on nextTick
                                     # 
                                     # * By calling injectionControl.defer.reject() once underway the
-                                    #   entire de-queue sequence will be rejected. 
+                                    #   entire de-queue sequence will be rejected. All remaining calls
+                                    #   to the injection target will go unmade.
                                     # 
-                                    # * By calling injectionControl.defer.resolve() (in onError) the
-                                    #   flow will proceed to the next queued call to the injection
-                                    #   target.
+                                    # * By calling injectionControl.defer.resolve() the flow will 
+                                    #   proceed to the next queued call.
                                     # 
                                     # 
                                     #
