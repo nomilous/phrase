@@ -67,6 +67,8 @@ exports.walk = (root, opts, rootString, rootFn) ->
                     CONTROL: injectionControl
                     ERROR:   error
 
+                console.log error.stack
+
                 #
                 # TODO: send error event via message bus
                 #       --------------------------------

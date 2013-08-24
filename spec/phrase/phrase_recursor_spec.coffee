@@ -38,7 +38,7 @@ describe 'PhraseRecursor', ->
             PhraseRecursorHooks.bind = swap1
 
 
-        it 'creates recursion control hooks with root context and parent control', (done) -> 
+        xit 'creates recursion control hooks with root context and parent control', (done) -> 
 
             PhraseRecursorHooks.bind = (rooot, parent) -> 
 
@@ -49,7 +49,7 @@ describe 'PhraseRecursor', ->
             try PhraseRecursor.walk root, opts
 
 
-        it 'creates root graph only once', (done) -> 
+        xit 'creates root graph only once', (done) -> 
 
             delete root.context.graph
             PhraseRecursor.walk root, opts, 'phrase string', (nest) ->
@@ -61,7 +61,7 @@ describe 'PhraseRecursor', ->
             done()
 
 
-        it 'creates an orphaned graph on subsequent calls', (done) -> 
+        xit 'creates an orphaned graph on subsequent calls', (done) -> 
 
             delete root.context.graph
             PhraseRecursor.walk root, opts, 'phrase string', (nest) ->
@@ -75,7 +75,7 @@ describe 'PhraseRecursor', ->
             done()
 
 
-        it 'assigns root token name and uuid from branch title', (done) -> 
+        xit 'assigns root token name and uuid from branch title', (done) -> 
 
             PhraseRecursorHooks.bind = (rooot, parent) -> 
 
@@ -87,7 +87,12 @@ describe 'PhraseRecursor', ->
             try PhraseRecursor.walk root, opts, 'phrase string', (nest) ->
 
 
-        it 'assigns access to registered phrase hooks', (done) -> 
+        it 'emits "error" onto the root token at invalid phrase', (done) -> 
+
+            PhraseRecursor.walk root, opts, 'phrase string', (nest) ->
+
+
+        xit 'assigns access to registered phrase hooks', (done) -> 
    
             PhraseRecursor.walk root, opts, 'phrase string', (nest) ->
             before each: -> done()
@@ -102,7 +107,7 @@ describe 'PhraseRecursor', ->
         #         done()
 
 
-        it 'recurses via the injector', (done) -> 
+        xit 'recurses via the injector', (done) -> 
 
             CALLS = []
 
