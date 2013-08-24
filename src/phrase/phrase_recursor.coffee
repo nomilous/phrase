@@ -159,7 +159,32 @@ exports.walk = (root, opts, rootString, rootFn) ->
 
             (phraseString, phraseControl, nestedPhraseFn) -> 
 
-                nestedPhraseFn recursor phraseString, phraseControl
+                #
+                # injection target function
+                # -------------------------
+                # 
+                # * It passes a new instance of the recursor as arg1 to the nested phrase function
+                #
+                # * The new injection function is initialized with the phraseText and phraseControl
+                #   options of the nested phrase.
+                # 
+                #   ie. 
+                #         phrase 'phrase text', (arg1)
+                #         
+                #             arg1 'nested phrase test', (...) -> 
+                #             arg1 'another nested phrase test', (...) -> 
+                #             arg1 'these are queueing'
+                #             arg1 'they run on nextTick'
+                #             arg1 """
+                #                   ie. whenever next the flow of execution breaks out
+                #                       and node decides which pending turn to run in
+                #                       the reactor queue
+                #              """
+                # 
+                #
+
+                newInjectionFn = recursor phraseString, phraseControl
+                nestedPhraseFn newInjectionFn
 
 
         #
