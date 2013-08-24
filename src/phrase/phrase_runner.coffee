@@ -5,7 +5,12 @@ error = (code, message) -> Object.defineProperty (new Error message), 'code', va
 
 api = 
     
-    run: (root, opts) -> 
+    run: (root, opts = {}, params = {}) -> 
+
+        #
+        # opts for control
+        # params for job inputs
+        #
 
         {context}       = root
         {graph, notice} = context
@@ -25,35 +30,36 @@ api =
                 return running.reject error 2, "uuid: '#{uuid}' not in local tree"
 
 
-        pipeline([
+            pipeline([
 
-            (     ) -> api.getSteps root, opts, running
-            (steps) -> 
+                (     ) -> api.getSteps root, opts, running
+                (steps) -> 
 
-                #
-                # TODO: - keep track of running jobs
-                #       - configable maximum allowed
-                #       - configable one at a timeness
-                #       - message bus chatter for use
-                #         on a webui dashboard
-                #       - stop making lists...
-                #       - [rubina](http://www.youtube.com/watch?v=a5xzSjgatP8)
-                #
+                    #
+                    # TODO: - keep track of running jobs
+                    #       - configable maximum allowed
+                    #       - configable one at a timeness
+                    #       - message bus chatter for use
+                    #         on a webui dashboard
+                    #       - stop making lists...
+                    #       - [rubina](http://www.youtube.com/watch?v=a5xzSjgatP8)
+                    #
 
-                job = new context.PhraseJob
+                    job = new context.PhraseJob
 
-                    steps: steps
-                    deferral: running
+                        steps: steps
+                        deferral: running
+                        params: params
 
-                job.run()
+                    job.run()
 
-        ]).then( 
+            ]).then( 
 
-            (result) -> running.resolve result
-            (error)  -> running.reject error
-            (update) -> running.notify update
+                (result) -> running.resolve result
+                (error)  -> running.reject error
+                (update) -> running.notify update
 
-        )
+            )
         
         return running.promise
 

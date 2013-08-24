@@ -21,7 +21,7 @@ describe 'integrations', ->
                         subtract = data.tokens[path] if path.match /subtract$/
 
                     
-                    token.run( add ).then (result) ->
+                    token.run( add, input1: 7, input2: 3 ).then (result) ->
 
                         should.exist result.job
                         console.log result

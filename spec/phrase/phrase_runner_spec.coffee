@@ -90,7 +90,7 @@ describe 'PhraseRunner', ->
 
         it 'returns a promise', (done) -> 
 
-            TOKEN.run().then.should.be.an.instanceof Function
+            TOKEN.run(uuid: 0).then.should.be.an.instanceof Function
             done()
 
         it 'reject if no target uuid was supplied', (done) -> 

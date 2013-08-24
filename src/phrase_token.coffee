@@ -40,9 +40,11 @@ exports.create = (root) ->
         #               is assigned to a phrase, run that one.
         #
 
-        [token] = args
+        [token, params] = args
 
-        PhraseRunner.run root, token
+        console.log params
+
+        PhraseRunner.run root, token, params
 
     notice.use (msg, next) -> 
 
