@@ -123,6 +123,10 @@ exports.createClass = (root) ->
 
         constructor: (opts = {}) -> 
 
+            if opts.text.match /\//
+
+                throw new Error "PhraseNode(text,opts,nestedFn) INVALID text: (=#{ opts.text })"
+
             localOpts = 
 
                 #

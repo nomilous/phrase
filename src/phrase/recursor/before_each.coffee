@@ -117,32 +117,42 @@ exports.create = (root, parentControl) ->
 
         #console.log TODO: 'allow no / in phraseString'
 
-        stack.push phrase = new PhraseNode 
+        try 
 
-            text:     phraseText
-            token:    parentControl.phraseToken
-            uuid:     uuid
-            timeout:  phraseControl.timeout
-            hooks: 
-                                        #
-                                        # copying the same instance of the phase hooks 
-                                        # into each nested phase has lead to some 
-                                        # undesired complexity  #GREP3
-                                        #
-                                        # correcting it will affect how the PhraseRunner
-                                        # assembels the step sequence to pass to the
-                                        # PhraseJob, specifically the mechanisms for 
-                                        # not repeating the 'All' hooks.
-                                        #
-                                        
-                beforeAll:  injectionControl.beforeAll
-                beforeEach: injectionControl.beforeEach
-                afterEach:  injectionControl.afterEach
-                afterAll:   injectionControl.afterAll
+            stack.push phrase = new PhraseNode 
 
-            fn:       phraseFn
-            deferral: deferral
-            queue:    injectionControl.queue
+                text:     phraseText
+                token:    parentControl.phraseToken
+                uuid:     uuid
+                timeout:  phraseControl.timeout
+                hooks: 
+                                            #
+                                            # copying the same instance of the phase hooks 
+                                            # into each nested phase has lead to some 
+                                            # undesired complexity  #GREP3
+                                            #
+                                            # correcting it will affect how the PhraseRunner
+                                            # assembels the step sequence to pass to the
+                                            # PhraseJob, specifically the mechanisms for 
+                                            # not repeating the 'All' hooks.
+                                            #
+                                            
+                    beforeAll:  injectionControl.beforeAll
+                    beforeEach: injectionControl.beforeEach
+                    afterEach:  injectionControl.afterEach
+                    afterAll:   injectionControl.afterAll
+
+                fn:       phraseFn
+                deferral: deferral
+                queue:    injectionControl.queue
+
+        catch error
+
+            #
+            # could not create new phrase
+            #
+
+            return done error
 
 
         #
