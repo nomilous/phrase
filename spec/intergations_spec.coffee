@@ -1,7 +1,7 @@
 should         = require 'should'
 PhraseRoot     = require '../lib/phrase_root'
 
-describe 'integrations', -> 
+describe 'PhraseRoot.createRoot(opts, linkFunction)', -> 
 
     before (done) ->
 
@@ -54,6 +54,8 @@ It calls the linkFunction with the PhraseGraph root token
             (@token) => 
 
                 @token.on 'ready', (data) => 
+
+                    # console.log data
 
                     for path of data.tokens
 
