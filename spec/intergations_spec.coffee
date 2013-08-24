@@ -95,11 +95,14 @@ TODO
 
                 #@answer = @input1 + @input2
                 throw new Error 'UnexpectedError caught inline'
+                                #=============================
 
                 """
 
 Leaf Exceptions
 ---------------
+
+Related: 'Token Run Updates' (below)
 
 * This step has now failed, But the token.run() **Has Not Failed**
 
@@ -116,10 +119,6 @@ Leaf Exceptions
           (result) -> # final result from the entire run
           (error)  -> # a catastrophic error terminstes the run
           (update) -> # an event occurs in the run (eg. 'run::step:failed')
-
-                                                            #
-                                                            # see 'Token Run Updates'
-                                                            #
 
      )
 
@@ -193,7 +192,11 @@ TODO
                     #  jobUUID: 'd254b360-0cbf-11e3-823a-01cf205a2ddf',
                     #  progress: { steps: 1, done: 0, failed: 1, skipped: 0 },
                     #  at: 1377350375835,
+                    # 
+                    # 
                     #  error: [Error: UnexpectedError caught inline],
+                    #                 =============================
+                    # 
                     #  step: 
                     #   { set: 1,
                     #     depth: 2,
