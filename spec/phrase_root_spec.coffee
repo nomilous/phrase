@@ -1,5 +1,5 @@
 should         = require 'should'
-PhraseRoot     = require '../lib/phrase_root'
+PhraseRoot     = require('../lib/phrase_root').createClass require 'also'
 PhraseRecursor = require '../lib/phrase/phrase_recursor'
 
 describe 'phrase', -> 
@@ -45,8 +45,9 @@ describe 'phrase', ->
 
                 @registrar = PhraseRoot.createRoot
 
-                    title: 'Phrase Title'
-                    uuid:  '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
+                    title:  'Phrase Title'
+                    uuid:   '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
+                    notice: {}
 
                     (token, notice) =>
 

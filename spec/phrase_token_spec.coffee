@@ -1,5 +1,5 @@
 should       = require 'should'
-PhraseRoot   = require '../lib/phrase_root'
+PhraseRoot   = require('../lib/phrase_root').createClass require 'also'
 PhraseToken  = require '../lib/phrase_token'
 PhraseRunner = require '../lib/phrase/phrase_runner'
 

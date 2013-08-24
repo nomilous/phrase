@@ -1,1 +1,14 @@
-module.exports = require './phrase_root'
+PhraseRoot = require './phrase_root'
+
+require( 'also' ) exports, {}, (core) -> 
+    
+    #
+    # leave room for multiple phrase trees per process
+    # ------------------------------------------------
+    #
+    # * for nez objective
+    # 
+
+    core.root1 = core
+
+    PhraseRoot.createClass core.root1

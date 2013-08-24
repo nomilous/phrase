@@ -5,7 +5,7 @@ PhraseGraph    = require './graph/phrase_graph'
 PhraseRecursor = require './phrase/phrase_recursor'
 PhraseJob      = require './phrase/phrase_job'
 
-require( 'also' ) exports, {}, (root) -> 
+exports.createClass = (root) -> 
 
     #
     # phrase
@@ -15,6 +15,8 @@ require( 'also' ) exports, {}, (root) ->
     #
 
     {context, validate} = root
+
+    root.context = context = {} unless context?
 
 
 
@@ -186,7 +188,7 @@ require( 'also' ) exports, {}, (root) ->
                     # * activate 'causality phase array'
                     #
 
-                    return 
+                    return
 
                     #
                     # the quantum flux has stabalized
@@ -195,7 +197,7 @@ require( 'also' ) exports, {}, (root) ->
                     # * rotate the 'chaos manifold'
                     # 
 
-                    ;
+                    ; 
 
 
                 #
