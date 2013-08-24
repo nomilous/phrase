@@ -112,6 +112,11 @@ exports.createClass = (root) ->
             graphs.list[ localOpts.uuid ] = this
             graphs.latest = this
 
+            order = []
+            historyLength = 2
+            order.push uuid for uuid of graphs.list
+            delete graphs.list[uuid] for uuid in order[ ..( -1 - historyLength) ]
+
 
             #
             # immutables

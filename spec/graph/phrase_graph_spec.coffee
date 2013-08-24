@@ -4,15 +4,6 @@ PhraseGraph = require '../../lib/graph/phrase_graph'
 describe 'PhraseGraph', -> 
 
 
-    context 'collection', -> 
-
-        # 
-        # IMPORTANT
-        # 
-
-        it 'removes old graphs from the collection'
-
-
     root  = undefined
     Graph = undefined
     graph = undefined
@@ -22,6 +13,27 @@ describe 'PhraseGraph', ->
         root = context: notice: use: ->
         Graph = PhraseGraph.createClass root
         graph = new Graph
+
+
+    context 'collection', -> 
+
+            #
+            # historyLength hardcoded to 2
+            #
+
+            it 'removes old graphs from the collection', (done) -> 
+
+                graph1 = new Graph
+                graph2 = new Graph
+                graph3 = new Graph
+
+
+                should.exist     root.context.graphs.list[graph3.uuid]
+                should.exist     root.context.graphs.list[graph2.uuid]
+                should.not.exist root.context.graphs.list[graph1.uuid]
+                done()
+
+           
 
     context 'general', ->
 
@@ -61,7 +73,7 @@ describe 'PhraseGraph', ->
 
             graph.vertices.should.eql {}
             graph.edges.should.eql {}
-            done()
+            done()     
 
 
     context 'assembler middleware', -> 

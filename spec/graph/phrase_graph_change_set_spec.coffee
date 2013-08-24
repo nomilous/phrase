@@ -114,7 +114,7 @@ describe 'PhraseGraphChangeSet', ->
         context 'collection', -> 
 
             #
-            # historyLength hardcoded to 1
+            # historyLength hardcoded to  (for now)
             # 
 
             it 'removes old changesets from the collection', (done) -> 
