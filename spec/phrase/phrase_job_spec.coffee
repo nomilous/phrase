@@ -160,7 +160,7 @@ describe 'PhraseJob', ->
             STEPS = [
 
                 ref: fn: -> 
-                
+
                     @parameter1.should.equal 1
                     done()
 
@@ -174,6 +174,34 @@ describe 'PhraseJob', ->
                     parameter1: 1
 
             job.run()
+
+
+        it 'skips run() if input parameter was reserved property', (done) ->
+
+            STEPS = [
+
+                ref: fn: -> @calculatedByJob = 1
+            ]
+
+            job = new PhraseJob 
+                steps: STEPS
+                deferral: DEFER
+                notice: NOTICE
+                params: 
+                    uuid: 1
+
+            job.run().then (result) -> 
+
+                #
+                # this appears obtuse (not rejecting...)
+                # It still resolves the job, event tho it skipped running it,
+                # the parent deferral will have been rejected already, at 
+                # assignmant of the reserved property in the job constructor
+                #
+
+                should.not.exist result.job.calculatedByJob
+                done()
+
 
         it 'has constant properties', (done) -> 
 

@@ -74,7 +74,21 @@ exports.createClass = (root) ->
                             # 
 
                             opts.deferral.reject new Error "Cannot assign reserved property: #{property}(=#{value})"
-                
+                            localOpts.skipped = true
+
+ 
+            Object.defineProperty this, 'skipped', 
+                enumarable: false
+                get: -> localOpts.skipped || false
+                set: (value) -> 
+
+                    #
+                    # assignable only once
+                    #
+
+                    localOpts.skipped = value unless localOpts.skipped?
+
+
             #
             # job parameters
             #
@@ -84,12 +98,16 @@ exports.createClass = (root) ->
 
         run: ->
 
-
             #
             # a local deferral for the promise of this step run
             #
 
             running = defer()
+
+            if @skipped 
+
+                process.nextTick => running.resolve job: this
+                return running.promise
 
             message = 
 

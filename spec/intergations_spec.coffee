@@ -21,11 +21,19 @@ describe 'integrations', ->
                         subtract = data.tokens[path] if path.match /subtract$/
 
                     
-                    token.run( add, input1: 7, input2: 3 ).then (result) ->
+                    token.run( add, uuid: 7, input2: 3 ).then(
 
-                        should.exist result.job
-                        console.log result
-                        done()
+                        (result) ->
+
+                            should.exist result.job
+                            console.log result
+                            done()
+
+                        (error)  -> 
+
+                            console.log ERROR: error
+
+                    )
 
 
         arithmatic 'operations', (operation) -> 
