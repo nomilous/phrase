@@ -73,6 +73,11 @@ It calls the linkFunction with the PhraseGraph root token
 
                     done()
 
+                @token.on 'error', (error) -> 
+
+                    console.log PHRASE_ERROR: error
+
+
         """
 
 The PhraseFunction

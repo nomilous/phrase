@@ -1,30 +1,38 @@
 should              = require 'should'
 PhraseRecursor      = require '../../lib/phrase/phrase_recursor'
 PhraseRecursorHooks = require '../../lib/phrase/recursor/hooks'
+PhraseNode          = require '../../lib//phrase_node'
 PhraseGraph         = require '../../lib/graph/phrase_graph'
 
 describe 'PhraseRecursor', -> 
 
     context 'create()', -> 
 
-        root  = undefined
-        opts  = undefined
-        swap1 = undefined
+        root   = undefined
+        opts   = undefined
+        swap1  = undefined
+        EVENTS = undefined
+
         asyncInjectionFn = ->
 
 
         beforeEach ->
 
-            swap1 = PhraseRecursorHooks.bind
-
-            root = require 'also'
+            swap1  = PhraseRecursorHooks.bind
+            
+            EVENTS = {}
+            root   = require 'also'
             root.context = 
                 stack:  []
                 notice: 
                     event: -> then: (fn) -> fn()
                     info:  -> then: (fn) -> fn()
                     use:   -> 
+                token: emit: (event, args...) ->
 
+                    EVENTS[event] = args
+
+            root.context.PhraseNode = PhraseNode.createClass root
             root.context.PhraseGraph = PhraseGraph.createClass root
 
             opts = 
@@ -38,7 +46,7 @@ describe 'PhraseRecursor', ->
             PhraseRecursorHooks.bind = swap1
 
 
-        xit 'creates recursion control hooks with root context and parent control', (done) -> 
+        it 'creates recursion control hooks with root context and parent control', (done) -> 
 
             PhraseRecursorHooks.bind = (rooot, parent) -> 
 
@@ -49,7 +57,7 @@ describe 'PhraseRecursor', ->
             try PhraseRecursor.walk root, opts
 
 
-        xit 'creates root graph only once', (done) -> 
+        it 'creates root graph only once', (done) -> 
 
             delete root.context.graph
             PhraseRecursor.walk root, opts, 'phrase string', (nest) ->
@@ -61,7 +69,7 @@ describe 'PhraseRecursor', ->
             done()
 
 
-        xit 'creates an orphaned graph on subsequent calls', (done) -> 
+        it 'creates an orphaned graph on subsequent calls', (done) -> 
 
             delete root.context.graph
             PhraseRecursor.walk root, opts, 'phrase string', (nest) ->
@@ -75,7 +83,7 @@ describe 'PhraseRecursor', ->
             done()
 
 
-        xit 'assigns root token name and uuid from branch title', (done) -> 
+        it 'assigns root token name and uuid from branch title', (done) -> 
 
             PhraseRecursorHooks.bind = (rooot, parent) -> 
 
@@ -87,14 +95,18 @@ describe 'PhraseRecursor', ->
             try PhraseRecursor.walk root, opts, 'phrase string', (nest) ->
 
 
-        it 'emits "error" onto the root token at invalid phrase', (done) -> 
+        it 'emits "error" onto the root token at invalid phrase text', (done) -> 
 
-            PhraseRecursor.walk root, opts, 'phrase string', (nest) ->
+            PhraseRecursor.walk( root, opts, 'phra/se string', (nest) -> ).then( 
 
-                console.log 'nest fn running'
+                ->
+                -> EVENTS.error.should.match /NVALID text/; done()
+                ->
 
+            )
+                
 
-        xit 'assigns access to registered phrase hooks', (done) -> 
+        it 'assigns access to registered phrase hooks', (done) -> 
    
             PhraseRecursor.walk root, opts, 'phrase string', (nest) ->
             before each: -> done()
@@ -109,7 +121,7 @@ describe 'PhraseRecursor', ->
         #         done()
 
 
-        xit 'recurses via the injector', (done) -> 
+        it 'recurses via the injector', (done) -> 
 
             CALLS = []
 

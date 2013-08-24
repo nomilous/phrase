@@ -118,7 +118,7 @@ exports.walk = (root, opts, rootString, rootFn) ->
                 #                   # 
                 #            fn()   # all these calls to fn() are queueing up in the background
                 #                   # ---------------------------------------------------------
-                 #                  # 
+                #                   # 
                                     # * None of them have actually run the injection target function
                                     #   because the de-queue is on nextTick
                                     # 
@@ -129,17 +129,7 @@ exports.walk = (root, opts, rootString, rootFn) ->
                                     # * By calling injectionControl.defer.resolve() the flow will 
                                     #   proceed to the next queued call.
                                     # 
-                                    # 
-                                    #
 
-
-
-                console.log 
-
-                    CONTROL: injectionControl
-                    ERROR:   error
-
-                console.log error.stack
 
                 #
                 # TODO: send error event via message bus
@@ -151,6 +141,8 @@ exports.walk = (root, opts, rootString, rootFn) ->
                 # TODO: send error event via token
                 #       if not ignore
                 # 
+
+                root.context.token.emit 'error', error
                 
                 #
                 # TODO: terminate the recursor if not ignored
