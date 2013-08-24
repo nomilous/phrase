@@ -203,7 +203,11 @@ exports.createClass = (root) ->
                     # 
 
                 (message) -> notice.event 'graph::update:start', message
-                (message) -> ChangeSet.applyChanges message.changes.uuid unless message.skipChange
+                (message) -> 
+
+                    return skipped: true if message.skipChange
+                    ChangeSet.applyChanges message.changes.uuid
+                    
                 (updated) -> notice.event 'graph::update:end', updated
 
             ]
