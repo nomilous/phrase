@@ -3,7 +3,9 @@ PhraseRoot     = require '../lib/phrase_root'
 
 describe 'integrations', -> 
 
-    it """
+    before (done) ->
+
+        """
 
 It provides a rootRegistrar for assembling a PhraseGraph
 --------------------------------------------------------
@@ -41,7 +43,7 @@ It calls the linkFunction with the PhraseGraph root token
         # 
 
 
-    """, (done) -> 
+        """
 
         arithmatic = PhraseRoot.createRoot
 
@@ -49,119 +51,32 @@ It calls the linkFunction with the PhraseGraph root token
             uuid:  '1'
             leaf: ['done']
 
-            (token) -> 
+            (@token) => 
 
-                token.on 'ready', (data) -> 
-
-                    """
-
-The Root Token
---------------
-
-### run()
-
-TODO
-
-
-
-
-                    """
+                @token.on 'ready', (data) => 
 
                     for path of data.tokens
 
-                        add      = data.tokens[path] if path.match /add$/
-                        subtract = data.tokens[path] if path.match /subtract$/
+                        @add      = data.tokens[path] if path.match /add$/
+                        @subtract = data.tokens[path] if path.match /subtract$/
 
-                    
-                    token.run( add, input1: 7, input2: 3 ).then(
+                    done()
 
-                        (result) ->
-
-                            #result.job.answer.should.equal 10
-                            #done()
-
-                        (error)  -> 
-
-                            console.log ERROR: error
-
-                        (update) -> 
-
-                            """
-
-Token Run Updates
------------------
-
-TODO
-
-
-                            """
-
-                            if update.state == 'run::step:failed'
-
-                                #
-                                # 
-                                #
-
-                                # console.log update
-                                
-                                #
-                                #  state: 'run::step:failed',
-                                #  class: 'PhraseJob',
-                                #  jobUUID: 'd254b360-0cbf-11e3-823a-01cf205a2ddf',
-                                #  progress: { steps: 1, done: 0, failed: 1, skipped: 0 },
-                                #  at: 1377350375835,
-                                #  error: [Error: UnexpectedError caught inline],
-                                #  step: 
-                                #   { set: 1,
-                                #     depth: 2,
-                                #     type: 'leaf',
-                                #     ref: 
-                                #      { uuid: [Getter],
-                                #        token: [Getter],
-                                #        text: [Getter],
-                                #        leaf: [Getter/Setter] },
-                                #     fail: true },
-                                #  originator: true }
-                                #
-
-                                ''
-
-                    )
-
-                    token.run( subtract, input1: 100000000000000000000, input2: 1 ).then (result) ->
-
-                            # console.log result
-                            result.job.answer.should.equal 100000000000000000000 
-                                                                    # 
-                                                                    # javascript... :)
-                                                                    #
-                            done()
-
-
-                    #
-                    # add and subtract are also tokens
-                    # --------------------------------
-                    # 
-                    # TODO: make them directly callable 
-                    #     
-                    #       but later... (because a future use case plays that hand very specifically)
-                    #
-
-                    # add( input1: 7, input2: 3 ).then -> 
-
-
-
-        arithmatic 'operations', (operation) -> 
-
-            """
+        """
 
 The PhraseFunction
 ------------------
 
 TODO
 
+        """
 
-            """
+        arithmatic 'operations', (operation) -> 
+
+            operation 'subtract', (done) -> 
+
+                @answer = @input1 - @input2
+                done()
 
             operation 'add', (done) -> 
 
@@ -189,6 +104,10 @@ Leaf Exceptions
           (error)  -> # a catastrophic error terminstes the run
           (update) -> # an event occurs in the run (eg. 'run::step:failed')
 
+                                                            #
+                                                            # see 'Token Run Updates'
+                                                            #
+
      )
 
 * The error was passed into the handlers notifier to allow the token
@@ -205,10 +124,94 @@ Leaf Exceptions
                 #  done new Error 'KnownError via resolver'
                 
 
-            operation 'subtract', (done) -> 
+    it """
 
+The Root Token
+--------------
+
+### run()
+
+TODO
+
+
+    """, (done) -> 
+
+        @token.run( @subtract, input1: 10, input2: 3 ).then(
+
+            (result) ->
+
+                result.job.answer.should.equal 7
                 done()
-                @answer = @input1 - @input2
+
+            (error)  -> 
+            (update) -> 
+
+        )
+
+
+    it  """
+
+Token Run Updates
+-----------------
+
+TODO
+
+
+    """, (done) -> 
+
+
+        @token.run( @add, input1: 7, input2: 3 ).then(
+
+            (result) ->
+            (error)  ->
+            (update) ->
+
+                if update.state == 'run::step:failed'
+
+                    #
+                    # 
+                    #
+
+                    # console.log update
+
+                    #
+                    #  state: 'run::step:failed',
+                    #  class: 'PhraseJob',
+                    #  jobUUID: 'd254b360-0cbf-11e3-823a-01cf205a2ddf',
+                    #  progress: { steps: 1, done: 0, failed: 1, skipped: 0 },
+                    #  at: 1377350375835,
+                    #  error: [Error: UnexpectedError caught inline],
+                    #  step: 
+                    #   { set: 1,
+                    #     depth: 2,
+                    #     type: 'leaf',
+                    #     ref: 
+                    #      { uuid: [Getter],
+                    #        token: [Getter],
+                    #        text: [Getter],
+                    #        leaf: [Getter/Setter] },
+                    #     fail: true },
+                    #  originator: true }
+                    #
+
+                    done()
+
+
+
+        )
+
+        #
+        # add and subtract are also tokens
+        # --------------------------------
+        # 
+        # TODO: make them directly callable 
+        #     
+        #       but later... (because a future use case plays that hand very specifically)
+        #
+
+        # add( input1: 7, input2: 3 ).then -> 
+
+
 
 
     it """
@@ -226,3 +229,4 @@ The RootCache
 -------------
 
     """
+
