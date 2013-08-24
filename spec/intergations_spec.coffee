@@ -5,40 +5,40 @@ describe 'integrations', ->
 
     it """
 
-        It provides a rootRegistrar for assembling a PhraseGraph
-        --------------------------------------------------------
+It provides a rootRegistrar for assembling a PhraseGraph
+--------------------------------------------------------
 
-        * For now the PhraseGraph is a tree (only)
+* For now the PhraseGraph is a tree (only)
 
-            ie. no complex pathways
+    ie. no complex pathways
 
-        * The rootRegistrar is returned by `PhraseRoot.createRoot( opts, linkFunction )`
+* The rootRegistrar is returned by `PhraseRoot.createRoot( opts, linkFunction )`
 
-            ie. `arithmatic` below
+    ie. `arithmatic` below
 
-        * It expects a string and a nested PhraseFunction to be passed
+* It expects a string and a nested PhraseFunction to be passed
 
-            ie. arithmatic 'operations', ( args ) -> 
+    ie. arithmatic 'operations', ( args ) -> 
 
-                #
-                # args?: see 'The PhraseFunction' below TODO
-                #  
+        #
+        # args?: see 'The PhraseFunction' below TODO
+        #  
 
 
-        It calls the linkFunction with the PhraseGraph root token
-        ---------------------------------------------------------
+It calls the linkFunction with the PhraseGraph root token
+---------------------------------------------------------
 
-        * The link function is called when the PhraseGraph is initialized
+* The link function is called when the PhraseGraph is initialized
 
-            ie. At the first call to rootRegistrar  (arithmatic)
+    ie. At the first call to rootRegistrar  (arithmatic)
 
-        * The link function is an event emitter (pubsub)
+* The link function is an event emitter (pubsub)
 
-            ie. token.on 'event', ( payload ) -> 
+    ie. token.on 'event', ( payload ) -> 
 
-                #
-                # event?, payload?: see 'The Root Token'  TODO
-                # 
+        #
+        # event?, payload?: see 'The Root Token'  TODO
+        # 
 
 
     """, (done) -> 
@@ -52,6 +52,18 @@ describe 'integrations', ->
             (token) -> 
 
                 token.on 'ready', (data) -> 
+
+                    """
+
+The Root Token
+--------------
+
+TODO
+
+
+
+
+                    """
 
                     for path of data.tokens
 
@@ -125,16 +137,53 @@ describe 'integrations', ->
 
         arithmatic 'operations', (operation) -> 
 
+            """
+
+The PhraseFunction
+------------------
+
+TODO
+
+
+            """
+
             operation 'add', (done) -> 
 
-                @answer = @input1 + @input2
+                #@answer = @input1 + @input2
+                throw new Error 'UnexpectedError caught inline'
+
+                #
+                # Important
+                # ---------
+                # 
+                # * This step has now failed, But the token.run() **Has Not Failed**
+                # 
+                # * This error was passed into the token.run().then promise handler's
+                #   notifier function (the 3rd function passed to then())
+                #    
+                #      ie. token.run( phraseOrBranchToken ).then(
+                # 
+                #           #
+                #           # these three functions are the promise handler
+                #           #   (see 'when' or 'q', node modules)
+                #           # 
+                # 
+                #           (result) -> # final result from the entire run
+                #           (error)  -> # a catastrophic error terminstes the run
+                #           (update) -> # an event occurs in the run (eg. 'run::step:failed')
+                #
+                #      )
+                # 
+                # * The error was passed into the handlers notifier to allow the token
+                #   run to continue processing the remaining leaves on the phraseBranch
+                #   that was called.
+                # 
+
 
                 #
                 # TODO: KnownError pathway
                 #
-
-                done new Error 'KnownError via resolver'
-                throw new Error 'UnexpectedError caught inline'
+                #  done new Error 'KnownError via resolver'
                 
 
             operation 'subtract', (done) -> 
@@ -145,8 +194,8 @@ describe 'integrations', ->
 
     it """
 
-    The PhraseCache
-    ---------------
+The PhraseCache
+---------------
 
     """
 
@@ -154,7 +203,7 @@ describe 'integrations', ->
 
     it """
 
-    The RootCache
-    -------------
+The RootCache
+-------------
 
     """
