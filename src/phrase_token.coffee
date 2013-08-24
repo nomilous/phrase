@@ -42,8 +42,6 @@ exports.create = (root) ->
 
         [token, params] = args
 
-        console.log params
-
         PhraseRunner.run root, token, params
 
     notice.use (msg, next) -> 

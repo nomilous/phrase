@@ -75,6 +75,12 @@ exports.createClass = (root) ->
 
                             opts.deferral.reject new Error "Cannot assign reserved property: #{property}(=#{value})"
                 
+            #
+            # job parameters
+            #
+
+            if opts.params? then @[param] = opts.params[param] for param of opts.params
+
 
         run: ->
 

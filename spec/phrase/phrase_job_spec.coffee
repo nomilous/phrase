@@ -155,6 +155,25 @@ describe 'PhraseJob', ->
                 job.new_property.should.equal 'CREATED ON JOB INSTANCE'
                 done()
 
+        it 'puts params onto job context', (done) -> 
+
+            STEPS = [
+
+                ref: fn: -> 
+                
+                    @parameter1.should.equal 1
+                    done()
+
+            ]
+
+            job = new PhraseJob 
+                steps: STEPS
+                deferral: DEFER
+                notice: NOTICE
+                params: 
+                    parameter1: 1
+
+            job.run()
 
         it 'has constant properties', (done) -> 
 
