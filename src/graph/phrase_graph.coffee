@@ -195,10 +195,14 @@ exports.createClass = (root) ->
                 (changes) -> notice.event 'graph::compare:end', changes: changes
 
                     #
+                    # * This currently goes on to auto apply the new changes
+                    # * It can be stopped by setting skipChange, (did for testing)
+                    # * But there is currently no way to call to apply changes later
+                    # 
                     # TODO: pend change apply per later instruction
                     # 
 
-                #(message) -> ChangeSet.applyChanges message.changes.uuid
+                (message) -> ChangeSet.applyChanges message.changes.uuid unless message.skipChange
 
             ]
 

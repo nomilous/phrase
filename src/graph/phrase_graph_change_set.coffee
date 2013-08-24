@@ -1,5 +1,4 @@
 {v1}    = require 'node-uuid'
-seq  = 0
 
 exports.createClass = (root) -> 
 
@@ -34,7 +33,7 @@ exports.createClass = (root) ->
         constructor: (@graphA, @graphB) -> 
 
             historyLength     = 1
-            @uuid             = seq++
+            @uuid             = v1()
             @changes          = uuid: @uuid
             changeSets[@uuid] = this
             runningGraph      = @graphA

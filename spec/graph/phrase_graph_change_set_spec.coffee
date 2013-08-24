@@ -37,7 +37,7 @@ describe 'PhraseGraphChangeSet', ->
         @graphA     = new @Graph
         @graphB     = new @Graph
 
-    xcontext 'general', ->
+    context 'general', ->
 
         it 'creates a changeSet with uuid', (done) -> 
 
@@ -100,6 +100,17 @@ describe 'PhraseGraphChangeSet', ->
                 root.context.token       = PhraseToken.create root
                 ChangeSet                = PhraseGraphChangeSet.createClass root
 
+                #
+                # skip the change, so that test can call manually
+                #
+
+                root.context.notice.use (msg, next) -> 
+
+                    return next() unless msg.context.title == 'graph::compare:end'
+                    msg.skipChange = true
+                    next()
+
+
                 PhraseRecursor.walk( root, opts, 'phrase', phrase1 ).then ->
 
                     previousGraph = root.context.graphs.latest
@@ -151,7 +162,7 @@ describe 'PhraseGraphChangeSet', ->
                             done()
 
 
-        xcontext 'detecting changes', ->
+        context 'detecting changes', ->
 
             it 'detects removed leaves', (done) -> 
 
@@ -389,7 +400,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
                     
 
-        xcontext 'applying changes (A-B)', -> 
+        context 'applying changes (A-B)', -> 
 
             it 'applies changes into graphA and preserves vertex uuid', (done) ->
 
@@ -629,7 +640,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-        xcontext 'updates indexes', -> 
+        context 'updates indexes', -> 
 
             it 'ammends path2uuid and uuid2path indexes (not in order)', (done) ->
 

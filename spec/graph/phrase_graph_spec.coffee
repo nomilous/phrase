@@ -15,6 +15,17 @@ describe 'PhraseGraph', ->
         graph = new Graph
 
 
+    context 'change set', ->
+
+        #
+        # later
+        # 
+
+        it 'it not applied immediately'
+        it 'informs messenger of readyness to swich version'
+        it 'enables rolling version forward and back'
+
+
     context 'collection', -> 
 
             #
@@ -27,13 +38,11 @@ describe 'PhraseGraph', ->
                 graph2 = new Graph
                 graph3 = new Graph
 
-
                 should.exist     root.context.graphs.list[graph3.uuid]
                 should.exist     root.context.graphs.list[graph2.uuid]
                 should.not.exist root.context.graphs.list[graph1.uuid]
                 done()
 
-           
 
     context 'general', ->
 
@@ -444,21 +453,4 @@ describe 'PhraseGraph', ->
 
                 @graph.findRoute( null, 'GRANDCHILD1' ).should.eql ['PARENT', 'CHILD1', 'GRANDCHILD1']
                 done()
-
-
-
-    context 'change set', ->
-
-        it 'is created ahead of graph update'
-
-        it 'informs messenger of readyness to swich version'
-
-        it 'enables rolling version forward and back'
-
-                
-    context 'update()', -> 
-
-        it 'creates a new ChangeSet', -> 
-
-        
 
