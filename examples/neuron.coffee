@@ -1,33 +1,6 @@
-### Version 0.0.3 (prerelease, unstable)
+#!/usr/bin/env coffee
 
-`npm install phrase`
-
-phrase
-======
-
-What is it?
------------
-
-* A describer.
-* A repeatable context assembler.
-* ...
-* A metadata enriched scope heap.
-* **An Open Closure**.
-
-
-Usage
------
-
-`rootRegistrar = require('phrase').createRoot( opts, linkFunction )`
-
-```coffee
-
-#
-# fantasy example
-# ---------------
-#
-
-neuron = require( 'phrase' ).createRoot
+neuron = require( '../lib/phrase' ).createRoot
 
     #
     # opts.
@@ -120,9 +93,3 @@ neuron 'soma', (dendrite) ->
 #       Possibly creating neural networks is entrely beside the point. 
 #       At this time.
 # 
-
-    
-```
-
-* [closer the purpose of 'phrase'](https://github.com/nomilous/phrase/blob/master/spec/intergations_spec.coffee)
-
