@@ -3,7 +3,45 @@ PhraseRoot     = require '../lib/phrase_root'
 
 describe 'integrations', -> 
 
-    it 'updatability', (done) -> 
+    it """
+
+        It provides a rootRegistrar for assembling a PhraseGraph
+        --------------------------------------------------------
+
+        * For now the PhraseGraph is a tree (only)
+
+            ie. no complex pathways
+
+        * The rootRegistrar is returned by `PhraseRoot.createRoot( opts, linkFunction )`
+
+            ie. `arithmatic` below
+
+        * It expects a string and a nested PhraseFunction to be passed
+
+            ie. arithmatic 'operations', ( args ) -> 
+
+                #
+                # args?: see 'The PhraseFunction' below TODO
+                #  
+
+
+        It calls the linkFunction with the PhraseGraph root token
+        ---------------------------------------------------------
+
+        * The link function is called when the PhraseGraph is initialized
+
+            ie. At the first call to rootRegistrar  (arithmatic)
+
+        * The link function is an event emitter (pubsub)
+
+            ie. token.on 'event', ( payload ) -> 
+
+                #
+                # event?, payload?: see 'The Root Token'  TODO
+                # 
+
+
+    """, (done) -> 
 
         arithmatic = PhraseRoot.createRoot
 
@@ -11,7 +49,7 @@ describe 'integrations', ->
             uuid:  '1'
             leaf: ['done']
 
-            (token, notice) -> 
+            (token) -> 
 
                 token.on 'ready', (data) -> 
 
@@ -64,7 +102,7 @@ describe 'integrations', ->
 
                     token.run( subtract, input1: 100000000000000000000, input2: 1 ).then (result) ->
 
-                            console.log result
+                            # console.log result
                             result.job.answer.should.equal 100000000000000000000 
                                                                     # 
                                                                     # javascript... :)
@@ -103,3 +141,20 @@ describe 'integrations', ->
 
                 done()
                 @answer = @input1 - @input2
+
+
+    it """
+
+    The PhraseCache
+    ---------------
+
+    """
+
+
+
+    it """
+
+    The RootCache
+    -------------
+
+    """
