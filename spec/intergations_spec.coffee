@@ -47,9 +47,20 @@ It calls the linkFunction with the PhraseGraph root token
 
         arithmatic = PhraseRoot.createRoot
 
+            #
+            # opts... 
+            #
+
             title: 'Arithmatic'
             uuid:  '1'
             leaf: ['done']
+            #
+            # this is an implicit hash (coffee!) passed to createRoot(opts, linkFunction)
+            #
+
+            #
+            # linkFunction
+            #
 
             (@token) => 
 
