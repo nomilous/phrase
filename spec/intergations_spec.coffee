@@ -21,12 +21,11 @@ describe 'integrations', ->
                         subtract = data.tokens[path] if path.match /subtract$/
 
                     
-                    token.run( add, uuid: 7, input2: 3 ).then(
+                    token.run( add, input1: 7, input2: 3 ).then(
 
                         (result) ->
 
-                            should.exist result.job
-                            console.log result
+                            result.job.answer.should.equal 10
                             done()
 
                         (error)  -> 
@@ -40,6 +39,7 @@ describe 'integrations', ->
 
             operation 'add', (done) -> 
 
+                @answer = @input1 + @input2
                 done()
 
             operation 'subtract', (done) -> 
