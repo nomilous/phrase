@@ -176,9 +176,12 @@ exports.walk = (root, opts, rootString, rootFn) ->
                 #             arg1 'these are queueing'
                 #             arg1 'they run on nextTick'
                 #             arg1 """
-                #                   ie. whenever next the flow of execution breaks out
-                #                       and node decides which pending turn to run in
-                #                       the reactor queue
+                #                   ie. * whenever next the flow of execution breaks out
+                #                         and node decides which pending turn to run in
+                #                         the reactor queue
+                #             
+                #                       * nextTicks are pushed to the front of the reactor 
+                #                         queue
                 #              """
                 # 
                 #
