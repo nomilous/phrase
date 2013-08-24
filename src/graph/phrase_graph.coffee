@@ -202,7 +202,9 @@ exports.createClass = (root) ->
                     # TODO: pend change apply per later instruction
                     # 
 
+                (message) -> notice.event 'graph::update:start', message
                 (message) -> ChangeSet.applyChanges message.changes.uuid unless message.skipChange
+                (updated) -> notice.event 'graph::update:end', updated
 
             ]
 

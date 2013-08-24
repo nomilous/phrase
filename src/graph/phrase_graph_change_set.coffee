@@ -1,4 +1,5 @@
 {v1}    = require 'node-uuid'
+{defer} = require 'when'
 
 exports.createClass = (root) -> 
 
@@ -332,8 +333,14 @@ exports.createClass = (root) ->
         enumarable: true
         get: -> (uuid, direction) -> 
 
-            changeSet = changeSets[uuid]
-            unless changeSet?
-                throw new Error 'PhraseGraphChangeSet.applyChanges() has no set with uuid: ' + uuid
-            changeSet[ direction || 'AtoB' ]()
+            doing = defer()
+            process.nextTick ->
+                return doing.reject new Error( 
+
+                    'PhraseGraphChangeSet.applyChanges() has no set with uuid: ' + uuid
+
+                ) unless changeSets[uuid]?
+                doing.resolve changeSets[uuid][ direction || 'AtoB' ]()
+
+            doing.promise
 

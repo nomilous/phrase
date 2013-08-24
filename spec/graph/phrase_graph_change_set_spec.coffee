@@ -124,10 +124,6 @@ describe 'PhraseGraphChangeSet', ->
 
         context 'collection', -> 
 
-            #
-            # historyLength hardcoded to  (for now)
-            # 
-
             it 'removes old changesets from the collection', (done) -> 
 
                 Test
@@ -153,13 +149,30 @@ describe 'PhraseGraphChangeSet', ->
 
                         set6 = new ChangeSet graphA, graphB
 
-                        try ChangeSet.applyChanges set5.uuid, 'AtoB'
-                        catch error
+                        ChangeSet.applyChanges( set5.uuid, 'AtoB' ).then(
 
-                            error.should.match /has no set with uuid/
+                                                #
+                                                # set5 was removed when set6 was created:
+                                                # (historyLength hardcoded to 1 for now)
+                                                # 
 
-                            ChangeSet.applyChanges set6.uuid, 'AtoB'
-                            done()
+                            (result) ->
+                            (error) -> 
+                                error.should.match /has no set with uuid/
+
+                                #
+                                # set6 should still be in there
+                                #
+
+                                ChangeSet.applyChanges( set6.uuid, 'AtoB' ).then (result) -> 
+
+                                    #
+                                    # resolved ok
+                                    # 
+
+                                    done()
+
+                        )
 
 
         context 'detecting changes', ->
