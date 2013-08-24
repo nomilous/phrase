@@ -33,7 +33,7 @@ describe 'PhraseGraphChangeSet', ->
         @graphA     = new @Graph
         @graphB     = new @Graph
 
-    context 'general', ->
+    xcontext 'general', ->
 
         it 'creates a changeSet with uuid', (done) -> 
 
@@ -108,7 +108,7 @@ describe 'PhraseGraphChangeSet', ->
             done()
 
 
-        context 'detecting changes', ->
+        xcontext 'detecting changes', ->
 
             it 'detects renamed branch vertices (token.name/text)'
 
@@ -358,7 +358,7 @@ describe 'PhraseGraphChangeSet', ->
 
         context 'applying changes (A-B)', -> 
 
-            it 'applies changes into graphA and preserves vertex uuid', (done) ->
+            xit 'applies changes into graphA and preserves vertex uuid', (done) ->
 
                 Test
 
@@ -382,7 +382,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'applies hook changes to all affected vertexes', (done) -> 
+            xit 'applies hook changes to all affected vertexes', (done) -> 
 
                 Test
 
@@ -411,7 +411,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
                 
-            it 'created hooks are assigned uuid, timeout, fn and copied into all children', (done) -> 
+            xit 'created hooks are assigned uuid, timeout, fn and copied into all children', (done) -> 
 
                 Test
 
@@ -441,7 +441,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'deletes vertices (leaf)', (done) -> 
+            xit 'deletes vertices (leaf)', (done) -> 
 
 
                 Test
@@ -470,7 +470,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'deletes vertices (branch)', (done) -> 
+            xit 'deletes vertices (branch)', (done) -> 
 
                 Test
 
@@ -497,10 +497,8 @@ describe 'PhraseGraphChangeSet', ->
                         should.not.exist graphA.vertices[4444]
                         done()
 
-            it 'preserves vertex order (indexes, not literals) after delete'
 
-
-            it 'creates vertices (leaf)', (done) -> 
+            xit 'creates vertices (leaf)', (done) -> 
 
                 Test
 
@@ -524,7 +522,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'creates vertices (branch)', (done) -> 
+            xit 'creates vertices (branch)', (done) -> 
 
                 Test
 
@@ -552,11 +550,53 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'creates vertices into ex leaf (leaf flag becomes false)'
-            it 'deletes vertices from ex branch (leaf flag becomes true)'
+            it 'creates vertices into ex leaf (leaf flag becomes false)', (done) -> 
+
+                Test
+
+                    phrase1: (nested) -> 
+
+                        nested 'nested phrase 1', uuid: 1111, (end) -> 
 
 
-        context 'updates indexes', -> 
+                    phrase2: (nested) -> 
+
+                        nested 'nested phrase 1', (deeper) ->
+                            deeper 'one', uuid: 2222, (end) ->
+                            deeper 'two', uuid: 3333, (end) ->  
+
+                    (graphA, graphB) -> 
+
+                        set = new ChangeSet graphA, graphB
+                        set.AtoB()
+                        graphA.vertices[1111].leaf.should.equal false
+                        done()
+
+
+            it 'deletes vertices from ex branch (leaf flag becomes true)', (done) -> 
+
+                Test
+
+                    phrase1: (nested) -> 
+
+                        nested 'nested phrase 1', uuid: 1111, (end) -> 
+                            deeper 'one', uuid: 2222, (end) ->
+                            deeper 'two', uuid: 3333, (end) ->  
+
+
+                    phrase2: (nested) -> 
+
+                        nested 'nested phrase 1', (end) ->
+
+                    (graphA, graphB) -> 
+
+                        set = new ChangeSet graphA, graphB
+                        set.AtoB()
+                        graphA.vertices[1111].leaf.should.equal true
+                        done()
+
+
+        xcontext 'updates indexes', -> 
 
             it 'ammends path2uuid and uuid2path indexes (not in order)', (done) ->
 
@@ -796,7 +836,7 @@ describe 'PhraseGraphChangeSet', ->
             # later...
             #
 
-            it 'can undo the  changes applies in A-B'
+            it 'can do the changes in reverse'
 
 
 

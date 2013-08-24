@@ -191,7 +191,7 @@ exports.createClass = (root) ->
                     return target.update changes if target? and target isnt this
 
 
-                    for thing in ['fn', 'timeout']
+                    for thing in ['fn', 'timeout', 'leaf']
 
                         if changes[thing]? 
 
@@ -245,9 +245,12 @@ exports.createClass = (root) ->
 
             changes = undefined
 
-            for property in ['fn', 'timeout']
+            for property in ['fn', 'timeout', 'leaf']
 
-                if @[property].toString() != vertex[property].toString()
+                from = try @[property].toString()
+                to   = try vertex[property].toString()
+
+                if from != to
                     
                     changes ||= 
                         target: this

@@ -66,6 +66,13 @@ exports.createClass = (root) ->
 
                 if changes = runningVertex.getChanges newVertex
 
+                    if changes.leaf?
+
+                        @changes.updated ||= {}
+                        @changes.updated[path] ||= {}
+                        @changes.updated[path].leaf = changes.leaf
+
+
                     if changes.fn?
 
                         if runningVertex.leaf # and newVertex.leaf

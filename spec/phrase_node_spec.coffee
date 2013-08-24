@@ -153,6 +153,29 @@ describe 'PhraseNode', ->
 
             done()
 
+        it 'detects changes to leaf flag', (done) -> 
+
+            node1 = new @Node
+
+                uuid:      'UUID1'
+                token:     name: 'it'
+                text:      'is a leaf phrase'
+                timeout:   2000
+                leaf:      true
+                fn: ->
+
+            node2 = new @Node
+
+                uuid:      'UUID1'
+                token:     name: 'it'
+                text:      'is not a leaf'
+                timeout:   2000
+                leaf:      false
+                fn: ->
+
+            node1.getChanges( node2 ).leaf.should.eql from: true, to: false
+            done() 
+
 
         it 'returns undefined if no changes', (done) -> 
 
