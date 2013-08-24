@@ -262,11 +262,6 @@ exports.createClass = (root) ->
                 @graphA.leaves.push @graphA.path2uuid[ @graphB.uuid2path[leaf] ] || leaf
 
 
-                    
-
-            
-
-
             if @changes.updated?
 
                 for path of @changes.updated
