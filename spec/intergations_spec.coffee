@@ -53,7 +53,6 @@ It calls the linkFunction with the PhraseGraph root token
 
             title: 'Arithmatic'
             uuid:  '1'
-            leaf: ['done']
             #
             # this is an implicit hash (coffee!) passed to createRoot(opts, linkFunction)
             #
@@ -85,12 +84,12 @@ TODO
 
         arithmatic 'operations', (operation) -> 
 
-            operation 'subtract', (done) -> 
+            operation 'subtract', (end) -> 
 
                 @answer = @input1 - @input2
-                done()
+                end()
 
-            operation 'add', (done) -> 
+            operation 'add', (end) -> 
 
                 #@answer = @input1 + @input2
                 throw new Error 'UnexpectedError caught inline'
@@ -132,7 +131,7 @@ Related: 'Token Run Updates' (below)
                 #
                 # TODO: KnownError pathway
                 #
-                #  done new Error 'KnownError via resolver'
+                #  end new Error 'KnownError via resolver'
                 
 
     it """
