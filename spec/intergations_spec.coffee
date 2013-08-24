@@ -58,20 +58,19 @@ describe 'integrations', ->
                                 #  originator: true }
                                 #
 
+                                ''
+
                     )
 
-                    token.run( add, input1: 7, input2: 3 ).then(
+                    token.run( subtract, input1: 100000000000000000000, input2: 1 ).then (result) ->
 
-                        (result) ->
-
-                            result.job.answer.should.equal 10
+                            console.log result
+                            result.job.answer.should.equal 100000000000000000000 
+                                                                    # 
+                                                                    # javascript... :)
+                                                                    #
                             done()
 
-                        (error)  -> 
-
-                            console.log ERROR: error
-
-                    )
 
                     #
                     # add and subtract are also tokens
