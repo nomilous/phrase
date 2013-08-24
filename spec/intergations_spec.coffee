@@ -58,6 +58,8 @@ It calls the linkFunction with the PhraseGraph root token
 The Root Token
 --------------
 
+### run()
+
 TODO
 
 
@@ -84,7 +86,21 @@ TODO
 
                         (update) -> 
 
+                            """
+
+Token Run Updates
+-----------------
+
+TODO
+
+
+                            """
+
                             if update.state == 'run::step:failed'
+
+                                #
+                                # 
+                                #
 
                                 # console.log update
                                 
@@ -152,32 +168,35 @@ TODO
                 #@answer = @input1 + @input2
                 throw new Error 'UnexpectedError caught inline'
 
-                #
-                # Important
-                # ---------
-                # 
-                # * This step has now failed, But the token.run() **Has Not Failed**
-                # 
-                # * This error was passed into the token.run().then promise handler's
-                #   notifier function (the 3rd function passed to then())
-                #    
-                #      ie. token.run( phraseOrBranchToken ).then(
-                # 
-                #           #
-                #           # these three functions are the promise handler
-                #           #   (see 'when' or 'q', node modules)
-                #           # 
-                # 
-                #           (result) -> # final result from the entire run
-                #           (error)  -> # a catastrophic error terminstes the run
-                #           (update) -> # an event occurs in the run (eg. 'run::step:failed')
-                #
-                #      )
-                # 
-                # * The error was passed into the handlers notifier to allow the token
-                #   run to continue processing the remaining leaves on the phraseBranch
-                #   that was called.
-                # 
+                """
+
+Leaf Exceptions
+---------------
+
+* This step has now failed, But the token.run() **Has Not Failed**
+
+* This error was passed into the token.run().then promise handler's
+  notifier function (the 3rd function passed to then())
+   
+     ie. token.run( phraseOrBranchToken ).then(
+
+          #
+          # these three functions are the promise handler
+          #   (see 'when' or 'q', node modules)
+          # 
+
+          (result) -> # final result from the entire run
+          (error)  -> # a catastrophic error terminstes the run
+          (update) -> # an event occurs in the run (eg. 'run::step:failed')
+
+     )
+
+* The error was passed into the handlers notifier to allow the token
+  run to continue processing the remaining leaves on the phraseBranch
+  that was called.
+
+
+                """
 
 
                 #
