@@ -34,7 +34,7 @@ It calls the linkFunction with the PhraseGraph root token
 
     ie. At the first call to rootRegistrar  (arithmatic)
 
-* The link function is an event emitter (pubsub)
+* The token passed to the link function is an event emitter (pubsub)
 
     ie. token.on 'event', ( payload ) -> 
 
@@ -61,7 +61,6 @@ It calls the linkFunction with the PhraseGraph root token
             #
             # linkFunction
             #
-
             (@token) => 
 
                 @token.on 'ready', (data) => 
