@@ -9,14 +9,18 @@ also                 = require 'also'
 
 describe 'PhraseGraphChangeSet', -> 
 
-    context 'collection', -> 
 
-        # 
-        # IMPORTANT
-        # 
 
-        it 'removes old changesets from the collection'
+    it 'can do the changes in reverse'
 
+    it 'detects renamed branch vertices (token.name/text)'
+
+                #
+                # instead of reporting deleted and created for all nested vertices
+                # with the resulting new path.
+                # 
+                # later...
+                #
 
 
     beforeEach -> 
@@ -107,18 +111,47 @@ describe 'PhraseGraphChangeSet', ->
 
             done()
 
+        context 'collection', -> 
+
+            #
+            # historyLength hardcoded to 1
+            # 
+
+            it 'removes old changesets from the collection', (done) -> 
+
+                Test
+
+                    phrase1: (nested) -> 
+                        nested 'nested phrase 1', (end) -> 
+                            end()
+                        nested 'deletes this', (end) -> 
+                            end()
+
+                    phrase2: (nested) -> 
+                        nested 'nested phrase 1', (end) -> 
+                            end()
+
+
+                    (graphA, graphB) -> 
+
+                        set1 = new ChangeSet graphA, graphB
+                        set2 = new ChangeSet graphA, graphB
+                        set3 = new ChangeSet graphA, graphB
+                        set4 = new ChangeSet graphA, graphB
+                        set5 = new ChangeSet graphA, graphB
+
+                        set6 = new ChangeSet graphA, graphB
+
+                        try ChangeSet.applyChanges set5.uuid, 'AtoB'
+                        catch error
+
+                            error.should.match /has no set with uuid/
+
+                            ChangeSet.applyChanges set6.uuid, 'AtoB'
+                            done()
+
 
         xcontext 'detecting changes', ->
-
-            it 'detects renamed branch vertices (token.name/text)'
-
-                #
-                # instead of reporting deleted and created for all nested vertices
-                # with the resulting new path.
-                # 
-                # later...
-                #
-
 
             it 'detects removed leaves', (done) -> 
 
@@ -356,9 +389,9 @@ describe 'PhraseGraphChangeSet', ->
                         done()
                     
 
-        context 'applying changes (A-B)', -> 
+        xcontext 'applying changes (A-B)', -> 
 
-            xit 'applies changes into graphA and preserves vertex uuid', (done) ->
+            it 'applies changes into graphA and preserves vertex uuid', (done) ->
 
                 Test
 
@@ -382,7 +415,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            xit 'applies hook changes to all affected vertexes', (done) -> 
+            it 'applies hook changes to all affected vertexes', (done) -> 
 
                 Test
 
@@ -411,7 +444,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
                 
-            xit 'created hooks are assigned uuid, timeout, fn and copied into all children', (done) -> 
+            it 'created hooks are assigned uuid, timeout, fn and copied into all children', (done) -> 
 
                 Test
 
@@ -441,7 +474,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            xit 'deletes vertices (leaf)', (done) -> 
+            it 'deletes vertices (leaf)', (done) -> 
 
 
                 Test
@@ -470,7 +503,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            xit 'deletes vertices (branch)', (done) -> 
+            it 'deletes vertices (branch)', (done) -> 
 
                 Test
 
@@ -498,7 +531,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            xit 'creates vertices (leaf)', (done) -> 
+            it 'creates vertices (leaf)', (done) -> 
 
                 Test
 
@@ -522,7 +555,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            xit 'creates vertices (branch)', (done) -> 
+            it 'creates vertices (branch)', (done) -> 
 
                 Test
 
@@ -827,17 +860,5 @@ describe 'PhraseGraphChangeSet', ->
 
                         
                         done()
-
-
-
-        context 'applying changes (B-A)', -> 
-
-            #
-            # later...
-            #
-
-            it 'can do the changes in reverse'
-
-
 
 

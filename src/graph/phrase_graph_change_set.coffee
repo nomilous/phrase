@@ -1,4 +1,5 @@
 {v1}    = require 'node-uuid'
+seq  = 0
 
 exports.createClass = (root) -> 
 
@@ -32,12 +33,17 @@ exports.createClass = (root) ->
 
         constructor: (@graphA, @graphB) -> 
 
-            @uuid             = v1()
+            historyLength     = 1
+            @uuid             = seq++
             @changes          = uuid: @uuid
             changeSets[@uuid] = this
             runningGraph      = @graphA
             newGraph          = @graphB
-            
+
+            order = []
+            order.push uuid for uuid of changeSets
+            delete changeSets[uuid] for uuid in order[ ..( -1 - historyLength) ]
+
             #
             # updated or deleted
             #
@@ -328,5 +334,7 @@ exports.createClass = (root) ->
         get: -> (uuid, direction) -> 
 
             changeSet = changeSets[uuid]
+            unless changeSet?
+                throw new Error 'PhraseGraphChangeSet.applyChanges() has no set with uuid: ' + uuid
             changeSet[ direction || 'AtoB' ]()
 
