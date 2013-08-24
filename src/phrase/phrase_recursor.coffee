@@ -55,12 +55,32 @@ exports.walk = (root, opts, rootString, rootFn) ->
 
         injectionFn = inject.async
 
-
             parallel:   false
             beforeAll:  recursionControl.beforeAll
             beforeEach: recursionControl.beforeEach
             afterEach:  recursionControl.afterEach
             afterAll:   recursionControl.afterAll
+            onError:    (done, injectionControl, error) -> 
+
+                console.log 
+
+                    CONTROL: injectionControl
+                    ERROR:   error
+
+                #
+                # TODO: send error event via message bus
+                #       --------------------------------
+                #       * async, await ignore flag
+                #
+
+                #
+                # TODO: send error event via token
+                #       if not ignore
+                # 
+                
+                #
+                # TODO: terminate the recursor if not ignored
+                #
 
 
             (phraseString, phraseControl, nestedPhraseFn) -> 

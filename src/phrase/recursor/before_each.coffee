@@ -152,7 +152,7 @@ exports.create = (root, parentControl) ->
             # could not create new phrase
             #
 
-            return done error
+            done error
 
 
         #

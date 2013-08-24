@@ -100,7 +100,7 @@ describe 'RecursorBeforeEach', ->
         ), injectionControl
 
 
-    it 'hands error into injection resolver if phraseText contains /', (done) -> 
+    it 'hands error into injectionControl deferral if phraseText contains /', (done) -> 
 
         root.context.stack.push parent = new root.context.PhraseNode
 
@@ -108,11 +108,11 @@ describe 'RecursorBeforeEach', ->
             text: 'the parent phrase'
             fn: ->
 
-        injectionControl.args = [ 'does not allow / in phraseText', { uuid: 'UUID' }, (end) -> ]
         parent.phraseToken = name: 'it'
         hook = RecursorBeforeEach.create root, parent
+        injectionControl.args = [ 'does not allow / in phraseText', { uuid: 'UUID' }, (end) -> ]
 
-        hook ( (result) -> 
+        hook ( (result) ->
 
             result.should.be.an.instanceof Error
             result.should.match /INVALID text/

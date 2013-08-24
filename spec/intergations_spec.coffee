@@ -82,7 +82,7 @@ TODO
 
         """
 
-        arithmatic 'operations', (operation) -> 
+        arithmatic 'ope/rations', (operation) -> 
 
             operation 'subtract', (end) -> 
 
