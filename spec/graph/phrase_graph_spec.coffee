@@ -18,7 +18,7 @@ describe 'PhraseGraph', ->
     context 'collection', -> 
 
             #
-            # historyLength hardcoded to 2
+            # historyLength hardcoded to 2 for now
             #
 
             it 'removes old graphs from the collection', (done) -> 
