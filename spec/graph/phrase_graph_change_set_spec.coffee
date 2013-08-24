@@ -33,7 +33,7 @@ describe 'PhraseGraphChangeSet', ->
         @graphA     = new @Graph
         @graphB     = new @Graph
 
-    xcontext 'general', ->
+    context 'general', ->
 
         it 'creates a changeSet with uuid', (done) -> 
 
@@ -108,7 +108,7 @@ describe 'PhraseGraphChangeSet', ->
             done()
 
 
-        xcontext 'detecting changes', ->
+        context 'detecting changes', ->
 
             it 'detects renamed branch vertices (token.name/text)'
 
@@ -356,7 +356,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
                     
 
-        xcontext 'applying changes (A-B)', -> 
+        context 'applying changes (A-B)', -> 
 
             it 'applies changes into graphA and preserves vertex uuid', (done) ->
 
@@ -488,6 +488,7 @@ describe 'PhraseGraphChangeSet', ->
                     (graphA, graphB) -> 
 
                         set = new ChangeSet graphA, graphB
+
                         set.AtoB()
 
                         should.exist     graphA.vertices[1111]
@@ -519,8 +520,6 @@ describe 'PhraseGraphChangeSet', ->
                         set = new ChangeSet graphA, graphB
                         set.AtoB()
                         graphA.vertices[1111].fn().should.equal 1
-
-                        console.log 'ORPHAN...': graphA.parent[2222]
                         graphA.vertices[2222].fn().should.equal 2
                         done()
 
@@ -550,11 +549,6 @@ describe 'PhraseGraphChangeSet', ->
                         should.exist     graphA.vertices[2222]
                         should.exist     graphA.vertices[3333]
                         should.exist     graphA.vertices[4444]
-
-                        console.log 'ORPHANs...': 
-                            2222: graphA.parent[2222]
-                            3333: graphA.parent[3333]
-                            4444: graphA.parent[4444]
                         done()
 
 
@@ -564,7 +558,7 @@ describe 'PhraseGraphChangeSet', ->
 
         context 'updates indexes', -> 
 
-            xit 'ammends path2uuid and uuid2path indexes (not in order)', (done) ->
+            it 'ammends path2uuid and uuid2path indexes (not in order)', (done) ->
 
                 Test
 
@@ -599,13 +593,6 @@ describe 'PhraseGraphChangeSet', ->
                     (graphA, graphB) -> 
 
                         set = new ChangeSet graphA, graphB
-
-                        # console.log path2uuid: graphA.path2uuid
-                        # console.log uuid2path: graphA.uuid2path
-                        # console.log PARENT: graphA.parent
-                        # console.log CHILDS: graphA.children
-                        # console.log LEAVES: graphA.leaves
-
                         set.AtoB()
 
                         should.not.exist graphA.path2uuid['/TEST/phrase/nested/nested phrase 1/deeper/deleted']
@@ -661,10 +648,6 @@ describe 'PhraseGraphChangeSet', ->
                     (graphA, graphB) -> 
 
                         set = new ChangeSet graphA, graphB
-
-                        # console.log PARENT: graphA.parent
-                        # console.log LEAVES: graphA.leaves
-
                         set.AtoB()
 
                         children = {}
@@ -716,9 +699,6 @@ describe 'PhraseGraphChangeSet', ->
                     (graphA, graphB) -> 
 
                         set = new ChangeSet graphA, graphB
-
-                        # console.log LEAVES: graphA.leaves
-
                         set.AtoB()
 
                         graphA.parent.should.eql 
@@ -731,8 +711,83 @@ describe 'PhraseGraphChangeSet', ->
 
                         done()
 
-            it 'preserves vertex order in leaves array'
-            it 'preserves vertex edges'
+            it 'preserves vertex order in leaves array', (done) ->
+
+                Test
+
+                    phrase1: (nested) -> 
+
+                        nested 'nested phrase 1', uuid: 1111, (deeper) -> 
+
+                            deeper 'deleted',  uuid: 'deleted', (end) ->
+
+                        nested 'nested phrase 2', uuid: 2222, (deeper) ->
+                            deeper 'one', uuid: 3333, (end) ->
+                            deeper 'two', uuid: 4444, (end) ->  
+                        
+
+                    phrase2: (nested) -> 
+
+                        nested 'nested phrase 1', (end) -> 
+                        nested 'nested phrase 2', (deeper) -> 
+
+                            deeper 'created', uuid: 9999, (end) -> 
+                            deeper 'one',                 (end) ->
+                            deeper 'two',                 (end) ->  
+
+                    (graphA, graphB) -> 
+
+                        set = new ChangeSet graphA, graphB
+                        set.AtoB()
+
+                        graphA.leaves.should.eql [ 1111, 9999, 3333, 4444 ]
+                        done()
+
+
+            it 'preserves vertex edges', (done) -> 
+
+                Test
+
+                    phrase1: (nested) -> 
+
+                        nested 'nested phrase 1', uuid: 1111, (deeper) -> 
+
+                            deeper 'deleted', uuid: 'deleted', (end) ->
+                            deeper 'kept',    uuid: 'kept', (end) ->
+
+                        nested 'nested phrase 2', uuid: 2222, (deeper) ->
+                            deeper 'one', uuid: 3333, (end) ->
+                            deeper 'two', uuid: 4444, (end) ->  
+                        
+
+                    phrase2: (nested) -> 
+
+                        nested 'nested phrase 1', (deeper) -> 
+                            deeper 'kept',    uuid: 'kept', (end) ->
+
+                        nested 'nested phrase 2', (deeper) -> 
+
+                            deeper 'created', uuid: 9999, (end) -> 
+                            deeper 'one',                 (end) ->
+                            deeper 'two',                 (end) ->  
+
+                    (graphA, graphB) -> 
+
+                        set = new ChangeSet graphA, graphB
+                        set.AtoB()
+                        graphA.edges.should.eql 
+
+                            '1111': [ { to: '0001' }, { to: 'kept' }                           ]
+                            '2222': [ { to: '0001' }, { to: 3333 }, { to: 4444 }, { to: 9999 } ]
+                            '3333': [ { to: 2222 }                                             ]
+                            '4444': [ { to: 2222 }                                             ]
+                            '9999': [ { to: 2222 }                                             ]
+                            '0001': [ { to: 1111 }, { to: 2222 }                               ]
+                            kept:   [ { to: 1111 }                                             ]
+
+                        
+                        done()
+
 
 
         context 'applying changes (B-A)', -> 

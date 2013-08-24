@@ -169,11 +169,18 @@ exports.createClass = (root) ->
                     # consider keeping it for BtoA (later)
                     #
 
-                    uuid   = @graphA.path2uuid[path]
-                    delete @graphA.vertices[uuid]
+                    uuid = @graphA.path2uuid[path]
                     delete @graphA.path2uuid[path]
                     delete @graphA.uuid2path[uuid]
+
+                    try 
+                        parent = @graphA.parent[uuid]
+                        @graphA.edges[parent] = @graphA.edges[parent].filter (edge) -> edge.to != uuid
+
+                    delete @graphA.edges[uuid]
                     delete @graphA.parent[uuid]
+                    delete @graphA.children[uuid]
+                    delete @graphA.vertices[uuid]
 
 
             if @changes.created?
@@ -184,6 +191,16 @@ exports.createClass = (root) ->
                     @graphA.vertices[uuid]  = @changes.created[path]
                     @graphA.path2uuid[path] = @changes.created[path].uuid
                     @graphA.uuid2path[uuid] = path
+
+                    parentB = @graphB.parent[uuid]
+                    parent  = @graphA.path2uuid[ @graphB.uuid2path[ parentB ] ]
+                    @graphA.edges[uuid]    = [to: parent]
+                    @graphA.edges[parent] ||= []
+                    @graphA.edges[parent].push to: uuid
+                                            #
+                                            # not preserving order in edge array 
+                                            #
+
 
             #
             # rebuild indexes 
@@ -216,21 +233,20 @@ exports.createClass = (root) ->
                     child = @graphA.path2uuid[ @graphB.uuid2path[childUUID] ] || childUUID
                     @graphA.children[parent].push child
                     @graphA.parent[child] = parent
+
                     #
                     # translated graphB childUUID to corresponding uuid in graphA
                     # and ammended parent / children indexes
                     #
-
-                    #stillChild[child] = true
             
             for parentUUID of @graphA.children
                 unless stillParent[parentUUID]
-                    delete @graphA.children[parentUUID] 
+                    delete @graphA.children[parentUUID]
 
-            # for childUUID of @graphA.parent
-            #     unless stillChild[childUUID]
-            #         delete @graphA.parent[childUUID] 
 
+            @graphA.leaves.length = 0
+            for leaf in @graphB.leaves
+                @graphA.leaves.push @graphA.path2uuid[ @graphB.uuid2path[leaf] ] || leaf
 
 
                     
