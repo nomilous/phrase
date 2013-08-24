@@ -54,8 +54,11 @@ task 'dev', 'Run dev/spec', ->
     watchSrcDir()
 
 
-task 'spec', 'Run all tests', -> 
-    build -> runSpec './spec', ->
+# task 'spec', 'Run all tests', -> 
+#     build -> runSpec './spec', ->
+# 
+# or not.
+# 
 
 
 task 'build', 'Build', ->

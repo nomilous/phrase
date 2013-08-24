@@ -87,12 +87,23 @@ TODO
 
         """
 
-        arithmatic 'ope/rations', (operation) -> 
+        arithmatic 'operations', (operation) -> 
 
             operation 'subtract', (end) -> 
 
                 @answer = @input1 - @input2
                 end()
+
+
+            operation 'just checking', (nested) -> 
+
+                nested 'invalid / phrase text', (end) -> 
+
+                nested 'still running', (nest) -> 
+
+                    console.log still_running: true
+
+                    nest 'deeper', (end) -> 
 
             operation 'add', (end) -> 
 
