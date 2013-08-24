@@ -33,14 +33,16 @@ exports.create = (root) ->
 
 
 
-    emitter.run = (opts = {}) -> 
+    emitter.run = (args...) -> 
 
         #
         # TODO: (later) opts.uuid becomes optional, this (token)
         #               is assigned to a phrase, run that one.
         #
 
-        PhraseRunner.run root, opts
+        [token] = args
+
+        PhraseRunner.run root, token
 
     notice.use (msg, next) -> 
 

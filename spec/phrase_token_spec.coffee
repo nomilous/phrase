@@ -38,7 +38,7 @@ describe 'PhraseToken', ->
 
         it 'returns a promise', (done) -> 
 
-            TOKEN.run().then.should.be.an.instanceof Function
+            TOKEN.run({}).then.should.be.an.instanceof Function
             done()
 
         it 'calls the phrase runner', (done) -> 
