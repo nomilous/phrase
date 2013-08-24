@@ -190,6 +190,13 @@ exports.createClass = (root) ->
 
             return pipeline [
 
+                #
+                # WARNING - The event sequence / the event names will very likely 
+                #           change when this update pipeline is expanded to support 
+                #           scrolling the running graph (root.context.graph) forward 
+                #           and backward through versions. 
+                #
+
                 (       ) -> notice.event 'graph::compare:start'
                 (       ) -> new ChangeSet( context.graph, context.graphs.latest ).changes
                 (changes) -> notice.event 'graph::compare:end', changes: changes
@@ -207,7 +214,7 @@ exports.createClass = (root) ->
 
                     return skipped: true if message.skipChange
                     ChangeSet.applyChanges message.changes.uuid
-                    
+
                 (updated) -> notice.event 'graph::update:end', updated
 
             ]
