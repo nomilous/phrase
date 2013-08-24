@@ -179,10 +179,9 @@ TODO
             (update) ->
 
                 if update.state == 'run::step:failed'
-
-                    #
-                    # 
-                    #
+                            #
+                            # TODO: rename to event
+                            #
 
                     # console.log update
 
@@ -246,3 +245,20 @@ The RootCache
 
     """
 
+
+
+    it """
+
+The PhraseMetrics
+-----------------
+
+    """
+
+
+
+    it """
+
+The RootMetrics
+---------------
+
+    """
