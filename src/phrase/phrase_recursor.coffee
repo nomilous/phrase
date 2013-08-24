@@ -62,6 +62,78 @@ exports.walk = (root, opts, rootString, rootFn) ->
             afterAll:   recursionControl.afterAll
             onError:    (done, injectionControl, error) -> 
 
+                #
+                # when using also.inject.async 
+                # ----------------------------
+                # 
+                # * Each of the hooks and the injection target function receive as 
+                #   first arg a customised resolver.
+                # 
+                #       eg: beforeAll: (done) -> done()
+                # 
+                # * Upon calling done with an Error instance the 'flow of execution'
+                #   is passed into the errorHandler (this function)
+                # 
+                # * This error handler is also asynchronous. In other words the 'flow
+                #   of execution' on the injection remains suspended until this 
+                #   errorHandler calls done()
+                # 
+                # * So if a before all hook in the injection sequence calls done with
+                #   an error, the flow will not proceed to the before each hook waiting
+                #   behind it.
+                # 
+                # * Calling done in this error handler releases the flow and effectively
+                #   ignores the error. 
+                # 
+                # * OR
+                # 
+                # * Included as arg2 to to this handler is the injectionControl object
+                #   with access to the 'parent' deferral that is doing the holding of 
+                #   the flow. 
+                # 
+                #       ie. injectionControl.defer (is the 'parent' deferral)
+                # 
+                # * Calling injectionControl.defer.reject( error ) will terminate the
+                #   flow if the injection.
+                # 
+                # * BUT!!
+                #
+                # * It will also not proceed to any subsequent injections waiting in 
+                #   the queue.
+                # 
+                #       ie. 
+                #            fn = also.inject.async
+                #                parallel: false  # causes the queueing
+                #                beforeAll: (done) -> done()
+                #                onError: (done, injectionControl, error) -> 
+                #                (done) -> 
+                #                   #
+                #                   # injection target function
+                #                   # 
+                #                   done new Error 'Moo'
+                # 
+                #            fn()   # first call to the injection target is queued via the injector
+                #            fn()   # ...second into queue
+                #            fn()   # ...3rd
+                #                   # 
+                #            fn()   # all these calls to fn() are queueing up in the background
+                #                   # ---------------------------------------------------------
+                 #                  # 
+                                    # * None of them have actually run the injection target function
+                                    #   because the de-queue is on nextTick
+                                    # 
+                                    # * By calling injectionControl.defer.reject() once underway the
+                                    #   entire de-queue sequence will be rejected. 
+                                    # 
+                                    # * By calling injectionControl.defer.resolve() (in onError) the
+                                    #   flow will proceed to the next queued call to the injection
+                                    #   target.
+                                    # 
+                                    # 
+                                    #
+
+
+
                 console.log 
 
                     CONTROL: injectionControl

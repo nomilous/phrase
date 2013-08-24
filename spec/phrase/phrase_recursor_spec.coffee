@@ -91,6 +91,8 @@ describe 'PhraseRecursor', ->
 
             PhraseRecursor.walk root, opts, 'phrase string', (nest) ->
 
+                console.log 'nest fn running'
+
 
         xit 'assigns access to registered phrase hooks', (done) -> 
    
