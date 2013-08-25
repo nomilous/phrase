@@ -1,4 +1,3 @@
-PhraseLeaf = require './leaf'
 sequence   = require 'when/sequence'
 
 #
@@ -10,7 +9,7 @@ exports.create = (root, parentControl) ->
     {context, util}  = root
     {stack, notice, PhraseNode} = context
 
-    phraseLeaf = PhraseLeaf.create root, parentControl
+    #phraseLeaf = PhraseLeaf.create root, parentControl
 
     (done, injectionControl) -> 
 
@@ -159,7 +158,7 @@ exports.create = (root, parentControl) ->
         # is this phrase a leaf
         #
 
-        phraseLeaf.detect phrase, (leaf) -> 
+        parentControl.detectLeaf phrase, (leaf) -> 
 
             #
             # when this phrase is a leaf

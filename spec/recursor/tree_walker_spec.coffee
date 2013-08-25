@@ -1,8 +1,8 @@
-should       = require 'should'
-TreeWalker   = require '../../lib/recursor/tree_walker'
-ControlHooks = require '../../lib/recursor/control/hooks'
-PhraseNode   = require '../../lib/phrase_node'
-PhraseGraph  = require '../../lib/graph/phrase_graph'
+should          = require 'should'
+TreeWalker      = require '../../lib/recursor/tree_walker'
+RecursorControl = require '../../lib/recursor/control'
+PhraseNode      = require '../../lib/phrase_node'
+PhraseGraph     = require '../../lib/graph/phrase_graph'
 
 describe 'TreeWalker', -> 
 
@@ -18,7 +18,7 @@ describe 'TreeWalker', ->
 
         beforeEach ->
 
-            swap1  = ControlHooks.bind
+            swap1  = RecursorControl.bindControl
             
             EVENTS = {}
             root   = require 'also'
@@ -43,12 +43,12 @@ describe 'TreeWalker', ->
 
         afterEach -> 
 
-            ControlHooks.bind = swap1
+            RecursorControl.bindControl = swap1
 
 
         it 'creates recursion control hooks with root context and parent control', (done) -> 
 
-            ControlHooks.bind = (rooot, parent) -> 
+            RecursorControl.bindControl = (rooot, parent) -> 
 
                 rooot.should.equal root
                 done()
@@ -85,7 +85,7 @@ describe 'TreeWalker', ->
 
         it 'assigns root token name and uuid from branch title', (done) -> 
 
-            ControlHooks.bind = (rooot, parent) -> 
+            RecursorControl.bindControl = (rooot, parent) -> 
 
                 parent.phraseToken.name.should.equal 'Title'
                 parent.phraseToken.uuid.should.equal '00000'

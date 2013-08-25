@@ -1,6 +1,5 @@
 should             = require 'should'
 RecursorBeforeEach = require '../../../lib/recursor/control/before_each'
-PhraseLeaf         = require '../../../lib/recursor/control/leaf'
 PhraseNode         = require '../../../lib/phrase_node'
 
 describe 'RecursorBeforeEach', -> 
@@ -30,15 +29,9 @@ describe 'RecursorBeforeEach', ->
             defer: resolve: ->
             args: ['phrase text', {}, (nested) -> ]
 
-        parent = phraseToken: name: 'it'
-
-        PhraseLeaf_swap = PhraseLeaf.create
-        PhraseLeaf.create = -> detect: (phrase, isLeaf) -> isLeaf true 
-
-    afterEach: -> 
-
-        PhraseLeaf.create = PhraseLeaf_swap
-
+        parent = 
+            phraseToken: name: 'it'
+            detectLeaf: (phrase, isLeaf) -> isLeaf true 
 
     it 'extracts the injection deferral', (done) -> 
         
@@ -63,7 +56,6 @@ describe 'RecursorBeforeEach', ->
         phraseHookFn = ->
 
         injectionControl.args = [ 'phrase text', { key: 'VALUE' }, nestedPhraseFn ]
-        PhraseLeaf.create = -> detect: (phrase, isLeaf) -> isLeaf true
         parent.phraseToken = name: 'it', uuid: 'uuid'
         injectionControl.beforeEach = phraseHookFn
         
@@ -91,7 +83,6 @@ describe 'RecursorBeforeEach', ->
 
             root.context.stack[0].text.should.equal 'phrase text'
             root.context.stack[0].uuid.should.equal 'uuid'  # only in case of root phrase
-            #root.context.stack[0].control.key.should.equal 'VALUE'
             root.context.stack[0].fn.should.equal nestedPhraseFn
             root.context.stack[0].token.name.should.equal 'it'
             root.context.stack[0].hooks.beforeEach.should.equal phraseHookFn
@@ -102,7 +93,7 @@ describe 'RecursorBeforeEach', ->
 
     it 'hands error into injectionControl deferral if phraseText contains /', (done) -> 
 
-        root.context.stack.push parent = new root.context.PhraseNode
+        root.context.stack.push new root.context.PhraseNode
 
             token: name: 'context'
             text: 'the parent phrase'
@@ -123,7 +114,7 @@ describe 'RecursorBeforeEach', ->
 
     it 'can assign uuid from phraseControl for non root phrases', (done) -> 
 
-        root.context.stack.push parent = new root.context.PhraseNode
+        root.context.stack.push new root.context.PhraseNode
 
             token: name: 'context'
             text: 'the parent phrase'
@@ -144,7 +135,6 @@ describe 'RecursorBeforeEach', ->
     it 'does not assign uuid from parent phraseToken if not root phrase', (done) -> 
 
         injectionControl.args = [ 'phrase text', { key: 'VALUE' }, -> ]
-        PhraseLeaf.create = -> detect: (phrase, isLeaf) -> isLeaf true
         parent.phraseToken = name: 'it', uuid: 'UUID'
         root.context.stack[0] = new root.context.PhraseNode
 
@@ -170,13 +160,13 @@ describe 'RecursorBeforeEach', ->
         # existing stack elements
         #
 
-        root.context.stack.push parent = new root.context.PhraseNode
+        root.context.stack.push new root.context.PhraseNode
 
             token: name: 'describe'
             text: 'use case one'
             fn: ->
 
-        root.context.stack.push parent = new root.context.PhraseNode
+        root.context.stack.push new root.context.PhraseNode
 
             token: name: 'context'
             text: 'the parent phrase'
@@ -187,7 +177,6 @@ describe 'RecursorBeforeEach', ->
         #
         parent.phraseToken = name: 'it'
         injectionControl.args      = [ 'has this child in', {}, -> ]
-        PhraseLeaf.create = -> detect: (phrase, isLeaf) -> isLeaf true 
         SEQUENCE = []
         EVENTS = {}
         root.context.notice.event = (event, payload) -> 
@@ -231,7 +220,8 @@ describe 'RecursorBeforeEach', ->
 
         nestedPhraseFn = -> 
         injectionControl.args = [ 'phrase text', { key: 'VALUE' }, nestedPhraseFn ]
-        PhraseLeaf.create = -> detect: (phrase) -> 
+
+        parent.detectLeaf = (phrase, isLeaf) ->
 
             phrase.fn.should.equal nestedPhraseFn
             done()
@@ -243,7 +233,7 @@ describe 'RecursorBeforeEach', ->
     it 'ensures injection function as lastarg is at arg3 if phrase is not a leaf', (done) -> 
 
         nestedPhraseFn = -> 
-        PhraseLeaf.create = -> detect: (phrase, isLeaf) -> isLeaf false
+        parent.detectLeaf = (phrase, isLeaf) -> isLeaf false
 
         hook = RecursorBeforeEach.create root, parent
 
@@ -269,10 +259,7 @@ describe 'RecursorBeforeEach', ->
     it 'replaces injection function with noop if phrase is a leaf', (done) -> 
 
         nestedPhraseFn = -> 'not noop'
-        PhraseLeaf.create = -> detect: (phrase, isLeaf) -> isLeaf true
-
         hook = RecursorBeforeEach.create root, parent
-
         injectionControl.args = [ 'phrase text', { phrase: 'control' }, nestedPhraseFn ]
         hook (-> 
 

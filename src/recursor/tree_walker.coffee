@@ -1,5 +1,5 @@
-ControlHooks = require '../recursor/control/hooks' 
-PhraseHooks  = require '../phrase/phrase_hooks'
+Control     = require '../recursor/control' 
+PhraseHooks = require '../phrase/phrase_hooks'
 
 #
 # TreeWalker
@@ -49,7 +49,7 @@ exports.walk = (root, opts, rootString, rootFn) ->
 
     recursor = (parentPhraseString, parentPhraseControl) -> 
 
-        recursionControl = ControlHooks.bind root, parentPhraseControl
+        recursionControl = Control.bindControl root, parentPhraseControl
 
         #
         # recurse via async injector
