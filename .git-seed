@@ -8,14 +8,6 @@
       "remote.origin.url": "git@github.com:nomilous/phrase.git",
       "HEAD": "refs/heads/develop",
       "version": "ROOT_REPO_REF"
-    },
-    {
-      "root": false,
-      "workDir": "./node_modules/also",
-      "packageManager": "npm",
-      "remote.origin.url": "git@github.com:nomilous/also.git",
-      "HEAD": "refs/heads/develop",
-      "version": "0ac2b25f4a46c0faf988b1b4e5aca259beba7326"
     }
   ]
 }
