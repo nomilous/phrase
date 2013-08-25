@@ -111,9 +111,7 @@ neuron 'soma', (dendrite) ->
 
             do (i) -> 
 
-                receptorName = "#{  i  }"
-
-                input receptorName, (synapse) -> 
+                input "#{  i  }", (synapse) -> 
 
                     #
                     # from this point onward: things become largely theoretical...
@@ -138,7 +136,7 @@ neuron 'soma', (dendrite) ->
                             # controller has located ideal free::axon
                             #
 
-                            require('notice').connect receptorName, 
+                            require('notice').connect "#{  i  }", 
 
                                 connect: address
                                 
