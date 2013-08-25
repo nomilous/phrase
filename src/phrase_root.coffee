@@ -1,9 +1,9 @@
-Notice         = require 'notice'
-RootToken      = require './token/root_token'
-PhraseNode     = require './phrase_node'
-PhraseGraph    = require './graph/phrase_graph'
-PhraseRecursor = require './phrase/phrase_recursor'
-PhraseJob      = require './phrase/phrase_job'
+Notice      = require 'notice'
+RootToken   = require './token/root_token'
+PhraseNode  = require './phrase_node'
+PhraseGraph = require './graph/phrase_graph'
+TreeWalker  = require './recursor/tree_walker'
+PhraseJob   = require './phrase/phrase_job'
 
 exports.createClass = (root) -> 
 
@@ -122,7 +122,7 @@ exports.createClass = (root) ->
                     # * Houses the set of vertexes and edges that define the phrase tree
                     # * Assembled (via message bus) by the 'first walk' of the phrase recursor
                     # * This is the PhraseGraph definition (class)
-                    # * Instance is managed in PhraseRecursor
+                    # * Instance is managed in TreeWalker
                     # 
 
                     context.PhraseGraph = PhraseGraph.createClass root
@@ -166,7 +166,7 @@ exports.createClass = (root) ->
                     # * Start 'first walk' to load the phrase tree
                     #
 
-                    PhraseRecursor.walk root, opts, phraseRootString, phraseRootFn
+                    TreeWalker.walk root, opts, phraseRootString, phraseRootFn
 
 
                     # 
@@ -204,7 +204,7 @@ exports.createClass = (root) ->
                 # not the first walk
                 # 
 
-                PhraseRecursor.walk root, opts, phraseRootString, phraseRootFn
+                TreeWalker.walk root, opts, phraseRootString, phraseRootFn
 
 
 

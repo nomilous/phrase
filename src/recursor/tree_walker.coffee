@@ -1,12 +1,14 @@
-RecursorHooks  = require '../recursor/control/hooks' 
-PhraseHooks    = require './phrase_hooks'
+ControlHooks = require '../recursor/control/hooks' 
+PhraseHooks  = require '../phrase/phrase_hooks'
 
 #
-# phrase recursor
-# ===============
+# TreeWalker
+# ==========
 # 
-# Performs the 'first walk' of the tree, to assemble. Does not
-# run any of the hooks or leaf nodes.
+# * Performs a recursive 'walk' through the tree being passed to the rootRegistrar 
+#   to assemble the PhraseGraph
+#   
+# * Does not run any of the hooks or leaf nodes in the tree.
 # 
 
 exports.walk = (root, opts, rootString, rootFn) ->
@@ -47,7 +49,7 @@ exports.walk = (root, opts, rootString, rootFn) ->
 
     recursor = (parentPhraseString, parentPhraseControl) -> 
 
-        recursionControl = RecursorHooks.bind root, parentPhraseControl
+        recursionControl = ControlHooks.bind root, parentPhraseControl
 
         #
         # recurse via async injector

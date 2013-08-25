@@ -1,6 +1,6 @@
-should         = require 'should'
-PhraseRoot     = require('../lib/phrase_root').createClass require 'also'
-PhraseRecursor = require '../lib/phrase/phrase_recursor'
+should      = require 'should'
+PhraseRoot  = require('../lib/phrase_root').createClass require 'also'
+TreeWalker  = require '../lib/recursor/tree_walker'
 
 describe 'phrase', -> 
 
@@ -8,11 +8,11 @@ describe 'phrase', ->
     
     beforeEach -> 
 
-        phraseRecursor_swap = PhraseRecursor.walk 
+        phraseRecursor_swap = TreeWalker.walk 
 
     afterEach -> 
 
-        PhraseRecursor.walk = phraseRecursor_swap
+        TreeWalker.walk = phraseRecursor_swap
 
 
     context 'createRoot()', ->
@@ -79,10 +79,10 @@ describe 'phrase', ->
                 done()
 
 
-            it 'creates a PhraseRecursor with root context', (done) -> 
+            it 'creates a TreeWalker with root context', (done) -> 
 
 
-                PhraseRecursor.walk = (root, opts) -> 
+                TreeWalker.walk = (root, opts) -> 
 
                     should.exist root.context
                     done()
@@ -170,7 +170,7 @@ describe 'phrase', ->
 
         xit 'passes opts into the root phrase recursor', (done) -> 
 
-            PhraseRecursor.walk = (root, opts) -> -> 
+            TreeWalker.walk = (root, opts) -> -> 
 
                 opts.title.should.equal 'Phrase Title'
                 opts.uuid.should.equal '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'

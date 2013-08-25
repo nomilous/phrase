@@ -1,10 +1,10 @@
-should              = require 'should'
-PhraseRecursor      = require '../../lib/phrase/phrase_recursor'
-PhraseRecursorHooks = require '../../lib/recursor/control/hooks'
-PhraseNode          = require '../../lib//phrase_node'
-PhraseGraph         = require '../../lib/graph/phrase_graph'
+should       = require 'should'
+TreeWalker   = require '../../lib/recursor/tree_walker'
+ControlHooks = require '../../lib/recursor/control/hooks'
+PhraseNode   = require '../../lib/phrase_node'
+PhraseGraph  = require '../../lib/graph/phrase_graph'
 
-describe 'PhraseRecursor', -> 
+describe 'TreeWalker', -> 
 
     context 'create()', -> 
 
@@ -18,7 +18,7 @@ describe 'PhraseRecursor', ->
 
         beforeEach ->
 
-            swap1  = PhraseRecursorHooks.bind
+            swap1  = ControlHooks.bind
             
             EVENTS = {}
             root   = require 'also'
@@ -43,28 +43,28 @@ describe 'PhraseRecursor', ->
 
         afterEach -> 
 
-            PhraseRecursorHooks.bind = swap1
+            ControlHooks.bind = swap1
 
 
         it 'creates recursion control hooks with root context and parent control', (done) -> 
 
-            PhraseRecursorHooks.bind = (rooot, parent) -> 
+            ControlHooks.bind = (rooot, parent) -> 
 
                 rooot.should.equal root
                 done()
                 throw 'go no further'
 
-            try PhraseRecursor.walk root, opts
+            try TreeWalker.walk root, opts
 
 
         it 'creates root graph only once', (done) -> 
 
             delete root.context.graph
-            PhraseRecursor.walk root, opts, 'phrase string', (nest) ->
+            TreeWalker.walk root, opts, 'phrase string', (nest) ->
             graph = root.context.graph
             should.exist graph
 
-            PhraseRecursor.walk root, opts, 'phrase string', (nest) ->
+            TreeWalker.walk root, opts, 'phrase string', (nest) ->
             graph.should.equal root.context.graph
             done()
 
@@ -72,10 +72,10 @@ describe 'PhraseRecursor', ->
         it 'creates an orphaned graph on subsequent calls', (done) -> 
 
             delete root.context.graph
-            PhraseRecursor.walk root, opts, 'phrase string', (nest) ->
+            TreeWalker.walk root, opts, 'phrase string', (nest) ->
             rootGraph = root.context.graph
 
-            PhraseRecursor.walk root, opts, 'phrase string', (nest) ->
+            TreeWalker.walk root, opts, 'phrase string', (nest) ->
             newGraph = root.context.graphs.latest
 
             should.exist newGraph
@@ -85,19 +85,19 @@ describe 'PhraseRecursor', ->
 
         it 'assigns root token name and uuid from branch title', (done) -> 
 
-            PhraseRecursorHooks.bind = (rooot, parent) -> 
+            ControlHooks.bind = (rooot, parent) -> 
 
                 parent.phraseToken.name.should.equal 'Title'
                 parent.phraseToken.uuid.should.equal '00000'
                 done()
                 throw 'go no further'
 
-            try PhraseRecursor.walk root, opts, 'phrase string', (nest) ->
+            try TreeWalker.walk root, opts, 'phrase string', (nest) ->
 
 
         it 'emits "error" onto the root token at invalid phrase text', (done) -> 
 
-            PhraseRecursor.walk( root, opts, 'phra/se string', (nest) -> ).then( 
+            TreeWalker.walk( root, opts, 'phra/se string', (nest) -> ).then( 
 
                 ->
                 -> EVENTS.error.should.match /NVALID text/; done()
@@ -108,7 +108,7 @@ describe 'PhraseRecursor', ->
 
         it 'assigns access to registered phrase hooks', (done) -> 
    
-            PhraseRecursor.walk root, opts, 'phrase string', (nest) ->
+            TreeWalker.walk root, opts, 'phrase string', (nest) ->
             before each: -> done()
             root.context.hooks.beforeEach[0].fn()
 
@@ -132,7 +132,7 @@ describe 'PhraseRecursor', ->
                 args[2] = args[1] unless args[2]?
                 decoratedFn.apply this, args
 
-            PhraseRecursor.walk root, opts, 'outer phrase string', (nested) ->
+            TreeWalker.walk root, opts, 'outer phrase string', (nested) ->
 
                 nested 'nested phrase string', {}, (deeper) -> 
 

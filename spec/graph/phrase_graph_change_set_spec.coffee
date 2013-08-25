@@ -3,7 +3,7 @@ PhraseGraphChangeSet = require '../../lib/graph/phrase_graph_change_set'
 PhraseGraph          = require '../../lib/graph/phrase_graph'
 RootToken            = require '../../lib/token/root_token'
 PhraseNode           = require '../../lib/phrase_node'
-PhraseRecursor       = require '../../lib/phrase/phrase_recursor'
+TreeWalker           = require '../../lib/recursor/tree_walker'
 Notice               = require 'notice'
 also                 = require 'also'
 
@@ -111,11 +111,11 @@ describe 'PhraseGraphChangeSet', ->
                     next()
 
 
-                PhraseRecursor.walk( root, opts, 'phrase', phrase1 ).then ->
+                TreeWalker.walk( root, opts, 'phrase', phrase1 ).then ->
 
                     previousGraph = root.context.graphs.latest
                 
-                    PhraseRecursor.walk( root, opts, 'phrase', phrase2 ).then -> 
+                    TreeWalker.walk( root, opts, 'phrase', phrase2 ).then -> 
 
                         compare previousGraph, root.context.graphs.latest
 

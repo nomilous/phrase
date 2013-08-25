@@ -1,5 +1,5 @@
 #
-# bind all recusrion hooks to root context
+# bind all recusrion ControlHooks to root context
 #
 
 BeforeAll      = require './before_all'  
