@@ -113,14 +113,6 @@ describe 'TreeWalker', ->
             root.context.hooks.beforeEach[0].fn()
 
 
-        # it 'TEMPORARY provides assess to stack', (done) -> 
-            
-        #     PhraseRecursor.walk root, opts, 'phrase', (nested) -> 
-
-        #         nested.stack.should.equal root.context.stack
-        #         done()
-
-
         it 'recurses via the injector', (done) -> 
 
             CALLS = []
