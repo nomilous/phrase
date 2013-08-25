@@ -37,6 +37,7 @@ neuron = require( 'phrase' ).createRoot
     title:       'Neuron'
     uuid:        '00000000-0700-0000-0000-fffffffffff0'
     leaf:        ['synapse']
+    timeout:     100000000001  # neuron lifetime (estimate)
     
 
     #
