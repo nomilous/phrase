@@ -1,5 +1,5 @@
 should      = require 'should'
-PhraseGraph = require '../../lib/graph/phrase_graph'
+PhraseGraph = require '../../lib/phrase/graph'
 
 describe 'PhraseGraph', -> 
 

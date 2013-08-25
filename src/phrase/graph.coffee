@@ -1,6 +1,6 @@
-{v1}                 = require 'node-uuid'
-pipeline             = require 'when/pipeline'
-PhraseGraphChangeSet = require './phrase_graph_change_set'
+{v1}             = require 'node-uuid'
+pipeline         = require 'when/pipeline'
+ChangeSetFactory = require './change_set'
 seq                                                                = 0 # couldn't resist
 
 exports.createClass = (root) -> 
@@ -34,7 +34,7 @@ exports.createClass = (root) ->
     #   a closure with access to the root context.
     # 
 
-    ChangeSet = PhraseGraphChangeSet.createClass root
+    ChangeSet = ChangeSetFactory.createClass root
 
     
     #

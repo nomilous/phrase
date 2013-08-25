@@ -1,7 +1,7 @@
 Notice      = require 'notice'
-RootToken   = require '../token/root_token'
 PhraseNode  = require './node'
-PhraseGraph = require '../graph/phrase_graph'
+PhraseGraph = require './graph'
+RootToken   = require '../token/root_token'
 TreeWalker  = require '../recursor/tree_walker'
 Job         = require '../runner/job'
 

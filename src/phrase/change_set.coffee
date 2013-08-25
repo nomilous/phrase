@@ -29,7 +29,7 @@ exports.createClass = (root) ->
 
     changeSets = {}
 
-    class PhraseGraphChangeSet
+    class ChangeSet
 
         constructor: (@graphA, @graphB) -> 
 
@@ -324,7 +324,7 @@ exports.createClass = (root) ->
 
 
 
-    Object.defineProperty PhraseGraphChangeSet, 'applyChanges', 
+    Object.defineProperty ChangeSet, 'applyChanges', 
         enumarable: true
         get: -> (uuid, direction) -> 
 
@@ -332,7 +332,7 @@ exports.createClass = (root) ->
             process.nextTick ->
                 return doing.reject new Error( 
 
-                    'PhraseGraphChangeSet.applyChanges() has no set with uuid: ' + uuid
+                    'ChangeSet.applyChanges() has no set with uuid: ' + uuid
 
                 ) unless changeSets[uuid]?
                 doing.resolve changeSets[uuid][ direction || 'AtoB' ]()
