@@ -25,8 +25,7 @@ exports.createClass = (root) ->
     # ChangeSet 
     # ---------
     # 
-    # * Generated when the PhraseRecursor is called to re-walk the 
-    #   phrase tree.
+    # * Generated when the TreeWalker is called to re-walk the phrase tree.
     # 
     # * Builds the delta that, when applied, would advance the root.context.graph 
     #   to the new definition in root.context.graphs.latest
@@ -42,8 +41,8 @@ exports.createClass = (root) ->
     # Graph Assembler (middleware)
     # ----------------------------
     # 
-    # * PhraseRecursor walks the phrase tree and transmits all vertex and 
-    #   edge data onto the message bus.
+    # * TreeWalker walks the phrase tree and transmits all vertex and edge data 
+    #   onto the message bus.
     # 
     # * This middleware constructs the graph from that data.
     # 
