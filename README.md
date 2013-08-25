@@ -145,7 +145,7 @@ neuron 'soma', (dendrite) ->
                                     socket.use (msg, next) -> 
 
                                         #
-                                        # a new payload has crossed the synaptic cleft
+                                        # a new 'excitement' payload has crossed the synaptic cleft
                                         #
 
                                         next()
