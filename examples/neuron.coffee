@@ -72,7 +72,7 @@ neuron 'soma', (dendrite) ->
         each: -> @synapticWeight = Math.random()
         
 
-    dendrite 'synapses', (input, notice) -> 
+    dendrite 'synapses', (input) -> 
 
         #
         # initialize a random number (<100) of input synapses
@@ -109,15 +109,19 @@ neuron 'soma', (dendrite) ->
                             # controller has located ideal free::axon
                             #
 
-                            require('notice').connect receptorName, address, (error, socket) -> 
+                            require('notice').connect receptorName, 
 
-                                socket.use (msg, next) -> 
+                                connect: address
+                                
+                                (error, socket) -> 
 
-                                    #
-                                    # a new payload has crossed the synaptic cleft
-                                    #
+                                    socket.use (msg, next) -> 
 
-                                    next()
+                                        #
+                                        # a new payload has crossed the synaptic cleft
+                                        #
+
+                                        next()
 
 
 
