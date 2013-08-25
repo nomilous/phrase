@@ -231,7 +231,7 @@ describe 'PhraseGraph', ->
             it 'stores a list of leaves if tree', (done) -> 
 
                 #
-                # vertices are flagged a leaf by the PhraseRecursor
+                # vertices are flagged as leaf by the TreeWalker
                 #
 
                 graph.registerEdge type: 'tree', vertices: [
