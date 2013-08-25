@@ -1,6 +1,6 @@
 should              = require 'should'
 PhraseRecursor      = require '../../lib/phrase/phrase_recursor'
-PhraseRecursorHooks = require '../../lib/phrase/recursor/hooks'
+PhraseRecursorHooks = require '../../lib/recursor/control/hooks'
 PhraseNode          = require '../../lib//phrase_node'
 PhraseGraph         = require '../../lib/graph/phrase_graph'
 

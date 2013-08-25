@@ -1,7 +1,7 @@
 should       = require 'should'
-PhraseRoot   = require('../lib/phrase_root').createClass require 'also'
-PhraseToken  = require '../lib/phrase_token'
-PhraseRunner = require '../lib/phrase/phrase_runner'
+PhraseRoot   = require('../../lib/phrase_root').createClass require 'also'
+RootToken    = require '../../lib/token/root_token'
+PhraseRunner = require '../../lib/phrase/phrase_runner'
 
 describe 'PhraseToken', -> 
     
@@ -54,7 +54,7 @@ describe 'PhraseToken', ->
     context 'events', (done) -> 
 
         before -> 
-            @token = PhraseToken.create 
+            @token = RootToken.create 
                 context: 
                     notice: 
                         use: (@middleware) =>

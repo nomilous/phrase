@@ -1,4 +1,4 @@
-RecursorHooks  = require './recursor/hooks' 
+RecursorHooks  = require '../recursor/control/hooks' 
 PhraseHooks    = require './phrase_hooks'
 
 #

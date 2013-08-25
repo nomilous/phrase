@@ -1,13 +1,11 @@
 #
-# phrase token
-# ============
+# root token
+# ===========
 # 
-# A container / controller (resident in each phrase node) 
-# to manage it's edges.  
 # 
 
 {EventEmitter} = require 'events' 
-PhraseRunner   = require './phrase/phrase_runner'
+PhraseRunner   = require '../phrase/phrase_runner'
 
 exports.create = (root) -> 
 
@@ -38,6 +36,11 @@ exports.create = (root) ->
         #
         # TODO: (later) opts.uuid becomes optional, this (token)
         #               is assigned to a phrase, run that one.
+        # 
+        #                         # - talking about phrase token
+        #                         # - does not fromally exist yet
+        #                         # - psuedo token is attached to each phrase
+        #                         # - they passed on the 'ready' event to link
         #
 
         [token, params] = args

@@ -1,5 +1,5 @@
 Notice         = require 'notice'
-PhraseToken    = require './phrase_token'
+RootToken      = require './token/root_token'
 PhraseNode     = require './phrase_node'
 PhraseGraph    = require './graph/phrase_graph'
 PhraseRecursor = require './phrase/phrase_recursor'
@@ -153,13 +153,13 @@ exports.createClass = (root) ->
 
 
                     #
-                    # create PhraseToken (root instance)
+                    # create RootToken (root instance)
                     # ----------------------------------
                     # 
                     # * This token is the primary interface into the phrase tree
                     # 
 
-                    context.token = PhraseToken.create root
+                    context.token = RootToken.create root
 
 
                     #
