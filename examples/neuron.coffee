@@ -72,7 +72,7 @@ neuron 'soma', (dendrite) ->
         each: -> @synapticWeight = Math.random()
         
 
-    dendrite 'synapses', (input) -> 
+    dendrite 'synapses', (input, notice) -> 
 
         #
         # initialize a random number (<100) of input synapses
@@ -80,11 +80,45 @@ neuron 'soma', (dendrite) ->
 
         for i in [1..(Math.floor Math.random() * 100)] 
 
-            input '' + i, (synapse) -> 
+            do (i) -> 
 
-                #
-                # TODO: transform function
-                #
+                receptorName = "#{  i  }"
+
+                input receptorName, (synapse) -> 
+
+                    #
+                    # from this point onward: things become largely theoretical...
+                    #
+
+                    @notice.event( 'free::dentrite', 
+
+                        #
+                        # inform the controller
+                        #
+
+                        Wanted:   'axon synapse for coupling'
+                        Likes:    'long walks on the beach'
+                        Dislikes: 'electro-shock therapy'
+
+
+                    ).then (pending) -> 
+
+                        pending.on 'free::axon', (address) -> 
+
+                            #
+                            # controller has located ideal free::axon
+                            #
+
+                            require('notice').connect receptorName, address, (error, socket) -> 
+
+                                socket.use (msg, next) -> 
+
+                                    #
+                                    # a new payload has crossed the synaptic cleft
+                                    #
+
+                                    next()
+
 
 
 #
