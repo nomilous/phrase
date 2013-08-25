@@ -1,5 +1,5 @@
 should             = require 'should'
-RecursorAfterEach  = require '../../../lib/phrase/recursor/after_each'
+RecursorAfterEach  = require '../../../lib/recursor/control/after_each'
 
 describe 'RecursorAfterEach', -> 
 

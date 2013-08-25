@@ -1,6 +1,6 @@
 should             = require 'should'
-RecursorBeforeEach = require '../../../lib/phrase/recursor/before_each'
-PhraseLeaf         = require '../../../lib/phrase/recursor/leaf'
+RecursorBeforeEach = require '../../../lib/recursor/control/before_each'
+PhraseLeaf         = require '../../../lib/recursor/control/leaf'
 PhraseNode         = require '../../../lib/phrase_node'
 
 describe 'RecursorBeforeEach', -> 

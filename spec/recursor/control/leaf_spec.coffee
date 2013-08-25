@@ -1,5 +1,5 @@
 should         = require 'should'
-RecursorLeaf   = require '../../../lib/phrase/recursor/leaf'
+RecursorLeaf   = require '../../../lib/recursor/control/leaf'
 PhraseNode     = require '../../../lib/phrase_node'
 
 

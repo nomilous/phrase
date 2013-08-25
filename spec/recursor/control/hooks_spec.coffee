@@ -1,9 +1,9 @@
 should             = require 'should'
-RecursorHooks      = require '../../../lib/phrase/recursor/hooks'
-RecursorBeforeAll  = require '../../../lib/phrase/recursor/before_all'
-RecursorBeforeEach = require '../../../lib/phrase/recursor/before_each'
-RecursorAfterEach  = require '../../../lib/phrase/recursor/after_each'
-RecursorAfterAll   = require '../../../lib/phrase/recursor/after_all'
+RecursorHooks      = require '../../../lib/recursor/control/hooks'
+RecursorBeforeAll  = require '../../../lib/recursor/control/before_all'
+RecursorBeforeEach = require '../../../lib/recursor/control/before_each'
+RecursorAfterEach  = require '../../../lib/recursor/control/after_each'
+RecursorAfterAll   = require '../../../lib/recursor/control/after_all'
 
 they = it
 

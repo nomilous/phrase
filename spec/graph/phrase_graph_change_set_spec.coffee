@@ -1,7 +1,7 @@
 should               = require 'should'
 PhraseGraphChangeSet = require '../../lib/graph/phrase_graph_change_set'
 PhraseGraph          = require '../../lib/graph/phrase_graph'
-PhraseToken          = require '../../lib/phrase_token'
+RootToken            = require '../../lib/token/root_token'
 PhraseNode           = require '../../lib/phrase_node'
 PhraseRecursor       = require '../../lib/phrase/phrase_recursor'
 Notice               = require 'notice'
@@ -97,7 +97,7 @@ describe 'PhraseGraphChangeSet', ->
                 root.context.notice      = Notice.create opts.uuid
                 root.context.PhraseGraph = PhraseGraph.createClass root
                 root.context.PhraseNode  = PhraseNode.createClass root
-                root.context.token       = PhraseToken.create root
+                root.context.token       = RootToken.create root
                 ChangeSet                = PhraseGraphChangeSet.createClass root
 
                 #
