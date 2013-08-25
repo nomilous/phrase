@@ -3,7 +3,7 @@ RootToken   = require './token/root_token'
 PhraseNode  = require './phrase_node'
 PhraseGraph = require './graph/phrase_graph'
 TreeWalker  = require './recursor/tree_walker'
-PhraseJob   = require './phrase/phrase_job'
+Job         = require './runner/job'
 
 exports.createClass = (root) -> 
 
@@ -141,15 +141,15 @@ exports.createClass = (root) ->
                   
 
                     #
-                    # create PhraseJob (class definition)
+                    # create Job (class definition)
                     # -----------------------------------
                     #
-                    # * PhraseJob instances are created with each call to token.run
+                    # * Job instances are created with each call to token.run
                     # * The class definition is instanciated here to enable root access
                     # 
                     # 
 
-                    context.PhraseJob = PhraseJob.createClass root
+                    context.Job = Job.createClass root
 
 
                     #

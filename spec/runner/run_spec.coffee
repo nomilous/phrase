@@ -1,9 +1,9 @@
-should       = require 'should'
-PhraseRoot   = require('../../lib/phrase_root').createClass require 'also'
-RootToken    = require '../../lib/token/root_token'
-PhraseRunner = require '../../lib/phrase/phrase_runner'
+should     = require 'should'
+PhraseRoot = require('../../lib/phrase_root').createClass require 'also'
+RootToken  = require '../../lib/token/root_token'
+Run        = require '../../lib/runner/run'
 
-describe 'PhraseRunner', -> 
+describe 'Run', -> 
 
     root        = undefined
     TOKEN       = undefined
@@ -115,9 +115,9 @@ describe 'PhraseRunner', ->
 
         it 'calls get all steps to run', (done) -> 
 
-            swap = PhraseRunner.getSteps
-            PhraseRunner.getSteps = (root, opts) ->
-                PhraseRunner.getSteps = swap
+            swap = Run.getSteps
+            Run.getSteps = (root, opts) ->
+                Run.getSteps = swap
                 opts.uuid.should.equal NEST_ONE
                 done()
                 then: -> throw 'go no further'
@@ -125,16 +125,16 @@ describe 'PhraseRunner', ->
             try TOKEN.run( uuid: NEST_ONE )
 
 
-        it 'creates a PhraseJob and calls it to run', (done) -> 
+        it 'creates a Job and calls it to run', (done) -> 
 
-            swap = PhraseRunner.getSteps
-            PhraseRunner.getSteps = (root, opts) ->
-                PhraseRunner.getSteps = swap
+            swap = Run.getSteps
+            Run.getSteps = (root, opts) ->
+                Run.getSteps = swap
 
-                swap = root.context.PhraseJob.prototype.run
-                root.context.PhraseJob.prototype.run = -> 
+                swap = root.context.Job.prototype.run
+                root.context.Job.prototype.run = -> 
 
-                    root.context.PhraseJob.prototype.run = swap
+                    root.context.Job.prototype.run = swap
                     @steps.should.eql ['STEP']
                     done()
 
@@ -185,7 +185,7 @@ describe 'PhraseRunner', ->
             deferral = notify: ->
 
 
-            PhraseRunner.getSteps( root, opts, deferral ).then (steps) -> 
+            Run.getSteps( root, opts, deferral ).then (steps) -> 
 
                 # steps.map (step) -> 
                 #     console.log FN: step.ref.fn.toString()
@@ -231,7 +231,7 @@ describe 'PhraseRunner', ->
             deferral = notify: ->
 
 
-            PhraseRunner.getSteps( root, opts, deferral ).then (steps) -> 
+            Run.getSteps( root, opts, deferral ).then (steps) -> 
 
                 i = 0
 
@@ -272,7 +272,7 @@ describe 'PhraseRunner', ->
             deferral = notify: ->
 
 
-            PhraseRunner.getSteps( root, opts, deferral ).then (steps) -> 
+            Run.getSteps( root, opts, deferral ).then (steps) -> 
 
                 i = 0
 
@@ -315,7 +315,7 @@ describe 'PhraseRunner', ->
             deferral = notify: (update) -> UPDATES.push update
 
 
-            PhraseRunner.getSteps( root, opts, deferral ).then (steps) -> 
+            Run.getSteps( root, opts, deferral ).then (steps) -> 
 
                 # console.log UPDATES
                 UPDATES.should.eql [

@@ -201,7 +201,7 @@ TODO
 
                     #
                     #  state: 'run::step:failed',
-                    #  class: 'PhraseJob',
+                    #  class: 'Job',
                     #  jobUUID: 'd254b360-0cbf-11e3-823a-01cf205a2ddf',
                     #  progress: { steps: 1, done: 0, failed: 1, skipped: 0 },
                     #  at: 1377350375835,

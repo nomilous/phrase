@@ -5,7 +5,7 @@
 # 
 
 {EventEmitter} = require 'events' 
-PhraseRunner   = require '../phrase/phrase_runner'
+Run            = require '../runner/run'
 
 exports.create = (root) -> 
 
@@ -45,7 +45,7 @@ exports.create = (root) ->
 
         [token, params] = args
 
-        PhraseRunner.run root, token, params
+        Run.start root, token, params
 
     notice.use (msg, next) -> 
 

@@ -8,7 +8,7 @@
 
 
 Notice = require 'notice'
-Noc    = require( '../lib/phrase_root' ).createRoot 
+Noc    = require( '../lib/phrase' ).createRoot 
     
     title: 'Network Operations Center'
     uuid:  '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
@@ -57,7 +57,7 @@ Noc    = require( '../lib/phrase_root' ).createRoot
                                      #
                                                         #
                                                         # assigns @data for use in the
-                                                        # resulting PhraseJob instance
+                                                        # resulting Job instance
                                                         # 
                                                         # This very useful feature
                                                         # 
@@ -66,7 +66,7 @@ Noc    = require( '../lib/phrase_root' ).createRoot
                             (notify)  ->   
 
 
-                                if notify.state 'alert::escalate' 
+                                # if notify.state 'alert::escalate' 
 
                                     #
                                     # escalate
@@ -114,7 +114,7 @@ Noc 'Duties', (duty) ->
                 # chatter generated throughout the handling 
                 # of this alert process
                 #
-                # @variables are stored on the PhraseJob instance
+                # @variables are stored on the Job instance
                 # that is created at token.run(...)
                 # 
                                     # 
@@ -156,7 +156,7 @@ Noc 'Duties', (duty) ->
                             # received acknowledgement from someone on the noc team web
                             # app / mobile client,
                             # 
-                            # assign respondent messenger onto `this` (PhraseJob instance)
+                            # assign respondent messenger onto `this` (Job instance)
                             # ---------------------------
                             #
 
@@ -177,7 +177,7 @@ Noc 'Duties', (duty) ->
 
                             #
                             # log all notification / status updates from 
-                            # the respondent onto `this` (PhraseJob instance)
+                            # the respondent onto `this` (Job instance)
                             #
 
                             @log.push msg.content  # probably needs a deep copy!
@@ -197,7 +197,7 @@ Noc 'Duties', (duty) ->
 
                                     #
                                     # initialize a new Escalation 
-                                    # from `this` (PhraseJob instance)
+                                    # from `this` (Job instance)
                                     #
 
                                     done new Escalation @

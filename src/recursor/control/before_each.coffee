@@ -131,10 +131,10 @@ exports.create = (root, parentControl) ->
                                             # into each nested phase has lead to some 
                                             # undesired complexity  #GREP3
                                             #
-                                            # correcting it will affect how the PhraseRunner
-                                            # assembels the step sequence to pass to the
-                                            # PhraseJob, specifically the mechanisms for 
-                                            # not repeating the 'All' hooks.
+                                            # correcting it will affect how the RootToken's 
+                                            # call to run a phrase assembels the step sequence 
+                                            # to pass to the Job, specifically the mechanisms 
+                                            # for not repeating the 'All' hook steps
                                             #
                                             
                     beforeAll:  injectionControl.beforeAll

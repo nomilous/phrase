@@ -1,7 +1,7 @@
 should       = require 'should'
 PhraseRoot   = require('../../lib/phrase_root').createClass require 'also'
 RootToken    = require '../../lib/token/root_token'
-PhraseRunner = require '../../lib/phrase/phrase_runner'
+Run          = require '../../lib/runner/run'
 
 describe 'PhraseToken', -> 
     
@@ -43,9 +43,9 @@ describe 'PhraseToken', ->
 
         it 'calls the phrase runner', (done) -> 
 
-            swap = PhraseRunner.run
-            PhraseRunner.run = -> 
-                PhraseRunner.run = swap
+            swap = Run.start
+            Run.start = -> 
+                Run.start = swap
                 done()
 
             TOKEN.run()

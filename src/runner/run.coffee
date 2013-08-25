@@ -5,7 +5,7 @@ error = (code, message) -> Object.defineProperty (new Error message), 'code', va
 
 api = 
     
-    run: (root, opts = {}, params = {}) -> 
+    start: (root, opts = {}, params = {}) -> 
 
         #
         # opts for control
@@ -45,7 +45,7 @@ api =
                     #       - [rubina](http://www.youtube.com/watch?v=a5xzSjgatP8)
                     #
 
-                    job = new context.PhraseJob
+                    job = new context.Job
 
                         steps: steps
                         deferral: running

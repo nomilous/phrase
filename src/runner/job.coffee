@@ -5,7 +5,7 @@ sequence     = require 'when/sequence'
 exports.createClass = (root) -> 
 
     #
-    # PhraseJob (class factory)
+    # Job (class factory)
     # =========================
     # 
     # Has root access factory create() scope
@@ -14,7 +14,7 @@ exports.createClass = (root) ->
     {inject, context} = root
     {notice}          = context
 
-    return class PhraseJob
+    return class Job
 
         constructor: (opts = {}) -> 
 
@@ -31,7 +31,7 @@ exports.createClass = (root) ->
             opts.deferral ||= 
 
                 reject: (error)  -> throw error
-                notify: (update) -> console.log 'PhraseJob:', JSON.stringify update
+                notify: (update) -> console.log 'Job:', JSON.stringify update
 
             localOpts =
 
@@ -158,7 +158,7 @@ exports.createClass = (root) ->
                     # * it will be called with arguments as determined 
                     #   by this injector
                     # 
-                    # * it is run with this (PhraseJob instance) as context
+                    # * it is run with this (Job instance) as context
                     # 
                     #      eg. this... 
                     # 

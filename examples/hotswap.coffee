@@ -1,7 +1,7 @@
 #!/usr/bin/env coffee
 
 coffee  = require 'coffee-script'
-hotswap = require( '../lib/phrase_root' ).createRoot
+hotswap = require( '../lib/phrase' ).createRoot
 
     title: 'Hotswap'
     uuid:  '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
