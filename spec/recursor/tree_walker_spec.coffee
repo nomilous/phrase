@@ -1,7 +1,7 @@
 should          = require 'should'
 TreeWalker      = require '../../lib/recursor/tree_walker'
 RecursorControl = require '../../lib/recursor/control'
-PhraseNode      = require '../../lib/phrase_node'
+PhraseNode      = require '../../lib/phrase/node'
 PhraseGraph     = require '../../lib/graph/phrase_graph'
 
 describe 'TreeWalker', -> 

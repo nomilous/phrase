@@ -1,6 +1,6 @@
 should             = require 'should'
 RecursorControl    = require '../../lib/recursor/control'
-PhraseNode         = require '../../lib/phrase_node'
+PhraseNode         = require '../../lib/phrase/node'
 RecursorBeforeAll  = require '../../lib/recursor/control/before_all'
 RecursorBeforeEach = require '../../lib/recursor/control/before_each'
 RecursorAfterEach  = require '../../lib/recursor/control/after_each'

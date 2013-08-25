@@ -1,5 +1,5 @@
 should     = require 'should'
-PhraseNode = require '../lib/phrase_node'
+PhraseNode = require '../../lib/phrase/node'
 
 describe 'PhraseNode', -> 
 
