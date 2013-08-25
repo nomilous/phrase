@@ -1,5 +1,5 @@
 should = require 'should'
-Walker = require '../lib/phrase_walker'
+Walker = require '../lib/walker'
 
 describe 'Walker', -> it()
 
