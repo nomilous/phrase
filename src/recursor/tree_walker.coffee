@@ -1,5 +1,5 @@
-Control     = require '../recursor/control' 
-PhraseHooks = require '../phrase/phrase_hooks'
+Control    = require '../recursor/control' 
+PhraseHook = require '../phrase/hook'
 
 #
 # TreeWalker
@@ -16,7 +16,7 @@ exports.walk = (root, opts, rootString, rootFn) ->
     {context, inject}                   = root
     {stack, notice, graph, PhraseGraph} = context
 
-    context.hooks  = PhraseHooks.bind root
+    context.hooks  = PhraseHook.bind root
 
 
     if graph? 

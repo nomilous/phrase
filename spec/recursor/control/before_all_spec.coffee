@@ -1,6 +1,6 @@
 should             = require 'should'
 RecursorBeforeAll  = require '../../../lib/recursor/control/before_all'
-{PhraseHook}       = require '../../../lib/phrase/phrase_hooks'
+{PhraseHook}       = require '../../../lib/phrase/hook'
 
 describe 'RecursorBeforeAll', -> 
     

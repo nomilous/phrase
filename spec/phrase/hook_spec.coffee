@@ -1,9 +1,9 @@
-should       = require 'should'
-PhraseHooks  = require '../../lib/phrase/phrase_hooks'
+should      = require 'should'
+PhraseHook  = require '../../lib/phrase/hook'
 
-describe 'PhraseHooks', -> 
+describe 'PhraseHook', -> 
 
-    hooks = PhraseHooks.bind timeout: 200
+    hooks = PhraseHook.bind timeout: 200
 
     it 'creates before and after hook registrars on the global scope', (done) -> 
  

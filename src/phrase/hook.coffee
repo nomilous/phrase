@@ -1,5 +1,9 @@
 {v1} = require 'node-uuid'
 
+#
+# (Phrase) Hook
+#
+
 exports.PhraseHook = class PhraseHook
 
     constructor: (root, @type, opts) -> 
