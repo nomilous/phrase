@@ -163,5 +163,5 @@ neuron 'soma', (dendrite) ->
     
 ```
 
-* [closer to the purpose of 'phrase'](https://github.com/nomilous/phrase/blob/master/spec/intergations_spec.coffee)
+* [closer to the purpose of 'phrase'](https://github.com/nomilous/phrase/blob/master/spec/phrase_spec.coffee)
 
