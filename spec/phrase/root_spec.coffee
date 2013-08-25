@@ -1,6 +1,6 @@
 should      = require 'should'
-PhraseRoot  = require('../lib/phrase_root').createClass require 'also'
-TreeWalker  = require '../lib/recursor/tree_walker'
+PhraseRoot  = require('../../lib/phrase/root').createClass require 'also'
+TreeWalker  = require '../../lib/recursor/tree_walker'
 
 describe 'phrase', -> 
 

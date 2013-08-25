@@ -1,9 +1,9 @@
 Notice      = require 'notice'
-RootToken   = require './token/root_token'
-PhraseNode  = require './phrase/node'
-PhraseGraph = require './graph/phrase_graph'
-TreeWalker  = require './recursor/tree_walker'
-Job         = require './runner/job'
+RootToken   = require '../token/root_token'
+PhraseNode  = require './node'
+PhraseGraph = require '../graph/phrase_graph'
+TreeWalker  = require '../recursor/tree_walker'
+Job         = require '../runner/job'
 
 exports.createClass = (root) -> 
 

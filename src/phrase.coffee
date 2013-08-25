@@ -1,4 +1,4 @@
-PhraseRoot = require './phrase_root'
+PhraseRoot = require './phrase/root'
 
 require( 'also' ) exports, {}, (core) -> 
     
