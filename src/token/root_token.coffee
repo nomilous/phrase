@@ -2,6 +2,7 @@
 # root token
 # ===========
 # 
+# The root of a PhraseTree
 # 
 
 {EventEmitter} = require 'events' 
