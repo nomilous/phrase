@@ -28,7 +28,7 @@ describe 'phrase.createRoot(opts, linkFunction)', ->
 
                     @token2.on 'ready', (data) ->
 
-                        console.log PHRASE_1: data
+                        console.log PHRASE_2: data
                         done()
 
 
