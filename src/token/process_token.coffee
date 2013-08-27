@@ -62,6 +62,13 @@ class ProcessToken
 
                 )
 
+        #
+        # processToken.type = 'process'
+        #
+        Object.defineProperty this, 'type', 
+            enumerable: true
+            get: -> 'process'
+
 
 
 module.exports = ProcessToken

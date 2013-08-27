@@ -222,19 +222,3 @@ describe 'phrase.createRoot(opts, linkFunction)', ->
 
                         @RAN_deeperB = true
                         end()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

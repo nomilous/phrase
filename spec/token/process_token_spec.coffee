@@ -18,6 +18,13 @@ describe 'ProcessToken', ->
 
         context 'root()', ->
 
+            it 'has immutable type', (done) ->
+
+                @process.type.should.equal 'process'
+                @process.type = 'soirée'
+                @process.type.should.equal 'process'
+                done()
+
             it 'creates roots to attach phrase trees to', (done) ->
 
                 root1 = @process.root 'UUID1'
