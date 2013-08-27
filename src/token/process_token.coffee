@@ -24,11 +24,22 @@ class ProcessToken
             
             enumerable: true
 
-            get: -> (uuid) -> 
+            get: => (uuid) => 
+
+                    #
+                    # return existing root
+                    #
 
                 collection[uuid] || (
 
-                    collection[uuid] = uuid: uuid
+                    #
+                    # or create a new one
+                    # 
+
+                    collection[uuid] = 
+
+                        uuid: uuid
+                        root: @root
 
                 )
 

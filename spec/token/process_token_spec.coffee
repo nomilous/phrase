@@ -39,3 +39,13 @@ describe 'ProcessToken', ->
                 root1.should.equal root2
                 done()
 
+
+            it 'enables each root access to peer roots', (done) -> 
+
+                A = @process.root 'A'
+                B = @process.root 'B'
+                A.root('B').one  = 1
+                
+                B.one.should.equal 1
+                done()
+
