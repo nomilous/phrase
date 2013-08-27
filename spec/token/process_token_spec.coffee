@@ -65,3 +65,14 @@ describe 'ProcessToken', ->
                 A.inject.should.equal   require('also').inject
                 done()
 
+
+            it 'preloads the processToken into each root context stack', (done) ->
+
+                #
+                # this'll probably break a few things for a bit...
+                #
+
+                C = @process.root '∆'
+                C.context.stack[0].should.equal @process
+                done()
+

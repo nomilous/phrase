@@ -60,6 +60,17 @@ class ProcessToken
                         inject:   core.inject
                         util:     core.util
 
+                        #
+                        # create context for each root
+                        # ----------------------------
+                        # 
+                        # * with this processToken preloaded into
+                        #   the walkers stack
+                        #   
+                        #
+
+                        context: stack: [@]
+
                 )
 
         #
