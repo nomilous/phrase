@@ -83,7 +83,11 @@ describe 'phrase.createRoot(opts, linkFunction)', ->
             # await tokens from both A and B
             #
 
-            @tokenA.on 'ready', ({tokens}) -> 
+            Atokens = undefined
+
+            @tokenA.on 'ready', ({tokens}) -> Atokens = tokens
+
+
 
                 # console.log A: tokens
                 #
@@ -93,6 +97,8 @@ describe 'phrase.createRoot(opts, linkFunction)', ->
                 #
 
             @tokenB.on 'ready', ({tokens}) => 
+
+                Btokens = tokens
 
                 # console.log B: tokens
                 #
@@ -104,7 +110,9 @@ describe 'phrase.createRoot(opts, linkFunction)', ->
 
                 require('when/sequence')([
 
-                    => @tokenB.run tokens['/B/outer B/phraseB/nested 1 B leaf']
+                    => @tokenB.run Btokens['/B/outer B/phraseB/nested 1 B leaf']
+                    => @tokenA.run Atokens['/A/outer A/phraseA/nested 1 A/deeperA/deeper 1 A']
+                    => @tokenB.run Btokens['/B/outer B/phraseB/nested 2 B/deeperB/deeper 1 B']
 
                 ]).then(
 
@@ -114,10 +122,47 @@ describe 'phrase.createRoot(opts, linkFunction)', ->
                         # did straight forward hook registration work? 
                         #
 
+                        # console.log results[0].job
                         results[0].job.should.eql 
 
                             RAN_before_all_nested_n_B: true
                             RAN_nested_n_B_leaf: true
+
+
+                        #
+                        # FAILS more complex hook registration
+                        # -----
+                        #
+                        # * should have run all hooks
+                        #
+
+                        # console.log results[1].job
+                        results[1].job.should.eql
+
+                            ####RAN_before_all_nested_n_B: true
+                            RAN_before_deeper_1_AB: true
+                            RAN_deeperA: true
+
+
+                        #
+                        # FAILS
+                        # -----
+                        #
+                        # console.log results[2].job
+                        results[2].job.should.eql
+
+                            RAN_before_all_nested_n_B: true
+                            ####RAN_before_deeper_1_AB: true
+                            RAN_deeperB: true
+
+
+                        console.log 'TODO: fix limited hook functionality on multiwalk'
+                        #
+                        # * need a cleverer hook registration mechanism
+                        # * currently they're popped of a shallow stack
+                        #   by the next recursor
+                        # * if A pops first then B gets none
+                        #
 
 
                         done()
@@ -163,10 +208,18 @@ describe 'phrase.createRoot(opts, linkFunction)', ->
 
                     before each: (done) -> 
 
-                        @before_deeper_1_AB = true
+                        @RAN_before_deeper_1_AB = true
+                        done()
 
-                    deeperA 'deeper 1 A', (end) ->
-                    deeperB 'deeper 1 B', (end) ->
+                    deeperA 'deeper 1 A', (end) -> 
+
+                        @RAN_deeperA = true
+                        end()
+
+                    deeperB 'deeper 1 B', (end) -> 
+
+                        @RAN_deeperB = true
+                        end()
 
 
 
