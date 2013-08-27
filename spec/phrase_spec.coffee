@@ -5,18 +5,22 @@ describe 'phrase.createRoot(opts, linkFunction)', ->
 
     context 'multiple trees', -> 
 
-        it 'allows multiple phrase trees', (done) -> 
+        before (done) -> 
 
             phraseOne = phrase.createRoot
 
                 title: 'One'
                 uuid:  '001'
 
-                (@token1) =>
+                (@token1, notice) =>
 
-                    @token1.on 'ready', (data) ->
+                    @token1.on 'ready', ({tokens}) =>
 
-                        console.log PHRASE_1: data
+                        @tokens1 = tokens
+
+                    @token1.on 'error', (error) ->
+
+                        console.log PHRASE_1_ERROR: error
 
 
             phraseTwo = phrase.createRoot
@@ -26,14 +30,31 @@ describe 'phrase.createRoot(opts, linkFunction)', ->
 
                 (@token2) =>
 
-                    @token2.on 'ready', (data) ->
+                    @token2.on 'ready', ({tokens}) =>
 
-                        console.log PHRASE_2: data
+                        @tokens2 = tokens
                         done()
 
+                    @token2.on 'error', (error) ->
 
-            phraseOne 'outer phrase', (nest) -> nest 'inner phrase', (end) ->
+                        console.log PHRASE_2_ERROR: error
 
-            phraseTwo 'outer phrase', (nest) -> nest 'inner phrase', (end) ->
+
+
+            phraseOne '1 outer phrase', (nest) -> 
+
+                nest '1 inner phrase', (end) ->
+
+
+
+            phraseTwo '2 outer phrase', (nest) -> 
+
+                nest '2 inner phrase', (end) ->
 
             
+        it 'allows multiple phrase trees', (done) -> 
+
+            should.exist @tokens1['/One/1 outer phrase/nest/1 inner phrase']
+            should.exist @tokens2['/Two/2 outer phrase/nest/2 inner phrase']
+            done()
+

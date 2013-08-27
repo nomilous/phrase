@@ -53,11 +53,12 @@ class ProcessToken
 
                         #
                         # * each root has access to validate, 
-                        #   inject
+                        #   inject, util
                         #
 
                         validate: core.validate
                         inject:   core.inject
+                        util:     core.util
 
                 )
 

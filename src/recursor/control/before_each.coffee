@@ -86,37 +86,35 @@ exports.create = (root, parentControl) ->
         #   associated with each nested child phrase
         #    
 
-        if phraseControl? 
-
-            phraseControl.phraseToken = name: util.argsOf( phraseFn )[0]
-
-
-        #
-        # inject new phrase into stack
-        #
-
-        if stack.length == 0 
-
-            #
-            # root node is assigned uuid of the phrase tree
-            #
-
-            uuid = parentControl.phraseToken.uuid 
-
-        else 
-
-            #
-            # others can optionally be set on the phraseControl
-            # 
-            #    nested 'phrase text', uuid: '123', (end) -> 
-            #
-
-            uuid = phraseControl.uuid
-
-
-        #console.log TODO: 'allow no / in phraseString'
-
         try 
+
+            if phraseControl? 
+
+                phraseControl.phraseToken = name: util.argsOf( phraseFn )[0]
+
+
+            #
+            # inject new phrase into stack
+            #
+
+            if stack.length == 0 
+
+                #
+                # root node is assigned uuid of the phrase tree
+                #
+
+                uuid = parentControl.phraseToken.uuid 
+
+            else 
+
+                #
+                # others can optionally be set on the phraseControl
+                # 
+                #    nested 'phrase text', uuid: '123', (end) -> 
+                #
+
+                uuid = phraseControl.uuid
+
 
             stack.push phrase = new PhraseNode 
 
@@ -152,6 +150,8 @@ exports.create = (root, parentControl) ->
             #
 
             done error
+
+
 
 
         #
