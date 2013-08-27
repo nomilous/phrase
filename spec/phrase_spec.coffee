@@ -163,7 +163,9 @@ describe 'phrase.createRoot(opts, linkFunction)', ->
                         #   by the next recursor
                         # * if A pops first then B gets none
                         #
-
+                        # * first consider: how 'should' it behave 
+                        #        (there's a catch 21.999999999993)
+                        # 
 
                         done()
 
