@@ -60,16 +60,23 @@ class ProcessToken
                         inject:   core.inject
                         util:     core.util
 
+                        # #
+                        # # create context for each root
+                        # # ----------------------------
+                        # # 
+                        # # * with this processToken preloaded into
+                        # #   the walkers stack
+                        # #   
+                        # #
                         #
-                        # create context for each root
-                        # ----------------------------
+                        # context: stack: [@]
                         # 
-                        # * with this processToken preloaded into
-                        #   the walkers stack
-                        #   
-                        #
-
-                        context: stack: [@]
+                        # no - keep process out of the tree
+                        # ---------------------------------
+                        # 
+                        #   UUIDofPhraseTree/path/way/to/leaf
+                        #   UUIDofPhraseTree/path/way/to/edge/[  *  ]/UUIDofAnotherTree
+                        # 
 
                 )
 

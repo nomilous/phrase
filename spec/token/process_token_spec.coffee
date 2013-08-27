@@ -66,13 +66,13 @@ describe 'ProcessToken', ->
                 done()
 
 
-            it 'preloads the processToken into each root context stack', (done) ->
+            # it 'preloads the processToken into each root context stack', (done) ->
 
-                #
-                # this'll probably break a few things for a bit...
-                #
+            #     #
+            #     # this'll probably break a few things for a bit...
+            #     #
 
-                C = @process.root '∆'
-                C.context.stack[0].should.equal @process
-                done()
+            #     C = @process.root '∆'
+            #     C.context.stack[0].should.equal @process
+            #     done()
 
