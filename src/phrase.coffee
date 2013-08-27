@@ -1,14 +1,8 @@
 PhraseRoot = require './phrase/root'
 
 require( 'also' ) exports, {}, (core) -> 
-    
-    #
-    # leave room for multiple phrase trees per process
-    # ------------------------------------------------
-    #
-    # * for nez objective
-    # 
 
-    core.root1 = core
+    createRoot: (opts, linkFn) -> 
 
-    PhraseRoot.createClass core.root1
+        phraseRoot = PhraseRoot.createClass core
+        phraseRoot.createRoot opts, linkFn
