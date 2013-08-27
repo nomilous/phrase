@@ -45,7 +45,16 @@ describe 'ProcessToken', ->
                 A = @process.root 'A'
                 B = @process.root 'B'
                 A.root('B').one  = 1
-                
+
                 B.one.should.equal 1
+                done()
+
+
+            it 'provides access to core validate and inject', (done) -> 
+
+                A = @process.root 'A'
+
+                A.validate.should.equal require('also').validate
+                A.inject.should.equal   require('also').inject
                 done()
 

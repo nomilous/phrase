@@ -34,12 +34,30 @@ class ProcessToken
 
                     #
                     # or create a new one
+                    # -------------------
                     # 
 
                     collection[uuid] = 
 
-                        uuid: uuid
-                        root: @root
+                        #
+                        # * each root knows it's uuid
+                        #
+
+                        uuid:     uuid
+
+                        #
+                        # * each root has access to peer roots
+                        #
+
+                        root:     @root
+
+                        #
+                        # * each root has access to validate, 
+                        #   inject
+                        #
+
+                        validate: core.validate
+                        inject:   core.inject
 
                 )
 
