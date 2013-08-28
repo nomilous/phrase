@@ -185,7 +185,7 @@ exports.createClass = (root) ->
                     # * Start 'first walk' to load the phrase tree
                     #
 
-                    TreeWalker.walk root, opts, phraseRootString, phraseRootFn
+                    promise = TreeWalker.walk root, opts, phraseRootString, phraseRootFn
 
 
                     # 
@@ -207,7 +207,7 @@ exports.createClass = (root) ->
                     # * activate 'causality phase array'
                     #
 
-                    return
+                    return promise
 
                     #
                     # the quantum flux has stabalized

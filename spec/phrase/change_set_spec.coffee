@@ -1,13 +1,13 @@
 should               = require 'should'
 PhraseGraphChangeSet = require '../../lib/phrase/change_set'
 PhraseGraph          = require '../../lib/phrase/graph'
-AccessToken          = require '../../lib/token//access_token'
-PhraseNode           = require '../../lib/phrase/node'
-TreeWalker           = require '../../lib/recursor/tree_walker'
-Notice               = require 'notice'
+PhraseRoot           = require '../../lib/phrase/root'
+ProcessToken         = require '../../lib/token/process_token'
+# AccessToken          = require '../../lib/token/access_token'
+# PhraseNode           = require '../../lib/phrase/node'
+# TreeWalker           = require '../../lib/recursor/tree_walker'
+# Notice               = require 'notice'
 also                 = require 'also'
-
-throw 'broken'
 
 describe 'PhraseGraphChangeSet', -> 
 
@@ -33,7 +33,7 @@ describe 'PhraseGraphChangeSet', ->
 
         @ChangeSet  = PhraseGraphChangeSet.createClass @root
         @Graph      = PhraseGraph.createClass @root
-        @Node       = PhraseNode.createClass @root
+        #@Node       = PhraseNode.createClass @root
         @graphA     = new @Graph
         @graphB     = new @Graph
 
@@ -70,9 +70,11 @@ describe 'PhraseGraphChangeSet', ->
         # console.log before.toString()
         ChangeSet = undefined
         Test      = undefined
+        seq       = 0
 
         before (done) -> 
 
+            seq++
 
             Test = (phrases, compare) => 
 
@@ -82,9 +84,15 @@ describe 'PhraseGraphChangeSet', ->
                 # assemble graph pair from each phrase
                 #
 
-                opts = 
+                opts1 = 
                     title:   'TEST'
-                    uuid:    '0001'
+                    uuid:    '0001-' + seq
+                    leaf:    ['end']
+                    timeout: 2000
+
+                opts2 = 
+                    title:   'TEST'
+                    uuid:    '0002-' + seq
                     leaf:    ['end']
                     timeout: 2000
 
@@ -92,32 +100,69 @@ describe 'PhraseGraphChangeSet', ->
                 # load runtime
                 #
 
-                root                     = also
-                root.context             = {}
-                root.context.notice      = Notice.create opts.uuid
-                root.context.PhraseGraph = PhraseGraph.createClass root
-                root.context.PhraseNode  = PhraseNode.createClass root
-                root.context.token       = AccessToken.create root
-                ChangeSet                = PhraseGraphChangeSet.createClass root
+                process   = new ProcessToken also
+                # tokens1   = undefined
+                # tokens2   = undefined
+                root1     = process.root opts1.uuid
+                root2     = process.root opts2.uuid
 
-                #
-                # skip the change, so that test can call manually
-                #
-
-                root.context.notice.use (msg, next) -> 
-
-                    return next() unless msg.context.title == 'graph::compare:end'
-                    msg.skipChange = true
-                    next()
-
-
-                TreeWalker.walk( root, opts, 'phrase', phrase1 ).then ->
-
-                    previousGraph = root.context.graphs.latest
+                recursor1 = PhraseRoot.createClass( root1 ).createRoot opts1, (token) -> 
+                    token.on 'ready', ({tokens}) -> 
+                        #tokens1 = tokens
                 
-                    TreeWalker.walk( root, opts, 'phrase', phrase2 ).then -> 
+                recursor2 = PhraseRoot.createClass( root2 ).createRoot opts2, (token) -> 
+                    token.on 'ready', ({tokens}) -> 
+                        #tokens2 = tokens
 
-                        compare previousGraph, root.context.graphs.latest
+
+                recursor1( 'phrase', phrase1 ).then -> 
+
+                    recursor2( 'phrase', phrase2 ).then -> 
+
+                        #console.log process.root( opts2.uuid ).context.graph
+
+                        compare( 
+
+                            process.root( opts1.uuid ).context.graph
+                            process.root( opts2.uuid ).context.graph
+                            #process.root( opts1.uuid ).context.graphs.latest
+
+                        )
+                        
+
+
+
+
+
+
+                # root                     = process.root opts.uuid
+                # root.context             = {}
+                # root.context.notice      = Notice.create opts.uuid
+                # root.context.PhraseGraph = PhraseGraph.createClass root
+                # root.context.PhraseNode  = PhraseNode.createClass root
+                # root.context.token       = AccessToken.create root
+                ChangeSet                = PhraseGraphChangeSet.createClass root1
+
+                # #
+                # # skip the change, so that test can call manually
+                # #
+
+                # root.context.notice.use (msg, next) -> 
+
+                #     console.log msg.content
+
+                #     return next() unless msg.context.title == 'graph::compare:end'
+                #     msg.skipChange = true
+                #     next()
+
+
+                # TreeWalker.walk( root, opts, 'phrase', phrase1 ).then ->
+
+                #     previousGraph = root.context.graphs.latest
+                
+                #     TreeWalker.walk( root, opts, 'phrase', phrase2 ).then -> 
+
+                #         compare previousGraph, root.context.graphs.latest
 
 
             done()
@@ -199,7 +244,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'detectes removed branches', (done) -> 
+            xit 'detectes removed branches', (done) -> 
 
                 Test
 
@@ -229,7 +274,7 @@ describe 'PhraseGraphChangeSet', ->
 
 
 
-            it 'detects created leaves', (done) -> 
+            xit 'detects created leaves', (done) -> 
 
                 Test
 
@@ -249,7 +294,7 @@ describe 'PhraseGraphChangeSet', ->
                         should.exist set.changes.created['/TEST/phrase/nested/creates this']
                         done()
 
-            it 'detectes created branches', (done) -> 
+            xit 'detectes created branches', (done) -> 
 
                 Test
 
@@ -276,7 +321,7 @@ describe 'PhraseGraphChangeSet', ->
 
 
 
-            it 'detects updated leaves', (done) -> 
+            xit 'detects updated leaves', (done) -> 
 
                 Test
 
@@ -296,7 +341,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'detects changed hooks as parent vertex', (done) -> 
+            xit 'detects changed hooks as parent vertex', (done) -> 
 
                 Test
 
@@ -333,7 +378,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'timeout changes all affected', (done) -> 
+            xit 'timeout changes all affected', (done) -> 
 
                 Test
 
@@ -374,7 +419,7 @@ describe 'PhraseGraphChangeSet', ->
 
 
 
-            it 'timeout on hook changes all affected', (done) -> 
+            xit 'timeout on hook changes all affected', (done) -> 
 
 
                 Test
@@ -415,7 +460,7 @@ describe 'PhraseGraphChangeSet', ->
 
         context 'applying changes (A-B)', -> 
 
-            it 'applies changes into graphA and preserves vertex uuid', (done) ->
+            xit 'applies changes into graphA and preserves vertex uuid', (done) ->
 
                 Test
 
@@ -439,7 +484,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'applies hook changes to all affected vertexes', (done) -> 
+            xit 'applies hook changes to all affected vertexes', (done) -> 
 
                 Test
 
@@ -468,7 +513,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
                 
-            it 'created hooks are assigned uuid, timeout, fn and copied into all children', (done) -> 
+            xit 'created hooks are assigned uuid, timeout, fn and copied into all children', (done) -> 
 
                 Test
 
@@ -498,7 +543,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'deletes vertices (leaf)', (done) -> 
+            xit 'deletes vertices (leaf)', (done) -> 
 
 
                 Test
@@ -527,7 +572,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'deletes vertices (branch)', (done) -> 
+            xit 'deletes vertices (branch)', (done) -> 
 
                 Test
 
@@ -555,7 +600,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'creates vertices (leaf)', (done) -> 
+            xit 'creates vertices (leaf)', (done) -> 
 
                 Test
 
@@ -579,7 +624,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'creates vertices (branch)', (done) -> 
+            xit 'creates vertices (branch)', (done) -> 
 
                 Test
 
@@ -607,7 +652,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'creates vertices into ex leaf (leaf flag becomes false)', (done) -> 
+            xit 'creates vertices into ex leaf (leaf flag becomes false)', (done) -> 
 
                 Test
 
@@ -630,7 +675,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'deletes vertices from ex branch (leaf flag becomes true)', (done) -> 
+            xit 'deletes vertices from ex branch (leaf flag becomes true)', (done) -> 
 
                 Test
 
@@ -655,7 +700,7 @@ describe 'PhraseGraphChangeSet', ->
 
         context 'updates indexes', -> 
 
-            it 'ammends path2uuid and uuid2path indexes (not in order)', (done) ->
+            xit 'ammends path2uuid and uuid2path indexes (not in order)', (done) ->
 
                 Test
 
@@ -718,7 +763,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'updates children index and preserves vertex order', (done) -> 
+            xit 'updates children index and preserves vertex order', (done) -> 
 
                 Test
 
@@ -769,7 +814,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'updates parents index', (done) -> 
+            xit 'updates parents index', (done) -> 
 
                 Test
 
@@ -808,7 +853,7 @@ describe 'PhraseGraphChangeSet', ->
 
                         done()
 
-            it 'preserves vertex order in leaves array', (done) ->
+            xit 'preserves vertex order in leaves array', (done) ->
 
                 Test
 
@@ -841,7 +886,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'preserves vertex edges', (done) -> 
+            xit 'preserves vertex edges', (done) -> 
 
                 Test
 
