@@ -3,10 +3,6 @@ PhraseGraphChangeSet = require '../../lib/phrase/change_set'
 PhraseGraph          = require '../../lib/phrase/graph'
 PhraseRoot           = require '../../lib/phrase/root'
 ProcessToken         = require '../../lib/token/process_token'
-# AccessToken          = require '../../lib/token/access_token'
-# PhraseNode           = require '../../lib/phrase/node'
-# TreeWalker           = require '../../lib/recursor/tree_walker'
-# Notice               = require 'notice'
 also                 = require 'also'
 
 describe 'PhraseGraphChangeSet', -> 
@@ -33,7 +29,6 @@ describe 'PhraseGraphChangeSet', ->
 
         @ChangeSet  = PhraseGraphChangeSet.createClass @root
         @Graph      = PhraseGraph.createClass @root
-        #@Node       = PhraseNode.createClass @root
         @graphA     = new @Graph
         @graphB     = new @Graph
 
@@ -67,18 +62,19 @@ describe 'PhraseGraphChangeSet', ->
         # these tests depend heavilly on functionlity of the rest of the system
         # 
 
-        # console.log before.toString()
         ChangeSet = undefined
         Test      = undefined
-        seq       = 0
+        ROOTUUID  = undefined
 
         before (done) -> 
 
-            seq++
+            seq  = 0
 
             Test = (phrases, compare) => 
 
                 {phrase1, phrase2} = phrases
+
+                ROOTUUID = "ROOT#{seq++}"
 
                 #
                 # assemble graph pair from each phrase
@@ -86,83 +82,31 @@ describe 'PhraseGraphChangeSet', ->
 
                 opts1 = 
                     title:   'TEST'
-                    uuid:    '0001-' + seq
+                    uuid:    ROOTUUID
                     leaf:    ['end']
                     timeout: 2000
-
-                opts2 = 
-                    title:   'TEST'
-                    uuid:    '0002-' + seq
-                    leaf:    ['end']
-                    timeout: 2000
-
-                #
-                # load runtime
-                #
 
                 process   = new ProcessToken also
-                # tokens1   = undefined
-                # tokens2   = undefined
                 root1     = process.root opts1.uuid
-                root2     = process.root opts2.uuid
 
-                recursor1 = PhraseRoot.createClass( root1 ).createRoot opts1, (token) -> 
-                    token.on 'ready', ({tokens}) -> 
-                        #tokens1 = tokens
-                
-                recursor2 = PhraseRoot.createClass( root2 ).createRoot opts2, (token) -> 
-                    token.on 'ready', ({tokens}) -> 
-                        #tokens2 = tokens
+                recursor1 = PhraseRoot.createClass( root1 ).createRoot opts1, (token, notice) -> 
+
+                    notice.use (msg, next) -> 
+                        msg.skipChange = true
+                        next()
 
 
                 recursor1( 'phrase', phrase1 ).then -> 
 
-                    recursor2( 'phrase', phrase2 ).then -> 
+                    recursor1( 'phrase', phrase2 ).then -> 
 
-                        #console.log process.root( opts2.uuid ).context.graph
-
+                        ChangeSet = PhraseGraphChangeSet.createClass root1
                         compare( 
-
-                            process.root( opts1.uuid ).context.graph
-                            process.root( opts2.uuid ).context.graph
-                            #process.root( opts1.uuid ).context.graphs.latest
-
+                            root1.context.graph
+                            root1.context.graphs.latest
                         )
                         
-
-
-
-
-
-
-                # root                     = process.root opts.uuid
-                # root.context             = {}
-                # root.context.notice      = Notice.create opts.uuid
-                # root.context.PhraseGraph = PhraseGraph.createClass root
-                # root.context.PhraseNode  = PhraseNode.createClass root
-                # root.context.token       = AccessToken.create root
-                ChangeSet                = PhraseGraphChangeSet.createClass root1
-
-                # #
-                # # skip the change, so that test can call manually
-                # #
-
-                # root.context.notice.use (msg, next) -> 
-
-                #     console.log msg.content
-
-                #     return next() unless msg.context.title == 'graph::compare:end'
-                #     msg.skipChange = true
-                #     next()
-
-
-                # TreeWalker.walk( root, opts, 'phrase', phrase1 ).then ->
-
-                #     previousGraph = root.context.graphs.latest
                 
-                #     TreeWalker.walk( root, opts, 'phrase', phrase2 ).then -> 
-
-                #         compare previousGraph, root.context.graphs.latest
 
 
             done()
@@ -244,7 +188,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            xit 'detectes removed branches', (done) -> 
+            it 'detectes removed branches', (done) -> 
 
                 Test
 
@@ -274,7 +218,7 @@ describe 'PhraseGraphChangeSet', ->
 
 
 
-            xit 'detects created leaves', (done) -> 
+            it 'detects created leaves', (done) -> 
 
                 Test
 
@@ -294,7 +238,7 @@ describe 'PhraseGraphChangeSet', ->
                         should.exist set.changes.created['/TEST/phrase/nested/creates this']
                         done()
 
-            xit 'detectes created branches', (done) -> 
+            it 'detectes created branches', (done) -> 
 
                 Test
 
@@ -321,7 +265,7 @@ describe 'PhraseGraphChangeSet', ->
 
 
 
-            xit 'detects updated leaves', (done) -> 
+            it 'detects updated leaves', (done) -> 
 
                 Test
 
@@ -341,7 +285,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            xit 'detects changed hooks as parent vertex', (done) -> 
+            it 'detects changed hooks as parent vertex', (done) -> 
 
                 Test
 
@@ -378,7 +322,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            xit 'timeout changes all affected', (done) -> 
+            it 'timeout changes all affected', (done) -> 
 
                 Test
 
@@ -419,7 +363,7 @@ describe 'PhraseGraphChangeSet', ->
 
 
 
-            xit 'timeout on hook changes all affected', (done) -> 
+            it 'timeout on hook changes all affected', (done) -> 
 
 
                 Test
@@ -460,7 +404,7 @@ describe 'PhraseGraphChangeSet', ->
 
         context 'applying changes (A-B)', -> 
 
-            xit 'applies changes into graphA and preserves vertex uuid', (done) ->
+            it 'applies changes into graphA and preserves vertex uuid', (done) ->
 
                 Test
 
@@ -484,7 +428,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            xit 'applies hook changes to all affected vertexes', (done) -> 
+            it 'applies hook changes to all affected vertexes', (done) -> 
 
                 Test
 
@@ -513,7 +457,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
                 
-            xit 'created hooks are assigned uuid, timeout, fn and copied into all children', (done) -> 
+            it 'created hooks are assigned uuid, timeout, fn and copied into all children', (done) -> 
 
                 Test
 
@@ -543,7 +487,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            xit 'deletes vertices (leaf)', (done) -> 
+            it 'deletes vertices (leaf)', (done) -> 
 
 
                 Test
@@ -572,7 +516,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            xit 'deletes vertices (branch)', (done) -> 
+            it 'deletes vertices (branch)', (done) -> 
 
                 Test
 
@@ -600,7 +544,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            xit 'creates vertices (leaf)', (done) -> 
+            it 'creates vertices (leaf)', (done) -> 
 
                 Test
 
@@ -624,7 +568,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            xit 'creates vertices (branch)', (done) -> 
+            it 'creates vertices (branch)', (done) -> 
 
                 Test
 
@@ -652,7 +596,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            xit 'creates vertices into ex leaf (leaf flag becomes false)', (done) -> 
+            it 'creates vertices into ex leaf (leaf flag becomes false)', (done) -> 
 
                 Test
 
@@ -675,7 +619,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            xit 'deletes vertices from ex branch (leaf flag becomes true)', (done) -> 
+            it 'deletes vertices from ex branch (leaf flag becomes true)', (done) -> 
 
                 Test
 
@@ -700,7 +644,7 @@ describe 'PhraseGraphChangeSet', ->
 
         context 'updates indexes', -> 
 
-            xit 'ammends path2uuid and uuid2path indexes (not in order)', (done) ->
+            it 'ammends path2uuid and uuid2path indexes (not in order)', (done) ->
 
                 Test
 
@@ -742,7 +686,7 @@ describe 'PhraseGraphChangeSet', ->
 
                         graphA.path2uuid.should.eql 
 
-                            '/TEST/phrase': '0001',
+                            '/TEST/phrase': ROOTUUID
                             '/TEST/phrase/nested/nested phrase 1': 1111
                             '/TEST/phrase/nested/nested phrase 2': 2222
                             '/TEST/phrase/nested/nested phrase 2/deeper/one': 3333
@@ -750,20 +694,17 @@ describe 'PhraseGraphChangeSet', ->
 
                             '/TEST/phrase/nested/nested phrase 2/deeper/created': 9999
 
-                        graphA.uuid2path.should.eql 
-
-                            '0001': '/TEST/phrase'
-                            '1111': '/TEST/phrase/nested/nested phrase 1'
-                            '2222': '/TEST/phrase/nested/nested phrase 2'
-                            '3333': '/TEST/phrase/nested/nested phrase 2/deeper/one'
-                            '4444': '/TEST/phrase/nested/nested phrase 2/deeper/two'
-
-                            '9999': '/TEST/phrase/nested/nested phrase 2/deeper/created'                   
+                        graphA.uuid2path[ROOTUUID].should.equal '/TEST/phrase'
+                        graphA.uuid2path['1111'].should.equal '/TEST/phrase/nested/nested phrase 1'
+                        graphA.uuid2path['2222'].should.equal '/TEST/phrase/nested/nested phrase 2'
+                        graphA.uuid2path['3333'].should.equal '/TEST/phrase/nested/nested phrase 2/deeper/one'
+                        graphA.uuid2path['4444'].should.equal '/TEST/phrase/nested/nested phrase 2/deeper/two'
+                        graphA.uuid2path['9999'].should.equal '/TEST/phrase/nested/nested phrase 2/deeper/created'                   
                         
                         done()
 
 
-            xit 'updates children index and preserves vertex order', (done) -> 
+            it 'updates children index and preserves vertex order', (done) -> 
 
                 Test
 
@@ -798,23 +739,18 @@ describe 'PhraseGraphChangeSet', ->
                             for child in graphA.children[parent]
                                 children[parent].push child
 
-                        children.should.eql 
+                        children[ROOTUUID].should.eql  [ 1111, 2222       ]
+                        children['2222'].should.eql    [ 9999, 3333, 4444 ]
 
-                                        #
-                                        # preserved child vertex order
-                                        #
-
-                            '0001': [ 1111, 2222 ]
-                            '2222': [ 9999, 3333, 4444 ]
+                                                    #
+                                                    # preserved child vertex order
+                                                    #   
 
                         should.not.exist children[1111] # no longer a parent
-
-
- 
                         done()
 
 
-            xit 'updates parents index', (done) -> 
+            it 'updates parents index', (done) -> 
 
                 Test
 
@@ -845,15 +781,15 @@ describe 'PhraseGraphChangeSet', ->
 
                         graphA.parent.should.eql 
 
-                            '1111': '0001'
-                            '2222': '0001'
+                            '1111': ROOTUUID
+                            '2222': ROOTUUID
                             '3333': 2222
                             '4444': 2222
                             '9999': 2222
 
                         done()
 
-            xit 'preserves vertex order in leaves array', (done) ->
+            it 'preserves vertex order in leaves array', (done) ->
 
                 Test
 
@@ -886,7 +822,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            xit 'preserves vertex edges', (done) -> 
+            it 'preserves vertex edges', (done) -> 
 
                 Test
 
@@ -919,13 +855,13 @@ describe 'PhraseGraphChangeSet', ->
                         set.AtoB()
                         graphA.edges.should.eql 
 
-                            '1111': [ { to: '0001' }, { to: 'kept' }                           ]
-                            '2222': [ { to: '0001' }, { to: 3333 }, { to: 4444 }, { to: 9999 } ]
-                            '3333': [ { to: 2222 }                                             ]
-                            '4444': [ { to: 2222 }                                             ]
-                            '9999': [ { to: 2222 }                                             ]
-                            '0001': [ { to: 1111 }, { to: 2222 }                               ]
-                            kept:   [ { to: 1111 }                                             ]
+                        graphA.edges['1111'  ].should.eql [ { to: ROOTUUID }, { to: 'kept' }                           ]
+                        graphA.edges['2222'  ].should.eql [ { to: ROOTUUID }, { to: 3333 }, { to: 4444 }, { to: 9999 } ]
+                        graphA.edges['3333'  ].should.eql [ { to: 2222 }                                             ]
+                        graphA.edges['4444'  ].should.eql [ { to: 2222 }                                             ]
+                        graphA.edges['9999'  ].should.eql [ { to: 2222 }                                             ]
+                        graphA.edges[ROOTUUID].should.eql [ { to: 1111 }, { to: 2222 }                               ]
+                        graphA.edges.kept.should.eql    [ { to: 1111 }                                             ]
 
                         
                         done()
