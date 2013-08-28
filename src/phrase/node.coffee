@@ -46,21 +46,21 @@ exports.createClass = (root) ->
         #    fn:    (end) ->   
         # 
 
-        class PhraseToken 
+        # class PhraseToken 
 
-            constructor: (opts = {}) -> 
+        #     constructor: (opts = {}) -> 
 
-                localOpts = {}
+        #         localOpts = {}
 
-                for property in ['name', 'uuid']
+        #         for property in ['name', 'uuid']
 
-                    do (property) => 
+        #             do (property) => 
 
-                        localOpts[property] = opts[property]
+        #                 localOpts[property] = opts[property]
 
-                        Object.defineProperty this, property, 
-                            get: -> localOpts[property]
-                            enumerable: true
+        #                 Object.defineProperty this, property, 
+        #                     get: -> localOpts[property]
+        #                     enumerable: true
 
 
         #
@@ -151,8 +151,8 @@ exports.createClass = (root) ->
             # copy uuid into token
             #
 
-            opts.token.uuid = localOpts.uuid
-            localOpts.token = new PhraseToken opts.token
+            #opts.token.uuid = localOpts.uuid
+            localOpts.token = opts.token
 
 
             for property in ['uuid', 'token', 'text']

@@ -2,6 +2,7 @@ sequence            = require 'when/sequence'
 BoundryTokenFactory = require '../../token/boundry_token' 
 VertexTokenFactory  = require '../../token/vertex_token' 
 LeafTokenFactory    = require '../../token/leaf_token' 
+{v1}                = require 'node-uuid'
 
 #
 # Before Each (recursion hook)
@@ -79,30 +80,11 @@ exports.create = (root, parentControl) ->
         injectionControl.args[1] = phraseControl
         injectionControl.args[2] = phraseFn
 
-        try 
-
-            #
-            # phraseToken 
-            # -----------
-            # 
-            # * is the signature name of the nested phrase recursor
-            #  
-            #     ie.    
-            #           phrase 'text', (nest) -> 
-            #                   
-            #               #    
-            #               # `nest` is now the phraseToken name
-            #               # 
-            #              
-            # * is carried through the injection to become the phraseToken 
-            #   associated with each nested child phrase
-            #    
-
-            phraseType = parentControl.phraseType phraseFn
+        try  
 
             if phraseControl? 
 
-                phraseControl.phraseToken = name: util.argsOf( phraseFn )[0]
+                phraseControl.phraseToken = signature: util.argsOf( phraseFn )[0]
 
 
             #
@@ -127,11 +109,35 @@ exports.create = (root, parentControl) ->
 
                 uuid = phraseControl.uuid
 
+            #
+            # create phraseToken according to phraseType
+            # ------------------------------------------
+            #
+
+            phraseType  = parentControl.phraseType phraseFn
+
+            phraseToken = new tokenTypes[phraseType]
+
+                uuid: uuid || v1()
+
+                #
+                # * signature is the signature name of the recursor that 
+                #   created the phrase assiciated with the token. 
+                # 
+                #   ie. 
+                # 
+                #     recurse 'this phrase has token signature "recurse"', (nest) -> 
+                # 
+                #         nest 'this phrase has token signature "nest"', (end) -> 
+                #
+
+                signature: parentControl.phraseToken.signature
+
 
             stack.push phrase = new PhraseNode 
 
                 text:     phraseText
-                token:    parentControl.phraseToken
+                token:    phraseToken
                 uuid:     uuid
 
                 #

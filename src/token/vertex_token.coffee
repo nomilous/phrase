@@ -4,14 +4,18 @@ exports.createClass = (root) ->
 
     class VertexToken
 
-        constructor: -> 
+        constructor: (params) -> 
 
-            @type = 'vertex'
+            @type      = 'vertex'
+            @uuid      = params.uuid
+            @signature = params.signature
+
 
             #
             # immutables 
             #
 
-            Object.defineProperty this, 'type', 
-                enumerable: true
-                writable: false
+            for property in ['type', 'uuid', 'signature']
+                Object.defineProperty this, property, 
+                    enumerable: true
+                    writable: false

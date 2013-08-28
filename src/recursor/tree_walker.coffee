@@ -201,8 +201,8 @@ exports.walk = (root, opts, rootString, rootFn) ->
             # of phrase tree, from phrase.createRoot()
             # 
 
-            name: opts.title
-            uuid: opts.uuid
+            signature: opts.title
+            uuid:      opts.uuid
 
         timeout: opts.timeout
         boundry: opts.boundry

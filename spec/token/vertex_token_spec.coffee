@@ -10,9 +10,9 @@ describe 'LeafToken', ->
         process   = new ProcessToken require 'also'
         VertexToken = VertexTokenFactory.createClass process.root 'UUID'
 
-    it 'has immutable type as vertex', (done) -> 
+    it 'has immutable type, uuid, and signature', (done) -> 
 
-        token = new VertexToken 
+        token = new VertexToken {}
         token.type = 'renamed token'
         token.type.should.equal 'vertex'
         done()
