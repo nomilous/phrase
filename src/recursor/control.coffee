@@ -22,6 +22,10 @@ exports.bindControl = (root, control) ->
 
                 return 'leaf'
 
+            else if control.boundry.indexOf( arg1 ) >= 0
+
+                return 'boundry'
+
         return 'vertex'
 
 

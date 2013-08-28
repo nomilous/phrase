@@ -26,7 +26,8 @@ describe 'RecursorControl', ->
             @Node = PhraseNode.createClass root
 
             control = 
-                leaf: ['end', 'done', 'slurp']
+                leaf:    ['end', 'done', 'slurp']
+                boundry: ['fingertip']
 
         it 'detects leaf phrases when phrase fn arg1 is in control.leaf', (done) -> 
         
@@ -38,6 +39,18 @@ describe 'RecursorControl', ->
 
             RecursorControl.bindControl root, control
             control.phraseType( phrase.fn ).should.equal 'leaf'
+            done()
+
+        it 'detects boundry phrases when phrase fn arg1 is in control.boundry', (done) -> 
+        
+            phrase = new @Node 
+                token: {}
+                text: ''
+                uuid: '1111'
+                fn: (fingertip) -> 
+
+            RecursorControl.bindControl root, control
+            control.phraseType( phrase.fn ).should.equal 'boundry'
             done()
 
         it 'defaults to vertex phrase', (done) ->
