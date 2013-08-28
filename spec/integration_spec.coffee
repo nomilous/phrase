@@ -62,14 +62,14 @@ It calls the linkFunction with the PhraseGraph root token
             #
             (@token) => 
 
-                @token.on 'ready', (data) => 
+                @token.on 'ready', ({tokens}) => 
 
-                    # console.log data
+                    console.log tokens
 
-                    for path of data.tokens
+                    for path of tokens
 
-                        @add      = data.tokens[path] if path.match /add$/
-                        @subtract = data.tokens[path] if path.match /subtract$/
+                        @add      = tokens[path] if path.match /add$/
+                        @subtract = tokens[path] if path.match /subtract$/
 
                     done()
 

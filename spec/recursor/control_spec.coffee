@@ -37,7 +37,7 @@ describe 'RecursorControl', ->
                 fn: (slurp) -> 
 
             RecursorControl.bindControl root, control
-            control.isLeaf( phrase ).should.equal true
+            control.phraseType( phrase.fn ).should.equal 'leaf'
             done()
 
         it 'detects not leaf when phrase fn arg1 is not in control.leaf', (done) ->
@@ -48,22 +48,26 @@ describe 'RecursorControl', ->
                 uuid: '1111'
                 fn: (other) -> 
             RecursorControl.bindControl root, control
-            control.isLeaf( phrase ).should.equal false
+            control.phraseType( phrase.fn ).should.not.equal 'leaf'
             done()
 
 
         it 'marks the phrase as a leaf', (done) -> 
+
+            throw 'changing'
 
             phrase = new @Node 
                 token: uuid: '1111'
                 text: ''
                 fn: (end) -> 
             RecursorControl.bindControl root, control
-            control.isLeaf( phrase ).should.equal true
+            control.phraseType( phrase.fn ).should.equal 'leaf'
             phrase.leaf.should.equal true
             done()
 
         it 'marks the phrase as not a leaf', (done) -> 
+
+            throw 'changing'
 
             phrase = new @Node 
                 token: {}
@@ -71,7 +75,7 @@ describe 'RecursorControl', ->
                 text: ''
                 fn: (other) -> 
             RecursorControl.bindControl root, control
-            control.isLeaf( phrase ).should.equal false
+            control.phraseType( phrase.fn ).should.notequal 'not a leaf'
             done()
 
 

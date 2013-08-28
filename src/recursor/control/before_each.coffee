@@ -1,4 +1,5 @@
-sequence   = require 'when/sequence'
+sequence         = require 'when/sequence'
+LeafTokenFactory = require '../../token/leaf_token' 
 
 #
 # Before Each (recursion hook)
@@ -10,6 +11,8 @@ exports.create = (root, parentControl) ->
     {stack, notice, PhraseNode} = context
 
     #phraseLeaf = PhraseLeaf.create root, parentControl
+
+    LeafToken = LeafTokenFactory.createClass root
 
     (done, injectionControl) -> 
 
@@ -68,25 +71,26 @@ exports.create = (root, parentControl) ->
         injectionControl.args[1] = phraseControl
         injectionControl.args[2] = phraseFn
 
-
-        #
-        # phraseToken 
-        # -----------
-        # 
-        # * is the signature name of the nested phrase recursor
-        #  
-        #     ie.    
-        #           phrase 'text', (nest) -> 
-        #                   
-        #               #    
-        #               # `nest` is now the phraseToken name
-        #               # 
-        #              
-        # * is carried through the injection to become the phraseToken 
-        #   associated with each nested child phrase
-        #    
-
         try 
+
+            #
+            # phraseToken 
+            # -----------
+            # 
+            # * is the signature name of the nested phrase recursor
+            #  
+            #     ie.    
+            #           phrase 'text', (nest) -> 
+            #                   
+            #               #    
+            #               # `nest` is now the phraseToken name
+            #               # 
+            #              
+            # * is carried through the injection to become the phraseToken 
+            #   associated with each nested child phrase
+            #    
+
+            phraseType = parentControl.phraseType phraseFn
 
             if phraseControl? 
 
@@ -121,6 +125,12 @@ exports.create = (root, parentControl) ->
                 text:     phraseText
                 token:    parentControl.phraseToken
                 uuid:     uuid
+
+                #
+                # TEMPORARY
+                #
+                leaf:     phraseType == 'leaf'
+                
                 timeout:  phraseControl.timeout
                 hooks: 
                                             #
@@ -153,13 +163,6 @@ exports.create = (root, parentControl) ->
 
 
 
-
-        #
-        # is this phrase a leaf
-        #
-
-        leaf = parentControl.isLeaf phrase
-
         # parentControl.detectLeaf phrase, (leaf) -> 
 
         #     #
@@ -175,7 +178,7 @@ exports.create = (root, parentControl) ->
         #     #   control thinks it was run
         #     # 
 
-        if leaf then injectionControl.args[2] = ->
+        if phraseType == 'leaf' then injectionControl.args[2] = ->
 
         run = sequence [
 
@@ -188,7 +191,7 @@ exports.create = (root, parentControl) ->
                     # 
 
                     type: 'tree'
-                    leaf: leaf
+                    leaf: phraseType == 'leaf'
 
                     #
                     # top two phraseNodes in the stack are parent and this
@@ -202,7 +205,7 @@ exports.create = (root, parentControl) ->
 
             done()
 
-            if leaf then process.nextTick -> 
+            if phraseType == 'leaf' then process.nextTick -> 
 
                 #
                 # leaf node resolves self, there are

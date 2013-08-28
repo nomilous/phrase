@@ -1,6 +1,7 @@
 should             = require 'should'
 RecursorBeforeEach = require '../../../lib/recursor/control/before_each'
 PhraseNode         = require '../../../lib/phrase/node'
+LeafTokenFactory   = require '../../../lib/token/leaf_token' 
 
 describe 'RecursorBeforeEach', -> 
 
@@ -31,7 +32,23 @@ describe 'RecursorBeforeEach', ->
 
         parent = 
             phraseToken: name: 'it'
-            isLeaf: -> true 
+            phraseType: -> 'leaf' 
+
+        @swap = LeafTokenFactory.createClass
+
+    afterEach ->
+
+        LeafTokenFactory.createClass = @swap
+
+    it 'creates LeafToken class with current root context', (done) -> 
+
+        LeafTokenFactory.createClass = (rooot) -> 
+            root.should.equal root
+            done()
+
+        hook = RecursorBeforeEach.create root, parent
+        try hook (->), injectionControl
+
 
     it 'extracts the injection deferral', (done) -> 
         
@@ -48,6 +65,21 @@ describe 'RecursorBeforeEach', ->
 
         hook = RecursorBeforeEach.create root, parent
         hook done, injectionControl
+
+
+    it 'gets the phrase type', (done) -> 
+
+        nestedPhraseFn = -> 
+        injectionControl.args = [ 'phrase text', { key: 'VALUE' }, nestedPhraseFn ]
+
+        parent.phraseType = (fn) ->
+
+            fn.should.equal nestedPhraseFn
+            done()
+
+        hook = RecursorBeforeEach.create root, parent
+        hook (->), injectionControl
+
 
 
     it 'pushes the new phrase into the stack and resolves the injection deferral if leaf', (done) -> 
@@ -79,7 +111,7 @@ describe 'RecursorBeforeEach', ->
 
         hook (-> 
 
-            root.context.stack[0].should.be.an.instanceof root.context.PhraseNode
+            #root.context.stack[0].should.be.an.instanceof root.context.PhraseNode
 
             root.context.stack[0].text.should.equal 'phrase text'
             root.context.stack[0].uuid.should.equal 'uuid'  # only in case of root phrase
@@ -216,24 +248,10 @@ describe 'RecursorBeforeEach', ->
         ), injectionControl
 
 
-    it 'tests if the phrase is a leaf', (done) -> 
-
-        nestedPhraseFn = -> 
-        injectionControl.args = [ 'phrase text', { key: 'VALUE' }, nestedPhraseFn ]
-
-        parent.isLeaf = (phrase) ->
-
-            phrase.fn.should.equal nestedPhraseFn
-            done()
-
-        hook = RecursorBeforeEach.create root, parent
-        hook (->), injectionControl
-
-
     it 'ensures injection function as lastarg is at arg3 if phrase is not a leaf', (done) -> 
 
         nestedPhraseFn = -> 
-        parent.isLeaf = -> false
+        parent.phraseType = -> 'not leaf'
 
         hook = RecursorBeforeEach.create root, parent
 
