@@ -205,6 +205,7 @@ exports.walk = (root, opts, rootString, rootFn) ->
             uuid: opts.uuid
 
         timeout: opts.timeout
-        leaf: opts.leaf
+        boundry: opts.boundry
+        leaf:    opts.leaf
 
     injector rootString, rootFn

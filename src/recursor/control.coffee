@@ -12,8 +12,6 @@ exports.bindControl = (root, control) ->
 
     {util} = root
 
-    console.moo = 1
-
     control.phraseType = (fn) -> 
 
         arg1 = try util.argsOf( fn )[0]
@@ -25,7 +23,7 @@ exports.bindControl = (root, control) ->
                 return 'leaf'
 
         return 'vertex'
-        
+
 
     return {
 

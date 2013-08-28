@@ -73,6 +73,7 @@ exports.create = (root, parentControl) ->
 
         phraseControl          ||= {}
         phraseControl.leaf     ||= parentControl.leaf
+        phraseControl.boundry  ||= parentControl.boundry
         phraseControl.timeout  ||= parentControl.timeout
         injectionControl.args[0] = phraseText
         injectionControl.args[1] = phraseControl

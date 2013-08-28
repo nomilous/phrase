@@ -36,9 +36,10 @@ describe 'TreeWalker', ->
             root.context.PhraseGraph = PhraseGraph.createClass root
 
             opts = 
-                title: 'Title'
-                uuid:  '00000'
-                leaf: ['end']
+                title:   'Title'
+                uuid:    '00000'
+                leaf:    ['end']
+                boundry: ['edge']
                 timeout: 1000
 
         afterEach -> 

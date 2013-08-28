@@ -49,6 +49,25 @@ exports.createClass = (root) ->
                             # 
 
                 """
+
+            boundry:
+                $default: ['edge']
+                $description: """
+
+                    This specifies an array of possible phraseFn arg1 signature names 
+                    that are used to determine if the phrase function is a boundry
+                    link to another phrase tree.
+
+                        eg. 
+
+                        phraseRegistrar 'phrase text', (edge) -> 
+
+                            # 
+                            # TODO...
+                            # 
+
+                """
+
             timeout: 
                 $default: 2000
                 $description: """
