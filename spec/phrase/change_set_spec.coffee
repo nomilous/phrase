@@ -1,15 +1,15 @@
 should               = require 'should'
 PhraseGraphChangeSet = require '../../lib/phrase/change_set'
 PhraseGraph          = require '../../lib/phrase/graph'
-RootToken            = require '../../lib/token/root_token'
+AccessToken          = require '../../lib/token//access_token'
 PhraseNode           = require '../../lib/phrase/node'
 TreeWalker           = require '../../lib/recursor/tree_walker'
 Notice               = require 'notice'
 also                 = require 'also'
 
+throw 'broken'
+
 describe 'PhraseGraphChangeSet', -> 
-
-
 
     it 'can do the changes in reverse'
 
@@ -97,7 +97,7 @@ describe 'PhraseGraphChangeSet', ->
                 root.context.notice      = Notice.create opts.uuid
                 root.context.PhraseGraph = PhraseGraph.createClass root
                 root.context.PhraseNode  = PhraseNode.createClass root
-                root.context.token       = RootToken.create root
+                root.context.token       = AccessToken.create root
                 ChangeSet                = PhraseGraphChangeSet.createClass root
 
                 #

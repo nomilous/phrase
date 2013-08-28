@@ -1,7 +1,7 @@
 Notice      = require 'notice'
 PhraseNode  = require './node'
 PhraseGraph = require './graph'
-RootToken   = require '../token/root_token'
+AccessToken = require '../token/access_token'
 TreeWalker  = require '../recursor/tree_walker'
 Job         = require '../runner/job'
 
@@ -172,13 +172,13 @@ exports.createClass = (root) ->
 
 
                     #
-                    # create RootToken (root instance)
+                    # create AccessToken (instance)
                     # ----------------------------------
                     # 
                     # * This token is the primary interface into the phrase tree
                     # 
 
-                    context.token = RootToken.create root
+                    context.token = AccessToken.create root
 
 
                     #

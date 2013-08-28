@@ -1,8 +1,8 @@
 #
-# root token
-# ===========
+# Access Token
+# ============
 # 
-# The root of a PhraseTree
+# Interface into the PhraseTree
 # 
 
 {EventEmitter} = require 'events' 

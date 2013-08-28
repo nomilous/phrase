@@ -1,7 +1,7 @@
-should     = require 'should'
-PhraseRoot = require('../../lib/phrase/root').createClass require 'also'
-RootToken  = require '../../lib/token/root_token'
-Run        = require '../../lib/runner/run'
+should      = require 'should'
+PhraseRoot  = require('../../lib/phrase/root').createClass require 'also'
+AccessToken = require '../../lib/token/access_token'
+Run         = require '../../lib/runner/run'
 
 describe 'Run', -> 
 
