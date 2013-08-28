@@ -158,56 +158,58 @@ exports.create = (root, parentControl) ->
         # is this phrase a leaf
         #
 
-        parentControl.detectLeaf phrase, (leaf) -> 
+        leaf = parentControl.isLeaf phrase
 
-            #
-            # when this phrase is a leaf
-            # --------------------------
-            # 
-            # * inject noop as phraseFn into the recursor instead of 
-            #   the nestedPhraseFn that contains the recursive call
-            # 
-            # * emit 'phrase::edge:create' for the graph assembler
-            # 
-            # * resolve the phraseFn promise so that the recusrion 
-            #   control thinks it was run
-            # 
+        # parentControl.detectLeaf phrase, (leaf) -> 
 
-            if leaf then injectionControl.args[2] = ->
+        #     #
+        #     # when this phrase is a leaf
+        #     # --------------------------
+        #     # 
+        #     # * inject noop as phraseFn into the recursor instead of 
+        #     #   the nestedPhraseFn that contains the recursive call
+        #     # 
+        #     # * emit 'phrase::edge:create' for the graph assembler
+        #     # 
+        #     # * resolve the phraseFn promise so that the recusrion 
+        #     #   control thinks it was run
+        #     # 
 
-            run = sequence [
+        if leaf then injectionControl.args[2] = ->
 
-                ->  
+        run = sequence [
 
-                    notice.event 'phrase::edge:create',
+            ->  
 
-                        #
-                        # trees as special case of graph, edge needs to know
-                        # 
-
-                        type: 'tree'
-                        leaf: leaf
-
-                        #
-                        # top two phraseNodes in the stack are parent and this
-                        #
-
-                        vertices: stack[ -2.. ]
-
-            ]
-
-            run.then -> 
-
-                done()
-
-                if leaf then process.nextTick -> 
+                notice.event 'phrase::edge:create',
 
                     #
-                    # leaf node resolves self, there are
-                    # no children to recurse into
+                    # trees as special case of graph, edge needs to know
                     # 
-                    # #GREP1
+
+                    type: 'tree'
+                    leaf: leaf
+
+                    #
+                    # top two phraseNodes in the stack are parent and this
                     #
 
-                    deferral.resolve()
+                    vertices: stack[ -2.. ]
+
+        ]
+
+        run.then -> 
+
+            done()
+
+            if leaf then process.nextTick -> 
+
+                #
+                # leaf node resolves self, there are
+                # no children to recurse into
+                # 
+                # #GREP1
+                #
+
+                deferral.resolve()
 

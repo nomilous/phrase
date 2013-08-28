@@ -31,7 +31,7 @@ describe 'RecursorBeforeEach', ->
 
         parent = 
             phraseToken: name: 'it'
-            detectLeaf: (phrase, isLeaf) -> isLeaf true 
+            isLeaf: -> true 
 
     it 'extracts the injection deferral', (done) -> 
         
@@ -221,7 +221,7 @@ describe 'RecursorBeforeEach', ->
         nestedPhraseFn = -> 
         injectionControl.args = [ 'phrase text', { key: 'VALUE' }, nestedPhraseFn ]
 
-        parent.detectLeaf = (phrase, isLeaf) ->
+        parent.isLeaf = (phrase) ->
 
             phrase.fn.should.equal nestedPhraseFn
             done()
@@ -233,7 +233,7 @@ describe 'RecursorBeforeEach', ->
     it 'ensures injection function as lastarg is at arg3 if phrase is not a leaf', (done) -> 
 
         nestedPhraseFn = -> 
-        parent.detectLeaf = (phrase, isLeaf) -> isLeaf false
+        parent.isLeaf = -> false
 
         hook = RecursorBeforeEach.create root, parent
 

@@ -12,7 +12,7 @@ exports.bindControl = (root, control) ->
 
     {util} = root
 
-    control.detectLeaf = (phrase, isLeaf) -> 
+    control.isLeaf = (phrase) -> 
 
         arg1 = try util.argsOf( phrase.fn )[0]
 
@@ -25,10 +25,10 @@ exports.bindControl = (root, control) ->
         if arg1? and control.leaf.indexOf( arg1 ) >= 0
 
             phrase.leaf = true
-            return isLeaf true 
+            return true
 
-        phrase.leaf = false
-        isLeaf false
+        return false
+
 
     return {
 

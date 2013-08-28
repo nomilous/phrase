@@ -10,9 +10,9 @@ describe 'LeafToken', ->
         process   = new ProcessToken require 'also'
         LeafToken = LeafTokenFactory.createClass process.root 'UUID'
 
-
     it 'has immutable type as leaf', (done) -> 
 
         token = new LeafToken 
+        token.type = 'edge'
         token.type.should.equal 'leaf'
         done()

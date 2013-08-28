@@ -6,6 +6,12 @@ exports.createClass = (root) ->
 
         constructor: -> 
 
+            @type = 'leaf'
+
+            #
+            # immutables 
+            #
+
             Object.defineProperty this, 'type', 
                 enumerable: true
-                get: -> 'leaf'
+                writable: false

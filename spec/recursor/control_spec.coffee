@@ -10,7 +10,7 @@ RecursorAfterAll   = require '../../lib/recursor/control/after_all'
 
 describe 'RecursorControl', -> 
 
-    context 'detectLeaf()', ->
+    context 'isLeaf()', ->
 
         root    = undefined
         control = undefined
@@ -37,10 +37,8 @@ describe 'RecursorControl', ->
                 fn: (slurp) -> 
 
             RecursorControl.bindControl root, control
-            control.detectLeaf phrase, (isLeaf) ->
-
-                isLeaf.should.equal true
-                done()
+            control.isLeaf( phrase ).should.equal true
+            done()
 
         it 'detects not leaf when phrase fn arg1 is not in control.leaf', (done) ->
 
@@ -50,10 +48,8 @@ describe 'RecursorControl', ->
                 uuid: '1111'
                 fn: (other) -> 
             RecursorControl.bindControl root, control
-            control.detectLeaf phrase, (isLeaf) ->
-
-                isLeaf.should.equal false
-                done()
+            control.isLeaf( phrase ).should.equal false
+            done()
 
 
         it 'marks the phrase as a leaf', (done) -> 
@@ -63,10 +59,9 @@ describe 'RecursorControl', ->
                 text: ''
                 fn: (end) -> 
             RecursorControl.bindControl root, control
-            control.detectLeaf phrase, (isLeaf) ->
-
-                phrase.leaf.should.equal true
-                done()
+            control.isLeaf( phrase ).should.equal true
+            phrase.leaf.should.equal true
+            done()
 
         it 'marks the phrase as not a leaf', (done) -> 
 
@@ -76,10 +71,8 @@ describe 'RecursorControl', ->
                 text: ''
                 fn: (other) -> 
             RecursorControl.bindControl root, control
-            control.detectLeaf phrase, (isLeaf) ->
-
-                phrase.leaf.should.equal false
-                done()
+            control.isLeaf( phrase ).should.equal false
+            done()
 
 
 
