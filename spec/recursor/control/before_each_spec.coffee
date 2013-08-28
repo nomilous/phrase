@@ -1,7 +1,9 @@
-should             = require 'should'
-RecursorBeforeEach = require '../../../lib/recursor/control/before_each'
-PhraseNode         = require '../../../lib/phrase/node'
-LeafTokenFactory   = require '../../../lib/token/leaf_token' 
+should              = require 'should'
+RecursorBeforeEach  = require '../../../lib/recursor/control/before_each'
+PhraseNode          = require '../../../lib/phrase/node'
+LeafTokenFactory    = require '../../../lib/token/leaf_token' 
+VertexTokenFactory  = require '../../../lib/token/vertex_token' 
+BoundryTokenFactory = require '../../../lib/token/boundry_token' 
 
 describe 'RecursorBeforeEach', -> 
 
@@ -34,15 +36,38 @@ describe 'RecursorBeforeEach', ->
             phraseToken: name: 'it'
             phraseType: -> 'leaf' 
 
-        @swap = LeafTokenFactory.createClass
+        @leafToken    = LeafTokenFactory.createClass
+        @vertexToken  = VertexTokenFactory.createClass
+        @boundryToken = BoundryTokenFactory.createClass
 
     afterEach ->
 
-        LeafTokenFactory.createClass = @swap
+        LeafTokenFactory.createClass    = @leafToken
+        VertexTokenFactory.createClass  = @vertexToken
+        BoundryTokenFactory.createClass = @boundryToken
+
 
     it 'creates LeafToken class with current root context', (done) -> 
 
         LeafTokenFactory.createClass = (rooot) -> 
+            root.should.equal root
+            done()
+
+        hook = RecursorBeforeEach.create root, parent
+        try hook (->), injectionControl
+
+    it 'creates BoundryToken class with current root context', (done) -> 
+
+        BoundryTokenFactory.createClass = (rooot) -> 
+            root.should.equal root
+            done()
+
+        hook = RecursorBeforeEach.create root, parent
+        try hook (->), injectionControl
+
+    it 'creates VertexToken class with current root context', (done) -> 
+
+        VertexTokenFactory.createClass = (rooot) -> 
             root.should.equal root
             done()
 
@@ -79,6 +104,11 @@ describe 'RecursorBeforeEach', ->
 
         hook = RecursorBeforeEach.create root, parent
         hook (->), injectionControl
+
+
+    it 'creates a Token according to type', (done) -> 
+
+        throw 'type'
 
 
 

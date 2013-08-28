@@ -1,5 +1,7 @@
-sequence         = require 'when/sequence'
-LeafTokenFactory = require '../../token/leaf_token' 
+sequence            = require 'when/sequence'
+BoundryTokenFactory = require '../../token/boundry_token' 
+VertexTokenFactory  = require '../../token/vertex_token' 
+LeafTokenFactory    = require '../../token/leaf_token' 
 
 #
 # Before Each (recursion hook)
@@ -12,7 +14,12 @@ exports.create = (root, parentControl) ->
 
     #phraseLeaf = PhraseLeaf.create root, parentControl
 
-    LeafToken = LeafTokenFactory.createClass root
+    tokenTypes = 
+
+        boundry: BoundryTokenFactory.createClass root
+        vertex:  VertexTokenFactory.createClass root
+        leaf:    LeafTokenFactory.createClass root
+        
 
     (done, injectionControl) -> 
 
@@ -130,7 +137,7 @@ exports.create = (root, parentControl) ->
                 # TEMPORARY
                 #
                 leaf:     phraseType == 'leaf'
-                
+
                 timeout:  phraseControl.timeout
                 hooks: 
                                             #

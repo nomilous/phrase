@@ -40,7 +40,7 @@ describe 'RecursorControl', ->
             control.phraseType( phrase.fn ).should.equal 'leaf'
             done()
 
-        it 'detects not leaf when phrase fn arg1 is not in control.leaf', (done) ->
+        it 'defaults to vertex phrase', (done) ->
 
             phrase = new @Node 
                 token: {}
@@ -48,7 +48,7 @@ describe 'RecursorControl', ->
                 uuid: '1111'
                 fn: (other) -> 
             RecursorControl.bindControl root, control
-            control.phraseType( phrase.fn ).should.not.equal 'leaf'
+            control.phraseType( phrase.fn ).should.equal 'vertex'
             done()
 
 

@@ -10,9 +10,9 @@ describe 'BoundryToken', ->
         process   = new ProcessToken require 'also'
         BoundryToken = BoundryTokenFactory.createClass process.root 'UUID'
 
-    it 'has immutable type as leaf', (done) -> 
+    it 'has immutable type as boundry', (done) -> 
 
         token = new BoundryToken 
-        token.type = 'edge'
+        token.type = 'renamed token'
         token.type.should.equal 'boundry'
         done()

@@ -25,26 +25,7 @@ exports.bindControl = (root, control) ->
                 return 'leaf'
 
         return 'vertex'
-
-
-    # control.isLeaf = (phrase) -> 
-
-    #     arg1 = try util.argsOf( phrase.fn )[0]
-
-
-    #     #
-    #     # can override leaf detection list ['end', 'done']
-    #     # at any depth in the tree, affecting the entire
-    #     # branch
-    #     #
-
-    #     if arg1? and control.leaf.indexOf( arg1 ) >= 0
-
-    #         phrase.leaf = true
-    #         return true
-
-    #     return false
-
+        
 
     return {
 

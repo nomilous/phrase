@@ -13,6 +13,6 @@ describe 'LeafToken', ->
     it 'has immutable type as leaf', (done) -> 
 
         token = new LeafToken 
-        token.type = 'edge'
+        token.type = 'renamed token'
         token.type.should.equal 'leaf'
         done()
