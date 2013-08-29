@@ -126,12 +126,16 @@ exports.create = (root, parentControl) ->
 
                 text:     phraseText
                 token:    phraseToken
-                uuid:     uuid
 
                 #
                 # TEMPORARY
                 #
-                leaf:     phraseType == 'leaf'
+                uuid:     phraseToken.uuid
+
+                #
+                # TEMPORARY
+                #
+                # leaf:     phraseType == 'leaf'
 
                 timeout:  phraseControl.timeout
                 hooks: 

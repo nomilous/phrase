@@ -32,7 +32,7 @@ describe 'PhraseGraphChangeSet', ->
         @graphA     = new @Graph
         @graphB     = new @Graph
 
-    context 'general', ->
+    xcontext 'general', ->
 
         it 'creates a changeSet with uuid', (done) -> 
 
@@ -113,7 +113,7 @@ describe 'PhraseGraphChangeSet', ->
 
         context 'collection', -> 
 
-            it 'removes old changesets from the collection', (done) -> 
+            xit 'removes old changesets from the collection', (done) -> 
 
                 Test
 
@@ -166,7 +166,7 @@ describe 'PhraseGraphChangeSet', ->
 
         context 'detecting changes', ->
 
-            it 'detects removed leaves', (done) -> 
+            xit 'detects removed leaves', (done) -> 
 
                 Test
 
@@ -188,7 +188,32 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'detectes removed branches', (done) -> 
+            xit 'detects leaf becoming branch vertex', (done) -> 
+
+                Test
+
+                    phrase1: (nested) -> 
+                        nested 'nested phrase 1', (end) -> 
+                            end()
+
+                    phrase2: (nested) -> 
+                        nested 'nested phrase 1', (more) -> 
+                            more 'more', (end) ->
+
+
+                    (graphA, graphB) -> 
+
+                        set = new ChangeSet graphA, graphB
+                        should.exist set.changes.updated['/TEST/phrase/nested/nested phrase 1']
+                        set.changes.updated['/TEST/phrase/nested/nested phrase 1'].should.eql 
+
+                            from: 'leaf'
+                            to: 'vertex'
+
+                        done()
+
+
+            xit 'detectes removed branches', (done) -> 
 
                 Test
 
@@ -210,15 +235,14 @@ describe 'PhraseGraphChangeSet', ->
                     (graphA, graphB) -> 
 
                         set = new ChangeSet graphA, graphB
+
                         should.exist set.changes.deleted['/TEST/phrase/nested/deletes this']
                         should.exist set.changes.deleted['/TEST/phrase/nested/deletes this/more/1']
                         should.exist set.changes.deleted['/TEST/phrase/nested/deletes this/more/2']
                         done()
 
 
-
-
-            it 'detects created leaves', (done) -> 
+            xit 'detects created leaves', (done) -> 
 
                 Test
 
@@ -238,7 +262,7 @@ describe 'PhraseGraphChangeSet', ->
                         should.exist set.changes.created['/TEST/phrase/nested/creates this']
                         done()
 
-            it 'detectes created branches', (done) -> 
+            xit 'detectes created branches', (done) -> 
 
                 Test
 
@@ -265,7 +289,7 @@ describe 'PhraseGraphChangeSet', ->
 
 
 
-            it 'detects updated leaves', (done) -> 
+            xit 'detects updated leaves', (done) -> 
 
                 Test
 
@@ -285,7 +309,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'detects changed hooks as parent vertex', (done) -> 
+            xit 'detects changed hooks as parent vertex', (done) -> 
 
                 Test
 
@@ -322,7 +346,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'timeout changes all affected', (done) -> 
+            xit 'timeout changes all affected', (done) -> 
 
                 Test
 
@@ -363,7 +387,7 @@ describe 'PhraseGraphChangeSet', ->
 
 
 
-            it 'timeout on hook changes all affected', (done) -> 
+            xit 'timeout on hook changes all affected', (done) -> 
 
 
                 Test
@@ -404,7 +428,7 @@ describe 'PhraseGraphChangeSet', ->
 
         context 'applying changes (A-B)', -> 
 
-            it 'applies changes into graphA and preserves vertex uuid', (done) ->
+            xit 'applies changes into graphA and preserves vertex uuid', (done) ->
 
                 Test
 
@@ -428,7 +452,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'applies hook changes to all affected vertexes', (done) -> 
+            xit 'applies hook changes to all affected vertexes', (done) -> 
 
                 Test
 
@@ -457,7 +481,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
                 
-            it 'created hooks are assigned uuid, timeout, fn and copied into all children', (done) -> 
+            xit 'created hooks are assigned uuid, timeout, fn and copied into all children', (done) -> 
 
                 Test
 
@@ -487,7 +511,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'deletes vertices (leaf)', (done) -> 
+            xit 'deletes vertices (leaf)', (done) -> 
 
 
                 Test
@@ -516,7 +540,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'deletes vertices (branch)', (done) -> 
+            xit 'deletes vertices (branch)', (done) -> 
 
                 Test
 
@@ -544,7 +568,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'creates vertices (leaf)', (done) -> 
+            xit 'creates vertices (leaf)', (done) -> 
 
                 Test
 
@@ -568,7 +592,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'creates vertices (branch)', (done) -> 
+            xit 'creates vertices (branch)', (done) -> 
 
                 Test
 
@@ -596,7 +620,7 @@ describe 'PhraseGraphChangeSet', ->
                         done()
 
 
-            it 'creates vertices into ex leaf (leaf flag becomes false)', (done) -> 
+            xit 'creates vertices into ex leaf (leaf flag becomes false)', (done) -> 
 
                 Test
 
@@ -625,7 +649,7 @@ describe 'PhraseGraphChangeSet', ->
 
                     phrase1: (nested) -> 
 
-                        nested 'nested phrase 1', uuid: 1111, (end) -> 
+                        nested 'nested phrase 1', uuid: 1111, (deeper) -> 
                             deeper 'one', uuid: 2222, (end) ->
                             deeper 'two', uuid: 3333, (end) ->  
 
@@ -637,12 +661,13 @@ describe 'PhraseGraphChangeSet', ->
                     (graphA, graphB) -> 
 
                         set = new ChangeSet graphA, graphB
+
                         set.AtoB()
-                        graphA.vertices[1111].leaf.should.equal true
+                        graphA.vertices[1111].type.should.equal 'leaf'
                         done()
 
 
-        context 'updates indexes', -> 
+        xcontext 'updates indexes', -> 
 
             it 'ammends path2uuid and uuid2path indexes (not in order)', (done) ->
 

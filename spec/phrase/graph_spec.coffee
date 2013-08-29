@@ -205,13 +205,13 @@ describe 'PhraseGraph', ->
                 graph = new @Graph
 
                 graph.registerEdge type: 'tree', vertices: [
-                    { uuid: 'UUID1', key: 'value1' }
-                    { uuid: 'UUID2', key: 'value2' }
+                    { uuid: 'UUID1', key: 'value1', token: {              } }
+                    { uuid: 'UUID2', key: 'value2', token: {              } }
                 ],  ->
 
                 graph.registerEdge type: 'tree', vertices: [
-                        { uuid: 'UUID1', key: 'value1' }
-                        { uuid: 'UUID3', key: 'value3' }
+                        { uuid: 'UUID1', key: 'value1', token: {              } }
+                        { uuid: 'UUID3', key: 'value3', token: {              } }
                     ],  ->
 
 
@@ -224,7 +224,6 @@ describe 'PhraseGraph', ->
 
                     UUID1: ['UUID2', 'UUID3']
 
-
                 done()
 
 
@@ -235,8 +234,8 @@ describe 'PhraseGraph', ->
                 #
 
                 graph.registerEdge type: 'tree', vertices: [
-                        { uuid: 'UUID1', key: 'value1' }
-                        { uuid: 'UUID2', key: 'value2', leaf: true }
+                        { uuid: 'UUID1', key: 'value1', token: {              } }
+                        { uuid: 'UUID2', key: 'value2', token: { type: 'leaf' } }
                     ],  ->
 
                 graph.registerEdge type: 'tree', vertices: [
@@ -245,8 +244,8 @@ describe 'PhraseGraph', ->
                     ],  ->
 
                 graph.registerEdge type: 'tree', vertices: [
-                        { uuid: 'UUID3', key: 'value3' }
-                        { uuid: 'UUID4', key: 'value4', leaf: true }
+                        { uuid: 'UUID3', key: 'value3', token: {              } }
+                        { uuid: 'UUID4', key: 'value4', token: { type: 'leaf' } }
                     ],  ->
 
                 graph.leaves.should.eql ['UUID2', 'UUID4']
@@ -262,7 +261,7 @@ describe 'PhraseGraph', ->
 
             graph.registerEdge type: 'tree', vertices: [
                     { uuid: 'UUID1', key: 'value1' }
-                    { uuid: 'UUID2', arbkey: 'arbvalue', token: { leaf: true } }
+                    { uuid: 'UUID2', arbkey: 'arbvalue', token: { type: 'leaf' } }
                 ],  ->
 
             graph.leavesOf( 'UUID2' )[0].arbkey.should.equal 'arbvalue'
@@ -289,7 +288,7 @@ describe 'PhraseGraph', ->
 
             graph.registerEdge type: 'tree', vertices: [
                     { uuid: 'UUID1', key: 'value1' }
-                    { uuid: 'UUID2', key: 'value2', token: { leaf: true } }
+                    { uuid: 'UUID2', key: 'value2', token: { type: 'leaf' } }
                 ],  ->
             graph.registerEdge type: 'tree', vertices: [
                     { uuid: 'UUID1', key: 'value1' }
@@ -301,39 +300,39 @@ describe 'PhraseGraph', ->
                 ],  ->
             graph.registerEdge type: 'tree', vertices: [
                     { uuid: 'UUID3', key: 'value3' }
-                    { uuid: 'UUID5', key: 'value5', token: { leaf: true } }
+                    { uuid: 'UUID5', key: 'value5', token: { type: 'leaf' } }
                 ],  ->
             graph.registerEdge type: 'tree', vertices: [
                     { uuid: 'UUID4', key: 'value4' }
-                    { uuid: 'UUID6', key: 'value6', token: { leaf: true } }
+                    { uuid: 'UUID6', key: 'value6', token: { type: 'leaf' } }
                 ],  ->
             graph.registerEdge type: 'tree', vertices: [
                     { uuid: 'UUID4', key: 'value4' }
-                    { uuid: 'UUID7', key: 'value7', token: { leaf: true } }
+                    { uuid: 'UUID7', key: 'value7', token: { type: 'leaf' } }
                 ],  ->
             graph.registerEdge type: 'tree', vertices: [
                     { uuid: 'UUID1', key: 'value1' }
-                    { uuid: 'UUID8', key: 'value8', token: { leaf: true } }
+                    { uuid: 'UUID8', key: 'value8', token: { type: 'leaf' } }
                 ],  ->
 
 
             graph.leavesOf( 'UUID4' ).should.eql [ 
-                { uuid: 'UUID6', key: 'value6', token: { leaf: true } }
-                { uuid: 'UUID7', key: 'value7', token: { leaf: true } }
+                { uuid: 'UUID6', key: 'value6', token: { type: 'leaf' } }
+                { uuid: 'UUID7', key: 'value7', token: { type: 'leaf' } }
             ]
 
             graph.leavesOf( 'UUID3' ).should.eql [ 
-                { uuid: 'UUID6', key: 'value6', token: { leaf: true } }
-                { uuid: 'UUID7', key: 'value7', token: { leaf: true } }
-                { uuid: 'UUID5', key: 'value5', token: { leaf: true } } 
+                { uuid: 'UUID6', key: 'value6', token: { type: 'leaf' } }
+                { uuid: 'UUID7', key: 'value7', token: { type: 'leaf' } }
+                { uuid: 'UUID5', key: 'value5', token: { type: 'leaf' } } 
             ]
 
             graph.leavesOf( 'UUID1' ).should.eql [ 
-                { uuid: 'UUID2', key: 'value2', token: { leaf: true } }
-                { uuid: 'UUID6', key: 'value6', token: { leaf: true } }
-                { uuid: 'UUID7', key: 'value7', token: { leaf: true } }
-                { uuid: 'UUID5', key: 'value5', token: { leaf: true } } 
-                { uuid: 'UUID8', key: 'value8', token: { leaf: true } }
+                { uuid: 'UUID2', key: 'value2', token: { type: 'leaf' } }
+                { uuid: 'UUID6', key: 'value6', token: { type: 'leaf' } }
+                { uuid: 'UUID7', key: 'value7', token: { type: 'leaf' } }
+                { uuid: 'UUID5', key: 'value5', token: { type: 'leaf' } } 
+                { uuid: 'UUID8', key: 'value8', token: { type: 'leaf' } }
             ]
 
             done()
@@ -347,11 +346,11 @@ describe 'PhraseGraph', ->
 
             @graph.registerEdge type: 'tree', vertices: [
                     { uuid: 'PARENT', token: { signature: 'context' }, text: 'the index' }
-                    { uuid: 'CHILD1', token: { signature: 'it' }, text: 'has map from path to uuid', leaf: true }
+                    { uuid: 'CHILD1', token: { signature: 'it', type: 'leaf' }, text: 'has map from path to uuid' }
                 ],  ->
             @graph.registerEdge type: 'tree', vertices: [
                     { uuid: 'PARENT', token: { signature: 'context' }, text: 'the index' }
-                    { uuid: 'CHILD2', token: { signature: 'it' }, text: 'has map from uuid to path', leaf: true }
+                    { uuid: 'CHILD2', token: { signature: 'it', type: 'leaf' }, text: 'has map from uuid to path' }
                 ],  ->
 
                     
@@ -417,8 +416,8 @@ describe 'PhraseGraph', ->
 
                     tokens: 
                         '/context/the index': { signature: 'context' }
-                        '/context/the index/it/has map from path to uuid': { signature: 'it' }
-                        '/context/the index/it/has map from uuid to path': { signature: 'it' }
+                        '/context/the index/it/has map from path to uuid': { signature: 'it', type: 'leaf' }
+                        '/context/the index/it/has map from uuid to path': { signature: 'it', type: 'leaf' }
 
                 done()
 

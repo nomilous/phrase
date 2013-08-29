@@ -72,16 +72,16 @@ exports.createClass = (root) ->
 
                 if changes = runningVertex.getChanges newVertex
 
-                    if changes.leaf?
+                    if changes.type?
 
                         @changes.updated ||= {}
                         @changes.updated[path] ||= {}
-                        @changes.updated[path].leaf = changes.leaf
+                        @changes.updated[path].type = changes.type
 
 
                     if changes.fn?
 
-                        if runningVertex.leaf # and newVertex.leaf
+                        if runningVertex.type == 'leaf' # and newVertex.type == 'leaf'
                                               # 
                                               # would prevent leaf that is becoming
                                               # vertex with nested leaf(s) from 

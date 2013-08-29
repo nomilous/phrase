@@ -181,7 +181,6 @@ exports.createClass = (root) ->
                     localOpts.leaf = value
 
 
-
             Object.defineProperty this, 'update', 
 
                 enumerable: false
@@ -195,7 +194,7 @@ exports.createClass = (root) ->
                     return target.update changes if target? and target isnt this
 
 
-                    for thing in ['fn', 'timeout', 'leaf']
+                    for thing in ['fn', 'timeout']
 
                         if changes[thing]? 
 
@@ -204,6 +203,10 @@ exports.createClass = (root) ->
                     if changes.hooks?
 
                         localOpts.hooks.update changes.hooks
+
+                    if changes.type? 
+
+                        console.log SWITCH_TOKEN: changes.type
 
 
         getChanges: (vertex) -> 
@@ -249,7 +252,7 @@ exports.createClass = (root) ->
 
             changes = undefined
 
-            for property in ['fn', 'timeout', 'leaf']
+            for property in ['fn', 'timeout']
 
                 from = try @[property].toString()
                 to   = try vertex[property].toString()
@@ -262,6 +265,21 @@ exports.createClass = (root) ->
                     changes[property] = 
                         from: @[property]
                         to: vertex[property]
+
+            for tokenProperty in ['type']
+
+                from = try @token[tokenProperty]
+                to   = try vertex.token[tokenProperty]
+
+                if from != to
+                    
+                    changes ||= 
+                        target: this
+                        #source: vertex
+                    changes[tokenProperty] = 
+                        from: @token[tokenProperty]
+                        to: vertex.token[tokenProperty]
+
 
             for hookType in ['beforeAll', 'beforeEach', 'afterEach', 'afterAll']
 
