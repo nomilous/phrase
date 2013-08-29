@@ -1,7 +1,8 @@
 sequence            = require 'when/sequence'
-BoundryTokenFactory = require '../../token/boundry_token' 
+RootTokenFactory    = require '../../token/root_token' 
 VertexTokenFactory  = require '../../token/vertex_token' 
 LeafTokenFactory    = require '../../token/leaf_token' 
+BoundryTokenFactory = require '../../token/boundry_token'
 {v1}                = require 'node-uuid'
 
 #
@@ -17,10 +18,11 @@ exports.create = (root, parentControl) ->
 
     tokenTypes = 
 
-        boundry: BoundryTokenFactory.createClass root
+        root:    RootTokenFactory.createClass root
         vertex:  VertexTokenFactory.createClass root
         leaf:    LeafTokenFactory.createClass root
-        
+        boundry: BoundryTokenFactory.createClass root
+
 
     (done, injectionControl) -> 
 
@@ -86,35 +88,21 @@ exports.create = (root, parentControl) ->
 
                 phraseControl.phraseToken = signature: util.argsOf( phraseFn )[0]
 
-
-            #
-            # inject new phrase into stack
-            #
-
-            if stack.length == 0 
-
-                #
-                # root node is assigned uuid of the phrase tree
-                #
-
-                uuid = parentControl.phraseToken.uuid 
-
-            else 
-
-                #
-                # others can optionally be set on the phraseControl
-                # 
-                #    nested 'phrase text', uuid: '123', (end) -> 
-                #
-
-                uuid = phraseControl.uuid
-
             #
             # create phraseToken according to phraseType
             # ------------------------------------------
             #
 
-            phraseType  = parentControl.phraseType phraseFn
+            phraseType = parentControl.phraseType phraseFn
+
+            if stack.length == 0
+
+                phraseType  = 'root'
+                uuid  = parentControl.phraseToken.uuid
+
+            else 
+
+                uuid = phraseControl.uuid
 
             phraseToken = new tokenTypes[phraseType]
 

@@ -47,7 +47,7 @@ describe 'RecursorBeforeEach', ->
         BoundryTokenFactory.createClass = @boundryToken
 
 
-    it 'creates LeafToken class with current root context', (done) -> 
+    xit 'creates LeafToken class with current root context', (done) -> 
 
         LeafTokenFactory.createClass = (rooot) -> 
             root.should.equal root
@@ -56,7 +56,7 @@ describe 'RecursorBeforeEach', ->
         hook = RecursorBeforeEach.create root, parent
         try hook (->), injectionControl
 
-    it 'creates BoundryToken class with current root context', (done) -> 
+    xit 'creates BoundryToken class with current root context', (done) -> 
 
         BoundryTokenFactory.createClass = (rooot) -> 
             root.should.equal root
@@ -65,7 +65,7 @@ describe 'RecursorBeforeEach', ->
         hook = RecursorBeforeEach.create root, parent
         try hook (->), injectionControl
 
-    it 'creates VertexToken class with current root context', (done) -> 
+    xit 'creates VertexToken class with current root context', (done) -> 
 
         VertexTokenFactory.createClass = (rooot) -> 
             root.should.equal root
@@ -75,7 +75,7 @@ describe 'RecursorBeforeEach', ->
         try hook (->), injectionControl
 
 
-    it 'extracts the injection deferral', (done) -> 
+    xit 'extracts the injection deferral', (done) -> 
         
         Object.defineProperty injectionControl, 'defer', 
             get: -> 
@@ -86,13 +86,13 @@ describe 'RecursorBeforeEach', ->
         try hook (->), injectionControl
 
 
-    it 'calls the hook resolver', (done) -> 
+    xit 'calls the hook resolver', (done) -> 
 
         hook = RecursorBeforeEach.create root, parent
         hook done, injectionControl
 
 
-    it 'gets the phrase type', (done) -> 
+    xit 'gets the phrase type', (done) -> 
 
         nestedPhraseFn = -> 
         injectionControl.args = [ 'phrase text', { key: 'VALUE' }, nestedPhraseFn ]
@@ -105,17 +105,36 @@ describe 'RecursorBeforeEach', ->
         hook = RecursorBeforeEach.create root, parent
         hook (->), injectionControl
 
+    xit 'creates the first phrase a Token as RootToken', (done) -> 
 
-    it 'creates each phrase a Token according to type with signature and uuid', (done) -> 
+        injectionControl.args = [ 'something', { key: 'VALUE' }, -> ]
+        parent.phraseToken = signature: 'describe', uuid: 'uuid'
+        hook = RecursorBeforeEach.create root, parent
+        hook (->
 
-        injectionControl.args = [ 'phrase text', { key: 'VALUE' }, -> ]
+            root.context.stack[0].token.type.should.equal      'root'
+            root.context.stack[0].token.signature.should.equal 'describe'
+            root.context.stack[0].token.uuid.should.equal      'uuid'
+            done()
+
+        ), injectionControl
+
+    it 'creates each subsequent phrase a Token according to type with signature and uuid', (done) -> 
+
+        root.context.stack.push new root.context.PhraseNode
+
+            token: signature: 'describe'
+            text: 'the parent phrase'
+            fn: ->
+
+        injectionControl.args = [ 'phrase text', { uuid: 'uuid', key: 'VALUE' }, -> ]
         parent.phraseToken = signature: 'it', uuid: 'uuid'
         hook = RecursorBeforeEach.create root, parent
         hook (->
 
-            root.context.stack[0].token.type.should.equal      'leaf'
-            root.context.stack[0].token.signature.should.equal 'it'
-            root.context.stack[0].token.uuid.should.equal      'uuid'
+            root.context.stack[1].token.type.should.equal      'leaf'
+            root.context.stack[1].token.signature.should.equal 'it'
+            root.context.stack[1].token.uuid.should.equal      'uuid'
             done()
 
         ), injectionControl
@@ -127,8 +146,14 @@ describe 'RecursorBeforeEach', ->
         nestedPhraseFn = ->
         phraseHookFn = ->
 
-        injectionControl.args = [ 'phrase text', { key: 'VALUE' }, nestedPhraseFn ]
-        parent.phraseToken = signature: 'it', uuid: 'uuid'
+        root.context.stack.push new root.context.PhraseNode
+
+            token: signature: 'describe'
+            text: 'the parent phrase'
+            fn: ->
+
+        injectionControl.args = [ 'phrase text', { uuid: 'uuid', key: 'VALUE' }, nestedPhraseFn ]
+        parent.phraseToken = signature: 'it'
         injectionControl.beforeEach = phraseHookFn
         
         injectionControl.defer = 
@@ -153,11 +178,11 @@ describe 'RecursorBeforeEach', ->
 
             #root.context.stack[0].should.be.an.instanceof root.context.PhraseNode
 
-            root.context.stack[0].text.should.equal 'phrase text'
-            root.context.stack[0].uuid.should.equal 'uuid'  # only in case of root phrase
-            root.context.stack[0].fn.should.equal nestedPhraseFn
-            root.context.stack[0].token.signature.should.equal 'it'
-            root.context.stack[0].hooks.beforeEach.should.equal phraseHookFn
+            root.context.stack[1].text.should.equal 'phrase text'
+            root.context.stack[1].uuid.should.equal 'uuid'  # only in case of root phrase
+            root.context.stack[1].fn.should.equal nestedPhraseFn
+            root.context.stack[1].token.signature.should.equal 'it'
+            root.context.stack[1].hooks.beforeEach.should.equal phraseHookFn
 
 
         ), injectionControl
@@ -315,6 +340,13 @@ describe 'RecursorBeforeEach', ->
 
 
     it 'replaces injection function with noop if phrase is a leaf', (done) -> 
+
+        
+        root.context.stack.push new root.context.PhraseNode
+
+            token: signature: 'context'
+            text: 'the parent phrase'
+            fn: ->
 
         nestedPhraseFn = -> 'not noop'
         hook = RecursorBeforeEach.create root, parent

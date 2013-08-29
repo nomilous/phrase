@@ -64,7 +64,7 @@ It calls the linkFunction with the PhraseGraph root token
 
                 @token.on 'ready', ({tokens}) => 
 
-                    console.log tokens
+                    console.log JSON.stringify tokens, null, 2
 
                     for path of tokens
 
@@ -89,7 +89,7 @@ TODO
 
         arithmatic 'operations', (operation) -> 
 
-            operation 'subtract', (end) -> 
+            operation 'subtract', uuid: 900, (end) -> 
 
                 @answer = @input1 - @input2
                 end()
