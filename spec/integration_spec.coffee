@@ -94,6 +94,9 @@ TODO
                 @answer = @input1 - @input2
                 end()
 
+            operation 'boundry phrase', (edge) ->
+
+                console.log 'BOUNDRY'
 
             operation 'just checking', (nested) -> 
 

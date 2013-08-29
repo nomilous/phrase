@@ -65,35 +65,6 @@ describe 'RecursorControl', ->
             done()
 
 
-        it 'marks the phrase as a leaf', (done) -> 
-
-            throw 'changing'
-
-            phrase = new @Node 
-                token: uuid: '1111'
-                text: ''
-                fn: (end) -> 
-            RecursorControl.bindControl root, control
-            control.phraseType( phrase.fn ).should.equal 'leaf'
-            phrase.leaf.should.equal true
-            done()
-
-        it 'marks the phrase as not a leaf', (done) -> 
-
-            throw 'changing'
-
-            phrase = new @Node 
-                token: {}
-                uuid: '1111'
-                text: ''
-                fn: (other) -> 
-            RecursorControl.bindControl root, control
-            control.phraseType( phrase.fn ).should.notequal 'not a leaf'
-            done()
-
-
-
-
 they = it
 
 describe 'RecursorHooks', -> 

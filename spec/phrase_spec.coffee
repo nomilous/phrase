@@ -180,7 +180,7 @@ describe 'phrase.createRoot(opts, linkFunction)', ->
             # continue the walk into A
             #
 
-            @phraseA 'nested 1 A', (deeperA) =>
+            @phraseA 'nested 1 A', uuid: 0, (deeperA) =>
 
                 #
                 # continue the walk into B
@@ -196,13 +196,13 @@ describe 'phrase.createRoot(opts, linkFunction)', ->
                     @RAN_before_all_nested_n_B = true
                     done()
 
-                @phraseB 'nested 1 B leaf', (end) -> 
+                @phraseB 'nested 1 B leaf', uuid: 1, (end) -> 
 
                     #console.log RUNNING: 'nested 1 B leaf'
                     @RAN_nested_n_B_leaf = true
                     end()
 
-                @phraseB 'nested 2 B', (deeperB) -> 
+                @phraseB 'nested 2 B', uuid: 2, (deeperB) -> 
 
                     #
                     # * register before each on A and B vertices
@@ -213,12 +213,12 @@ describe 'phrase.createRoot(opts, linkFunction)', ->
                         @RAN_before_deeper_1_AB = true
                         done()
 
-                    deeperA 'deeper 1 A', (end) -> 
+                    deeperA 'deeper 1 A', uuid: 3, (end) -> 
 
                         @RAN_deeperA = true
                         end()
 
-                    deeperB 'deeper 1 B', (end) -> 
+                    deeperB 'deeper 1 B', uuid: 4, (end) -> 
 
                         @RAN_deeperB = true
                         end()

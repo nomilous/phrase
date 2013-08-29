@@ -217,3 +217,16 @@ exports.create = (root, parentControl) ->
 
                 deferral.resolve()
 
+
+            if phraseType == 'boundry'
+
+                #
+                # TEMPORARY: boundry node runs the phrase function 
+                #
+
+                result = phrase.fn -> 
+
+                deferral.resolve()
+
+
+
