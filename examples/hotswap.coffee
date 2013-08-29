@@ -8,7 +8,9 @@ hotswap = require( '../lib/phrase' ).createRoot
 
     (token, notice) -> 
 
-        token.on 'ready', -> 
+        token.on 'ready', ({tokens})-> 
+
+            #console.log tokens
 
             #
             # start first player on version 1

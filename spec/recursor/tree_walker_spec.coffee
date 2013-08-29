@@ -88,7 +88,7 @@ describe 'TreeWalker', ->
 
             RecursorControl.bindControl = (rooot, parent) -> 
 
-                parent.phraseToken.name.should.equal 'Title'
+                parent.phraseToken.signature.should.equal 'Title'
                 parent.phraseToken.uuid.should.equal '00000'
                 done()
                 throw 'go no further'
