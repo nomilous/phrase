@@ -149,10 +149,10 @@ exports.createClass = (root) ->
 
             recurse = (vertex, stack = []) => 
 
-                tokenName = vertex.token.name
+                signature = vertex.token.signature
                 text      = vertex.text
 
-                stack.push "/#{  tokenName  }/#{  text  }"
+                stack.push "/#{  signature  }/#{  text  }"
 
                 path = stack.join ''
                 @path2uuid[     path    ] = vertex.uuid

@@ -346,12 +346,12 @@ describe 'PhraseGraph', ->
             @graph = new @Graph
 
             @graph.registerEdge type: 'tree', vertices: [
-                    { uuid: 'PARENT', token: { name: 'context' }, text: 'the index' }
-                    { uuid: 'CHILD1', token: { name: 'it' }, text: 'has map from path to uuid', leaf: true }
+                    { uuid: 'PARENT', token: { signature: 'context' }, text: 'the index' }
+                    { uuid: 'CHILD1', token: { signature: 'it' }, text: 'has map from path to uuid', leaf: true }
                 ],  ->
             @graph.registerEdge type: 'tree', vertices: [
-                    { uuid: 'PARENT', token: { name: 'context' }, text: 'the index' }
-                    { uuid: 'CHILD2', token: { name: 'it' }, text: 'has map from uuid to path', leaf: true }
+                    { uuid: 'PARENT', token: { signature: 'context' }, text: 'the index' }
+                    { uuid: 'CHILD2', token: { signature: 'it' }, text: 'has map from uuid to path', leaf: true }
                 ],  ->
 
                     
@@ -416,9 +416,9 @@ describe 'PhraseGraph', ->
                 msg.should.eql 
 
                     tokens: 
-                        '/context/the index': { name: 'context' }
-                        '/context/the index/it/has map from path to uuid': { name: 'it' }
-                        '/context/the index/it/has map from uuid to path': { name: 'it' }
+                        '/context/the index': { signature: 'context' }
+                        '/context/the index/it/has map from path to uuid': { signature: 'it' }
+                        '/context/the index/it/has map from uuid to path': { signature: 'it' }
 
                 done()
 
@@ -433,17 +433,17 @@ describe 'PhraseGraph', ->
             @graph = new @Graph
 
             @graph.registerEdge type: 'tree', vertices: [
-                    { uuid: 'PARENT',      token: { name: 'context' }, text: 'the index' }
-                    { uuid: 'CHILD1',      token: { name: 'context' }, text: 'has indexes'}
+                    { uuid: 'PARENT',      token: { signature: 'context' }, text: 'the index' }
+                    { uuid: 'CHILD1',      token: { signature: 'context' }, text: 'has indexes'}
                 ],  ->
             @graph.registerEdge type: 'tree', vertices: [
-                    { uuid: 'PARENT',      token: { name: 'context' }, text: 'the index' }
-                    { uuid: 'CHILD2',      token: { name: 'it' }, text: 'has map from uuid to path', leaf: true }
+                    { uuid: 'PARENT',      token: { signature: 'context' }, text: 'the index' }
+                    { uuid: 'CHILD2',      token: { signature: 'it' }, text: 'has map from uuid to path', leaf: true }
                 ],  ->
 
             @graph.registerEdge type: 'tree', vertices: [
-                    { uuid: 'CHILD1',      token: { name: 'context' }, text: 'has indexes'}
-                    { uuid: 'GRANDCHILD1', token: { name: 'it' }, text: 'can get route (array of uuids)', leaf: true }
+                    { uuid: 'CHILD1',      token: { signature: 'context' }, text: 'has indexes'}
+                    { uuid: 'GRANDCHILD1', token: { signature: 'it' }, text: 'can get route (array of uuids)', leaf: true }
                 ],  ->
            
 
