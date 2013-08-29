@@ -1,8 +1,5 @@
 sequence            = require 'when/sequence'
-RootTokenFactory    = require '../../token/root_token' 
-VertexTokenFactory  = require '../../token/vertex_token' 
-LeafTokenFactory    = require '../../token/leaf_token' 
-BoundryTokenFactory = require '../../token/boundry_token'
+PhraseTokenFactory  = require '../../token/phrase_token'
 {v1}                = require 'node-uuid'
 
 #
@@ -16,12 +13,7 @@ exports.create = (root, parentControl) ->
 
     #phraseLeaf = PhraseLeaf.create root, parentControl
 
-    tokenTypes = 
-
-        root:    RootTokenFactory.createClass root
-        vertex:  VertexTokenFactory.createClass root
-        leaf:    LeafTokenFactory.createClass root
-        boundry: BoundryTokenFactory.createClass root
+    PhraseToken = PhraseTokenFactory.createClass root
 
 
     (done, injectionControl) -> 
@@ -104,7 +96,9 @@ exports.create = (root, parentControl) ->
 
                 uuid = phraseControl.uuid
 
-            phraseToken = new tokenTypes[phraseType]
+            phraseToken = new PhraseToken
+
+                type: phraseType
 
                 uuid: uuid || v1()
 

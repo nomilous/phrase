@@ -1,12 +1,10 @@
-
-
 exports.createClass = (root) -> 
 
-    class VertexToken
+    class PhraseToken
 
         constructor: (params) -> 
 
-            @type      = 'vertex'
+            @type      = params.type
             @uuid      = params.uuid
             @signature = params.signature
 

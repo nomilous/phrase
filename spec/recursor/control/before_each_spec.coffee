@@ -1,9 +1,8 @@
 should              = require 'should'
 RecursorBeforeEach  = require '../../../lib/recursor/control/before_each'
 PhraseNode          = require '../../../lib/phrase/node'
-LeafTokenFactory    = require '../../../lib/token/leaf_token' 
-VertexTokenFactory  = require '../../../lib/token/vertex_token' 
-BoundryTokenFactory = require '../../../lib/token/boundry_token' 
+PhraseTokenFactory  = require '../../../lib/token/phrase_token' 
+
 
 describe 'RecursorBeforeEach', -> 
 
@@ -36,38 +35,16 @@ describe 'RecursorBeforeEach', ->
             phraseToken: signature: 'it'
             phraseType: -> 'leaf' 
 
-        @leafToken    = LeafTokenFactory.createClass
-        @vertexToken  = VertexTokenFactory.createClass
-        @boundryToken = BoundryTokenFactory.createClass
+        @phraseToken = PhraseTokenFactory.createClass
 
     afterEach ->
 
-        LeafTokenFactory.createClass    = @leafToken
-        VertexTokenFactory.createClass  = @vertexToken
-        BoundryTokenFactory.createClass = @boundryToken
+        PhraseTokenFactory.createClass = @phraseToken
 
 
-    xit 'creates LeafToken class with current root context', (done) -> 
+    it 'creates LeafToken class with current root context', (done) -> 
 
-        LeafTokenFactory.createClass = (rooot) -> 
-            root.should.equal root
-            done()
-
-        hook = RecursorBeforeEach.create root, parent
-        try hook (->), injectionControl
-
-    xit 'creates BoundryToken class with current root context', (done) -> 
-
-        BoundryTokenFactory.createClass = (rooot) -> 
-            root.should.equal root
-            done()
-
-        hook = RecursorBeforeEach.create root, parent
-        try hook (->), injectionControl
-
-    xit 'creates VertexToken class with current root context', (done) -> 
-
-        VertexTokenFactory.createClass = (rooot) -> 
+        PhraseTokenFactory.createClass = (rooot) -> 
             root.should.equal root
             done()
 
@@ -75,7 +52,7 @@ describe 'RecursorBeforeEach', ->
         try hook (->), injectionControl
 
 
-    xit 'extracts the injection deferral', (done) -> 
+    it 'extracts the injection deferral', (done) -> 
         
         Object.defineProperty injectionControl, 'defer', 
             get: -> 
@@ -86,13 +63,13 @@ describe 'RecursorBeforeEach', ->
         try hook (->), injectionControl
 
 
-    xit 'calls the hook resolver', (done) -> 
+    it 'calls the hook resolver', (done) -> 
 
         hook = RecursorBeforeEach.create root, parent
         hook done, injectionControl
 
 
-    xit 'gets the phrase type', (done) -> 
+    it 'gets the phrase type', (done) -> 
 
         nestedPhraseFn = -> 
         injectionControl.args = [ 'phrase text', { key: 'VALUE' }, nestedPhraseFn ]
@@ -105,7 +82,7 @@ describe 'RecursorBeforeEach', ->
         hook = RecursorBeforeEach.create root, parent
         hook (->), injectionControl
 
-    xit 'creates the first phrase a Token as RootToken', (done) -> 
+    it 'creates the first phrase a Token as root', (done) -> 
 
         injectionControl.args = [ 'something', { key: 'VALUE' }, -> ]
         parent.phraseToken = signature: 'describe', uuid: 'uuid'
