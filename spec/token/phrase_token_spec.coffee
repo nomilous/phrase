@@ -10,9 +10,11 @@ describe 'LeafToken', ->
         process     = new ProcessToken require 'also'
         PhraseToken = PhraseTokenFactory.createClass process.root 'UUID'
 
-    it 'has immutable type, uuid, and signature', (done) -> 
+    it 'has immutable uuid, and signature', (done) -> 
 
-        token = new PhraseToken type: 'leaf'
-        token.type = 'renamed token'
-        token.type.should.equal 'leaf'
+        token = new PhraseToken type: 'leaf', uuid: 'UUID', signature: 'signature'
+        
+        token.uuid = 9
+        token.signature = '®†∑´®œ√œ'
+        token.should.eql type: 'leaf', uuid: 'UUID', signature: 'signature'
         done()

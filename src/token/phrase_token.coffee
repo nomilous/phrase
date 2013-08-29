@@ -13,7 +13,7 @@ exports.createClass = (root) ->
             # immutables 
             #
 
-            for property in ['type', 'uuid', 'signature']
+            for property in ['uuid', 'signature']
                 Object.defineProperty this, property, 
                     enumerable: true
                     writable: false

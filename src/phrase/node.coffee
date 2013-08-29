@@ -206,7 +206,7 @@ exports.createClass = (root) ->
 
                     if changes.type? 
 
-                        console.log SWITCH_TOKEN: changes.type
+                        localOpts.token.type = changes.type.to
 
 
         getChanges: (vertex) -> 

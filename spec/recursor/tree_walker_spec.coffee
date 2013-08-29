@@ -30,6 +30,8 @@ describe 'TreeWalker', ->
                     use:   -> 
                 token: emit: (event, args...) ->
 
+                    conosole.log '-----', arguments
+
                     EVENTS[event] = args
 
             root.context.PhraseNode = PhraseNode.createClass root
@@ -98,13 +100,12 @@ describe 'TreeWalker', ->
 
         it 'emits "error" onto the root token at invalid phrase text', (done) -> 
 
-            TreeWalker.walk( root, opts, 'phra/se string', (nest) -> ).then( 
+            root.context.token.emit = (event, error) ->
 
-                ->
-                -> EVENTS.error.should.match /NVALID text/; done()
-                ->
+                error.should.match /INVALID text/
+                done()
 
-            )
+            TreeWalker.walk root, opts, 'phra/se string', (nest) -> 
                 
 
         it 'assigns access to registered phrase hooks', (done) -> 

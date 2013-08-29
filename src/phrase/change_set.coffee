@@ -81,7 +81,7 @@ exports.createClass = (root) ->
 
                     if changes.fn?
 
-                        if runningVertex.type == 'leaf' # and newVertex.type == 'leaf'
+                        if runningVertex.token.type == 'leaf' # and newVertex.type == 'leaf'
                                               # 
                                               # would prevent leaf that is becoming
                                               # vertex with nested leaf(s) from 

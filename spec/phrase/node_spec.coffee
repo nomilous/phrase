@@ -1,5 +1,6 @@
-should     = require 'should'
-PhraseNode = require '../../lib/phrase/node'
+should      = require 'should'
+PhraseNode  = require '../../lib/phrase/node'
+PhraseToken = require( '../../lib/token/phrase_token' ).createClass {}
 
 describe 'PhraseNode', -> 
 
@@ -205,7 +206,7 @@ describe 'PhraseNode', ->
 
 
 
-    xcontext 'update()', -> 
+    context 'update()', -> 
 
         it 'applies change to fn', (done) -> 
 
@@ -320,6 +321,28 @@ describe 'PhraseNode', ->
 
 
             #node1.update changes
+
+        it 'applies changes to phrase type', (done) -> 
+
+            node1 = new @Node
+
+                uuid:      'UUID1'
+                token:     new PhraseToken type: 'leaf', uuid: 'UUID1'
+                text:      'is a leaf phrase'
+                fn: ->  'unchanged'
+
+
+            node2 = new @Node
+
+                token:     new PhraseToken type: 'vertex'
+                text:      'is a leaf phrase'
+                fn: -> 'unchanged'
+
+
+            changes = node1.getChanges node2
+            node1.update changes
+            done()
+
 
 
         it 'carries new hook uuid in on hook create', (done) -> 
