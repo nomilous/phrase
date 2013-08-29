@@ -30,10 +30,6 @@ describe 'TreeWalker', ->
                     use:   -> 
                 token: emit: (event, args...) ->
 
-                    conosole.log '-----', arguments
-
-                    EVENTS[event] = args
-
             root.context.PhraseNode = PhraseNode.createClass root
             root.context.PhraseGraph = PhraseGraph.createClass root
 
