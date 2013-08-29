@@ -289,7 +289,6 @@ describe 'RecursorBeforeEach', ->
 
             should.exist event1 = EVENTS['phrase::edge:create']
             event1.type.should.equal 'tree'
-            event1.leaf.should.equal true
             event1.vertices[0].text.should.equal 'the parent phrase'
             event1.vertices[1].text.should.equal 'has this child in'
 
@@ -341,7 +340,7 @@ describe 'RecursorBeforeEach', ->
 
     it 'replaces injection function with noop if phrase is a leaf', (done) -> 
 
-        
+
         root.context.stack.push new root.context.PhraseNode
 
             token: signature: 'context'

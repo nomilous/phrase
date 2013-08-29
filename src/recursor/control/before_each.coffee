@@ -193,7 +193,6 @@ exports.create = (root, parentControl) ->
                     # 
 
                     type: 'tree'
-                    leaf: phraseType == 'leaf'
 
                     #
                     # top two phraseNodes in the stack are parent and this

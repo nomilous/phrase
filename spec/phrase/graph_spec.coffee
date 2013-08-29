@@ -256,13 +256,13 @@ describe 'PhraseGraph', ->
 
     context 'leavesOf(uuid)', -> 
 
-        it 'returns the vertex at uuid if it is a leaf', (done) -> 
+        it 'returns the vertex at uuid if it is a leaf (per token type)', (done) -> 
 
             graph = new @Graph
 
             graph.registerEdge type: 'tree', vertices: [
                     { uuid: 'UUID1', key: 'value1' }
-                    { uuid: 'UUID2', arbkey: 'arbvalue', leaf: true }
+                    { uuid: 'UUID2', arbkey: 'arbvalue', token: { leaf: true } }
                 ],  ->
 
             graph.leavesOf( 'UUID2' )[0].arbkey.should.equal 'arbvalue'
@@ -289,7 +289,7 @@ describe 'PhraseGraph', ->
 
             graph.registerEdge type: 'tree', vertices: [
                     { uuid: 'UUID1', key: 'value1' }
-                    { uuid: 'UUID2', key: 'value2', leaf: true }
+                    { uuid: 'UUID2', key: 'value2', token: { leaf: true } }
                 ],  ->
             graph.registerEdge type: 'tree', vertices: [
                     { uuid: 'UUID1', key: 'value1' }
@@ -301,39 +301,39 @@ describe 'PhraseGraph', ->
                 ],  ->
             graph.registerEdge type: 'tree', vertices: [
                     { uuid: 'UUID3', key: 'value3' }
-                    { uuid: 'UUID5', key: 'value5', leaf: true }
+                    { uuid: 'UUID5', key: 'value5', token: { leaf: true } }
                 ],  ->
             graph.registerEdge type: 'tree', vertices: [
                     { uuid: 'UUID4', key: 'value4' }
-                    { uuid: 'UUID6', key: 'value6', leaf: true }
+                    { uuid: 'UUID6', key: 'value6', token: { leaf: true } }
                 ],  ->
             graph.registerEdge type: 'tree', vertices: [
                     { uuid: 'UUID4', key: 'value4' }
-                    { uuid: 'UUID7', key: 'value7', leaf: true }
+                    { uuid: 'UUID7', key: 'value7', token: { leaf: true } }
                 ],  ->
             graph.registerEdge type: 'tree', vertices: [
                     { uuid: 'UUID1', key: 'value1' }
-                    { uuid: 'UUID8', key: 'value8', leaf: true }
+                    { uuid: 'UUID8', key: 'value8', token: { leaf: true } }
                 ],  ->
 
 
             graph.leavesOf( 'UUID4' ).should.eql [ 
-                { uuid: 'UUID6', key: 'value6', leaf: true }
-                { uuid: 'UUID7', key: 'value7', leaf: true }
+                { uuid: 'UUID6', key: 'value6', token: { leaf: true } }
+                { uuid: 'UUID7', key: 'value7', token: { leaf: true } }
             ]
 
             graph.leavesOf( 'UUID3' ).should.eql [ 
-                { uuid: 'UUID6', key: 'value6', leaf: true }
-                { uuid: 'UUID7', key: 'value7', leaf: true }
-                { uuid: 'UUID5', key: 'value5', leaf: true } 
+                { uuid: 'UUID6', key: 'value6', token: { leaf: true } }
+                { uuid: 'UUID7', key: 'value7', token: { leaf: true } }
+                { uuid: 'UUID5', key: 'value5', token: { leaf: true } } 
             ]
 
             graph.leavesOf( 'UUID1' ).should.eql [ 
-                { uuid: 'UUID2', key: 'value2', leaf: true }
-                { uuid: 'UUID6', key: 'value6', leaf: true }
-                { uuid: 'UUID7', key: 'value7', leaf: true }
-                { uuid: 'UUID5', key: 'value5', leaf: true } 
-                { uuid: 'UUID8', key: 'value8', leaf: true }
+                { uuid: 'UUID2', key: 'value2', token: { leaf: true } }
+                { uuid: 'UUID6', key: 'value6', token: { leaf: true } }
+                { uuid: 'UUID7', key: 'value7', token: { leaf: true } }
+                { uuid: 'UUID5', key: 'value5', token: { leaf: true } } 
+                { uuid: 'UUID8', key: 'value8', token: { leaf: true } }
             ]
 
             done()

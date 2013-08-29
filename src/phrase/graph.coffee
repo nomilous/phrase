@@ -271,7 +271,7 @@ exports.createClass = (root) ->
 
             return found unless @vertices[uuid]?
 
-            if @vertices[uuid].leaf
+            if @vertices[uuid].token? and @vertices[uuid].token.leaf
 
                 found.push @vertices[uuid]
                 return found
