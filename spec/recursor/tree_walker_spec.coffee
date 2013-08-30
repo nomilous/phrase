@@ -135,3 +135,12 @@ describe 'TreeWalker', ->
                         done()
 
 
+        it 'enables linking to other Phrase Trees', (done) -> 
+
+            TreeWalker.walk root, opts, 'outer phrase string', (nested) ->
+
+                nested 'inner phrase', (boundry) -> 
+                
+                    boundry.link directory: './path/to/more'
+
+

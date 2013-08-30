@@ -180,8 +180,21 @@ exports.walk = (root, opts, rootString, rootFn) ->
                 # 
                 #
 
-                newInjectionFn = recursor phraseString, phraseControl
-                nestedPhraseFn newInjectionFn
+                newRecursorFn = recursor phraseString, phraseControl
+
+                Object.defineProperty newRecursorFn, 'link', 
+
+                    enumerable: false
+                    get: -> (opts) -> 
+
+                        #
+                        # TODO: perhaps only allow this on boundry phrases
+                        #
+
+                        console.log TODO: LINK: opts 
+
+
+                nestedPhraseFn newRecursorFn
 
 
         #
