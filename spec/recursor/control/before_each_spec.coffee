@@ -443,7 +443,7 @@ describe 'RecursorBeforeEach', ->
 
         context 'integration', -> 
 
-            it 'boundry handler errors into accessTokens error event listeners'
+            it "boundry handler errors into the accessToken's error event listeners"
 
                 #
                 # and associate message bus event

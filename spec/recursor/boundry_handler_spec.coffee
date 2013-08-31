@@ -18,7 +18,7 @@ describe 'TreeBoundry', ->
         done()
 
 
-    xcontext 'link() as directory', -> 
+    context 'link() as directory', -> 
 
         beforeEach -> 
             @directory = BoundryHandler.linkDirectory
@@ -29,106 +29,110 @@ describe 'TreeBoundry', ->
             BoundryHandler.recurse = @recurse
 
 
-        xit 'calls linkDirectory()', (done) -> 
+        it 'calls linkDirectory()', (done) -> 
 
             BoundryHandler.linkDirectory = -> done()
             BoundryHandler.link @root, directory: './spec'
 
-        context 'linkDirectory()', ->
+        context 'linkDirectory()', -> 
 
-            xit 'calls recure with default regex', (done) -> 
+            xcontext 'finds files', -> 
 
-                BoundryHandler.recurse = (path, regex) -> 
+                it 'calls recure with default regex', (done) -> 
 
-                    path.should.match /phrase\/spec\/recursor$/
-                    should.exist 'file.name.coffee'.match regex
+                    BoundryHandler.recurse = (path, regex) -> 
+
+                        path.should.match /phrase\/spec\/recursor$/
+                        should.exist 'file.name.coffee'.match regex
+                        done()
+                        return []
+
+                    BoundryHandler.linkDirectory @root, directory: __dirname
+
+
+                it 'finds matches', (done) -> 
+
+                    files = @recurse __dirname, /\.coffee$/
+                    files.map( 
+
+                        (f) -> f.replace __dirname, '.'
+
+                    ).should.eql [
+
+                        './boundry_handler_spec.coffee',
+                        './control/after_all_spec.coffee',
+                        './control/after_each_spec.coffee',
+                        './control/before_all_spec.coffee',
+                        './control/before_each_spec.coffee',
+                        './control_spec.coffee',
+                        './tree_walker_spec.coffee'
+
+                    ]
                     done()
-                    return []
 
-                BoundryHandler.linkDirectory @root, directory: __dirname
+                it 'finds no tea', (done) ->
 
-
-            xit 'finds matches', (done) -> 
-
-                files = @recurse __dirname, /\.coffee$/
-                files.map( 
-
-                    (f) -> f.replace __dirname, '.'
-
-                ).should.eql [
-
-                    './boundry_handler_spec.coffee',
-                    './control/after_all_spec.coffee',
-                    './control/after_each_spec.coffee',
-                    './control/before_all_spec.coffee',
-                    './control/before_each_spec.coffee',
-                    './control_spec.coffee',
-                    './tree_walker_spec.coffee'
-
-                ]
-                done()
-
-            xit 'finds no tea', (done) ->
-
-                @recurse( __dirname, /\.tea$/ ).should.eql []
-                done()
-
-
-            xit 'returs a promise', (done) -> 
-
-                should.exist BoundryHandler.linkDirectory( @root, directory: __dirname ).then
-                done()
-
-
-            xit 'pushes and pops onto the recursor stack', (done) -> 
-
-                @root.context.stack = 
-
-                    push: -> done()
-                    pop:  -> throw 'go no further'
-
-                BoundryHandler.linkDirectory( @root, directory: __dirname ).then(
-
-                    ->
-                    (e) -> #console.log e
-                )
-
-            it 'queries message bus for uuid', (done) -> 
-
-                @root.context.notice = event: (title, payload) -> 
-
-                    title.should.equal 'phrase::boundry:query'
+                    @recurse( __dirname, /\.tea$/ ).should.eql []
                     done()
-                    throw 'go no further'
 
-                BoundryHandler.linkDirectory( @root, directory: __dirname )
+            xcontext 'flow control', -> 
 
-            it 'defaults to not walk across the boundry', (done) -> 
+                it 'returs a promise', (done) -> 
 
-                @root.context.notice = event: (title, payload) -> 
-
-                    payload.follow.should.equal false
+                    should.exist BoundryHandler.linkDirectory( @root, directory: __dirname ).then
                     done()
-                    throw 'go no further'
-
-                BoundryHandler.linkDirectory( @root, directory: __dirname )
 
 
-            it 'and defaults to uuid.v1'
+            context 'recursor stack and graph assembly', -> 
 
 
-            xit 'emit phrase::edge:create onto the message bus', (done) -> 
+                xit 'pushes and pops onto the recursor stack', (done) -> 
 
-                #
-                # PhraseGraph is listening... 
-                # 
+                    @root.context.stack = 
+
+                        push: -> done()
+                        pop:  -> throw 'go no further'
+
+                    BoundryHandler.linkDirectory( @root, directory: __dirname ).then(
+
+                        ->
+                        (e) -> #console.log e
+                    )
+
+                xit 'queries message bus for uuid', (done) -> 
+
+                    @root.context.notice = event: (title, payload) -> 
+
+                        title.should.equal 'phrase::boundry:query'
+                        done()
+                        throw 'go no further'
+
+                    BoundryHandler.linkDirectory( @root, directory: __dirname )
+
+                xit 'defaults to not walk across the boundry', (done) -> 
+
+                    @root.context.notice = event: (title, payload) -> 
+
+                        payload.follow.should.equal false
+                        done()
+                        throw 'go no further'
+
+                    BoundryHandler.linkDirectory( @root, directory: __dirname )
 
 
-    context 'integration', -> 
+                it 'and defaults to uuid.v1'
+
+
+                it 'emit phrase::edge:create onto the message bus'
+
+                    # 
+                    # PhraseGraph is listening... 
+                    # 
+
+
+    xcontext 'integration', -> 
 
         it 'works', (done) -> 
-
-            throw 'bang!'
 
             recursor = phrase.createRoot
 
