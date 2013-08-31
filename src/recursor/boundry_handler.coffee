@@ -43,7 +43,7 @@ module.exports = boundryHandler =
             #            
             #          
 
-            sequence( try for filename in boundryHandler.recurse opts.directory, regex
+            sequence( try for filename in filenames
 
 
                 do (filename) -> -> notice.event 'phrase::boundry:query', 
