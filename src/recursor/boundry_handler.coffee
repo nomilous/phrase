@@ -27,11 +27,11 @@ module.exports = boundryHandler =
                 return makeLinks.reject error
 
             #
-            # Assemble each linked PhraseToken
-            # --------------------------------
+            # phrase::boundry:assemble
+            # ------------------------
             #
-            # * Details of each found file are transmitted into the message bus to enable 
-            #   remote components to influence the token assembly.
+            # * Parameters of the boundry phrase assembly are transmitted onto the 
+            #   message bus to enable remote components to influence the token assembly.
             # 
             #   Specifically this is necessary to enable implementations to determine 
             #   the map from filename to the Token uuid.
@@ -41,38 +41,18 @@ module.exports = boundryHandler =
             #   eg.  
             #            nez realizers contain the realizer uuid in the file
             #            
-            #          
-
-            console.log filenames
-
-            console.log 'TODO: link mode nest|ref multiple nested link'
+            #  
 
             sequence( for filename in filenames
 
 
                 do (filename) -> -> notice.event 'phrase::boundry:assemble', 
 
-                    #
-                    # * sends the type of this remote token assembly line
-                    #
+                    params:
 
-                    type:        'directory'
-                    filename:    filename
-
-                    #
-                    # TODO: include the current stack path
-                    #
-
-                    stackpath:   'TODO'
-
-                    #
-                    # * default the recursor to not walk across the boundry
-                    #
-
-                    follow: false
-
-
-                    token: {}
+                        type:        'directory'
+                        filename:    filename
+                        stackpath:   'TODO'
                     
 
 
@@ -84,7 +64,7 @@ module.exports = boundryHandler =
 
                 (messages) -> for message in messages
 
-                    console.log message.token.uuid
+                    #console.log message.token.uuid
 
                     root.context.stack.push {}
 

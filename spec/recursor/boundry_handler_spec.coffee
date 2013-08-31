@@ -85,8 +85,42 @@ describe 'TreeBoundry', ->
 
             context 'recursor stack and graph assembly', -> 
 
+                beforeEach -> 
 
-                xit 'pushes and pops onto the recursor stack', (done) -> 
+                    @root.context.notice = @notice = require(
+
+                        'notice' ).create 'test with actual message bus'
+
+
+                it 'uses the message bus as assembly line to create each boundry phrase', (done) -> 
+
+                    #
+                    # This means that networks / databases can be directly involved in 
+                    # the assembly of composite PhraseTrees.
+                    #
+
+                    @notice.use (msg, next) -> 
+
+                        if msg.context.title == 'phrase::boundry:assemble' 
+
+                            msg.params.type.should.equal      'directory'
+                            msg.params.filename.should.match   new RegExp __dirname
+                            msg.params.stackpath.should.equal  'TODO'
+
+                            done()
+                            throw 'go no further'
+
+                        next()
+
+                    BoundryHandler.linkDirectory( @root, directory: __dirname )
+
+
+                it 'uses the assembly result to create the phrase and boundry token'
+
+                it 'defaults to uuid.v1 if not specified on assembly line'
+
+
+                it 'pushes and pops onto the recursor stack', (done) -> 
 
                     @root.context.stack = 
 
@@ -99,35 +133,23 @@ describe 'TreeBoundry', ->
                         (e) -> #console.log e
                     )
 
-                xit 'queries message bus for uuid', (done) -> 
 
-                    @root.context.notice = event: (title, payload) -> 
-
-                        title.should.equal 'phrase::boundry:query'
-                        done()
-                        throw 'go no further'
-
-                    BoundryHandler.linkDirectory( @root, directory: __dirname )
-
-                xit 'defaults to not walk across the boundry', (done) -> 
-
-                    @root.context.notice = event: (title, payload) -> 
-
-                        payload.follow.should.equal false
-                        done()
-                        throw 'go no further'
-
-                    BoundryHandler.linkDirectory( @root, directory: __dirname )
-
-
-                it 'and defaults to uuid.v1'
-
-
-                it 'emit phrase::edge:create onto the message bus'
+                it 'emits phrase::edge:create onto the message bus'
 
                     # 
                     # PhraseGraph is listening... 
                     # 
+
+
+            context 'boundry type', -> 
+
+                context 'nest', -> 
+
+                    it 'graph assembly continues with recrsion across the phrase boundry'
+
+                context 'refer', -> 
+
+                    it "boundry token carries reference to the 'other' tree"
 
 
     xcontext 'integration', -> 
