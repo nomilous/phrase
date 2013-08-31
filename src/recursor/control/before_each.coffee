@@ -12,23 +12,16 @@ exports.create = (root, parentControl) ->
     {context, util}  = root
     {stack, notice, PhraseNode, PhraseToken} = context
 
-    #phraseLeaf = PhraseLeaf.create root, parentControl
-
-    
-
-
     (done, injectionControl) -> 
 
         #
         # injectionControl
         # ----------------
         # 
-        # This object controls the behaviour of the async injection into 
-        # the target function for the recursor's 'first walk'
-        # 
         # * injectionControl.defer is a deferral held by the async controller
         #   that wraps the call to the injection target. Ordinarilly it would
-        #   be passed into the injection target function as arg1 (done)
+        #   be passed into the injection target function (ThePhraseRecursor) 
+        #   as arg1 `(done) ->`
         #   
         #   But, instead, calling it out here...
         # 
@@ -48,32 +41,33 @@ exports.create = (root, parentControl) ->
         #
         # 
 
-
+        #
+        # injectionControl.args
+        # ---------------------
         #
         # * injectionControl.args are the inbound args that were called into the 
         #   decorated function that was returned by inject.async.
         # 
         # * These args are used to assemble a Phrase to be pushed into the stack
-        # 
-        # * These args are then passed oneward to the injection target for recrsion.
-        # 
+        #   for PhraseTree assembly.
+        #
 
         phraseText    = if typeof injectionControl.args[0] == 'function' then '' else injectionControl.args[0]
         phraseControl = if typeof injectionControl.args[1] == 'function' then {} else injectionControl.args[1]
         phraseFn      = injectionControl.args[2] || injectionControl.args[1] || injectionControl.args[0] || -> console.log 'NO ARGS'
 
-
-        #
-        # inherit parent control unless re-defined and assign injection args
-        #
-
         phraseControl          ||= {}
-        phraseControl.leaf     ||= parentControl.leaf
-        phraseControl.boundry  ||= parentControl.boundry
-        phraseControl.timeout  ||= parentControl.timeout
+        phraseControl.leaf     ||= parentControl.leaf      # inherites
+        phraseControl.boundry  ||= parentControl.boundry   # unless 
+        phraseControl.timeout  ||= parentControl.timeout   # defined
+
+        # 
+        # * Assign final args to be injected into ThePhraseRecursor.
+        # 
+
         injectionControl.args[0] = phraseText
         injectionControl.args[1] = phraseControl
-        injectionControl.args[2] = phraseFn
+        injectionControl.args[2] = phraseFn  # becomes noop for leaf or boundry phrases
 
         try  
 
@@ -177,24 +171,6 @@ exports.create = (root, parentControl) ->
             return done error
 
 
-
-
-
-        # parentControl.detectLeaf phrase, (leaf) -> 
-
-        #     #
-        #     # when this phrase is a leaf
-        #     # --------------------------
-        #     # 
-        #     # * inject noop as phraseFn into the recursor instead of 
-        #     #   the nestedPhraseFn that contains the recursive call
-        #     # 
-        #     # * emit 'phrase::edge:create' for the graph assembler
-        #     # 
-        #     # * resolve the phraseFn promise so that the recusrion 
-        #     #   control thinks it was run
-        #     # 
-
         if phraseType == 'leaf' then injectionControl.args[2] = ->
 
         run = sequence [
@@ -222,6 +198,12 @@ exports.create = (root, parentControl) ->
             if phraseType == 'leaf' then return process.nextTick -> 
 
                 #
+                # * inject noop into 'ThePhraseRecursor'
+                #
+
+                injectionControl.args[2] = ->
+
+                #
                 # leaf node resolves self, there are
                 # no children to recurse into
                 # 
@@ -233,10 +215,6 @@ exports.create = (root, parentControl) ->
 
 
             if actualPhraseType == 'boundry'
-
-                #
-                # * inject noop into 'ThePhraseRecursor'
-                #
 
                 injectionControl.args[2] = -> 
 
@@ -259,7 +237,8 @@ exports.create = (root, parentControl) ->
                 ).then(
 
                     #
-                    # * All boundries handler successfully
+                    # * All boundries handled successfully
+                    # * Dont send resolve (result array) to injection resolver.
                     #
 
                     (resolve) -> done()
@@ -269,7 +248,8 @@ exports.create = (root, parentControl) ->
                     #       should it? && ?fix it
                     #
                         
-                    (reject)  -> done reject #GREP4
+                    # (reject)  -> done reject 
+                    done #GREP4
 
                     (notify)  -> # console.log NOTIFY: notify
 
