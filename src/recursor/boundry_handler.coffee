@@ -53,6 +53,7 @@ module.exports = boundryHandler =
                         type:        'directory'
                         filename:    filename
                         stackpath:   'TODO'
+                        mode:        'refer'
                     
 
 
@@ -62,19 +63,27 @@ module.exports = boundryHandler =
                 # * All remote ammendments have been made
                 #
 
-                (messages) -> for message in messages
+                (messages) -> 
 
-                    #console.log message.token.uuid
+                    for message in messages
 
-                    root.context.stack.push {}
+                        if message.error? 
 
+                            console.log 'ERROR_UNHANDLED_1', error.stack
+                            continue
+
+
+                        console.log '\nphraseText\t', message.result.title
+                        console.log 'phraseControl\t', message.result.opts
+                        console.log 'phraseFn\t', message.result.fn.toString()
+
+                        console.log mode:  message.params.mode
+                        root.context.stack.push {}
 
 
                         
 
-
-
-                    root.context.stack.pop()
+                        root.context.stack.pop()
 
                     makeLinks.resolve()
 
