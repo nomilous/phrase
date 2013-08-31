@@ -163,7 +163,14 @@ exports.create = (root, parentControl) ->
             # could not create new phrase
             #
 
-            done error
+            #SUSPECT1 done error
+            # 
+            # - not clear on how this affects the recursion 
+            #  (or how it 'should' affect it)
+            # 
+            return done error
+
+
 
 
 

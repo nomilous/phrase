@@ -128,6 +128,8 @@ describe 'TreeBoundry', ->
 
         it 'works', (done) -> 
 
+            throw 'bang!'
+
             recursor = phrase.createRoot
 
                 title:   'Title'

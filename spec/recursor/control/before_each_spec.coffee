@@ -62,7 +62,7 @@ describe 'RecursorBeforeEach', ->
             hook done, injectionControl
 
 
-        xit 'hands error into injectionControl deferral if phraseText contains /', (done) -> 
+        it 'hands error into injectionControl deferral if phraseText contains /', (done) -> 
 
             root.context.stack.push new root.context.PhraseNode
 
@@ -75,6 +75,11 @@ describe 'RecursorBeforeEach', ->
             injectionControl.args = [ 'does not allow / in phraseText', { uuid: 'UUID' }, (end) -> ]
 
             hook ( (result) ->
+
+                #SUSPECT1
+                # 
+                # return unless result?
+                # unless result? then console.log (new Error '').stack
 
                 result.should.be.an.instanceof Error
                 result.should.match /INVALID text/
@@ -299,7 +304,6 @@ describe 'RecursorBeforeEach', ->
             ), injectionControl
 
 
-
         it 'emits "phrase::edge:create" into the middleware pipeline', (done) -> 
 
             #
@@ -344,6 +348,10 @@ describe 'RecursorBeforeEach', ->
                 done()
 
             ), injectionControl
+
+    context 'boundry linking -', -> 
+
+        it ''
 
 
 
