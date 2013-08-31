@@ -27,6 +27,8 @@ describe 'RecursorBeforeEach', ->
 
             util: require('also').util
 
+        root.context.PhraseToken = PhraseTokenFactory.createClass root
+
         injectionControl = 
             defer: resolve: ->
             args: ['phrase text', {}, (nested) -> ]
@@ -40,16 +42,6 @@ describe 'RecursorBeforeEach', ->
     afterEach ->
 
         PhraseTokenFactory.createClass = @phraseToken
-
-
-    it 'creates LeafToken class with current root context', (done) -> 
-
-        PhraseTokenFactory.createClass = (rooot) -> 
-            root.should.equal root
-            done()
-
-        hook = RecursorBeforeEach.create root, parent
-        try hook (->), injectionControl
 
 
     it 'extracts the injection deferral', (done) -> 

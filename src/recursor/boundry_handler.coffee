@@ -7,6 +7,8 @@ module.exports = boundryHandler =
 
     link: (root, opts) -> 
 
+        console.log opts
+
         if opts.directory? then boundryHandler.linkDirectory root, opts
 
 

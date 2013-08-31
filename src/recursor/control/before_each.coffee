@@ -9,11 +9,11 @@ PhraseTokenFactory  = require '../../token/phrase_token'
 exports.create = (root, parentControl) -> 
 
     {context, util}  = root
-    {stack, notice, PhraseNode} = context
+    {stack, notice, PhraseNode, PhraseToken} = context
 
     #phraseLeaf = PhraseLeaf.create root, parentControl
 
-    PhraseToken = PhraseTokenFactory.createClass root
+    
 
 
     (done, injectionControl) -> 

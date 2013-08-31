@@ -1,6 +1,7 @@
 Control        = require '../recursor/control' 
 PhraseHook     = require '../phrase/hook'
 BoundryHandler = require './boundry_handler'
+PhraseTokenFactory = require '../token/phrase_token'
 
 #
 # TreeWalker
@@ -17,8 +18,8 @@ exports.walk = (root, opts, rootString, rootFn) ->
     {context, inject}                   = root
     {stack, notice, graph, PhraseGraph} = context
 
-    context.hooks  = PhraseHook.bind root
-
+    context.hooks       = PhraseHook.bind root
+    context.PhraseToken = PhraseTokenFactory.createClass root
 
     if graph? 
 
@@ -145,6 +146,9 @@ exports.walk = (root, opts, rootString, rootFn) ->
                 #       if not ignore
                 # 
 
+                # console.log error
+                # console.log error.stack
+
                 root.context.token.emit 'error', error
                 
                 #
@@ -186,7 +190,10 @@ exports.walk = (root, opts, rootString, rootFn) ->
                 Object.defineProperty newRecursorFn, 'link', 
 
                     enumerable: false
-                    get: -> (opts) -> BoundryHandler.link root, opts
+                    get: -> (opts) -> 
+
+                        console.log LINK: opts
+                        BoundryHandler.link root, opts
 
                         #
                         # TODO: perhaps only allow this on boundry phrases

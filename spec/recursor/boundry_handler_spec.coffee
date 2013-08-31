@@ -1,12 +1,14 @@
-should         = require 'should'
-BoundryHandler = require '../../lib/recursor/boundry_handler'
-phrase         = require '../../lib/phrase'
+should             = require 'should'
+BoundryHandler     = require '../../lib/recursor/boundry_handler'
+#PhraseTokenFactory = require '../../lib/token/phrase_token'
+phrase             = require '../../lib/phrase'
 
 describe 'TreeBoundry', -> 
 
     beforeEach -> 
 
         @root = context: stack: []
+        #@root.context.PhraseToken = PhraseTokenFactory.createClass @root
 
 
     it 'defines link() to recurse a boundry phrase', (done) ->  
@@ -113,6 +115,8 @@ describe 'TreeBoundry', ->
                     console.log tokens
 
             recursor 'outer', (edge) -> 
+
+                console.log edge.link
 
                 edge.link directory: __dirname
 
