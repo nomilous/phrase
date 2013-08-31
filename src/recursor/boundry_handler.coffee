@@ -34,7 +34,7 @@ module.exports = boundryHandler =
             #   remote components to influence the token assembly.
             # 
             #   Specifically this is necessary to enable implementations to determine 
-            #   the map from filename to the Token uuid (which may require callback)
+            #   the map from filename to the Token uuid.
             # 
             #   And to allow that determination to be performed asynchronously.
             # 
@@ -92,6 +92,18 @@ module.exports = boundryHandler =
                     root.context.stack.pop()
 
                     makeLinks.resolve()
+
+
+                #
+                # TODO: notice message bus does not yet catch exceptions
+                #       in the middleware pipeline, this anticipates that
+                #       
+                # * proxy message bus exceptions directly
+                # 
+
+                # (reject) -> makeLinks.reject reject
+                makeLinks.reject
+                
 
             )
 
