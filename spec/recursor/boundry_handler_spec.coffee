@@ -3,6 +3,10 @@ BoundryHandler = require '../../lib/recursor/boundry_handler'
 
 describe 'TreeBoundry', -> 
 
+    beforeEach -> 
+
+        @root = context: stack: []
+
 
     it 'defines link() to recurse a boundry phrase', (done) ->  
 
@@ -24,7 +28,7 @@ describe 'TreeBoundry', ->
         it 'calls linkDirectory()', (done) -> 
 
             BoundryHandler.linkDirectory = -> done()
-            BoundryHandler.link {}, directory: './spec'
+            BoundryHandler.link @root, directory: './spec'
 
         context 'linkDirectory()', ->
 
@@ -35,8 +39,9 @@ describe 'TreeBoundry', ->
                     path.should.match /phrase\/spec\/recursor$/
                     should.exist 'file.name.coffee'.match regex
                     done()
+                    return []
 
-                BoundryHandler.linkDirectory {}, directory: __dirname
+                BoundryHandler.linkDirectory @root, directory: __dirname
 
 
             it 'finds matches', (done) -> 
@@ -65,8 +70,28 @@ describe 'TreeBoundry', ->
                 done()
 
 
-        it 'places a PhraseToken (type=remote) for each match into the parent phrase', (done) -> 
+            it 'returs a promise', (done) -> 
 
-                root = {}
+                should.exist BoundryHandler.linkDirectory( @root, directory: __dirname ).then
+                done()
+                
 
-                BoundryHandler.linkDirectory root, directory: __dirname
+            it 'pushes and pops onto the recursor stack', (done) -> 
+
+                @root.context.stack = 
+
+                    push: -> done()
+                    pop:  -> throw 'go no further'
+
+                BoundryHandler.linkDirectory( @root, directory: __dirname ).then(
+
+                    ->
+                    (e) -> #console.log e
+                )
+
+
+            xit 'emit phrase::edge:create onto the message bus', (done) -> 
+
+                #
+                # PhraseGraph is listening... 
+                # 

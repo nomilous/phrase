@@ -1,5 +1,6 @@
 {readdirSync} = require 'fs'
 {join}        = require 'path'
+{defer}       = require 'when' 
 
 
 module.exports = boundryHandler = 
@@ -11,12 +12,30 @@ module.exports = boundryHandler =
 
     linkDirectory: (root, opts) -> 
 
+        makeLinks = defer()
+
         if opts.match? then regex = new RegExp opts.match
         else                regex = new RegExp '\\.coffee$'
 
-        fileNames = boundryHandler.recurse opts.directory, regex
+        process.nextTick -> 
 
-        console.log fileNames
+            try for filename in boundryHandler.recurse opts.directory, regex
+
+                root.context.stack.push {}
+
+
+
+
+
+                root.context.stack.pop()
+
+            catch error
+
+                makeLinks.reject error
+
+            makeLinks.resolve()
+
+        makeLinks.promise
 
 
     recurse: (path, regex, matches = []) ->
@@ -36,8 +55,4 @@ module.exports = boundryHandler =
                 matches.push nextPath if nextPath.match regex
 
         return matches
-
-        
-
-
 
