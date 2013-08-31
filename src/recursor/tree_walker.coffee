@@ -143,10 +143,11 @@ exports.walk = (root, opts, rootString, rootFn) ->
                                     # 
 
 
-                #
+                # #GREP4
                 # TODO: send error event via message bus
                 #       --------------------------------
                 #       * async, await ignore flag
+                # 
                 #
 
                 #

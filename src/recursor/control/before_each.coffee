@@ -161,6 +161,12 @@ exports.create = (root, parentControl) ->
 
             #
             # could not create new phrase
+            # ---------------------------
+            # 
+            # * Errors are passed into the TreeWalkers error handler
+            # * It has capacity to terminate the recursion of the current phrase
+            # 
+            # #GREP4
             #
 
             #SUSPECT1 done error
@@ -235,17 +241,34 @@ exports.create = (root, parentControl) ->
                 injectionControl.args[2] = -> 
 
                 #
-                #
+                # * Call the phaseFn and accumulate the calls it makes to link
                 #
 
                 linkQueue = []
                 phrase.fn link: (opts) -> linkQueue.push opts
 
-                sequence ( for opts in linkQueue
+                sequence( for opts in linkQueue
 
-                    do (opts) -> 
+                    #
+                    # * Each call to BoundryHandler returns the promise necessary 
+                    #   for the sequence's flow control.
+                    #
 
-                        console.log opts
+                    do (opts) -> -> BoundryHandler.link root, opts
+
+                ).then(
+
+                    (resolve) -> console.log resolve
+                    (reject)  -> 
+
+                        #
+                        # TODO: one boundry hander error terminates the entire sequence
+                        #       should it? && ?fix it
+                        #
+
+                        done reject #GREP4
+
+                    (notify)  -> # console.log NOTIFY: notify
 
                 )
                 

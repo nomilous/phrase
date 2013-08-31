@@ -2,6 +2,7 @@ should              = require 'should'
 RecursorBeforeEach  = require '../../../lib/recursor/control/before_each'
 PhraseNode          = require '../../../lib/phrase/node'
 PhraseTokenFactory  = require '../../../lib/token/phrase_token' 
+BoundryHandler      = require '../../../lib/recursor/boundry_handler'
 
 
 describe 'RecursorBeforeEach', -> 
@@ -382,12 +383,62 @@ describe 'RecursorBeforeEach', ->
             hook done, injectionControl
 
 
-        it 'calls the boundry handler and waits before resolving the injection'
+        xit 'resolves the injection deferral after all calls to link are handled', (done) -> 
 
-        it 'allows multiple links and calls the boundry handler in sequence', (done) ->
+            RESOLVED = false
+            injectionResolver = -> RESOLVED = true
+
+            # BoundryHandler.link = (root, opts) -> 
+
+            #     throw new Error 'unhandled'
+
+            parent.phraseType = (fn) -> 'boundry'
+            injectionControl.args  = [ 'edge phrase', (edge) ->
+
+                edge.link directory: './path1'
+                edge.link directory: './path2'
+
+            ]
+            hook = RecursorBeforeEach.create root, parent
+            hook injectionResolver, injectionControl 
+
+
+        it 'proxies errors into the injections hook resolver', (done) -> 
+
+            injectionResolver = (result) -> 
+
+                result.should.be.an.instanceof Error
+                result.should.match /in BoundryHandler/
+                done()
+
+            BoundryHandler.link = (root, opts) -> 
+
+                throw new Error 'in BoundryHandler'
+
+            parent.phraseType = (fn) -> 'boundry'
+            injectionControl.args  = [ 'edge phrase', (edge) ->
+
+                edge.link directory: './path1'
+
+            ]
+            hook = RecursorBeforeEach.create root, parent
+            hook injectionResolver, injectionControl 
+
+        xit 'allows multiple links and calls the boundry handler in sequence', (done) ->
 
             @edge.link directory: './path1'
             @edge.link directory: './path2'
+
+
+
+        context 'integration', -> 
+
+            it 'boundry handler errors into accessTokens error event listeners'
+
+                #
+                # and associate message bus event
+                # #GREP4
+                #
 
 
 
