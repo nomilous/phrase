@@ -59,6 +59,11 @@ describe 'TreeBoundry', ->
                 ]
                 done()
 
+            it 'finds no tea', (done) ->
+
+                @recurse( __dirname, /\.tea$/ ).should.eql []
+                done()
+
 
         it 'places a PhraseToken (type=remote) for each match into the parent phrase', (done) -> 
 
