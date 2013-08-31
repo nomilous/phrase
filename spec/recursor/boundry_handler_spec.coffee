@@ -1,5 +1,6 @@
-should = require 'should'
+should         = require 'should'
 BoundryHandler = require '../../lib/recursor/boundry_handler'
+phrase         = require '../../lib/phrase'
 
 describe 'TreeBoundry', -> 
 
@@ -14,7 +15,7 @@ describe 'TreeBoundry', ->
         done()
 
 
-    context 'link() as directory', -> 
+    xcontext 'link() as directory', -> 
 
         beforeEach -> 
             @directory = BoundryHandler.linkDirectory
@@ -74,7 +75,7 @@ describe 'TreeBoundry', ->
 
                 should.exist BoundryHandler.linkDirectory( @root, directory: __dirname ).then
                 done()
-                
+
 
             it 'pushes and pops onto the recursor stack', (done) -> 
 
@@ -95,3 +96,24 @@ describe 'TreeBoundry', ->
                 #
                 # PhraseGraph is listening... 
                 # 
+
+
+    context 'integration', -> 
+
+        it 'works', (done) -> 
+
+            recursor = phrase.createRoot
+
+                title:   'Title'
+                uuid:    'UUID'
+                boundry: ['matchThisForBoundry']
+
+                (accessToken) -> accessToken.on 'ready', ({tokens}) -> 
+
+                    console.log tokens
+
+            recursor 'outer', (edge) -> 
+
+                edge.link directory: __dirname
+
+

@@ -7,7 +7,9 @@ module.exports = boundryHandler =
 
     link: (root, opts) -> 
 
-        if opts.directory? then boundryHandler.linkDirectory opts
+        console.log opts
+
+        if opts.directory? then boundryHandler.linkDirectory root, opts
 
 
     linkDirectory: (root, opts) -> 
@@ -24,6 +26,8 @@ module.exports = boundryHandler =
                 root.context.stack.push {}
 
 
+
+                console.log filename[60..]
 
 
 
@@ -47,6 +51,7 @@ module.exports = boundryHandler =
             try boundryHandler.recurse nextPath, regex, matches
             catch error
                 throw error unless error.code == 'ENOTDIR'
+                throw error unless nextPath?
                 
                 #
                 # TODO: will this follow symlinks? (should it?)

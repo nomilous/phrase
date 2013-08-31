@@ -1,5 +1,6 @@
-Control    = require '../recursor/control' 
-PhraseHook = require '../phrase/hook'
+Control        = require '../recursor/control' 
+PhraseHook     = require '../phrase/hook'
+BoundryHandler = require './boundry_handler'
 
 #
 # TreeWalker
@@ -185,13 +186,12 @@ exports.walk = (root, opts, rootString, rootFn) ->
                 Object.defineProperty newRecursorFn, 'link', 
 
                     enumerable: false
-                    get: -> (opts) -> 
+                    get: -> (opts) -> BoundryHandler.link root, opts
 
                         #
                         # TODO: perhaps only allow this on boundry phrases
                         #
 
-                        console.log TODO: LINK: opts 
 
 
                 nestedPhraseFn newRecursorFn

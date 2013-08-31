@@ -3,6 +3,7 @@ TreeWalker      = require '../../lib/recursor/tree_walker'
 RecursorControl = require '../../lib/recursor/control'
 PhraseNode      = require '../../lib/phrase/node'
 PhraseGraph     = require '../../lib/phrase/graph'
+BoundryHandler  = require '../../lib/recursor/boundry_handler'
 
 describe 'TreeWalker', -> 
 
@@ -136,6 +137,12 @@ describe 'TreeWalker', ->
 
 
         it 'enables linking to other Phrase Trees', (done) -> 
+
+            BoundryHandler.link = (root, opts) -> 
+
+                root.should.equal root
+                opts.should.eql directory: './path/to/more'
+                done()
 
             TreeWalker.walk root, opts, 'outer phrase string', (nested) ->
 
