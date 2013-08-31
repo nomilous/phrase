@@ -72,13 +72,7 @@ module.exports = boundryHandler =
                     follow: false
 
 
-                    token: 
-
-                        #
-                        # TODO: consider only allowing set: (value) -> once
-                        #
-
-                        uuid: undefined
+                    token: {}
                     
 
 

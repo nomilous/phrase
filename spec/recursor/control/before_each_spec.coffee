@@ -370,10 +370,25 @@ describe 'RecursorBeforeEach', ->
             injectionControl.args[2].toString().should.eql 'function () {}'
             done()
 
+        it 'resolves the injection deferral if no call to link', (done) -> 
+
+            parent.phraseType = (fn) -> 'boundry'
+            injectionControl.args  = [ 'edge phrase', (edge) ->
+
+                # edge.link directory: './path'
+
+            ]
+            hook = RecursorBeforeEach.create root, parent
+            hook done, injectionControl
+
 
         it 'calls the boundry handler and waits before resolving the injection'
 
-        it 'allows multiple links and calls the boundry handler in sequence'
+        it 'allows multiple links and calls the boundry handler in sequence', (done) ->
+
+            @edge.link directory: './path1'
+            @edge.link directory: './path2'
+
 
 
 

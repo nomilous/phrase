@@ -233,18 +233,18 @@ exports.create = (root, parentControl) ->
                 # call the phraseFn directly with the Boundry handler
                 #
 
-                console.log 'boundry'
-
                 injectionControl.args[2] = ->
 
-                linking = phrase.fn link: (opts) -> BoundryHandler.link root, opts
+                linkQueue = []
 
-                console.log 'TODO: test multiple nested link'
+                phrase.fn link: (opts) -> linkQueue.push opts    #BoundryHandler.link root, opts
+
+
+                console.log linkQueue
                 
-                console.log 'TODO: resolve on linking resolved'
 
 
-                unless linking? or linking.then? 
+                unless linkQueue.length > 0
 
                     #
                     # no link attempt was made in the boundry phrase
