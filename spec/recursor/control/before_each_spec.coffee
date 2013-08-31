@@ -394,12 +394,10 @@ describe 'RecursorBeforeEach', ->
                 LINKCOUNT.should.equal 10000
                 done()
                 
-
             {defer} = require 'when'
             BoundryHandler.link = (root, opts) -> 
 
                 doing = defer()
-
                 process.nextTick -> 
 
                     RESOLVED.should.equal false
@@ -441,12 +439,6 @@ describe 'RecursorBeforeEach', ->
             ]
             hook = RecursorBeforeEach.create root, parent
             hook injectionResolver, injectionControl 
-
-        xit 'allows multiple links and calls the boundry handler in sequence', (done) ->
-
-            @edge.link directory: './path1'
-            @edge.link directory: './path2'
-
 
 
         context 'integration', -> 
