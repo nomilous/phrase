@@ -165,8 +165,8 @@ exports.walk = (root, opts, rootString, rootFn) ->
 
 
             #
-            # inject.async() target function (ThePhraseRecursor)
-            # ------------------------------------------------
+            # inject.async() arg2 - Injection Target (ThePhraseRecursor)
+            # ----------------------------------------------------------
             # 
             # * It passes a new instance of the recursor (newRecursorFn) as arg1 to the 
             #   nested phrase function
