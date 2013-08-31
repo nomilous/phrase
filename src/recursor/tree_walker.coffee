@@ -173,9 +173,6 @@ exports.walk = (root, opts, rootString, rootFn) ->
             # 
             # * The new recursor becomes the phrase registrar for the nested phrases.
             #
-            # * The new recursor is initialized with the phraseText and phraseControl options 
-            #   of the nested phrase. 
-            # 
             # * Calls to the new recursor queue in the injector.
             # 
             #   ie. 
