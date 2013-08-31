@@ -8,6 +8,7 @@ describe 'TreeBoundry', ->
     beforeEach -> 
 
         @root = context: stack: []
+        @root.context.notice = event: (title, payload) -> 
         #@root.context.PhraseToken = PhraseTokenFactory.createClass @root
 
 
@@ -28,14 +29,14 @@ describe 'TreeBoundry', ->
             BoundryHandler.recurse = @recurse
 
 
-        it 'calls linkDirectory()', (done) -> 
+        xit 'calls linkDirectory()', (done) -> 
 
             BoundryHandler.linkDirectory = -> done()
             BoundryHandler.link @root, directory: './spec'
 
         context 'linkDirectory()', ->
 
-            it 'calls recure with default regex', (done) -> 
+            xit 'calls recure with default regex', (done) -> 
 
                 BoundryHandler.recurse = (path, regex) -> 
 
@@ -47,7 +48,7 @@ describe 'TreeBoundry', ->
                 BoundryHandler.linkDirectory @root, directory: __dirname
 
 
-            it 'finds matches', (done) -> 
+            xit 'finds matches', (done) -> 
 
                 files = @recurse __dirname, /\.coffee$/
                 files.map( 
@@ -67,19 +68,19 @@ describe 'TreeBoundry', ->
                 ]
                 done()
 
-            it 'finds no tea', (done) ->
+            xit 'finds no tea', (done) ->
 
                 @recurse( __dirname, /\.tea$/ ).should.eql []
                 done()
 
 
-            it 'returs a promise', (done) -> 
+            xit 'returs a promise', (done) -> 
 
                 should.exist BoundryHandler.linkDirectory( @root, directory: __dirname ).then
                 done()
 
 
-            it 'pushes and pops onto the recursor stack', (done) -> 
+            xit 'pushes and pops onto the recursor stack', (done) -> 
 
                 @root.context.stack = 
 
@@ -92,6 +93,14 @@ describe 'TreeBoundry', ->
                     (e) -> #console.log e
                 )
 
+            it 'queries message bus for uuid and defaults to uuid.v1', (done) -> 
+
+                @root.context.notice = event: (title, payload) -> 
+
+                    done()
+                    throw 'go no further'
+
+                BoundryHandler.linkDirectory( @root, directory: __dirname )
 
             xit 'emit phrase::edge:create onto the message bus', (done) -> 
 
@@ -110,13 +119,20 @@ describe 'TreeBoundry', ->
                 uuid:    'UUID'
                 boundry: ['matchThisForBoundry']
 
-                (accessToken) -> accessToken.on 'ready', ({tokens}) -> 
+                (accessToken, messageBus) -> 
 
-                    console.log tokens
+                    i = 1000000
+
+                    messageBus.use (msg, next) -> 
+
+                        msg.uuid = "REMOTE-UUID#{  i++  }"
+                        next()
+
+                    accessToken.on 'ready', ({tokens}) -> 
+
+                        console.log tokens
 
             recursor 'outer', (edge) -> 
-
-                console.log edge.link
 
                 edge.link directory: __dirname
 
