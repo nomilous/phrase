@@ -136,18 +136,18 @@ describe 'TreeWalker', ->
                         done()
 
 
-        it 'enables linking to other Phrase Trees', (done) -> 
+        # it 'enables linking to other Phrase Trees', (done) -> 
 
-            BoundryHandler.link = (root, opts) -> 
+        #     BoundryHandler.link = (root, opts) -> 
 
-                root.should.equal root
-                opts.should.eql directory: './path/to/more'
-                done()
+        #         root.should.equal root
+        #         opts.should.eql directory: './path/to/more'
+        #         done()
 
-            TreeWalker.walk root, opts, 'outer phrase string', (nested) ->
+        #     TreeWalker.walk root, opts, 'outer phrase string', (nested) ->
 
-                nested 'inner phrase', (boundry) -> 
+        #         nested 'inner phrase', (boundry) -> 
                 
-                    boundry.link directory: './path/to/more'
+        #             boundry.link directory: './path/to/more'
 
 

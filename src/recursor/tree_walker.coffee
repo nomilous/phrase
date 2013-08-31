@@ -1,6 +1,5 @@
 Control        = require '../recursor/control' 
 PhraseHook     = require '../phrase/hook'
-BoundryHandler = require './boundry_handler'
 PhraseTokenFactory = require '../token/phrase_token'
 
 #
@@ -185,19 +184,8 @@ exports.walk = (root, opts, rootString, rootFn) ->
                 # 
                 #
 
+
                 newRecursorFn = recursor phraseString, phraseControl
-
-                Object.defineProperty newRecursorFn, 'link', 
-
-                    enumerable: false
-                    get: -> (opts) -> BoundryHandler.link root, opts
-
-                        #
-                        # TODO: perhaps only allow this on boundry phrases
-                        #
-
-
-
                 nestedPhraseFn newRecursorFn
 
 

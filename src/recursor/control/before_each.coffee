@@ -1,5 +1,6 @@
 sequence            = require 'when/sequence'
 PhraseTokenFactory  = require '../../token/phrase_token'
+BoundryHandler      = require '../boundry_handler'
 {v1}                = require 'node-uuid'
 
 #
@@ -85,7 +86,10 @@ exports.create = (root, parentControl) ->
             # ------------------------------------------
             #
 
-            phraseType = parentControl.phraseType phraseFn
+            phraseType = actualPhraseType = parentControl.phraseType phraseFn
+                                #
+                                # needed if root is also a leaf or boundy
+                                #
 
             if stack.length == 0
 
@@ -202,7 +206,7 @@ exports.create = (root, parentControl) ->
 
         run.then -> 
 
-            done()
+            
 
             if phraseType == 'leaf' then process.nextTick -> 
 
@@ -213,18 +217,44 @@ exports.create = (root, parentControl) ->
                 # #GREP1
                 #
 
+                done()
                 deferral.resolve()
 
 
-            if phraseType == 'boundry'
+            if actualPhraseType == 'boundry'
 
                 #
-                # TEMPORARY: boundry node runs the phrase function 
+                # on boundry, noop the pending recursion injection and 
+                # call the phraseFn directly with the Boundry handler
                 #
 
-                result = phrase.fn -> 
+                injectionControl.args[2] = ->
 
-                deferral.resolve()
+                linking = phrase.fn link: (opts) -> BoundryHandler.link root, opts
 
+                unless linking? or linking.then? 
 
+                    #
+                    # no link attempt was made in the boundry phrase
+                    #
+
+                    done()
+                    deferral.resolve()
+                    return
+
+                #
+                # TODO: fix "can only have one link statement in boundry phrase"
+                # TODO: resolve on linking resolved
+                #
+                
+
+            #
+            # vertex or root phrases, continue to injection recursor
+            #
+
+            done()
+
+                    
+
+            
 
