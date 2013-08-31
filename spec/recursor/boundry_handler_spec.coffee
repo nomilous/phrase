@@ -103,6 +103,16 @@ describe 'TreeBoundry', ->
 
                 BoundryHandler.linkDirectory( @root, directory: __dirname )
 
+            it 'defaults to not walk across theboundry', (done) -> 
+
+                @root.context.notice = event: (title, payload) -> 
+
+                    payload.follow.should.equal false
+                    done()
+                    throw 'go no further'
+
+                BoundryHandler.linkDirectory( @root, directory: __dirname )
+
 
             it 'and defaults to uuid.v1'
 

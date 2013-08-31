@@ -61,6 +61,13 @@ module.exports = boundryHandler =
 
                     stackpath:   'TODO'
 
+                    #
+                    # * default the recursor to not walk across the boundry
+                    #
+
+                    follow: false
+                    
+
                     token: 
 
                         #
