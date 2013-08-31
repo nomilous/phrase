@@ -50,13 +50,22 @@ exports.walk = (root, opts, rootString, rootFn) ->
 
     recursor = (parentPhraseString, parentPhraseControl) -> 
 
+        #
+        # This recursion is proxied through an async injector
+        # ---------------------------------------------------
+        # 
+        # * It provides flow control.
+        # * It provides argument injection.
+        #
+
         recursionControl = Control.bindControl root, parentPhraseControl
 
-        #
-        # recurse via async injector
-        # 
+        return inject.async
 
-        injectionFn = inject.async
+            #
+            # inject.async() arg1 - Injection Preparator
+            # ------------------------------------------
+            # 
 
             parallel:   false
             beforeAll:  recursionControl.beforeAll
@@ -155,46 +164,51 @@ exports.walk = (root, opts, rootString, rootFn) ->
                 #
 
 
+            #
+            # inject.async() target function (ThePhraseRecursor)
+            # ------------------------------------------------
+            # 
+            # * It passes a new instance of the recursor (newRecursorFn) as arg1 to the 
+            #   nested phrase function
+            # 
+            # * The new recursor becomes the phrase registrar for the nested phrases.
+            #
+            # * The new recursor is initialized with the phraseText and phraseControl options 
+            #   of the nested phrase. 
+            # 
+            # * Calls to the new recursor queue in the injector.
+            # 
+            #   ie. 
+            #         phrase 'phrase text', (arg1)
+            #         
+            #             arg1 'nested phrase test', (...) -> 
+            #             arg1 'another nested phrase test', (...) -> 
+            #             arg1 'these are queueing'
+            #             arg1 'they run on nextTick'
+            #             arg1 """
+            #                   ie. * whenever next the flow of execution breaks out
+            #                         and node decides which pending turn to run in
+            #                         the reactor queue
+            #             
+            #                       * nextTicks are pushed to the front of the reactor 
+            #                         queue
+            #              """
+            # 
+            #
+
             (phraseString, phraseControl, nestedPhraseFn) -> 
-
-                #
-                # injection target function
-                # -------------------------
-                # 
-                # * It passes a new instance of the recursor as arg1 to the nested phrase function
-                #
-                # * The new injection function is initialized with the phraseText and phraseControl
-                #   options of the nested phrase.
-                # 
-                #   ie. 
-                #         phrase 'phrase text', (arg1)
-                #         
-                #             arg1 'nested phrase test', (...) -> 
-                #             arg1 'another nested phrase test', (...) -> 
-                #             arg1 'these are queueing'
-                #             arg1 'they run on nextTick'
-                #             arg1 """
-                #                   ie. * whenever next the flow of execution breaks out
-                #                         and node decides which pending turn to run in
-                #                         the reactor queue
-                #             
-                #                       * nextTicks are pushed to the front of the reactor 
-                #                         queue
-                #              """
-                # 
-                #
-
+                                                #
+                                                # leaf and boundry phrases inject noop here
+                                                #
+                                                # TODO: quite possibly simply injecting null 
+                                                #       and doing no recursion in that case
+                                                #       will more appropriately achieve the 
+                                                #       desired effect.
+                                                #       
 
                 newRecursorFn = recursor phraseString, phraseControl
                 nestedPhraseFn newRecursorFn
 
-
-        #
-        # recursor( phraseString, phraseControl ) 
-        # returns injector function
-        #
-
-        return injectionFn
 
 
     injector = recursor 'ROOT', 

@@ -229,18 +229,25 @@ exports.create = (root, parentControl) ->
             if actualPhraseType == 'boundry'
 
                 #
-                # on boundry, noop the pending recursion injection and 
-                # call the phraseFn directly with the Boundry handler
+                # * inject noop into 'ThePhraseRecursor'
                 #
 
-                injectionControl.args[2] = ->
+                injectionControl.args[2] = -> 
+
+                #
+                #
+                #
 
                 linkQueue = []
+                phrase.fn link: (opts) -> linkQueue.push opts
 
-                phrase.fn link: (opts) -> linkQueue.push opts    #BoundryHandler.link root, opts
+                sequence ( for opts in linkQueue
 
+                    do (opts) -> 
 
-                console.log linkQueue
+                        console.log opts
+
+                )
                 
 
 
