@@ -14,18 +14,33 @@ describe 'TreeBoundry', ->
 
         beforeEach -> 
             @directory = BoundryHandler.linkDirectory
+            @recurse   = BoundryHandler.recurse
 
         afterEach -> 
             BoundryHandler.linkDirectory = @directory
+            BoundryHandler.recurse = @recurse
 
 
         it 'calls linkDirectory()', (done) -> 
 
             BoundryHandler.linkDirectory = -> done()
-            BoundryHandler.link directory: './spec'
+            BoundryHandler.link {}, directory: './spec'
+
+        context 'linkDirectory()', ->
+
+            it 'calls recure with default regex', (done) -> 
+
+                BoundryHandler.recurse = (path, regex) -> 
+
+                    path.should.match /phrase\/spec\/recursor$/
+                    should.exist 'file.name.coffee'.match regex
+                    done()
+
+                BoundryHandler.linkDirectory {}, directory: __dirname
 
 
-        it 'recurses for files with name match'
-        it 'places a PhraseToken (type=remote) for each match into the parent phrase'
+        it 'places a PhraseToken (type=remote) for each match into the parent phrase', (done) -> 
 
-        
+                root = {}
+
+                BoundryHandler.linkDirectory root, directory: __dirname
