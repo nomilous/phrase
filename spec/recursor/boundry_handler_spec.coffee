@@ -93,14 +93,19 @@ describe 'TreeBoundry', ->
                     (e) -> #console.log e
                 )
 
-            it 'queries message bus for uuid and defaults to uuid.v1', (done) -> 
+            it 'queries message bus for uuid', (done) -> 
 
                 @root.context.notice = event: (title, payload) -> 
 
+                    title.should.equal 'phrase::boundry:query'
                     done()
                     throw 'go no further'
 
                 BoundryHandler.linkDirectory( @root, directory: __dirname )
+
+
+            it ' and defaults to uuid.v1'
+
 
             xit 'emit phrase::edge:create onto the message bus', (done) -> 
 
@@ -125,7 +130,10 @@ describe 'TreeBoundry', ->
 
                     messageBus.use (msg, next) -> 
 
-                        msg.uuid = "REMOTE-UUID#{  i++  }"
+                        if msg.context.title == 'phrase::boundry:query'
+                            
+                            msg.uuid = "REMOTE-UUID#{  i++  }" 
+
                         next()
 
                     accessToken.on 'ready', ({tokens}) -> 
