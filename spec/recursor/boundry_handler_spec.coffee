@@ -103,7 +103,7 @@ describe 'TreeBoundry', ->
 
                 BoundryHandler.linkDirectory( @root, directory: __dirname )
 
-            it 'defaults to not walk across theboundry', (done) -> 
+            it 'defaults to not walk across the boundry', (done) -> 
 
                 @root.context.notice = event: (title, payload) -> 
 

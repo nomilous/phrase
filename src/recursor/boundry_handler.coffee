@@ -43,6 +43,8 @@ module.exports = boundryHandler =
             #            
             #          
 
+            console.log filenames
+
             sequence( for filename in filenames
 
 
@@ -66,7 +68,7 @@ module.exports = boundryHandler =
                     #
 
                     follow: false
-                    
+
 
                     token: 
 
