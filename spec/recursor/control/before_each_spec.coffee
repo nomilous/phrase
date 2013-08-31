@@ -38,10 +38,12 @@ describe 'RecursorBeforeEach', ->
             phraseType: -> 'leaf' 
 
         @phraseToken = PhraseTokenFactory.createClass
+        @boundryLink = BoundryHandler.link
 
     afterEach ->
 
         PhraseTokenFactory.createClass = @phraseToken
+        BoundryHandler.link = @boundryLink
 
     context 'recursion control -', ->
 
@@ -383,20 +385,36 @@ describe 'RecursorBeforeEach', ->
             hook done, injectionControl
 
 
-        xit 'resolves the injection deferral after all calls to link are handled', (done) -> 
+        it 'resolves the injection deferral after ALL calls to link are handled', (done) -> 
 
-            RESOLVED = false
-            injectionResolver = -> RESOLVED = true
+            RESOLVED  = false
+            LINKCOUNT = 0
 
-            # BoundryHandler.link = (root, opts) -> 
+            injectionResolver = -> 
+                LINKCOUNT.should.equal 10000
+                done()
+                
 
-            #     throw new Error 'unhandled'
+            {defer} = require 'when'
+            BoundryHandler.link = (root, opts) -> 
+
+                doing = defer()
+
+                process.nextTick -> 
+
+                    RESOLVED.should.equal false
+                    LINKCOUNT++
+                    doing.resolve()
+
+                doing.promise
 
             parent.phraseType = (fn) -> 'boundry'
             injectionControl.args  = [ 'edge phrase', (edge) ->
 
-                edge.link directory: './path1'
-                edge.link directory: './path2'
+                for i in [1..10000] # a tad sluggish...
+
+                    edge.link directory: './path' + i
+
 
             ]
             hook = RecursorBeforeEach.create root, parent
@@ -441,6 +459,6 @@ describe 'RecursorBeforeEach', ->
                 #
 
 
-
+            it 'contunues walk through peer phrases that follow a phrase containing links'
 
 

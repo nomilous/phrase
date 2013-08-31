@@ -258,37 +258,25 @@ exports.create = (root, parentControl) ->
 
                 ).then(
 
-                    (resolve) -> console.log resolve
-                    (reject)  -> 
+                    #
+                    # * All boundries handler successfully
+                    #
 
-                        #
-                        # TODO: one boundry hander error terminates the entire sequence
-                        #       should it? && ?fix it
-                        #
+                    (resolve) -> done()
 
-                        done reject #GREP4
+                    #
+                    # TODO: one boundry hander error terminates the entire sequence
+                    #       should it? && ?fix it
+                    #
+                        
+                    (reject)  -> done reject #GREP4
 
                     (notify)  -> # console.log NOTIFY: notify
 
                 )
-                
-
-
-                unless linkQueue.length > 0
-
-                    #
-                    # no link attempt was made in the boundry phrase
-                    #
-
-                    done()
-                    deferral.resolve()
-                    return
 
                 return
 
-                #
-                # TODO: resolve on linking resolved
-                #
 
 
             #
