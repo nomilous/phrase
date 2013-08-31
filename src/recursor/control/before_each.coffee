@@ -69,16 +69,22 @@ exports.create = (root, parentControl) ->
         injectionControl.args[1] = phraseControl
         injectionControl.args[2] = phraseFn  # becomes noop for leaf or boundry phrases
 
+
+        #
+        # Phrase and Token assembly
+        # -------------------------
+        # 
+        # * This pushes the stack from which 'phrase::edge:create' events are 
+        #   transmitted into the PhraseGraph.assemble via the message bus.
+        # 
+        # * The stack is popped on the return walk (in recursor/control/after_each)
+        #
+
         try  
 
             if phraseControl? 
 
                 phraseControl.phraseToken = signature: util.argsOf( phraseFn )[0]
-
-            #
-            # create phraseToken according to phraseType
-            # ------------------------------------------
-            #
 
             phraseType = actualPhraseType = parentControl.phraseType phraseFn
                                 #
