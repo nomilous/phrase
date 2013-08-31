@@ -206,9 +206,7 @@ exports.create = (root, parentControl) ->
 
         run.then -> 
 
-            
-
-            if phraseType == 'leaf' then process.nextTick -> 
+            if phraseType == 'leaf' then return process.nextTick -> 
 
                 #
                 # leaf node resolves self, there are
@@ -232,6 +230,11 @@ exports.create = (root, parentControl) ->
 
                 linking = phrase.fn link: (opts) -> BoundryHandler.link root, opts
 
+                console.log 'TODO: test multiple nested link'
+                console.log 'TODO: link mode nest|ref multiple nested link'
+                console.log 'TODO: resolve on linking resolved'
+
+
                 unless linking? or linking.then? 
 
                     #
@@ -242,11 +245,12 @@ exports.create = (root, parentControl) ->
                     deferral.resolve()
                     return
 
+                return
+
                 #
-                # TODO: fix "can only have one link statement in boundry phrase"
                 # TODO: resolve on linking resolved
                 #
-                
+
 
             #
             # vertex or root phrases, continue to injection recursor
