@@ -39,6 +39,27 @@ describe 'TreeBoundry', ->
                 BoundryHandler.linkDirectory {}, directory: __dirname
 
 
+            it 'finds matches', (done) -> 
+
+                files = @recurse __dirname, /\.coffee$/
+                files.map( 
+
+                    (f) -> f.replace __dirname, '.'
+
+                ).should.eql [
+
+                    './boundry_handler_spec.coffee',
+                    './control/after_all_spec.coffee',
+                    './control/after_each_spec.coffee',
+                    './control/before_all_spec.coffee',
+                    './control/before_each_spec.coffee',
+                    './control_spec.coffee',
+                    './tree_walker_spec.coffee'
+
+                ]
+                done()
+
+
         it 'places a PhraseToken (type=remote) for each match into the parent phrase', (done) -> 
 
                 root = {}

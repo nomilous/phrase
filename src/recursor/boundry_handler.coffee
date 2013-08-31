@@ -25,7 +25,7 @@ module.exports = boundryHandler =
 
             nextPath = join path, fileOrDirname
 
-            try boundryHandler.recurse nextPath, matches
+            try boundryHandler.recurse nextPath, regex, matches
             catch error
                 throw error unless error.code == 'ENOTDIR'
                 
