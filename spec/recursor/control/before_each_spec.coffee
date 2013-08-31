@@ -349,9 +349,15 @@ describe 'RecursorBeforeEach', ->
 
             ), injectionControl
 
+
     context 'boundry linking -', -> 
 
-        it ''
+        it 'noops the recursor phraseFn'
+
+        it 'calls the boundry handler and wait before resolving the injection'
+
+        it 'allows multiple links and calls the boundry handler in sequence'
+
 
 
 

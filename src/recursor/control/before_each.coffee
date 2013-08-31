@@ -233,12 +233,14 @@ exports.create = (root, parentControl) ->
                 # call the phraseFn directly with the Boundry handler
                 #
 
+                console.log 'boundry'
+
                 injectionControl.args[2] = ->
 
                 linking = phrase.fn link: (opts) -> BoundryHandler.link root, opts
 
                 console.log 'TODO: test multiple nested link'
-                console.log 'TODO: link mode nest|ref multiple nested link'
+                
                 console.log 'TODO: resolve on linking resolved'
 
 

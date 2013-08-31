@@ -45,6 +45,8 @@ module.exports = boundryHandler =
 
             console.log filenames
 
+            console.log 'TODO: link mode nest|ref multiple nested link'
+
             sequence( for filename in filenames
 
 
