@@ -104,7 +104,7 @@ describe 'TreeBoundry', ->
                 BoundryHandler.linkDirectory( @root, directory: __dirname )
 
 
-            it ' and defaults to uuid.v1'
+            it 'and defaults to uuid.v1'
 
 
             xit 'emit phrase::edge:create onto the message bus', (done) -> 
@@ -130,9 +130,9 @@ describe 'TreeBoundry', ->
 
                     messageBus.use (msg, next) -> 
 
-                        if msg.context.title == 'phrase::boundry:query'
+                        if msg.context.title == 'phrase::boundry:assemble'
                             
-                            msg.uuid = "REMOTE-UUID#{  i++  }" 
+                            msg.token.uuid = "REMOTE-UUID#{  i++  }" 
 
                         next()
 

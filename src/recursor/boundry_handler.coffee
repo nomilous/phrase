@@ -43,10 +43,10 @@ module.exports = boundryHandler =
             #            
             #          
 
-            sequence( try for filename in filenames
+            sequence( for filename in filenames
 
 
-                do (filename) -> -> notice.event 'phrase::boundry:query', 
+                do (filename) -> -> notice.event 'phrase::boundry:assemble', 
 
                     #
                     # * sends the type of this remote token assembly line
@@ -60,18 +60,26 @@ module.exports = boundryHandler =
                     #
 
                     stackpath:   'TODO'
+
+                    token: 
+
+                        #
+                        # TODO: consider only allowing set: (value) -> once
+                        #
+
+                        uuid: undefined
                     
 
 
             ).then(
 
                 #
-                # * Wait for all bussed messages before processding assemble the tokens
+                # * All remote ammendments have been made
                 #
 
                 (messages) -> for message in messages
 
-                    console.log message.uuid
+                    console.log message.token.uuid
 
                     root.context.stack.push {}
 
@@ -83,13 +91,9 @@ module.exports = boundryHandler =
 
                     root.context.stack.pop()
 
+                    makeLinks.resolve()
+
             )
-
-
-           
-
-
-            makeLinks.resolve()
 
         makeLinks.promise
 
