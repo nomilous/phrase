@@ -309,15 +309,18 @@ exports.create = (root, parentControl) ->
                         # ------------------------------    
                         #  
                         # * pass local closure containing assembled phrases into the recursor 
-                        #  as a phrase of nested phrases
+                        #   as a phrase of nested phrases
                         # 
 
+                        if phrases.nest.length > 0
 
-                        
+                            injectionControl.args[2] = (recursor) -> 
 
-                        
+                                phrases.nest.map ({opts, phrase}) -> 
 
+                                    recursor phrase.title, phrase.control, phrase.fn
 
+                            done()
 
                     #
                     # TODO: one boundry hander error terminates the entire sequence

@@ -474,10 +474,16 @@ describe 'RecursorBeforeEach', ->
 
                         accessToken.on 'ready', ({tokens}) -> 
 
-                            console.log JSON.stringify tokens, null, 2
+                            #console.log JSON.stringify tokens, null, 2
 
-                            # should.exist tokens[ '/BoundryTest/tree1/nest/boundry leaf/edge/nested 1/book/The Enchanted Wood/characters/Angry Pixie' ]
-                            # done()
+                            tokens[ '/BoundryTest/tree1/nest/boundry leaf' ].should.eql 
+
+                                type: 'boundry'
+                                uuid: 'GRAFTPOINT1'
+                                signature: 'nest'
+
+                            should.exist tokens[ '/BoundryTest/tree1/nest/boundry leaf/edge/NESTED 15/book/The Enchanted Wood/characters/Angry Pixie' ]
+                            done()
 
                         count = 1
                         messageBus.use (msg, next) -> 
@@ -503,8 +509,8 @@ describe 'RecursorBeforeEach', ->
 
                                 msg.phrase = 
 
-                                    title: "nested #{count++}"
-                                    uuid:  count++
+                                    title: "NESTED #{count++}"
+                                    control: uuid:  count++
                                     fn: (book) -> 
 
                                         #
@@ -532,7 +538,7 @@ describe 'RecursorBeforeEach', ->
 
                     nest 'local leaf', (end) -> 
 
-                    nest 'boundry leaf', (edge) -> 
+                    nest 'boundry leaf', uuid: 'GRAFTPOINT1', (edge) -> 
 
                         edge.link directory: __dirname
                         edge.link directory: __dirname
