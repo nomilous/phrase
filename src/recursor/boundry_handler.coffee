@@ -40,8 +40,7 @@ module.exports = boundryHandler =
             # 
             #   eg.  
             #            nez realizers contain the realizer uuid in the file
-            #            
-            #  
+            #
 
             sequence( for filename in filenames
 
@@ -58,32 +57,67 @@ module.exports = boundryHandler =
 
 
             ).then(
-
+      
                 #
-                # * All remote ammendments have been made
-                #
+                # Boundry Mode
+                # ------------
+                # 
+                # Refers to how the PhraseTree on the other side of the boundry is attached 
+                # to this PhraseTree
+                # 
+                # ### refer 
+                # 
+                # `boundry token carries reference to the 'other' tree`
+                # 
+                # Each PhraseTree from across the boundry is built onto a new root on the 
+                # core and a reference if placed into this PhraseTree at the vertex where
+                # the link was called.
+                # 
+                # ### nest
+                # 
+                # `graph assembly continues with recrsion across the phrase boundry`
+                # 
+                # Each PhraseTree from the other side of the boundry is grafted into this
+                # PhraseTree at the vertex where the link was called. 
+                #  
+                #  
 
-                (messages) -> 
+                result = (messages) -> 
 
-                    for message in messages
+                    return makeLinks.resolve() if messages.length == 0 
 
-                        if message.error? 
+                    #
+                    # Boundry Assembly
+                    # ----------------
+                    # 
+                    # * Messages (Array) contains the specifications for each boundry phrase
+                    #   the was linked
+                    # 
+                    # * Mixed mode is not supported. All boundry phrases must be linked with 
+                    #   the mode as 'refer' or 'nest', not a combination of the two.
+                    #
 
-                            console.log 'ERROR_UNHANDLED_1', error.stack
-                            continue
+                    try
+                        mode  = undefined
+                        messages.map (m) -> 
+                            mode = m.opts.mode unless mode?
+                            if mode != m.opts.mode 
+                                throw new Error 'Mixed boundry modes not supported.' 
+
+                    catch error
+                        return makeLinks.reject error
 
 
-                        console.log '\nphraseTitle\t', message.phrase.title
-                        console.log 'phraseControl\t', message.phrase.opts
-                        console.log 'phraseFn\t', message.phrase.fn.toString()
-
-                        console.log mode:  message.opts.mode
-                        root.context.stack.push {}
-
-
-                        
-
-                        root.context.stack.pop()
+                    # for message in messages
+                    #     if message.error? 
+                    #         console.log 'ERROR_UNHANDLED_1', error.stack
+                    #         continue
+                    #     if message.opts.mode == 'nest'
+                    #         console.log '\nphraseTitle\t', message.phrase.title
+                    #         console.log 'phraseControl\t', message.phrase.opts
+                    #         console.log 'phraseFn\t', message.phrase.fn.toString()
+                        # root.context.stack.push {}
+                        # root.context.stack.pop()
 
                     makeLinks.resolve()
 
@@ -95,8 +129,7 @@ module.exports = boundryHandler =
                 # * proxy message bus exceptions directly
                 # 
 
-                # (reject) -> makeLinks.reject reject
-                makeLinks.reject
+                error = (reject) -> makeLinks.reject reject
                 
 
             )

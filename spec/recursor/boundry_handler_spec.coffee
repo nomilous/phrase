@@ -83,7 +83,7 @@ describe 'TreeBoundry', ->
                     done()
 
 
-            context 'recursor stack and graph assembly', -> 
+            xcontext 'recursor stack and graph assembly', -> 
 
                 beforeEach -> 
 
@@ -120,7 +120,7 @@ describe 'TreeBoundry', ->
                 it 'defaults to uuid.v1 if not specified on assembly line'
 
 
-                it 'pushes and pops onto the recursor stack', (done) -> 
+                xit 'pushes and pops onto the recursor stack', (done) -> 
 
                     @root.context.stack = 
 
@@ -142,6 +142,32 @@ describe 'TreeBoundry', ->
 
 
             context 'boundry type', -> 
+
+                beforeEach -> 
+
+                    @root.context.notice = @notice = require(
+
+                        'notice' ).create 'test with actual message bus'
+
+
+                it 'rejects on mixed boundry modes', (done) -> 
+
+                    @notice.use (msg, next) -> 
+                        if msg.context.title == 'phrase::boundry:assemble'
+                            msg.opts.mode = 'refer'
+                            msg.opts.mode = 'nest' if msg.opts.filename.match /boundry_handler_spec/
+                        next()
+
+                    BoundryHandler.linkDirectory( @root, directory: __dirname ).then(
+
+                        -> 
+                        (error) -> 
+
+                            error.should.match /Mixed boundry modes not supported/
+                            done()
+
+                    )
+
 
                 context 'nest', -> 
 
