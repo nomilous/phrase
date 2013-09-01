@@ -107,6 +107,33 @@ module.exports = boundryHandler =
                     catch error
                         return makeLinks.reject error
 
+                    #
+                    # ### As Nest
+                    # 
+                    # * It assembles a phrase that contains all the nested phrase
+                    #   functions that were returned by the assembly pipeline.
+                    # 
+                    # * It hands the phrase back to the recursor (before each) via 
+                    #   the promise.
+                    # 
+                    # * The recursor substitutes the phraseFn that contained the 
+                    #   calls to link with this new phraseFn that now contains all 
+                    #   the linked PhraseTrees.
+                    # 
+                    # * The recursor then proceeds as normal, recursing into the
+                    #   new phrases as if they were always there.
+                    #
+                    #
+
+                    if mode == 'nest'
+
+                        makeLinks.notify 
+
+                            action: 'phrase::nest'
+
+                            
+
+
 
                     # for message in messages
                     #     if message.error? 

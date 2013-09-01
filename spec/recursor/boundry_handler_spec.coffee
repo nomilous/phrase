@@ -169,9 +169,26 @@ describe 'TreeBoundry', ->
                     )
 
 
-                context 'nest', -> 
+                context 'As Nest', -> 
 
-                    it 'graph assembly continues with recrsion across the phrase boundry'
+                    beforeEach -> 
+                        @notice.use (msg, next) -> 
+                            if msg.context.title == 'phrase::boundry:assemble'
+                                msg.opts.mode = 'nest'
+                            next()
+
+                    it 'sends phrase::nest back to the recursor', (done) -> 
+
+                        BoundryHandler.linkDirectory( @root, directory: __dirname ).then(
+
+                            ->
+                            -> console.log error.stack
+                            (notify) -> 
+
+                                notify.action.should.equal 'phrase::nest'
+                                done()
+
+                        )
 
                 context 'refer', -> 
 

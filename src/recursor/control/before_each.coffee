@@ -257,7 +257,9 @@ exports.create = (root, parentControl) ->
                     # (reject)  -> done reject 
                     done #GREP4
 
-                    (notify)  -> # console.log NOTIFY: notify
+                    (notify)  -> 
+
+                        console.log NOTIFY: notify
 
                 )
 
