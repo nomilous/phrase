@@ -103,9 +103,9 @@ describe 'TreeBoundry', ->
 
                         if msg.context.title == 'phrase::boundry:assemble' 
 
-                            msg.params.type.should.equal      'directory'
-                            msg.params.filename.should.match   new RegExp __dirname
-                            msg.params.stackpath.should.equal  'TODO'
+                            msg.opts.type.should.equal      'directory'
+                            msg.opts.filename.should.match   new RegExp __dirname
+                            msg.opts.stackpath.should.equal  'TODO'
 
                             done()
                             throw 'go no further'

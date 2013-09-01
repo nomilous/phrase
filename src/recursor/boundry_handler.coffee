@@ -48,7 +48,7 @@ module.exports = boundryHandler =
 
                 do (filename) -> -> notice.event 'phrase::boundry:assemble', 
 
-                    params:
+                    opts:
 
                         type:        'directory'
                         filename:    filename
@@ -73,11 +73,11 @@ module.exports = boundryHandler =
                             continue
 
 
-                        console.log '\nphraseText\t', message.result.title
-                        console.log 'phraseControl\t', message.result.opts
-                        console.log 'phraseFn\t', message.result.fn.toString()
+                        console.log '\nphraseText\t', message.phrase.title
+                        console.log 'phraseControl\t', message.phrase.opts
+                        console.log 'phraseFn\t', message.phrase.fn.toString()
 
-                        console.log mode:  message.params.mode
+                        console.log mode:  message.opts.mode
                         root.context.stack.push {}
 
 
