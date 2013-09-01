@@ -204,18 +204,11 @@ exports.create = (root, parentControl) ->
             if phraseType == 'leaf' then return process.nextTick -> 
 
                 #
-                # * inject noop into 'ThePhraseRecursor'
+                # * inject noop into 'ThePhraseRecursor', (no children)
+                #   #GREP1
                 #
 
                 injectionControl.args[2] = ->
-
-                #
-                # leaf node resolves self, there are
-                # no children to recurse into
-                # 
-                # #GREP1
-                #
-
                 done()
                 deferral.resolve()
 
@@ -230,6 +223,10 @@ exports.create = (root, parentControl) ->
                 phrase.fn link: (opts) -> linkQueue.push opts
 
                 if linkQueue.length == 0 then return process.nextTick ->
+
+                    #
+                    # * empty boundry phrase, same as leaf. 
+                    #
 
                     injectionControl.args[2] = -> 
                     done()
@@ -257,6 +254,30 @@ exports.create = (root, parentControl) ->
                         # * boundries is an array of arrays, reduce it to
                         #   arrays by boundry mode
                         # 
+
+                        #
+                        # Boundry Mode
+                        # ------------
+                        # 
+                        # Refers to how the PhraseTree on the other side of the boundry is attached 
+                        # to this PhraseTree
+                        # 
+                        # ### refer 
+                        # 
+                        # `boundry token carries reference to the 'other' tree`
+                        # 
+                        # Each PhraseTree from across the boundry is built onto a new root on the 
+                        # core and a reference if placed into this PhraseTree at the vertex where
+                        # the link was called.
+                        # 
+                        # ### nest
+                        # 
+                        # `graph assembly continues with recrsion across the phrase boundry`
+                        # 
+                        # Each PhraseTree from the other side of the boundry is grafted into this
+                        # PhraseTree at the vertex where the link was called. 
+                        #  
+                        #  
                         
                         phrases = refer: [], nest: []
 
@@ -267,8 +288,34 @@ exports.create = (root, parentControl) ->
                                 opts: boundry.opts
                                 phrase: boundry.phrase
 
+                        #
+                        # TODO: handle refer boundry mode
+                        # -------------------------------
+                        # 
+                        # * create new phrase tree for each boundy phrass
+                        # 
+                        # * push a phrase containing reference to the new tree's root
+                        #   into the local stack 
+                        #  
+                        # * send phrase::edge:create onto the bus so that the local graph
+                        #   stores the reference to another tree as a local leaf
+                        # 
+                        # * pop the stack (and repeat for each boundry phrase)
+                        # 
 
-                        console.log phrases
+
+                        #
+                        # TODO: handle nest boundry mode
+                        # ------------------------------    
+                        #  
+                        # * pass local closure containing assembled phrases into the recursor 
+                        #  as a phrase of nested phrases
+                        # 
+
+
+                        
+
+                        
 
 
 

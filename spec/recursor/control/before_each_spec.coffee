@@ -494,10 +494,12 @@ describe 'RecursorBeforeEach', ->
                             
                             if msg.context.title == 'phrase::boundry:assemble'
 
-                                switch count++ % 2
+                                # switch count++ % 2
 
-                                    when 0 then msg.opts.mode = 'nest'
-                                    when 1 then msg.opts.mode = 'refer'
+                                #     when 0 then msg.opts.mode = 'nest'
+                                #     when 1 then msg.opts.mode = 'refer'
+
+                                msg.opts.mode = 'nest'
 
                                 msg.phrase = 
 
@@ -534,7 +536,7 @@ describe 'RecursorBeforeEach', ->
 
                         edge.link directory: __dirname
                         edge.link directory: __dirname
-                        edge.link directory: __dirname
-                        edge.link directory: __dirname
-                        edge.link directory: __dirname
+                        # edge.link directory: __dirname
+                        # edge.link directory: __dirname
+                        # edge.link directory: __dirname
 
