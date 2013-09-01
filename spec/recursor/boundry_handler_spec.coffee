@@ -1,6 +1,7 @@
 should             = require 'should'
 BoundryHandler     = require '../../lib/recursor/boundry_handler'
 #PhraseTokenFactory = require '../../lib/token/phrase_token'
+fs                 = require 'fs'
 phrase             = require '../../lib/phrase'
 
 describe 'TreeBoundry', -> 
@@ -11,6 +12,11 @@ describe 'TreeBoundry', ->
         @root.context.notice = event: (title, payload) -> 
         #@root.context.PhraseToken = PhraseTokenFactory.createClass @root
 
+        @readdirSync = fs.readdirSync
+
+    afterEach ->
+
+        fs.readdirSync = @readdirSync
 
     it 'defines link() to recurse a boundry phrase', (done) ->  
 
@@ -150,7 +156,7 @@ describe 'TreeBoundry', ->
                         'notice' ).create 'test with actual message bus'
 
 
-                it 'rejects on mixed boundry modes', (done) -> 
+                xit 'rejects on mixed boundry modes', (done) -> 
 
                     @notice.use (msg, next) -> 
                         if msg.context.title == 'phrase::boundry:assemble'
@@ -178,7 +184,7 @@ describe 'TreeBoundry', ->
                             next()
 
 
-                    it 'sends phrase::nest back to the recursor', (done) -> 
+                    xit 'sends phrase::nest back to the recursor', (done) -> 
 
                         BoundryHandler.linkDirectory( @root, directory: __dirname ).then(
 
@@ -192,7 +198,7 @@ describe 'TreeBoundry', ->
                         )
 
 
-                    it 'phrase::nest contains a resolver to callback "done"', (done) -> 
+                    xit 'phrase::nest contains a resolver to callback "done"', (done) -> 
 
                         BoundryHandler.linkDirectory( @root, directory: __dirname ).then(
 
@@ -206,7 +212,7 @@ describe 'TreeBoundry', ->
                         )
 
 
-                    it 'phrase::nest contains the new phrase to recurse into', (done) -> 
+                    xit 'phrase::nest contains the new phrase to recurse into', (done) -> 
 
                         BoundryHandler.linkDirectory( @root, directory: __dirname ).then(
 
@@ -219,6 +225,50 @@ describe 'TreeBoundry', ->
                                 done()
 
                         )
+
+
+                    it 'running the new phrase through the async injector will resume the recustion', (done) -> 
+
+                        #
+                        # assemble mock phrase 
+                        #
+                        count1 = 1
+                        count2 = 1
+                        @notice.use (msg, next) -> 
+                            if msg.context.title == 'phrase::boundry:assemble'
+                                msg.phrase = 
+                                    title: msg.opts.filename.split('/')[-1..].join ''
+                                    opts: 
+                                        uuid: count1++
+                                    fn: -> 
+                                        return "RETURN FROM PHRASE_#{ count2++ }"
+                                        
+                            next()
+
+                        RESULTS = []
+                        BoundryHandler.linkDirectory( @root, directory: __dirname ).then(
+
+                            ->
+                            ->
+                            (notify) -> 
+
+                                #
+                                # the new phrase can be mapped onto the 
+                                #
+
+                                notify.phrase (phraseTitle, phraseControl, phraseFn) -> 
+
+                                    RESULTS.push phraseFn ->
+                                    if phraseControl.uuid == 3
+                                        
+                                        RESULTS.should.eql [
+                                            'RETURN FROM PHRASE_1'
+                                            'RETURN FROM PHRASE_2'
+                                            'RETURN FROM PHRASE_3'
+                                        ]
+                                        done()
+                        )
+
 
                 context 'refer', -> 
 

@@ -1,4 +1,5 @@
-{readdirSync} = require 'fs'
+# {readdirSync} = require 'fs'  # prevents stub
+fs            = require 'fs'
 {join}        = require 'path'
 {defer}       = require 'when'
 sequence      = require 'when/sequence'
@@ -128,16 +129,22 @@ module.exports = boundryHandler =
 
                                 #
                                 # * The recursor then proceeds as normal, recursing into this
-                                #   new phrases (As if it was always nested here.).
+                                #   new phrase (As if it was always nested here.).
                                 #
                                 # 
                                 #        "Aaaah... The beauty of the closure, 
                                 # 
                                 # 
 
-                                messages.map (message) -> 
+                                messages.map ({phrase}) -> do (phrase) -> 
 
-                                    console.log message.opts.filename[-30..]
+                                    #
+                                    # `boundry` is the async injection recursor,
+                                    #  see: Injection Target (ThePhraseRecursor)
+                                    #  in /recursor/tree_walker
+                                    # 
+                                    
+                                    boundry phrase.title, phrase.opts, phrase.fn
 
 
 
@@ -172,7 +179,7 @@ module.exports = boundryHandler =
 
     recurse: (path, regex, matches = []) ->
 
-        for fileOrDirname in readdirSync path
+        for fileOrDirname in fs.readdirSync path
 
             nextPath = join path, fileOrDirname
 
@@ -184,6 +191,8 @@ module.exports = boundryHandler =
                 #
                 # TODO: will this follow symlinks? (should it?)
                 #
+
+
 
                 matches.push nextPath if nextPath.match regex
 
