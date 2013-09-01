@@ -215,7 +215,7 @@ exports.walk = (root, opts, rootString, rootFn) ->
                     * if not, make it so
                     * once so, ...
 
-                          How to get it into context?
+                          How to get it into scope?
                           Because the vertex phrases 
                           are not run at jobtime. 
 
