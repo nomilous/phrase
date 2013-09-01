@@ -16,7 +16,7 @@ module.exports = boundryHandler =
         if opts.match? then regex = new RegExp opts.match
         else                regex = new RegExp '\\.coffee$'
 
-        {PhraseToken, notice} = root.context
+        {notice} = root.context
 
         sequence( for filename in boundryHandler.recurse opts.directory, regex
 

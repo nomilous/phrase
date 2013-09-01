@@ -37,13 +37,15 @@ describe 'RecursorBeforeEach', ->
             phraseToken: signature: 'it'
             phraseType: -> 'leaf' 
 
-        @phraseToken = PhraseTokenFactory.createClass
-        @boundryLink = BoundryHandler.link
+        @phraseToken    = PhraseTokenFactory.createClass
+        @boundryLink    = BoundryHandler.link
+        @boundryRecurse = BoundryHandler.recurse
 
     afterEach ->
 
         PhraseTokenFactory.createClass = @phraseToken
         BoundryHandler.link = @boundryLink
+        BoundryHandler.recurse = @boundryRecurse
 
     context 'recursion control -', ->
 
@@ -454,6 +456,86 @@ describe 'RecursorBeforeEach', ->
             hook injectionResolver, injectionControl 
 
 
+        context 'integration (refered boundry)', -> 
+
+            it "boundry handler errors into the accessToken's error event listeners"
+
+            it 'creates a reference phrase in the primary tree for each boundry phrase', (done) -> 
+
+                BoundryHandler.recurse = (directory, match) -> [
+
+                    '/make/believe/one.possible'
+                    '/make/believe/two.possible'
+                    '/make/believe/three.possible'
+
+                ]
+
+                recursor = require('../../../lib/phrase').createRoot
+
+                    title: 'Boundry Test (refer)'
+                    uuid:  '0000000001'
+                    leaf:  ['π']
+
+                    (accessToken, messageBus) -> 
+
+                        messageBus.use (msg, next) -> 
+
+                            if msg.context.title == 'phrase::boundry:assemble'
+
+                                #
+                                # async boundry phrase assembly line
+                                # ----------------------------------
+                                # 
+                                # * can fetch and load a remote tree
+                                # 
+                                # TODO: (maybe) default assembly, (or the recursor never completes the 'first walk')
+                                #
+
+                                # msg.opts.mode = 'refer'
+                                msg.opts.mode = 'nest'
+                                msg.phrase = 
+
+                                    title: msg.opts.filename.split('/')[-1..].join()
+                                    control: uuid: msg.opts.filename
+
+                                    fn: (fromBeyond) -> 
+
+                                        fromBeyond '¥®†§ç', (ƒ) -> 
+
+                                            ƒ 'øπˆ˙¥√ø', uuid: '∞', (π) -> π()
+                                            ƒ '®∂¨çøˆ•',            (π) -> π()
+
+                                next()
+
+                            else next()
+
+                        accessToken.on 'ready', ({tokens}) -> 
+
+                            # console.log tokens
+
+                            tokens[ '/Boundry Test (refer)/Primary Tree/nest/boundry phrase/edge/three.possible/fromBeyond/¥®†§ç/ƒ/øπˆ˙¥√ø' ].should.eql
+
+                                type:      'leaf'
+                                uuid:      '∞'
+                                signature: 'ƒ'
+
+                            done()
+
+                           
+
+                recursor 'Primary Tree', (nest) -> 
+
+                    nest 'boundry phrase', (edge) -> 
+
+                        edge.link
+
+                            directory: '/make/believe'
+                            match: /\.possibile$/
+
+
+            it 'the reference phrase contains uuid of new tree rooted on the local core'
+
+
         context 'integration (nested boundry)', -> 
 
             it "boundry handler errors into the accessToken's error event listeners"
@@ -464,39 +546,29 @@ describe 'RecursorBeforeEach', ->
                 #
 
 
-            it 'contunues walk through peer phrases that follow a phrase containing links', (done) -> 
+            it 'contunues walk through peer phrases that are linked as nested', (done) -> 
 
                 recursor = require('../../../lib/phrase').createRoot
 
-                    title: 'BoundryTest'
-                    uuid:  '0000000000'
+                    title: 'Boundry Test (nest)'
+                    uuid:  '0000000002'
                     (accessToken, messageBus) -> 
 
                         accessToken.on 'ready', ({tokens}) -> 
 
                             #console.log JSON.stringify tokens, null, 2
 
-                            tokens[ '/BoundryTest/tree1/nest/boundry leaf' ].should.eql 
+                            tokens[ '/Boundry Test (nest)/tree1/nest/boundry leaf' ].should.eql 
 
                                 type: 'boundry'
                                 uuid: 'GRAFTPOINT1'
                                 signature: 'nest'
 
-                            should.exist tokens[ '/BoundryTest/tree1/nest/boundry leaf/edge/NESTED 15/book/The Enchanted Wood/characters/Angry Pixie' ]
+                            should.exist tokens[ '/Boundry Test (nest)/tree1/nest/boundry leaf/edge/NESTED 15/book/The Enchanted Wood/characters/Angry Pixie' ]
                             done()
 
                         count = 1
                         messageBus.use (msg, next) -> 
-
-                            #
-                            # async boundry phrase assembly line
-                            # ----------------------------------
-                            # 
-                            # * can fetch and load a remote tree
-                            # 
-                            # TODO: (maybe) default assembly, (or the recursor never completes the 'first walk')
-                            #
-
                             
                             if msg.context.title == 'phrase::boundry:assemble'
 

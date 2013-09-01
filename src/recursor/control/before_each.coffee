@@ -307,11 +307,9 @@ exports.create = (root, parentControl) ->
                             # * pop the stack (and repeat for each boundry phrase)
                             # 
 
-                            -> 
-                                console.log BOUNDRY: 
+                            #-> if phrases.refer.length > 0
+                                
 
-                                    mode: 'refer'
-                                    phrases: phrases.refer
 
 
                             #
