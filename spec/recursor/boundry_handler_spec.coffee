@@ -177,6 +177,7 @@ describe 'TreeBoundry', ->
                                 msg.opts.mode = 'nest'
                             next()
 
+
                     it 'sends phrase::nest back to the recursor', (done) -> 
 
                         BoundryHandler.linkDirectory( @root, directory: __dirname ).then(
@@ -201,6 +202,21 @@ describe 'TreeBoundry', ->
 
                                 notify.done.should.be.an.instanceof Function
                                 notify.done()
+
+                        )
+
+
+                    it 'phrase::nest contains the new phrase to recurse into', (done) -> 
+
+                        BoundryHandler.linkDirectory( @root, directory: __dirname ).then(
+
+                            (result) -> 
+                            (error)  -> console.log UNEXPECTED_ERROR_C: error, file: __filename
+                            (notify) -> 
+
+                                notify.phrase.should.be.an.instanceof Function
+                                notify.phrase()
+                                done()
 
                         )
 

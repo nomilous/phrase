@@ -110,38 +110,34 @@ module.exports = boundryHandler =
                     #
                     # ### As Nest
                     # 
-                    # * It assembles a phrase that contains all the nested phrase
+                    # * It assembles a phraseFn that calls all the nested phrase
                     #   functions that were returned by the assembly pipeline.
                     # 
                     # * It hands the phrase back to the recursor (before each) via 
-                    #   the promise.
-                    # 
-                    # * The recursor substitutes the phraseFn that contained the 
-                    #   calls to link with this new phraseFn that now contains all 
-                    #   the linked PhraseTrees.
-                    # 
-                    # * The recursor then proceeds as normal, recursing into the
-                    #   new phrases as if they were always there.
+                    #   the promise notifier
                     #
-                    #
-
-                    done = (result) -> 
-
-                        console.log RESULT: result
-
-                        #if result instanceof Error then makeLinks.reject result
-                        makeLinks.resolve result
-
-
 
                     if mode == 'nest'
 
                         makeLinks.notify 
-
-                            done: -> makeLinks.resolve()
+  
                             action: 'phrase::nest'
+                            done: -> makeLinks.resolve()
 
-                            
+                            phrase: (boundry) -> 
+
+                                #
+                                # * The recursor then proceeds as normal, recursing into this
+                                #   new phrases (As if it was always nested here.).
+                                #
+                                # 
+                                #        "Aaaah... The beauty of the closure, 
+                                # 
+                                # 
+
+                                messages.map (message) -> 
+
+                                    console.log message.opts.filename[-30..]
 
 
 
