@@ -41,15 +41,15 @@ describe 'Run', ->
 
                         vertices = TOKEN.graph.vertices
                         LEAF_TWO = ( for uuid of vertices
-                            continue unless vertices[uuid].text == 'LEAF_TWO'
+                            continue unless vertices[uuid].title == 'LEAF_TWO'
                             uuid
                         )[0]
                         PHRASE_ROOT = ( for uuid of vertices
-                            continue unless vertices[uuid].text == 'PHRASE_ROOT'
+                            continue unless vertices[uuid].title == 'PHRASE_ROOT'
                             uuid
                         )[0]
                         NEST_ONE = ( for uuid of vertices
-                            continue unless vertices[uuid].text == 'NEST_ONE'
+                            continue unless vertices[uuid].title == 'NEST_ONE'
                             uuid
                         )[0]
                         done()
@@ -82,7 +82,7 @@ describe 'Run', ->
                 deeper 'LEAF_THREE', (end) -> 
                     'RUN_LEAF_THREE'
                     #end()
-            nested 'LEAF_FOUR', (end) -> #end()
+            nested 'LEAF_FOUR', (end) -> end()
 
 
 
@@ -117,6 +117,7 @@ describe 'Run', ->
 
             swap = Run.getSteps
             Run.getSteps = (root, opts) ->
+
                 Run.getSteps = swap
                 opts.uuid.should.equal NEST_ONE
                 done()
@@ -143,7 +144,14 @@ describe 'Run', ->
             try TOKEN.run( uuid: NEST_ONE )
 
 
-        xit 'notifies state of the promise', (ok) ->
+
+        it 'is not called state', (done) -> 
+
+            throw 'rename'
+
+        it 'notifies state of the promise', (ok) ->
+
+            throw 'rename'
 
             tick = 0
             Date.now = -> tick++
@@ -170,7 +178,10 @@ describe 'Run', ->
 
                     console.log error.stack
 
-                (update) -> MESSAGES.push update
+                (update) -> 
+
+                    MESSAGES.push update
+                    #console.log MESSAGES
 
             ) 
 

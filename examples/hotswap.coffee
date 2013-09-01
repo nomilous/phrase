@@ -40,7 +40,7 @@ hotswap = require( '../lib/phrase' ).createRoot
 
                 for uuid of vertices
 
-                    continue unless vertices[uuid].text == 'remain'
+                    continue unless vertices[uuid].title == 'remain'
 
                     vertices[uuid].hooks.beforeEach.fn = eval coffee.compile """ 
 

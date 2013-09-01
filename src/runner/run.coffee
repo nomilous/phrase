@@ -29,7 +29,6 @@ api =
             unless graph.vertices[uuid]?
                 return running.reject error 2, "uuid: '#{uuid}' not in local tree"
 
-
             pipeline([
 
                 (     ) -> api.getSteps root, opts, running
