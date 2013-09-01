@@ -14,7 +14,7 @@ PhraseTokenFactory = require '../token/phrase_token'
 
 exports.walk = (root, opts, rootString, rootFn) ->
 
-    {context, inject}                   = root
+    {context, inject, util}             = root
     {stack, notice, graph, PhraseGraph} = context
 
     context.hooks       = PhraseHook.bind root
@@ -203,6 +203,26 @@ exports.walk = (root, opts, rootString, rootFn) ->
                                                 #       will more appropriately achieve the 
                                                 #       desired effect.
                                                 #       
+
+
+                args = util.argsOf nestedPhraseFn
+                console.log """
+
+                    This may prove trickier than i thought...
+                    -----------------------------------------
+
+                    * is this available in the job run?
+                    * if not, make it so
+                    * once so, ...
+
+                          How to get it into context?
+                          Because the vertex phrases 
+                          are not run at jobtime. 
+
+                          UM...
+
+
+                """: args if args.length > 1
 
                 newRecursorFn = recursor phraseString, phraseControl
                 nestedPhraseFn newRecursorFn
