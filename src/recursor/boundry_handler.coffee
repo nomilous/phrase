@@ -1,5 +1,4 @@
-# {readdirSync} = require 'fs'  # prevents stub
-fs            = require 'fs'
+{readdirSync} = require 'fs'
 {join}        = require 'path'
 {defer}       = require 'when'
 sequence      = require 'when/sequence'
@@ -144,7 +143,7 @@ module.exports = boundryHandler =
                                     #  in /recursor/tree_walker
                                     # 
                                     
-                                    boundry phrase.title, phrase.opts, phrase.fn
+                                    boundry phrase.title, phrase.control, phrase.fn
 
 
 
@@ -179,7 +178,7 @@ module.exports = boundryHandler =
 
     recurse: (path, regex, matches = []) ->
 
-        for fileOrDirname in fs.readdirSync path
+        for fileOrDirname in readdirSync path
 
             nextPath = join path, fileOrDirname
 

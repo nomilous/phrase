@@ -238,7 +238,7 @@ describe 'TreeBoundry', ->
                             if msg.context.title == 'phrase::boundry:assemble'
                                 msg.phrase = 
                                     title: msg.opts.filename.split('/')[-1..].join ''
-                                    opts: 
+                                    control: 
                                         uuid: count1++
                                     fn: -> 
                                         return "RETURN FROM PHRASE_#{ count2++ }"
