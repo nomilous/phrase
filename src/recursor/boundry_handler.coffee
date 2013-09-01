@@ -125,10 +125,20 @@ module.exports = boundryHandler =
                     #
                     #
 
+                    done = (result) -> 
+
+                        console.log RESULT: result
+
+                        #if result instanceof Error then makeLinks.reject result
+                        makeLinks.resolve result
+
+
+
                     if mode == 'nest'
 
                         makeLinks.notify 
 
+                            done: -> makeLinks.resolve()
                             action: 'phrase::nest'
 
                             

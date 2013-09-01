@@ -182,11 +182,25 @@ describe 'TreeBoundry', ->
                         BoundryHandler.linkDirectory( @root, directory: __dirname ).then(
 
                             ->
-                            -> console.log error.stack
+                            (error) -> console.log UNEXPECTED_ERROR_B: error, file: __filename
                             (notify) -> 
 
                                 notify.action.should.equal 'phrase::nest'
                                 done()
+
+                        )
+
+
+                    it 'phrase::nest contains a resolver to callback "done"', (done) -> 
+
+                        BoundryHandler.linkDirectory( @root, directory: __dirname ).then(
+
+                            (result) -> done()
+                            (error)  -> console.log UNEXPECTED_ERROR_B: error, file: __filename
+                            (notify) -> 
+
+                                notify.done.should.be.an.instanceof Function
+                                notify.done()
 
                         )
 
