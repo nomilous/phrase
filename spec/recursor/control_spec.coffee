@@ -33,7 +33,7 @@ describe 'RecursorControl', ->
         
             phrase = new @Node 
                 token: {}
-                text: ''
+                title: ''
                 uuid: '1111'
                 fn: (slurp) -> 
 
@@ -45,7 +45,7 @@ describe 'RecursorControl', ->
         
             phrase = new @Node 
                 token: {}
-                text: ''
+                title: ''
                 uuid: '1111'
                 fn: (fingertip) -> 
 
@@ -57,7 +57,7 @@ describe 'RecursorControl', ->
 
             phrase = new @Node 
                 token: {}
-                text: ''
+                title: ''
                 uuid: '1111'
                 fn: (other) -> 
             RecursorControl.bindControl root, control

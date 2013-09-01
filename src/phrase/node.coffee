@@ -123,9 +123,9 @@ exports.createClass = (root) ->
 
         constructor: (opts = {}) -> 
 
-            if opts.text.match /\//
+            if opts.title.match /\//
 
-                throw new Error "PhraseNode(text,opts,nestedFn) INVALID text: (=#{ opts.text })"
+                throw new Error "PhraseNode(title,opts,nestedFn) INVALID title: (=#{ opts.title })"
 
             localOpts = 
 
@@ -134,7 +134,7 @@ exports.createClass = (root) ->
                 #
 
                 uuid:      opts.uuid  || v1()
-                text:      opts.text
+                title:     opts.title
                 leaf:      opts.leaf
 
                 #
@@ -155,7 +155,7 @@ exports.createClass = (root) ->
             localOpts.token = opts.token
 
 
-            for property in ['uuid', 'token', 'text']
+            for property in ['uuid', 'token', 'title']
 
                 do (property) => 
 

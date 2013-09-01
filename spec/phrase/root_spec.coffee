@@ -55,7 +55,7 @@ describe 'phrase', ->
                         @token  = token
                         @notice = notice
 
-                @registrar 'phrase text', (end) -> 
+                @registrar 'phrase title', (end) -> 
 
 
             afterEach -> 
@@ -66,7 +66,7 @@ describe 'phrase', ->
             it 'calls linkFn', (done) -> 
 
                 # 
-                # @registrar 'phrase text', (end) -> 
+                # @registrar 'phrase title', (end) -> 
                 #
 
                 should.exist @token
@@ -88,7 +88,7 @@ describe 'phrase', ->
                     done()
 
 
-                @registrar 'phrase text', -> 
+                @registrar 'phrase title', -> 
 
 
 
@@ -96,9 +96,9 @@ describe 'phrase', ->
                 
                 ERROR = undefined
 
-                @registrar 'phrase text', (nested) =>  
+                @registrar 'phrase title', (nested) =>  
 
-                    try @registrar 'phrase text', (nested) ->  
+                    try @registrar 'phrase title', (nested) ->  
 
                     catch error
 

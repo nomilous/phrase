@@ -95,11 +95,11 @@ describe 'TreeWalker', ->
             try TreeWalker.walk root, opts, 'phrase string', (nest) ->
 
 
-        it 'emits "error" onto the root token at invalid phrase text', (done) -> 
+        it 'emits "error" onto the root token at invalid phrase title', (done) -> 
 
             root.context.token.emit = (event, error) ->
 
-                error.should.match /INVALID text/
+                error.should.match /INVALID title/
                 done()
 
             TreeWalker.walk root, opts, 'phra/se string', (nest) -> 

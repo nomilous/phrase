@@ -42,7 +42,7 @@ exports.createClass = (root) ->
 
                         eg. 
 
-                        phraseRegistrar 'phrase text', (end) -> 
+                        phraseRegistrar 'phrase title', (end) -> 
 
                             # 
                             # this is a leaf function
@@ -60,7 +60,7 @@ exports.createClass = (root) ->
 
                         eg. 
 
-                        phraseRegistrar 'phrase text', (edge) -> 
+                        phraseRegistrar 'phrase title', (edge) -> 
 
                             # 
                             # TODO...

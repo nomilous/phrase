@@ -177,7 +177,7 @@ exports.walk = (root, opts, rootString, rootFn) ->
             # * Calls to the new recursor queue in the injector.
             # 
             #   ie. 
-            #         phrase 'phrase text', (arg1)
+            #         phrase 'phrase title', (arg1)
             #         
             #             arg1 'nested phrase test', (...) -> 
             #             arg1 'another nested phrase test', (...) -> 

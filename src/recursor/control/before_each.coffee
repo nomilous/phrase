@@ -52,7 +52,7 @@ exports.create = (root, parentControl) ->
         #   for PhraseTree assembly.
         #
 
-        phraseText    = if typeof injectionControl.args[0] == 'function' then '' else injectionControl.args[0]
+        phraseTitle   = if typeof injectionControl.args[0] == 'function' then '' else injectionControl.args[0]
         phraseControl = if typeof injectionControl.args[1] == 'function' then {} else injectionControl.args[1]
         phraseFn      = injectionControl.args[2] || injectionControl.args[1] || injectionControl.args[0] || -> console.log 'NO ARGS'
 
@@ -65,7 +65,7 @@ exports.create = (root, parentControl) ->
         # * Assign final args to be injected into ThePhraseRecursor.
         # 
 
-        injectionControl.args[0] = phraseText
+        injectionControl.args[0] = phraseTitle
         injectionControl.args[1] = phraseControl
         injectionControl.args[2] = phraseFn  # becomes noop for leaf or boundry phrases
 
@@ -122,7 +122,7 @@ exports.create = (root, parentControl) ->
 
             stack.push phrase = new PhraseNode 
 
-                text:     phraseText
+                title:     phraseTitle
                 token:    phraseToken
 
                 #

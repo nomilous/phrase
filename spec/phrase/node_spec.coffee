@@ -32,7 +32,7 @@ describe 'PhraseNode', ->
 
                 uuid:      '123'
                 token:     name: 'it'
-                text:      'is a leaf phrase'
+                title:     'is a leaf phrase'
                 leaf:      true
 
                 #
@@ -44,7 +44,7 @@ describe 'PhraseNode', ->
                 deferral: {}
                 queue:    {}
                 
-            JSON.stringify( node ).should.equal '{"uuid":"123","token":{"name":"it","uuid":"123"},"text":"is a leaf phrase","leaf":true}'
+            JSON.stringify( node ).should.equal '{"uuid":"123","token":{"name":"it","uuid":"123"},"title":"is a leaf phrase","leaf":true}'
             done()
 
 
@@ -55,7 +55,7 @@ describe 'PhraseNode', ->
 
                 uuid:      '123'
                 token:     name: 'it'
-                text:      'is a leaf phrase'
+                title:     'is a leaf phrase'
 
                 hooks: beforeAll: fn: -> 0
 
@@ -76,7 +76,7 @@ describe 'PhraseNode', ->
 
                 uuid:      '123'
                 token:     name: 'it'
-                text:      'is a leaf phrase'
+                title:     'is a leaf phrase'
 
 
             should.not.exist node.leaf
@@ -100,7 +100,7 @@ describe 'PhraseNode', ->
 
                 uuid:      'UUID1'
                 token:     name: 'it'
-                text:      'is a leaf phrase'
+                title:     'is a leaf phrase'
                 timeout:   2000
 
                 hooks: 
@@ -112,7 +112,7 @@ describe 'PhraseNode', ->
 
                 uuid:      'UUID2'
                 token:     name: 'it'
-                text:      'is a leaf phrase'
+                title:     'is a leaf phrase'
                 timeout:   5000
 
                 hooks: 
@@ -160,7 +160,7 @@ describe 'PhraseNode', ->
 
                 uuid:      'UUID1'
                 token:     signature: 'it', type: 'leaf'
-                text:      'is a leaf phrase'
+                title:     'is a leaf phrase'
                 timeout:   2000
                 
                 fn: ->
@@ -169,7 +169,7 @@ describe 'PhraseNode', ->
 
                 uuid:      'UUID1'
                 token:     signature: 'it', type: 'vertex'
-                text:      'is not a leaf'
+                title:     'is not a leaf'
                 timeout:   2000
                 
                 fn: ->
@@ -184,7 +184,7 @@ describe 'PhraseNode', ->
 
                 uuid:      'UUID1'
                 token:     name: 'it'
-                text:      'is a leaf phrase'
+                title:     'is a leaf phrase'
                 timeout:   2000
 
                 hooks: beforeAll: fn: ->
@@ -194,7 +194,7 @@ describe 'PhraseNode', ->
 
                 uuid:      'UUID1'
                 token:     name: 'it'
-                text:      'is a leaf phrase'
+                title:     'is a leaf phrase'
                 timeout:   2000
 
                 hooks: beforeAll: fn: ->
@@ -214,7 +214,7 @@ describe 'PhraseNode', ->
 
                 uuid:      'UUID1'
                 token:     name: 'it'
-                text:      'is a leaf phrase'
+                title:     'is a leaf phrase'
                 
                 fn: ->  'old'
 
@@ -222,7 +222,7 @@ describe 'PhraseNode', ->
 
                 uuid:      'UUID1'
                 token:     name: 'it'
-                text:      'is a leaf phrase'
+                title:     'is a leaf phrase'
                 
                 fn: -> 'new'
 
@@ -242,7 +242,7 @@ describe 'PhraseNode', ->
 
                 uuid:      'UUID1'
                 token:     name: 'it'
-                text:      'is a leaf phrase'
+                title:     'is a leaf phrase'
                 timeout:   100
                 fn: ->  'unchanged'
 
@@ -250,7 +250,7 @@ describe 'PhraseNode', ->
 
                 uuid:      'UUID1'
                 token:     name: 'it'
-                text:      'is a leaf phrase'
+                title:     'is a leaf phrase'
                 fn: -> 'unchanged'
 
             changes = node1.getChanges node2
@@ -268,7 +268,7 @@ describe 'PhraseNode', ->
 
                 uuid:      'UUID1'
                 token:     name: 'it'
-                text:      'is a leaf phrase'
+                title:     'is a leaf phrase'
                 hooks: 
                     beforeAll:                fn: -> 1
                     beforeEach: timeout: 100, fn: -> 1
@@ -281,7 +281,7 @@ describe 'PhraseNode', ->
 
                 uuid:      'UUID1'
                 token:     name: 'it'
-                text:      'is a leaf phrase'
+                title:     'is a leaf phrase'
                 hooks: 
                     beforeAll:                fn: -> 'UPDATED'
                     beforeEach: timeout: 200, fn: -> 1
@@ -292,7 +292,7 @@ describe 'PhraseNode', ->
 
                 uuid: 'parent'
                 token:  name: 'context'
-                text:  'parent phrase'
+                title: 'parent phrase'
                 fn: ->
 
 
@@ -328,14 +328,14 @@ describe 'PhraseNode', ->
 
                 uuid:      'UUID1'
                 token:     new PhraseToken type: 'leaf', uuid: 'UUID1'
-                text:      'is a leaf phrase'
+                title:     'is a leaf phrase'
                 fn: ->  'unchanged'
 
 
             node2 = new @Node
 
                 token:     new PhraseToken type: 'vertex'
-                text:      'is a leaf phrase'
+                title:     'is a leaf phrase'
                 fn: -> 'unchanged'
 
 

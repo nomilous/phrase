@@ -73,7 +73,7 @@ module.exports = boundryHandler =
                             continue
 
 
-                        console.log '\nphraseText\t', message.phrase.title
+                        console.log '\nphraseTitle\t', message.phrase.title
                         console.log 'phraseControl\t', message.phrase.opts
                         console.log 'phraseFn\t', message.phrase.fn.toString()
 

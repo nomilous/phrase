@@ -100,7 +100,7 @@ TODO
 
             operation 'just checking', (nested) -> 
 
-                nested 'invalid / phrase text', (end) -> 
+                nested 'invalid / phrase title', (end) -> 
 
                 nested 'still running', (nest) -> 
 
@@ -220,7 +220,7 @@ TODO
                     #     ref: 
                     #      { uuid: [Getter],
                     #        token: [Getter],
-                    #        text: [Getter],
+                    #        title: [Getter],
                     #        leaf: [Getter/Setter] },
                     #     fail: true },
                     #  originator: true }
