@@ -111,13 +111,13 @@ exports.createClass = (root) ->
 
             message = 
 
-                state:   'run::starting'
+                update:  'run::starting'
                 class:    @constructor.name
                 jobUUID:  @uuid
                 progress: @progress()
                 at:       Date.now()
 
-            @notice.event( message.state, message ).then => 
+            @notice.event( message.update, message ).then => 
 
                             #
                             # asynchronous notification
@@ -128,7 +128,6 @@ exports.createClass = (root) ->
                             # * job is not started until the message has 
                             #   traversed the middleware pipeline
                             #
-
                
                 @deferral.notify message
 
@@ -234,16 +233,16 @@ exports.createClass = (root) ->
 
                                 if s is step 
                                     s.fail = true 
-                                    state  = 'run::step:failed'  
+                                    update = 'run::step:failed'  
                                 else 
                                     s.skip = true
-                                    state  = 'run::step:skipped'
+                                    update = 'run::step:skipped'
                                     skipped.push s
 
 
                                 @deferral.notify
 
-                                    state:      state
+                                    update:     update
                                     class:      @constructor.name
                                     jobUUID:    @uuid
                                     progress:   @progress()
@@ -255,7 +254,7 @@ exports.createClass = (root) ->
 
                             @notice.event( 'run::step:failed',  
 
-                                    state:      'run::step:failed'
+                                    update:     'run::step:failed'
                                     class:      @constructor.name
                                     jobUUID:    @uuid
                                     progress:   @progress()
@@ -389,14 +388,14 @@ exports.createClass = (root) ->
 
                                 message = 
 
-                                    state:   'run::step:done'
+                                    update:   'run::step:done'
                                     class:    @constructor.name
                                     jobUUID:  @uuid
                                     progress: @progress()
                                     at:       Date.now()
                                     step:     step
 
-                                return @notice.event( message.state, message ).then => 
+                                return @notice.event( message.update, message ).then => 
 
                                     @deferral.notify message
                                     done()
@@ -413,13 +412,13 @@ exports.createClass = (root) ->
 
                         message = 
 
-                            state:   'run::complete'
+                            update:   'run::complete'
                             class:    @constructor.name
                             jobUUID:  @uuid
                             progress: @progress()
                             at:       Date.now()
 
-                        @notice.event( message.state, message ).then => 
+                        @notice.event( message.update, message ).then => 
 
                             @deferral.notify message
 

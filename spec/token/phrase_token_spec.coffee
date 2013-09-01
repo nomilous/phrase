@@ -21,7 +21,7 @@ describe 'PhraseToken', ->
         done()
 
 
-    it 'can serialize its branch', (done) -> 
+    xit 'can serialize its branch', (done) -> 
 
 
         innerBeforeAll   = (done) -> 'innerBeforeAll  '; done()

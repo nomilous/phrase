@@ -117,10 +117,10 @@ api =
 
                 running.notify
 
-                    state:  'scan::complete'
-                    at:     Date.now()
-                    steps:  steps.length
-                    leaves: count
+                    update:  'scan::complete'
+                    at:      Date.now()
+                    steps:   steps.length
+                    leaves:  count
 
                 return getting.resolve steps
 
@@ -223,8 +223,8 @@ api =
 
         running.notify 
 
-            state: 'scan::starting'
-            at:    Date.now()
+            update: 'scan::starting'
+            at:      Date.now()
 
         start()
         

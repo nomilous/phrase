@@ -111,7 +111,7 @@ describe 'Job', ->
 
 
 
-        it 'notifies the deferral on running state', (done) -> 
+        it 'notifies the deferral on running', (done) -> 
 
             MESSAGES = []
 
@@ -127,7 +127,7 @@ describe 'Job', ->
 
                 msg = MESSAGES[0]
                 msg.class.should.equal 'Job'
-                msg.state.should.equal 'run::starting'
+                msg.update.should.equal 'run::starting'
                 msg.progress.should.eql steps: 0, done: 0, failed: 0, skipped: 0
                 should.exist msg.jobUUID
                 should.exist msg.at
@@ -256,7 +256,7 @@ describe 'Job', ->
 
 
 
-        it 'resolves with object containing the job instance and notified state succeeded', (done) -> 
+        it 'resolves with object containing the job instance and notified update succeeded', (done) -> 
 
             STEPS = [
 
@@ -272,7 +272,7 @@ describe 'Job', ->
             job.run().then (result) -> 
 
                 msg = MESSAGES.pop()
-                msg.state.should.equal 'run::complete'
+                msg.update.should.equal 'run::complete'
                 msg.progress.should.eql { steps: 3, done: 3, failed: 0, skipped: 0 }
                 result.job.should.eql one: 1, two: 2, three: 3
                 done()
@@ -289,7 +289,7 @@ describe 'Job', ->
             job = new Job notice: NOTICE, steps: [], deferral: DEFER
             job.run().then -> 
 
-                EVENT.state.should.equal 'run::complete'
+                EVENT.update.should.equal 'run::complete'
                 done()
 
 
@@ -308,7 +308,7 @@ describe 'Job', ->
 
                 -> 
 
-                    MESSAGES[1].state.should.equal 'run::step:failed'
+                    MESSAGES[1].update.should.equal 'run::step:failed'
                     done()
 
                 ->
@@ -355,7 +355,7 @@ describe 'Job', ->
 
                 -> 
 
-                    MESSAGES[1].state.should.equal 'run::step:failed'
+                    MESSAGES[1].update.should.equal 'run::step:failed'
                     done()
 
                 ->
@@ -424,15 +424,15 @@ describe 'Job', ->
 
                         five: 5
 
-                    MESSAGES.map( (m) -> state: m.state, progress: m.progress ).should.eql [ 
+                    MESSAGES.map( (m) -> update: m.update, progress: m.progress ).should.eql [ 
 
-                        { state: 'run::starting',     progress: { steps: 5, done: 0, failed: 0, skipped: 0 } }
-                        { state: 'run::step:done',    progress: { steps: 5, done: 1, failed: 0, skipped: 0 } }
-                        { state: 'run::step:failed',  progress: { steps: 5, done: 1, failed: 1, skipped: 0 } }
-                        { state: 'run::step:skipped', progress: { steps: 5, done: 1, failed: 1, skipped: 1 } }
-                        { state: 'run::step:skipped', progress: { steps: 5, done: 1, failed: 1, skipped: 2 } }
-                        { state: 'run::step:done',    progress: { steps: 5, done: 2, failed: 1, skipped: 2 } }
-                        { state: 'run::complete',     progress: { steps: 5, done: 2, failed: 1, skipped: 2 } } 
+                        { update: 'run::starting',     progress: { steps: 5, done: 0, failed: 0, skipped: 0 } }
+                        { update: 'run::step:done',    progress: { steps: 5, done: 1, failed: 0, skipped: 0 } }
+                        { update: 'run::step:failed',  progress: { steps: 5, done: 1, failed: 1, skipped: 0 } }
+                        { update: 'run::step:skipped', progress: { steps: 5, done: 1, failed: 1, skipped: 1 } }
+                        { update: 'run::step:skipped', progress: { steps: 5, done: 1, failed: 1, skipped: 2 } }
+                        { update: 'run::step:done',    progress: { steps: 5, done: 2, failed: 1, skipped: 2 } }
+                        { update: 'run::complete',     progress: { steps: 5, done: 2, failed: 1, skipped: 2 } } 
 
                     ]
 
@@ -475,18 +475,18 @@ describe 'Job', ->
                 (result) ->
 
                     
-                    MESSAGES.map( (m) -> state: m.state, progress: m.progress ).should.eql [ 
+                    MESSAGES.map( (m) -> update: m.update, progress: m.progress ).should.eql [ 
 
-                        { state: 'run::starting',     progress: { steps: 8, done: 0, failed: 0, skipped: 0 } }
-                        { state: 'run::step:done',    progress: { steps: 8, done: 1, failed: 0, skipped: 0 } }
-                        { state: 'run::step:failed',  progress: { steps: 8, done: 1, failed: 1, skipped: 0 } }
-                        { state: 'run::step:skipped', progress: { steps: 8, done: 1, failed: 1, skipped: 1 } }
-                        { state: 'run::step:skipped', progress: { steps: 8, done: 1, failed: 1, skipped: 2 } }
-                        { state: 'run::step:skipped', progress: { steps: 8, done: 1, failed: 1, skipped: 3 } }
-                        { state: 'run::step:done',    progress: { steps: 8, done: 2, failed: 1, skipped: 3 } }
-                        { state: 'run::step:done',    progress: { steps: 8, done: 3, failed: 1, skipped: 3 } }
-                        { state: 'run::step:done',    progress: { steps: 8, done: 4, failed: 1, skipped: 3 } }
-                        { state: 'run::complete',     progress: { steps: 8, done: 4, failed: 1, skipped: 3 } }
+                        { update: 'run::starting',     progress: { steps: 8, done: 0, failed: 0, skipped: 0 } }
+                        { update: 'run::step:done',    progress: { steps: 8, done: 1, failed: 0, skipped: 0 } }
+                        { update: 'run::step:failed',  progress: { steps: 8, done: 1, failed: 1, skipped: 0 } }
+                        { update: 'run::step:skipped', progress: { steps: 8, done: 1, failed: 1, skipped: 1 } }
+                        { update: 'run::step:skipped', progress: { steps: 8, done: 1, failed: 1, skipped: 2 } }
+                        { update: 'run::step:skipped', progress: { steps: 8, done: 1, failed: 1, skipped: 3 } }
+                        { update: 'run::step:done',    progress: { steps: 8, done: 2, failed: 1, skipped: 3 } }
+                        { update: 'run::step:done',    progress: { steps: 8, done: 3, failed: 1, skipped: 3 } }
+                        { update: 'run::step:done',    progress: { steps: 8, done: 4, failed: 1, skipped: 3 } }
+                        { update: 'run::complete',     progress: { steps: 8, done: 4, failed: 1, skipped: 3 } }
 
                     ]
 
@@ -575,14 +575,14 @@ describe 'Job', ->
 
                 MESSAGES.map( (m) -> 
 
-                    state: m.state, progress: m.progress
+                    update: m.update, progress: m.progress
 
                 ).should.eql [ 
-                    { state: 'run::starting',  progress: { steps: 3, done: 0, failed: 0, skipped: 0 } }
-                    { state: 'run::step:done', progress: { steps: 3, done: 1, failed: 0, skipped: 0 } }
-                    { state: 'run::step:done', progress: { steps: 3, done: 2, failed: 0, skipped: 0 } }
-                    { state: 'run::step:done', progress: { steps: 3, done: 3, failed: 0, skipped: 0 } }
-                    { state: 'run::complete',  progress: { steps: 3, done: 3, failed: 0, skipped: 0 } }
+                    { update: 'run::starting',  progress: { steps: 3, done: 0, failed: 0, skipped: 0 } }
+                    { update: 'run::step:done', progress: { steps: 3, done: 1, failed: 0, skipped: 0 } }
+                    { update: 'run::step:done', progress: { steps: 3, done: 2, failed: 0, skipped: 0 } }
+                    { update: 'run::step:done', progress: { steps: 3, done: 3, failed: 0, skipped: 0 } }
+                    { update: 'run::complete',  progress: { steps: 3, done: 3, failed: 0, skipped: 0 } }
                 ]
                 done()
 
@@ -671,11 +671,11 @@ describe 'Job', ->
 
             ).run().then ->
 
-                MESSAGES.map( (m) -> state: m.state, progress: m.progress ).should.eql [ 
+                MESSAGES.map( (m) -> update: m.update, progress: m.progress ).should.eql [ 
 
-                    { state: 'run::starting',    progress: { steps: 1, done: 0, failed: 0, skipped: 0 } }
-                    { state: 'run::step:failed', progress: { steps: 1, done: 0, failed: 1, skipped: 0 } }
-                    { state: 'run::complete',    progress: { steps: 1, done: 0, failed: 1, skipped: 0 } }
+                    { update: 'run::starting',    progress: { steps: 1, done: 0, failed: 0, skipped: 0 } }
+                    { update: 'run::step:failed', progress: { steps: 1, done: 0, failed: 1, skipped: 0 } }
+                    { update: 'run::complete',    progress: { steps: 1, done: 0, failed: 1, skipped: 0 } }
 
                 ]
 
