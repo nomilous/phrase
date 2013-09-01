@@ -13,135 +13,138 @@ module.exports = boundryHandler =
 
     linkDirectory: (root, opts) -> 
 
-        makeLinks = defer()
-
         if opts.match? then regex = new RegExp opts.match
         else                regex = new RegExp '\\.coffee$'
 
-        process.nextTick -> 
+        {PhraseToken, notice} = root.context
 
-            {PhraseToken, notice} = root.context
+        sequence( for filename in boundryHandler.recurse opts.directory, regex
 
-            try filenames = boundryHandler.recurse opts.directory, regex
-            catch error
-                return makeLinks.reject error
+            do (filename) -> -> notice.event 'phrase::boundry:assemble', 
 
-            #
-            # phrase::boundry:assemble
-            # ------------------------
-            #
-            # * Parameters of the boundry phrase assembly are transmitted onto the 
-            #   message bus to enable remote components to influence the token assembly.
-            # 
-            #   Specifically this is necessary to enable implementations to determine 
-            #   the map from filename to the Token uuid.
-            # 
-            #   And to allow that determination to be performed asynchronously.
-            # 
-            #   eg.  
-            #            nez realizers contain the realizer uuid in the file
-            #
+                opts:
 
-            sequence( for filename in filenames
+                    type:        'directory'
+                    filename:    filename
+                    stackpath:   'TODO'
+                    mode:        'refer'
 
-                do (filename) -> -> notice.event 'phrase::boundry:assemble', 
+        )
 
-                    opts:
+        
 
-                        type:        'directory'
-                        filename:    filename
-                        stackpath:   'TODO'
-                        mode:        'refer'
+
+        # makeLinks = defer()
+
+        # if opts.match? then regex = new RegExp opts.match
+        # else                regex = new RegExp '\\.coffee$'
+
+
+
+        # process.nextTick -> 
+
+        #     {PhraseToken, notice} = root.context
+
+        #     try filenames = boundryHandler.recurse opts.directory, regex
+        #     catch error
+        #         return makeLinks.reject error
+
+        #     #
+        #     # phrase::boundry:assemble
+        #     # ------------------------
+        #     #
+        #     # * Parameters of the boundry phrase assembly are transmitted onto the 
+        #     #   message bus to enable remote components to influence the token assembly.
+        #     # 
+        #     #   Specifically this is necessary to enable implementations to determine 
+        #     #   the map from filename to the Token uuid.
+        #     # 
+        #     #   And to allow that determination to be performed asynchronously.
+        #     # 
+        #     #   eg.  
+        #     #            nez realizers contain the realizer uuid in the file
+        #     #
+
+        #     sequence( for filename in filenames
+
+        #         do (filename) -> -> notice.event 'phrase::boundry:assemble', 
+
+        #             opts:
+
+        #                 type:        'directory'
+        #                 filename:    filename
+        #                 stackpath:   'TODO'
+        #                 mode:        'refer'
                     
 
 
-            ).then(
+        #     ).then(
       
-                #
-                # Boundry Mode
-                # ------------
-                # 
-                # Refers to how the PhraseTree on the other side of the boundry is attached 
-                # to this PhraseTree
-                # 
-                # ### refer 
-                # 
-                # `boundry token carries reference to the 'other' tree`
-                # 
-                # Each PhraseTree from across the boundry is built onto a new root on the 
-                # core and a reference if placed into this PhraseTree at the vertex where
-                # the link was called.
-                # 
-                # ### nest
-                # 
-                # `graph assembly continues with recrsion across the phrase boundry`
-                # 
-                # Each PhraseTree from the other side of the boundry is grafted into this
-                # PhraseTree at the vertex where the link was called. 
-                #  
-                #  
+        #         #
+        #         # Boundry Mode
+        #         # ------------
+        #         # 
+        #         # Refers to how the PhraseTree on the other side of the boundry is attached 
+        #         # to this PhraseTree
+        #         # 
+        #         # ### refer 
+        #         # 
+        #         # `boundry token carries reference to the 'other' tree`
+        #         # 
+        #         # Each PhraseTree from across the boundry is built onto a new root on the 
+        #         # core and a reference if placed into this PhraseTree at the vertex where
+        #         # the link was called.
+        #         # 
+        #         # ### nest
+        #         # 
+        #         # `graph assembly continues with recrsion across the phrase boundry`
+        #         # 
+        #         # Each PhraseTree from the other side of the boundry is grafted into this
+        #         # PhraseTree at the vertex where the link was called. 
+        #         #  
+        #         #  
 
-                result = (messages) -> 
+        #         result = (messages) -> makeLinks.resolve messages
 
-                    return makeLinks.resolve() if messages.length == 0 
+        #             # return makeLinks.resolve() if messages.length == 0 
 
-                    #
-                    # Boundry Assembly
-                    # ----------------
-                    # 
-                    # * Messages (Array) contains the specifications for each boundry phrase
-                    #   the was linked
-                    # 
-                    # * Mixed mode is not supported. All boundry phrases must be linked with 
-                    #   the mode as 'refer' or 'nest', not a combination of the two.
-                    #
+        #             # #
+        #             # # Boundry Assembly
+        #             # # ----------------
+        #             # # 
+        #             # # * Messages (Array) contains the specifications for each boundry phrase
+        #             # #   the was linked
+        #             # # 
+        #             # # * Mixed mode is not supported. All boundry phrases must be linked with 
+        #             # #   the mode as 'refer' or 'nest', not a combination of the two.
+        #             # #
 
-                    try
-                        mode  = undefined
-                        messages.map (m) -> 
-                            mode = m.opts.mode unless mode?
-                            if mode != m.opts.mode 
-                                throw new Error 'Mixed boundry modes not supported.' 
+        #             # try
+        #             #     mode  = undefined
+        #             #     messages.map (m) -> 
+        #             #         mode = m.opts.mode unless mode?
+        #             #         if mode != m.opts.mode 
+        #             #             throw new Error 'Mixed boundry modes not supported.' 
 
-                    catch error
-                        return makeLinks.reject error
+        #             # catch error
+        #             #     return makeLinks.reject error
 
-                    #
-                    # ### As Nest
-                    # 
-                    # * Send the assembled phrase messages back to the 
-                    #   recursion contro before each hook
-
-                    if mode == 'nest' then makeLinks.resolve messages
-
-                    
-                    # for message in messages
-                    #     if message.error? 
-                    #         console.log 'ERROR_UNHANDLED_1', error.stack
-                    #         continue
-                    #     if message.opts.mode == 'nest'
-                    #         console.log '\nphraseTitle\t', message.phrase.title
-                    #         console.log 'phraseControl\t', message.phrase.opts
-                    #         console.log 'phraseFn\t', message.phrase.fn.toString()
-                        # root.context.stack.push {}
-                        # root.context.stack.pop()
-
-                    # makeLinks.resolve()
+        #             # makeLinks.resolve messages
 
 
-                #
-                # TODO: notice message bus does not yet catch exceptions
-                #       in the middleware pipeline, this anticipates that
-                #       
-                # * proxy message bus exceptions directly
-                # 
+        #         #
+        #         # TODO: notice message bus does not yet catch exceptions
+        #         #       in the middleware pipeline, this anticipates that
+        #         #       
+        #         # * proxy message bus exceptions directly
+        #         # 
 
-                error = (reject) -> makeLinks.reject reject
+        #         error = (reject) -> makeLinks.reject reject
                 
 
-            )
+        #     )
 
-        makeLinks.promise
+        # makeLinks.promise
 
 
     recurse: (path, regex, matches = []) ->

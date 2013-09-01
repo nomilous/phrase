@@ -156,23 +156,23 @@ describe 'TreeBoundry', ->
                         'notice' ).create 'test with actual message bus'
 
 
-                xit 'rejects on mixed boundry modes', (done) -> 
+                # xit 'rejects on mixed boundry modes', (done) -> 
 
-                    @notice.use (msg, next) -> 
-                        if msg.context.title == 'phrase::boundry:assemble'
-                            msg.opts.mode = 'refer'
-                            msg.opts.mode = 'nest' if msg.opts.filename.match /boundry_handler_spec/
-                        next()
+                #     @notice.use (msg, next) -> 
+                #         if msg.context.title == 'phrase::boundry:assemble'
+                #             msg.opts.mode = 'refer'
+                #             msg.opts.mode = 'nest' if msg.opts.filename.match /boundry_handler_spec/
+                #         next()
 
-                    BoundryHandler.linkDirectory( @root, directory: __dirname ).then(
+                #     BoundryHandler.linkDirectory( @root, directory: __dirname ).then(
 
-                        -> 
-                        (error) -> 
+                #         -> 
+                #         (error) -> 
 
-                            error.should.match /Mixed boundry modes not supported/
-                            done()
+                #             error.should.match /Mixed boundry modes not supported/
+                #             done()
 
-                    )
+                #     )
 
 
                 context 'As Nest', -> 
@@ -184,92 +184,92 @@ describe 'TreeBoundry', ->
                             next()
 
 
-                    xit 'sends phrase::nest back to the recursor', (done) -> 
+                    # xit 'sends phrase::nest back to the recursor', (done) -> 
 
-                        BoundryHandler.linkDirectory( @root, directory: __dirname ).then(
+                    #     BoundryHandler.linkDirectory( @root, directory: __dirname ).then(
 
-                            ->
-                            (error) -> console.log UNEXPECTED_ERROR_B: error, file: __filename
-                            (notify) -> 
+                    #         ->
+                    #         (error) -> console.log UNEXPECTED_ERROR_B: error, file: __filename
+                    #         (notify) -> 
 
-                                notify.action.should.equal 'phrase::nest'
-                                done()
+                    #             notify.action.should.equal 'phrase::nest'
+                    #             done()
 
-                        )
-
-
-                    xit 'phrase::nest contains a resolver to callback "done"', (done) -> 
-
-                        BoundryHandler.linkDirectory( @root, directory: __dirname ).then(
-
-                            (result) -> done()
-                            (error)  -> console.log UNEXPECTED_ERROR_B: error, file: __filename
-                            (notify) -> 
-
-                                notify.done.should.be.an.instanceof Function
-                                notify.done()
-
-                        )
+                    #     )
 
 
-                    xit 'phrase::nest contains the new phrase to recurse into', (done) -> 
+                    # xit 'phrase::nest contains a resolver to callback "done"', (done) -> 
 
-                        BoundryHandler.linkDirectory( @root, directory: __dirname ).then(
+                    #     BoundryHandler.linkDirectory( @root, directory: __dirname ).then(
 
-                            (result) -> 
-                            (error)  -> console.log UNEXPECTED_ERROR_C: error, file: __filename
-                            (notify) -> 
+                    #         (result) -> done()
+                    #         (error)  -> console.log UNEXPECTED_ERROR_B: error, file: __filename
+                    #         (notify) -> 
 
-                                notify.phrase.should.be.an.instanceof Function
-                                notify.phrase()
-                                done()
+                    #             notify.done.should.be.an.instanceof Function
+                    #             notify.done()
 
-                        )
+                    #     )
 
 
-                    it 'running the new phrase through the async injector will resume the recustion', (done) -> 
+                    # xit 'phrase::nest contains the new phrase to recurse into', (done) -> 
 
-                        #
-                        # assemble mock phrase 
-                        #
-                        count1 = 1
-                        count2 = 1
-                        @notice.use (msg, next) -> 
-                            if msg.context.title == 'phrase::boundry:assemble'
-                                msg.phrase = 
-                                    title: msg.opts.filename.split('/')[-1..].join ''
-                                    control: 
-                                        uuid: count1++
-                                    fn: -> 
-                                        return "RETURN FROM PHRASE_#{ count2++ }"
+                    #     BoundryHandler.linkDirectory( @root, directory: __dirname ).then(
+
+                    #         (result) -> 
+                    #         (error)  -> console.log UNEXPECTED_ERROR_C: error, file: __filename
+                    #         (notify) -> 
+
+                    #             notify.phrase.should.be.an.instanceof Function
+                    #             notify.phrase()
+                    #             done()
+
+                    #     )
+
+
+                    # xit 'running the new phrase through the async injector will resume the recustion', (done) -> 
+
+                    #     #
+                    #     # assemble mock phrase 
+                    #     #
+                    #     count1 = 1
+                    #     count2 = 1
+                    #     @notice.use (msg, next) -> 
+                    #         if msg.context.title == 'phrase::boundry:assemble'
+                    #             msg.phrase = 
+                    #                 title: msg.opts.filename.split('/')[-1..].join ''
+                    #                 control: 
+                    #                     uuid: count1++
+                    #                 fn: -> 
+                    #                     return "RETURN FROM PHRASE_#{ count2++ }"
                                         
-                            next()
+                    #         next()
 
-                        RESULTS = []
-                        BoundryHandler.linkDirectory( @root, directory: __dirname ).then(
+                    #     RESULTS = []
+                    #     BoundryHandler.linkDirectory( @root, directory: __dirname ).then(
 
-                            ->
-                            ->
-                            (notify) -> 
+                    #         ->
+                    #         ->
+                    #         (notify) -> 
 
-                                #
-                                # the new phrase can be mapped onto the 
-                                #
+                    #             #
+                    #             # the new phrase can be mapped onto the 
+                    #             #
 
-                                console.log notify
+                    #             console.log notify
 
-                                notify.phrase (phraseTitle, phraseControl, phraseFn) -> 
+                    #             notify.phrase (phraseTitle, phraseControl, phraseFn) -> 
 
-                                    RESULTS.push phraseFn ->
-                                    if phraseControl.uuid == 3
+                    #                 RESULTS.push phraseFn ->
+                    #                 if phraseControl.uuid == 3
                                         
-                                        RESULTS.should.eql [
-                                            'RETURN FROM PHRASE_1'
-                                            'RETURN FROM PHRASE_2'
-                                            'RETURN FROM PHRASE_3'
-                                        ]
-                                        done()
-                        )
+                    #                     RESULTS.should.eql [
+                    #                         'RETURN FROM PHRASE_1'
+                    #                         'RETURN FROM PHRASE_2'
+                    #                         'RETURN FROM PHRASE_3'
+                    #                     ]
+                    #                     done()
+                    #     )
 
 
                 context 'refer', -> 

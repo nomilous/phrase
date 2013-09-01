@@ -355,12 +355,12 @@ describe 'RecursorBeforeEach', ->
 
     context 'boundry linking -', -> 
 
-        beforeEach (done) -> 
+        # beforeEach (done) -> 
 
-            parent.phraseType = (fn) -> 'boundry'
-            injectionControl.args  = [ 'edge phrase', (@edge) => done() ]
-            hook = RecursorBeforeEach.create root, parent
-            hook (->), injectionControl
+        #     parent.phraseType = (fn) -> 'boundry'
+        #     injectionControl.args  = [ 'edge phrase', (@edge) => done() ]
+        #     hook = RecursorBeforeEach.create root, parent
+        #     hook (->), injectionControl
 
 
         it 'noops the injected recursion phraseFn', (done) ->
@@ -370,8 +370,21 @@ describe 'RecursorBeforeEach', ->
             # but does nothing for the case of boundry phrases
             # 
 
-            injectionControl.args[2].toString().should.eql 'function () {}'
-            done()
+            parent.phraseType = (fn) -> 'boundry'
+            injectionControl.args  = [ 'edge phrase', (edge) ->
+
+                # edge.link directory: './path'
+
+            ]
+            hook = RecursorBeforeEach.create root, parent
+            hook (->
+
+                injectionControl.args[2].toString().should.eql 'function () {}'
+                done()
+
+            ), injectionControl
+            
+            
 
         it 'resolves the injection deferral if no call to link', (done) -> 
 
@@ -461,16 +474,12 @@ describe 'RecursorBeforeEach', ->
 
                         accessToken.on 'ready', ({tokens}) -> 
 
-                        
-                            #
-                            # Nice!
-                            #
+                            console.log JSON.stringify tokens, null, 2
 
-                            # console.log JSON.stringify tokens, null, 2
-                            should.exist tokens[ '/BoundryTest/tree1/nest/boundry leaf/edge/nested 1/book/The Enchanted Wood/characters/Angry Pixie' ]
-                            done()
+                            # should.exist tokens[ '/BoundryTest/tree1/nest/boundry leaf/edge/nested 1/book/The Enchanted Wood/characters/Angry Pixie' ]
+                            # done()
 
-
+                        count = 1
                         messageBus.use (msg, next) -> 
 
                             #
@@ -482,17 +491,18 @@ describe 'RecursorBeforeEach', ->
                             # TODO: (maybe) default assembly, (or the recursor never completes the 'first walk')
                             #
 
-                            count = 1
+                            
                             if msg.context.title == 'phrase::boundry:assemble'
 
-                                # console.log ASSEMBLY_PARAMETERS: msg.opts
-                                
-                                msg.opts.mode = 'nest'  # set to nest into the linked phrase
+                                switch count++ % 2
+
+                                    when 0 then msg.opts.mode = 'nest'
+                                    when 1 then msg.opts.mode = 'refer'
 
                                 msg.phrase = 
 
                                     title: "nested #{count++}"
-                                    uuid:  count
+                                    uuid:  count++
                                     fn: (book) -> 
 
                                         #
@@ -522,5 +532,9 @@ describe 'RecursorBeforeEach', ->
 
                     nest 'boundry leaf', (edge) -> 
 
+                        edge.link directory: __dirname
+                        edge.link directory: __dirname
+                        edge.link directory: __dirname
+                        edge.link directory: __dirname
                         edge.link directory: __dirname
 

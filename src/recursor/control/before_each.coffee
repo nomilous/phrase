@@ -222,8 +222,6 @@ exports.create = (root, parentControl) ->
 
             if actualPhraseType == 'boundry'
 
-                injectionControl.args[2] = -> 
-
                 #
                 # * Call the phaseFn and accumulate the calls it makes to link
                 #
@@ -231,7 +229,12 @@ exports.create = (root, parentControl) ->
                 linkQueue = []
                 phrase.fn link: (opts) -> linkQueue.push opts
 
-                phrases = []
+                if linkQueue.length == 0 then return process.nextTick ->
+
+                    injectionControl.args[2] = -> 
+                    done()
+                    deferral.resolve()
+
                 
                 sequence( for opts in linkQueue
 
@@ -248,15 +251,24 @@ exports.create = (root, parentControl) ->
                     # * All boundry links have been processed.
                     # 
 
-                    (boundryPhrases) -> 
+                    (boundries) -> 
 
                         #
-                        # * boundryPhrases is an array of arrays
+                        # * boundries is an array of arrays, reduce it to
+                        #   arrays by boundry mode
                         # 
+                        
+                        phrases = refer: [], nest: []
 
-                        console.log JSON.stringify boundryPhrases, null, 2
+                        boundries.reduce( (a, b) -> a.concat b ).map (boundry) -> 
 
-                    
+                            phrases[ boundry.opts.mode ].push 
+
+                                opts: boundry.opts
+                                phrase: boundry.phrase
+
+
+                        console.log phrases
 
 
 
