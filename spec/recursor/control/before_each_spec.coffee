@@ -472,9 +472,10 @@ describe 'RecursorBeforeEach', ->
 
                 recursor = require('../../../lib/phrase').createRoot
 
-                    title: 'Boundry Test (refer)'
-                    uuid:  '0000000001'
-                    leaf:  ['π']
+                    title:   'Boundry Test (refer)'
+                    uuid:    '0000000001'
+                    boundry: ['seeBeyond']
+                    leaf:    ['π']
 
                     (accessToken, messageBus) -> 
 
@@ -513,7 +514,7 @@ describe 'RecursorBeforeEach', ->
 
                             # console.log tokens
 
-                            tokens[ '/Boundry Test (refer)/Primary Tree/nest/boundry phrase/edge/three.possible/fromBeyond/¥®†§ç/ƒ/øπˆ˙¥√ø' ].should.eql
+                            tokens[ '/Boundry Test (refer)/Primary Tree/nest/boundry phrase/seeBeyond/three.possible/fromBeyond/¥®†§ç/ƒ/øπˆ˙¥√ø' ].should.eql
 
                                 type:      'leaf'
                                 uuid:      '∞'
@@ -525,9 +526,9 @@ describe 'RecursorBeforeEach', ->
 
                 recursor 'Primary Tree', (nest) -> 
 
-                    nest 'boundry phrase', (edge) -> 
+                    nest 'boundry phrase', (seeBeyond) -> 
 
-                        edge.link
+                        seeBeyond.link
 
                             directory: '/make/believe'
                             match: /\.possibile$/
