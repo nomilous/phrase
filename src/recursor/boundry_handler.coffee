@@ -44,7 +44,6 @@ module.exports = boundryHandler =
 
             sequence( for filename in filenames
 
-
                 do (filename) -> -> notice.event 'phrase::boundry:assemble', 
 
                     opts:

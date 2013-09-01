@@ -256,6 +256,8 @@ describe 'TreeBoundry', ->
                                 # the new phrase can be mapped onto the 
                                 #
 
+                                console.log notify
+
                                 notify.phrase (phraseTitle, phraseControl, phraseFn) -> 
 
                                     RESULTS.push phraseFn ->

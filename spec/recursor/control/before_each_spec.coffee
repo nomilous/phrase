@@ -441,7 +441,7 @@ describe 'RecursorBeforeEach', ->
             hook injectionResolver, injectionControl 
 
 
-        context 'integration', -> 
+        context 'integration (nested boundry)', -> 
 
             it "boundry handler errors into the accessToken's error event listeners"
 
@@ -451,6 +451,76 @@ describe 'RecursorBeforeEach', ->
                 #
 
 
-            it 'contunues walk through peer phrases that follow a phrase containing links'
+            it 'contunues walk through peer phrases that follow a phrase containing links', (done) -> 
 
+                recursor = require('../../../lib/phrase').createRoot
+
+                    title: 'BoundryTest'
+                    uuid:  '0000000000'
+                    (accessToken, messageBus) -> 
+
+                        accessToken.on 'ready', ({tokens}) -> 
+
+                        
+                            #
+                            # Nice!
+                            #
+
+                            # console.log JSON.stringify tokens, null, 2
+                            should.exist tokens[ '/BoundryTest/tree1/nest/boundry leaf/edge/nested 1/book/The Enchanted Wood/characters/Angry Pixie' ]
+                            done()
+
+
+                        messageBus.use (msg, next) -> 
+
+                            #
+                            # async boundry phrase assembly line
+                            # ----------------------------------
+                            # 
+                            # * can fetch and load a remote tree
+                            # 
+                            # TODO: (maybe) default assembly, (or the recursor never completes the 'first walk')
+                            #
+
+                            count = 1
+                            if msg.context.title == 'phrase::boundry:assemble'
+
+                                # console.log ASSEMBLY_PARAMETERS: msg.opts
+                                
+                                msg.opts.mode = 'nest'  # set to nest into the linked phrase
+
+                                msg.phrase = 
+
+                                    title: "nested #{count++}"
+                                    uuid:  count
+                                    fn: (book) -> 
+
+                                        #
+                                        # The Faraway Tree (series)
+                                        # -------------------------
+                                        #
+
+                                        book "The Enchanted Wood", (characters) -> 
+
+                                            characters 'Moonface',      (end) -> end()
+                                            characters 'Angry Pixie',   (end) -> end()
+                                            characters 'Mr.Watzisname', (end) -> end()
+                                            characters 'Dame Washalot', (end) -> end()
+                                            characters 'Saucepan Man',  (end) -> end()
+                                            characters 'Silky',         (end) -> end()
+                                            characters 'Dame Slap',     (end) -> end()
+
+                                        book "The Magic Faraway Tree", (end) -> end()
+                                        book "The Folk of the Faraway Tree", (end) -> end()
+                                        book "Up the Faraway Tree", (end) -> end()
+
+                            next()
+
+                recursor 'tree1', (nest) -> 
+
+                    nest 'local leaf', (end) -> 
+
+                    nest 'boundry leaf', (edge) -> 
+
+                        edge.link directory: __dirname
 

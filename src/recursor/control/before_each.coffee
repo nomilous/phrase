@@ -254,12 +254,27 @@ exports.create = (root, parentControl) ->
                     #       should it? && ?fix it
                     #
                         
-                    # (reject)  -> done reject 
-                    done #GREP4
+                    (reject)  -> done reject 
 
                     (notify)  -> 
 
-                        console.log NOTIFY: notify
+                        if notify.action == 'phrase::nest'
+
+                            #
+                            # * nest mode replaces the beoundry noop injection
+                            #   with this newly nestable phrase
+                            #
+
+                            injectionControl.args[2] = notify.phrase
+
+                            #
+                            # * resolve this injection (before each) hook
+                            # 
+
+                            done()
+
+
+                            #console.log 'PHRASE\t', phrase.toString()
 
                 )
 
