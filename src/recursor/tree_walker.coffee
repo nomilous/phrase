@@ -205,24 +205,24 @@ exports.walk = (root, opts, rootString, rootFn) ->
                                                 #       
 
 
-                args = util.argsOf nestedPhraseFn
-                console.log """
+                # args = util.argsOf nestedPhraseFn
+                # console.log """
 
-                    This may prove trickier than i thought...
-                    -----------------------------------------
+                #     This may prove trickier than i thought...
+                #     -----------------------------------------
 
-                    * is this available in the job run?
-                    * if not, make it so
-                    * once so, ...
+                #     * is this available in the job run?
+                #     * if not, make it so
+                #     * once so, ...
 
-                          How to get it into scope?
-                          Because the vertex phrases 
-                          are not run at jobtime. 
+                #           How to get it into scope?
+                #           Because the vertex phrases 
+                #           are not run at jobtime. 
 
-                          UM...
+                #           UM...
 
 
-                """: args if args.length > 1
+                # """: args if args.length > 1
 
                 newRecursorFn = recursor phraseString, phraseControl
                 nestedPhraseFn newRecursorFn

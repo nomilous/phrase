@@ -109,43 +109,12 @@ module.exports = boundryHandler =
                     #
                     # ### As Nest
                     # 
-                    # * It assembles a phraseFn that calls all the nested phrase
-                    #   functions that were returned by the assembly pipeline.
-                    # 
-                    # * It hands the phrase back to the recursor (before each) via 
-                    #   the promise notifier
-                    #
+                    # * Send the assembled phrase messages back to the 
+                    #   recursion contro before each hook
 
-                    if mode == 'nest'
+                    if mode == 'nest' then makeLinks.resolve messages
 
-                        makeLinks.notify 
-  
-                            action: 'phrase::nest'
-                            done: -> makeLinks.resolve()
-
-                            phrase: (boundry) -> 
-
-                                #
-                                # * The recursor then proceeds as normal, recursing into this
-                                #   new phrase (As if it was always nested here.).
-                                #
-                                # 
-                                #        "Aaaah... The beauty of the closure, 
-                                # 
-                                # 
-
-                                messages.map ({phrase}) -> do (phrase) -> 
-
-                                    #
-                                    # `boundry` is the async injection recursor,
-                                    #  see: Injection Target (ThePhraseRecursor)
-                                    #  in /recursor/tree_walker
-                                    # 
-                                    
-                                    boundry phrase.title, phrase.control, phrase.fn
-
-
-
+                    
                     # for message in messages
                     #     if message.error? 
                     #         console.log 'ERROR_UNHANDLED_1', error.stack
@@ -157,7 +126,7 @@ module.exports = boundryHandler =
                         # root.context.stack.push {}
                         # root.context.stack.pop()
 
-                    makeLinks.resolve()
+                    # makeLinks.resolve()
 
 
                 #

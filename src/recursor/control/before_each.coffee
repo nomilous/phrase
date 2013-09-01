@@ -231,6 +231,8 @@ exports.create = (root, parentControl) ->
                 linkQueue = []
                 phrase.fn link: (opts) -> linkQueue.push opts
 
+                phrases = []
+                
                 sequence( for opts in linkQueue
 
                     #
@@ -243,11 +245,20 @@ exports.create = (root, parentControl) ->
                 ).then(
 
                     #
-                    # * All boundries handled successfully
-                    # * Dont send resolve (result array) to injection resolver.
-                    #
+                    # * All boundry links have been processed.
+                    # 
 
-                    (resolve) -> done()
+                    (boundryPhrases) -> 
+
+                        #
+                        # * boundryPhrases is an array of arrays
+                        # 
+
+                        console.log JSON.stringify boundryPhrases, null, 2
+
+                    
+
+
 
                     #
                     # TODO: one boundry hander error terminates the entire sequence
@@ -255,26 +266,6 @@ exports.create = (root, parentControl) ->
                     #
                         
                     (reject)  -> done reject 
-
-                    (notify)  -> 
-
-                        if notify.action == 'phrase::nest'
-
-                            #
-                            # * nest mode replaces the beoundry noop injection
-                            #   with this newly nestable phrase
-                            #
-
-                            injectionControl.args[2] = notify.phrase
-
-                            #
-                            # * resolve this injection (before each) hook
-                            # 
-
-                            done()
-
-
-                            #console.log 'PHRASE\t', phrase.toString()
 
                 )
 
