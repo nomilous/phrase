@@ -288,39 +288,56 @@ exports.create = (root, parentControl) ->
                                 opts: boundry.opts
                                 phrase: boundry.phrase
 
-                        #
-                        # TODO: handle refer boundry mode
-                        # -------------------------------
-                        # 
-                        # * create new phrase tree for each boundy phrass
-                        # 
-                        # * push a phrase containing reference to the new tree's root
-                        #   into the local stack 
-                        #  
-                        # * send phrase::edge:create onto the bus so that the local graph
-                        #   stores the reference to another tree as a local leaf
-                        # 
-                        # * pop the stack (and repeat for each boundry phrase)
-                        # 
+
+                        sequence([
 
 
-                        #
-                        # TODO: handle nest boundry mode
-                        # ------------------------------    
-                        #  
-                        # * pass local closure containing assembled phrases into the recursor 
-                        #   as a phrase of nested phrases
-                        # 
+                            #
+                            # TODO: handle refer boundry mode
+                            # -------------------------------
+                            # 
+                            # * create new phrase tree for each boundy phrass
+                            # 
+                            # * push a phrase containing reference to the new tree's root
+                            #   into the local stack 
+                            #  
+                            # * send phrase::edge:create onto the bus so that the local graph
+                            #   stores the reference to another tree as a local leaf
+                            # 
+                            # * pop the stack (and repeat for each boundry phrase)
+                            # 
 
-                        if phrases.nest.length > 0
+                            -> 
+                                console.log BOUNDRY: 
 
-                            injectionControl.args[2] = (recursor) -> 
+                                    mode: 'refer'
+                                    phrases: phrases.refer
 
-                                phrases.nest.map ({opts, phrase}) -> 
 
-                                    recursor phrase.title, phrase.control, phrase.fn
+                            #
+                            # handle nest boundry mode
+                            # ------------------------------    
+                            #  
+                            # * pass local closure containing assembled phrases into the recursor 
+                            #   as a phrase of nested phrases
+                            # 
 
-                            done()
+                            -> if phrases.nest.length > 0
+
+                                injectionControl.args[2] = (recursor) -> 
+
+                                    phrases.nest.map ({opts, phrase}) -> 
+
+                                        recursor phrase.title, phrase.control, phrase.fn
+
+
+                        ]).then(
+
+                            -> done()
+                            (reject) -> done( reject )
+
+
+                        )
 
                     #
                     # TODO: one boundry hander error terminates the entire sequence
