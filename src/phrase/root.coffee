@@ -105,7 +105,7 @@ exports.createClass = (root) ->
             # * create the message bus
             # 
 
-            context.notice = Notice.create opts.uuid
+            context.notice = opts.notice || Notice.create opts.uuid
 
 
             #
