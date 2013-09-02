@@ -50,6 +50,7 @@ exports.create = (root, parentControl) ->
             notice.event( 'phrase::recurse:end' 
 
                 walk: context.walking
+                root: uuid: root.uuid
 
             ).then -> 
 

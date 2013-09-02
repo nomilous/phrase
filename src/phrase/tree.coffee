@@ -58,18 +58,17 @@ exports.createClass = (root) ->
 
             when 'phrase::recurse:start'
 
+                #return next() unless msg.root.uuid == root.uuid
                 next()
 
             when 'phrase::edge:create'
 
+                return next() unless msg.root.uuid == root.uuid
                 trees.latest.registerEdge msg, next
-
-            when 'phrase::leaf:create'
-
-                trees.latest.registerLeaf msg, next
 
             when 'phrase::recurse:end'
 
+                return next() unless msg.root.uuid == root.uuid
                 trees.latest.createIndexes msg, next
 
 

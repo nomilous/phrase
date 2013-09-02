@@ -9,6 +9,7 @@ describe 'RecursorBeforeAll', ->
     beforeEach -> 
 
         root = 
+            uuid: 'ROOTUUID'
             context: 
                 notice: event: -> then: (resolve) -> resolve() 
                 hooks: 
@@ -60,17 +61,20 @@ describe 'RecursorBeforeAll', ->
 
     it 'generates "phrase::recurse:start" at the beginning of the first walk and flags as first', (done) -> 
 
-        EVENT = undefined 
+        EVENT   = undefined
+        PAYLOAD = undefined
         Date.now = -> 1
-        root.context.notice.event = (title) -> 
+        root.context.notice.event = (title, payload) -> 
 
-            EVENT = title
+            EVENT   = title
+            PAYLOAD = payload
             then: (resolve) -> resolve()
 
         hook = RecursorBeforeAll.create root
         hook (->
 
             EVENT.should.equal 'phrase::recurse:start'
+            PAYLOAD.root.uuid.should.equal 'ROOTUUID'
             root.context.walking.startedAt.should.equal 1
             root.context.walking.first.should.equal true
             done()

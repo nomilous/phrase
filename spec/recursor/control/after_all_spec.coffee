@@ -6,11 +6,12 @@ describe 'RecursorAfterAll', ->
     
     it 'resolves the parent phrase', (done) -> 
 
-        root = context: stack: [
+        root = 
+            context: stack: [
 
-            deferral: resolve: done
+                deferral: resolve: done
 
-        ]
+            ]
 
         hook = RecursorAfterAll.create root, {}
         hook (->), {}
@@ -20,6 +21,7 @@ describe 'RecursorAfterAll', ->
 
         Date.now = -> 10
         root = 
+            uuid: 'ROOTUUID'
             context: 
                 stack: []
 
@@ -34,6 +36,7 @@ describe 'RecursorAfterAll', ->
                     
                     payload.should.eql 
 
+                        root: uuid: 'ROOTUUID'
                         walk:
                             startedAt: 1
                             duration:  9

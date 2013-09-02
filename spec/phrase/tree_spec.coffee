@@ -10,7 +10,8 @@ describe 'PhraseTree', ->
 
     before -> 
 
-        root = context: notice: use: ->
+        root = 
+            context: notice: use: ->
         Tree = PhraseTree.createClass root
         tree = new Tree
 
@@ -89,7 +90,9 @@ describe 'PhraseTree', ->
 
         before -> 
 
-            @Tree = PhraseTree.createClass context: notice: use: (@middleware) =>
+            @Tree = PhraseTree.createClass 
+                uuid: 'ROOTUUID'
+                context: notice: use: (@middleware) =>
 
 
         it 'registers on the message bus', (done) -> 
@@ -122,7 +125,21 @@ describe 'PhraseTree', ->
                 @Tree.assembler
 
                     context: title: 'phrase::edge:create'
+                    root: uuid: 'ROOTUUID'
                     ->
+
+
+            it 'ignores phrase::edge:create if root.uuid is not this root', (done) ->
+
+                tree = new @Tree
+
+                tree.registerEdge = -> throw 'should not run'
+
+                @Tree.assembler
+
+                    context: title: 'phrase::edge:create'
+                    root: uuid: 'NOTME'
+                    -> done()
 
 
             it 'creates vertices', (done) -> 
@@ -136,6 +153,7 @@ describe 'PhraseTree', ->
                     #
 
                     context: title: 'phrase::edge:create'
+                    root: uuid: 'ROOTUUID'
                     vertices: [
                         { uuid: 'UUID1', key: 'value1' }
                         { uuid: 'UUID2', key: 'value2' }
