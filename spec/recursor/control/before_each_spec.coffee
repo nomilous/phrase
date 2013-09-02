@@ -14,6 +14,7 @@ describe 'RecursorBeforeEach', ->
     beforeEach -> 
 
         root = 
+            uuid: 'ROOTUUID'
             context: 
                 stack: []
 
@@ -309,7 +310,7 @@ describe 'RecursorBeforeEach', ->
             ), injectionControl
 
 
-        it 'emits "phrase::edge:create" into the middleware pipeline', (done) -> 
+        it 'emits "phrase::edge:create" into the middleware pipeline with vertex pair and root uuid', (done) -> 
 
             #
             # existing stack elements
@@ -346,6 +347,7 @@ describe 'RecursorBeforeEach', ->
                 SEQUENCE.should.eql [ 'phrase::edge:create' ]
 
                 should.exist event1 = EVENTS['phrase::edge:create']
+                event1.root.uuid.should.equal root.uuid
                 event1.vertices[0].title.should.equal 'the parent phrase'
                 event1.vertices[1].title.should.equal 'has this child in'
 

@@ -2,7 +2,7 @@ should           = require 'should'
 ChangeSetFactory = require '../../lib/phrase/change_set'
 PhraseTree       = require '../../lib/phrase/tree'
 PhraseRoot       = require '../../lib/phrase/root'
-ProcessToken     = require '../../lib/token/process_token'
+Process          = require '../../lib/core/process'
 also             = require 'also'
 
 describe 'ChangeSet', -> 
@@ -86,7 +86,7 @@ describe 'ChangeSet', ->
                     leaf:    ['end']
                     timeout: 2000
 
-                process   = new ProcessToken also
+                process   = new Process also
                 root1     = process.root opts1.uuid
 
                 recursor1 = PhraseRoot.createClass( root1 ).createRoot opts1, (token, notice) -> 

@@ -1,6 +1,6 @@
 should             = require 'should'
 PhraseTokenFactory = require '../../lib/token/phrase_token'
-ProcessToken       = require '../../lib/token/process_token'
+Process            = require '../../lib/core/process'
 PhraseToken        = undefined
 phrase             = require '../../lib/phrase'
 
@@ -8,7 +8,7 @@ describe 'PhraseToken', ->
 
     before -> 
 
-        process     = new ProcessToken require 'also'
+        process     = new Process require 'also'
         PhraseToken = PhraseTokenFactory.createClass process.root 'UUID'
 
     it 'has immutable uuid, and signature', (done) -> 

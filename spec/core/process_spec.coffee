@@ -1,5 +1,5 @@
 should       = require 'should'
-ProcessToken = require '../../lib/token/process_token'
+Process      = require '../../lib/core/process'
 core         = require 'also'
 
 describe 'ProcessToken', -> 
@@ -8,7 +8,7 @@ describe 'ProcessToken', ->
 
         before -> 
 
-            @process = new ProcessToken core
+            @process = new Process core
 
         it 'houses the core but does not expose it', (done) -> 
 

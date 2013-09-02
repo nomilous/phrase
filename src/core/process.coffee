@@ -1,6 +1,6 @@
 #
-# Process Token
-# =============
+# Process
+# =======
 # 
 # * Represents a running processs. 
 # * Houses the collection of PhaseTree roots.
@@ -8,7 +8,7 @@
 
 collection = {}
 
-class ProcessToken
+class Process
 
     constructor: (core) -> 
 
@@ -89,4 +89,4 @@ class ProcessToken
 
 
 
-module.exports = ProcessToken
+module.exports = Process

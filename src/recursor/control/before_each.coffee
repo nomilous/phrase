@@ -189,6 +189,7 @@ exports.create = (root, parentControl) ->
                     #
 
                     vertices: stack[ -2.. ]
+                    root: uuid: root.uuid
 
         ]
 

@@ -1,9 +1,9 @@
-ProcessToken = require './token/process_token'
-PhraseRoot   = require './phrase/root'
+Process    = require './core/process'
+PhraseRoot = require './phrase/root'
 
 require( 'also' ) exports, {}, (core) -> 
 
-    process = new ProcessToken core
+    process = new Process core
 
     createRoot: (opts, linkFn) -> 
 
