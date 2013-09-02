@@ -89,7 +89,7 @@ describe 'TreeBoundry', ->
                     done()
 
 
-            xcontext 'recursor stack and graph assembly', -> 
+            xcontext 'recursor stack and tree assembly', -> 
 
                 beforeEach -> 
 
@@ -143,7 +143,7 @@ describe 'TreeBoundry', ->
                 it 'emits phrase::edge:create onto the message bus'
 
                     # 
-                    # PhraseGraph is listening... 
+                    # PhraseTree is listening... 
                     # 
 
 

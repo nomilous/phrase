@@ -255,7 +255,7 @@ describe 'RecursorBeforeEach', ->
             ), injectionControl
 
 
-    context 'stack and graph assembly -', ->
+    context 'stack and tree assembly -', ->
 
 
         it 'pushes the new phrase into the stack and resolves the injection deferral if leaf', (done) -> 
@@ -346,7 +346,6 @@ describe 'RecursorBeforeEach', ->
                 SEQUENCE.should.eql [ 'phrase::edge:create' ]
 
                 should.exist event1 = EVENTS['phrase::edge:create']
-                event1.type.should.equal 'tree'
                 event1.vertices[0].title.should.equal 'the parent phrase'
                 event1.vertices[1].title.should.equal 'has this child in'
 

@@ -28,7 +28,7 @@ neuron = require( '../lib/phrase' ).createRoot
                 })"
 
             # 
-            # console.log data
+            console.log data
             # 
             # { walk: { startedAt: 1377384696287, first: true, duration: 118 },
             # tokens: 

@@ -7,10 +7,10 @@ describe 'phrase.createRoot(opts, linkFunction)', ->
 
         """
 
-It provides a rootRegistrar for assembling a PhraseGraph
---------------------------------------------------------
+It provides a rootRegistrar for assembling a PhraseTree
+-------------------------------------------------------
 
-* For now the PhraseGraph is a tree (only)
+* For now the PhraseTree is a tree (only)
 
     ie. no complex pathways
 
@@ -27,10 +27,10 @@ It provides a rootRegistrar for assembling a PhraseGraph
         #  
 
 
-It calls the linkFunction with the PhraseGraph root token
+It calls the linkFunction with the PhraseTree root token
 ---------------------------------------------------------
 
-* The link function is called when the PhraseGraph is initialized
+* The link function is called when the PhraseTree is initialized
 
     ie. At the first call to rootRegistrar  (arithmatic)
 
@@ -60,7 +60,7 @@ It calls the linkFunction with the PhraseGraph root token
             #
             # linkFunction
             #
-            (@token) => 
+            (@token, notice) => 
 
                 @token.on 'ready', ({tokens}) => 
 

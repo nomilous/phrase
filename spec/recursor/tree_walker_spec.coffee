@@ -2,7 +2,7 @@ should          = require 'should'
 TreeWalker      = require '../../lib/recursor/tree_walker'
 RecursorControl = require '../../lib/recursor/control'
 PhraseNode      = require '../../lib/phrase/node'
-PhraseGraph     = require '../../lib/phrase/graph'
+PhraseTree      = require '../../lib/phrase/tree'
 BoundryHandler  = require '../../lib/recursor/boundry_handler'
 
 describe 'TreeWalker', -> 
@@ -32,7 +32,7 @@ describe 'TreeWalker', ->
                 token: emit: (event, args...) ->
 
             root.context.PhraseNode = PhraseNode.createClass root
-            root.context.PhraseGraph = PhraseGraph.createClass root
+            root.context.PhraseTree = PhraseTree.createClass root
 
             opts = 
                 title:   'Title'
@@ -57,29 +57,29 @@ describe 'TreeWalker', ->
             try TreeWalker.walk root, opts
 
 
-        it 'creates root graph only once', (done) -> 
+        it 'creates root tree only once', (done) -> 
 
-            delete root.context.graph
+            delete root.context.tree
             TreeWalker.walk root, opts, 'phrase string', (nest) ->
-            graph = root.context.graph
-            should.exist graph
+            tree = root.context.tree
+            should.exist tree
 
             TreeWalker.walk root, opts, 'phrase string', (nest) ->
-            graph.should.equal root.context.graph
+            tree.should.equal root.context.tree
             done()
 
 
-        it 'creates an orphaned graph on subsequent calls', (done) -> 
+        it 'creates an orphaned tree on subsequent calls', (done) -> 
 
-            delete root.context.graph
+            delete root.context.tree
             TreeWalker.walk root, opts, 'phrase string', (nest) ->
-            rootGraph = root.context.graph
+            rootTree = root.context.tree
 
             TreeWalker.walk root, opts, 'phrase string', (nest) ->
-            newGraph = root.context.graphs.latest
+            newTree = root.context.trees.latest
 
-            should.exist newGraph
-            newGraph.should.not.equal rootGraph
+            should.exist newTree
+            newTree.should.not.equal rootTree
             done()
 
 

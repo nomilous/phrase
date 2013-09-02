@@ -1,18 +1,18 @@
 should      = require 'should'
-PhraseGraph = require '../../lib/phrase/graph'
+PhraseTree  = require '../../lib/phrase/tree'
 
-describe 'PhraseGraph', -> 
+describe 'PhraseTree', -> 
 
 
     root  = undefined
-    Graph = undefined
-    graph = undefined
+    Tree  = undefined
+    tree  = undefined
 
     before -> 
 
         root = context: notice: use: ->
-        Graph = PhraseGraph.createClass root
-        graph = new Graph
+        Tree = PhraseTree.createClass root
+        tree = new Tree
 
 
     context 'change set', ->
@@ -32,15 +32,15 @@ describe 'PhraseGraph', ->
             # historyLength hardcoded to 2 for now
             #
 
-            it 'removes old graphs from the collection', (done) -> 
+            it 'removes old trees from the collection', (done) -> 
 
-                graph1 = new Graph
-                graph2 = new Graph
-                graph3 = new Graph
+                tree1 = new Tree
+                tree2 = new Tree
+                tree3 = new Tree
 
-                should.exist     root.context.graphs.list[graph3.uuid]
-                should.exist     root.context.graphs.list[graph2.uuid]
-                should.not.exist root.context.graphs.list[graph1.uuid]
+                should.exist     root.context.trees.list[tree3.uuid]
+                should.exist     root.context.trees.list[tree2.uuid]
+                should.not.exist root.context.trees.list[tree1.uuid]
                 done()
 
 
@@ -48,28 +48,28 @@ describe 'PhraseGraph', ->
 
         it 'has a uuid', (done) -> 
 
-            should.exist graph.uuid
+            should.exist tree.uuid
             done()
 
         it 'has a version', (done) -> 
 
-            should.exist graph.version
+            should.exist tree.version
             done()
 
 
-        it 'is added to the graphs collection on the root context', (done) -> 
+        it 'is added to the trees collection on the root context', (done) -> 
 
-            g = new Graph
-            g.should.equal root.context.graphs.list[ g.uuid ]
+            g = new Tree
+            g.should.equal root.context.trees.list[ g.uuid ]
             done()
 
 
-        it 'most recently created graph is set as latest in the graphs collection', (done) -> 
+        it 'most recently created tree is set as latest in the trees collection', (done) -> 
 
-            one = new Graph
-            root.context.graphs.latest.touch1 = 1
-            two = new Graph
-            root.context.graphs.latest.touch2 = 2
+            one = new Tree
+            root.context.trees.latest.touch1 = 1
+            two = new Tree
+            root.context.trees.latest.touch2 = 2
 
             should.exist one.touch1
             should.exist two.touch2
@@ -80,8 +80,8 @@ describe 'PhraseGraph', ->
 
         it 'provides access to vertices and edges lists', (done) -> 
 
-            graph.vertices.should.eql {}
-            graph.edges.should.eql {}
+            tree.vertices.should.eql {}
+            tree.edges.should.eql {}
             done()     
 
 
@@ -89,7 +89,7 @@ describe 'PhraseGraph', ->
 
         before -> 
 
-            @Graph = PhraseGraph.createClass context: notice: use: (@middleware) =>
+            @Tree = PhraseTree.createClass context: notice: use: (@middleware) =>
 
 
         it 'registers on the message bus', (done) -> 
@@ -99,11 +99,11 @@ describe 'PhraseGraph', ->
                 #        no longer appears to have a the same prototype
                 #        instance as the function itself.
                 # 
-                # middleware.should.equal Graph.assembler
-                # console.log middleware is Graph.assembler
+                # middleware.should.equal Tree.assembler
+                # console.log middleware is Tree.assembler
                 #
 
-                @middleware.toString().should.equal @Graph.assembler.toString()
+                @middleware.toString().should.equal @Tree.assembler.toString()
                 done()          # 
                                 # marginally pointless...
                                 # 
@@ -115,11 +115,11 @@ describe 'PhraseGraph', ->
 
             it 'is called by the assember at phrase::edge:create', (done) -> 
 
-                graph = new @Graph
+                tree = new @Tree
 
-                graph.registerEdge = -> done()
+                tree.registerEdge = -> done()
 
-                @Graph.assembler
+                @Tree.assembler
 
                     context: title: 'phrase::edge:create'
                     ->
@@ -127,9 +127,9 @@ describe 'PhraseGraph', ->
 
             it 'creates vertices', (done) -> 
 
-                graph = new @Graph
+                tree = new @Tree
 
-                graph.registerEdge 
+                tree.registerEdge 
 
                     #
                     # mock 'phrase::edge:create' message
@@ -143,7 +143,7 @@ describe 'PhraseGraph', ->
 
                     -> 
 
-                        graph.vertices.should.eql 
+                        tree.vertices.should.eql 
 
                             UUID1: uuid: 'UUID1', key: 'value1'
                             UUID2: uuid: 'UUID2', key: 'value2'
@@ -153,9 +153,9 @@ describe 'PhraseGraph', ->
 
             it 'creates edges' , (done) ->
 
-                graph = new @Graph
+                tree = new @Tree
 
-                graph.registerEdge 
+                tree.registerEdge 
 
                     #
                     # mock 'phrase::edge:create' message
@@ -169,7 +169,7 @@ describe 'PhraseGraph', ->
 
                     -> 
 
-                        graph.edges.should.eql 
+                        tree.edges.should.eql 
 
                             UUID1: [ { to: 'UUID2' } ]
                             UUID2: [ { to: 'UUID1' } ]
@@ -179,19 +179,19 @@ describe 'PhraseGraph', ->
 
             it 'allows multiple edges per vertex', (done) -> 
 
-                graph = new @Graph
+                tree = new @Tree
 
-                graph.registerEdge vertices: [
+                tree.registerEdge vertices: [
                         { uuid: 'UUID1', key: 'value1' }
                         { uuid: 'UUID2', key: 'value2' }
                     ],  ->
 
-                graph.registerEdge vertices: [
+                tree.registerEdge vertices: [
                         { uuid: 'UUID1', key: 'value1' }
                         { uuid: 'UUID3', key: 'value3' }
                     ],  ->
 
-                graph.edges.should.eql 
+                tree.edges.should.eql 
 
                     UUID1: [   { to: 'UUID2' }, { to: 'UUID3' }   ]
                     UUID2: [   { to: 'UUID1' }                    ]
@@ -202,25 +202,25 @@ describe 'PhraseGraph', ->
 
             it 'stores parent and child relations (if tree)', (done) -> 
 
-                graph = new @Graph
+                tree = new @Tree
 
-                graph.registerEdge type: 'tree', vertices: [
+                tree.registerEdge type: 'tree', vertices: [
                     { uuid: 'UUID1', key: 'value1', token: {              } }
                     { uuid: 'UUID2', key: 'value2', token: {              } }
                 ],  ->
 
-                graph.registerEdge type: 'tree', vertices: [
+                tree.registerEdge type: 'tree', vertices: [
                         { uuid: 'UUID1', key: 'value1', token: {              } }
                         { uuid: 'UUID3', key: 'value3', token: {              } }
                     ],  ->
 
 
-                graph.parent.should.eql 
+                tree.parent.should.eql 
 
                     UUID3: 'UUID1'
                     UUID2: 'UUID1'
 
-                graph.children.should.eql 
+                tree.children.should.eql 
 
                     UUID1: ['UUID2', 'UUID3']
 
@@ -233,22 +233,22 @@ describe 'PhraseGraph', ->
                 # vertices are flagged as leaf by the TreeWalker
                 #
 
-                graph.registerEdge type: 'tree', vertices: [
+                tree.registerEdge type: 'tree', vertices: [
                         { uuid: 'UUID1', key: 'value1', token: {              } }
                         { uuid: 'UUID2', key: 'value2', token: { type: 'leaf' } }
                     ],  ->
 
-                graph.registerEdge type: 'tree', vertices: [
+                tree.registerEdge type: 'tree', vertices: [
                         { uuid: 'UUID1', key: 'value1' }
                         { uuid: 'UUID3', key: 'value3' }
                     ],  ->
 
-                graph.registerEdge type: 'tree', vertices: [
+                tree.registerEdge type: 'tree', vertices: [
                         { uuid: 'UUID3', key: 'value3', token: {              } }
                         { uuid: 'UUID4', key: 'value4', token: { type: 'leaf' } }
                     ],  ->
 
-                graph.leaves.should.eql ['UUID2', 'UUID4']
+                tree.leaves.should.eql ['UUID2', 'UUID4']
 
                 done()
 
@@ -257,14 +257,14 @@ describe 'PhraseGraph', ->
 
         it 'returns the vertex at uuid if it is a leaf (per token type)', (done) -> 
 
-            graph = new @Graph
+            tree = new @Tree
 
-            graph.registerEdge type: 'tree', vertices: [
+            tree.registerEdge type: 'tree', vertices: [
                     { uuid: 'UUID1', key: 'value1' }
                     { uuid: 'UUID2', arbkey: 'arbvalue', token: { type: 'leaf' } }
                 ],  ->
 
-            graph.leavesOf( 'UUID2' )[0].arbkey.should.equal 'arbvalue'
+            tree.leavesOf( 'UUID2' )[0].arbkey.should.equal 'arbvalue'
             done()
 
 
@@ -284,50 +284,50 @@ describe 'PhraseGraph', ->
             # 
             #
 
-            graph = new @Graph
+            tree = new @Tree
 
-            graph.registerEdge type: 'tree', vertices: [
+            tree.registerEdge type: 'tree', vertices: [
                     { uuid: 'UUID1', key: 'value1' }
                     { uuid: 'UUID2', key: 'value2', token: { type: 'leaf' } }
                 ],  ->
-            graph.registerEdge type: 'tree', vertices: [
+            tree.registerEdge type: 'tree', vertices: [
                     { uuid: 'UUID1', key: 'value1' }
                     { uuid: 'UUID3', key: 'value3' }
                 ],  ->
-            graph.registerEdge type: 'tree', vertices: [
+            tree.registerEdge type: 'tree', vertices: [
                     { uuid: 'UUID3', key: 'value3' }
                     { uuid: 'UUID4', key: 'value4' }
                 ],  ->
-            graph.registerEdge type: 'tree', vertices: [
+            tree.registerEdge type: 'tree', vertices: [
                     { uuid: 'UUID3', key: 'value3' }
                     { uuid: 'UUID5', key: 'value5', token: { type: 'leaf' } }
                 ],  ->
-            graph.registerEdge type: 'tree', vertices: [
+            tree.registerEdge type: 'tree', vertices: [
                     { uuid: 'UUID4', key: 'value4' }
                     { uuid: 'UUID6', key: 'value6', token: { type: 'leaf' } }
                 ],  ->
-            graph.registerEdge type: 'tree', vertices: [
+            tree.registerEdge type: 'tree', vertices: [
                     { uuid: 'UUID4', key: 'value4' }
                     { uuid: 'UUID7', key: 'value7', token: { type: 'leaf' } }
                 ],  ->
-            graph.registerEdge type: 'tree', vertices: [
+            tree.registerEdge type: 'tree', vertices: [
                     { uuid: 'UUID1', key: 'value1' }
                     { uuid: 'UUID8', key: 'value8', token: { type: 'leaf' } }
                 ],  ->
 
 
-            graph.leavesOf( 'UUID4' ).should.eql [ 
+            tree.leavesOf( 'UUID4' ).should.eql [ 
                 { uuid: 'UUID6', key: 'value6', token: { type: 'leaf' } }
                 { uuid: 'UUID7', key: 'value7', token: { type: 'leaf' } }
             ]
 
-            graph.leavesOf( 'UUID3' ).should.eql [ 
+            tree.leavesOf( 'UUID3' ).should.eql [ 
                 { uuid: 'UUID6', key: 'value6', token: { type: 'leaf' } }
                 { uuid: 'UUID7', key: 'value7', token: { type: 'leaf' } }
                 { uuid: 'UUID5', key: 'value5', token: { type: 'leaf' } } 
             ]
 
-            graph.leavesOf( 'UUID1' ).should.eql [ 
+            tree.leavesOf( 'UUID1' ).should.eql [ 
                 { uuid: 'UUID2', key: 'value2', token: { type: 'leaf' } }
                 { uuid: 'UUID6', key: 'value6', token: { type: 'leaf' } }
                 { uuid: 'UUID7', key: 'value7', token: { type: 'leaf' } }
@@ -342,13 +342,13 @@ describe 'PhraseGraph', ->
 
         beforeEach -> 
 
-            @graph = new @Graph
+            @tree = new @Tree
 
-            @graph.registerEdge type: 'tree', vertices: [
+            @tree.registerEdge type: 'tree', vertices: [
                     { uuid: 'PARENT', token: { signature: 'context' }, title: 'the index' }
                     { uuid: 'CHILD1', token: { signature: 'it', type: 'leaf' }, title: 'has map from path to uuid' }
                 ],  ->
-            @graph.registerEdge type: 'tree', vertices: [
+            @tree.registerEdge type: 'tree', vertices: [
                     { uuid: 'PARENT', token: { signature: 'context' }, title: 'the index' }
                     { uuid: 'CHILD2', token: { signature: 'it', type: 'leaf' }, title: 'has map from uuid to path' }
                 ],  ->
@@ -358,9 +358,9 @@ describe 'PhraseGraph', ->
 
         it 'creates index from path to uuid', (done) -> 
 
-            @graph.createIndexes {}, =>
+            @tree.createIndexes {}, =>
 
-                @graph.path2uuid.should.eql 
+                @tree.path2uuid.should.eql 
 
                     '/context/the index':                               'PARENT'
                     '/context/the index/it/has map from path to uuid':  'CHILD1'
@@ -370,9 +370,9 @@ describe 'PhraseGraph', ->
 
         it 'creates index from uuid to path', (done) -> 
 
-            @graph.createIndexes {}, =>
+            @tree.createIndexes {}, =>
 
-                @graph.uuid2path.should.eql 
+                @tree.uuid2path.should.eql 
 
                     'PARENT': '/context/the index'
                     'CHILD1': '/context/the index/it/has map from path to uuid'
@@ -382,17 +382,17 @@ describe 'PhraseGraph', ->
 
         it 'creates index from parent to children', (done) -> 
 
-            @graph.createIndexes {}, =>
+            @tree.createIndexes {}, =>
 
-                @graph.children['PARENT'].should.eql ['CHILD1', 'CHILD2']
+                @tree.children['PARENT'].should.eql ['CHILD1', 'CHILD2']
                 done()
 
 
         it 'creates index from children to parent', (done) -> 
 
-            @graph.createIndexes {}, =>
+            @tree.createIndexes {}, =>
 
-                @graph.parent.should.eql
+                @tree.parent.should.eql
                     CHILD1: 'PARENT'
                     CHILD2: 'PARENT'
 
@@ -401,16 +401,16 @@ describe 'PhraseGraph', ->
 
         it 'creates list of leaves', (done) -> 
 
-            @graph.createIndexes {}, =>
+            @tree.createIndexes {}, =>
 
-                @graph.leaves.should.eql  ['CHILD1', 'CHILD2']
+                @tree.leaves.should.eql  ['CHILD1', 'CHILD2']
                 done()
 
 
         it 'appends tokens to message', (done) -> 
 
             msg = {}
-            @graph.createIndexes msg, =>
+            @tree.createIndexes msg, =>
 
                 msg.should.eql 
 
@@ -429,18 +429,18 @@ describe 'PhraseGraph', ->
 
         beforeEach -> 
 
-            @graph = new @Graph
+            @tree = new @Tree
 
-            @graph.registerEdge type: 'tree', vertices: [
+            @tree.registerEdge type: 'tree', vertices: [
                     { uuid: 'PARENT',      token: { signature: 'context' }, title: 'the index' }
                     { uuid: 'CHILD1',      token: { signature: 'context' }, title: 'has indexes'}
                 ],  ->
-            @graph.registerEdge type: 'tree', vertices: [
+            @tree.registerEdge type: 'tree', vertices: [
                     { uuid: 'PARENT',      token: { signature: 'context' }, title: 'the index' }
                     { uuid: 'CHILD2',      token: { signature: 'it'      }, title: 'has map from uuid to path', type: 'leaf' }
                 ],  ->
 
-            @graph.registerEdge type: 'tree', vertices: [
+            @tree.registerEdge type: 'tree', vertices: [
                     { uuid: 'CHILD1',      token: { signature: 'context' }, title: 'has indexes'}
                     { uuid: 'GRANDCHILD1', token: { signature: 'it'      }, title: 'can get route (array of uuids)', type: 'leaf' }
                 ],  ->
@@ -448,8 +448,8 @@ describe 'PhraseGraph', ->
 
         it 'returns array if vertex uuids from start to end (inclusive)', (done) ->
 
-            @graph.createIndexes {}, =>
+            @tree.createIndexes {}, =>
 
-                @graph.findRoute( null, 'GRANDCHILD1' ).should.eql ['PARENT', 'CHILD1', 'GRANDCHILD1']
+                @tree.findRoute( null, 'GRANDCHILD1' ).should.eql ['PARENT', 'CHILD1', 'GRANDCHILD1']
                 done()
 

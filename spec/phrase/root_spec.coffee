@@ -123,10 +123,10 @@ describe 'phrase', ->
 
                 @token.on 'ready', => 
 
-                    console.log @token.graph.tree.leaves
-                    console.log @token.graph.leaves
+                    console.log @token.tree.tree.leaves
+                    console.log @token.tree.leaves
 
-                    @token.graph.leaves.length.should.equal 2
+                    @token.tree.leaves.length.should.equal 2
                     done()
 
 

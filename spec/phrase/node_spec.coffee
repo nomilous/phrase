@@ -347,7 +347,7 @@ describe 'PhraseNode', ->
 
         it 'carries new hook uuid in on hook create', (done) -> 
 
-            done()  # tested in phrase_graph_change_set_spec
+            done()  # tested in change_set_spec
 
 
 

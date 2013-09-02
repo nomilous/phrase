@@ -236,8 +236,8 @@ exports.createClass = (root) ->
             # 
             # * The target is included to provide a direct reference to the
             #   the change destination (the results of this function are used
-            #   by the PhraseGraph to assemble a changeSet, which could likely
-            #   be queued and applied onto the graph by later instruction)
+            #   by the PhraseTree to assemble a changeSet, which could likely
+            #   be queued and applied onto the tree by later instruction)
             # 
             # * The target is specifically used for cases where the change
             #   is a hook. In these cases the changeset refers to the parent

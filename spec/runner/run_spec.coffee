@@ -8,7 +8,7 @@ describe 'Run', ->
     root        = undefined
     TOKEN       = undefined
     NOTICE      = undefined
-    GRAPH       = undefined
+    TREE        = undefined
     LEAF_TWO    = undefined
     PHRASE_ROOT = undefined
     NEST_ONE    = undefined
@@ -27,7 +27,7 @@ describe 'Run', ->
 
                 TOKEN  = token
                 NOTICE = notice
-                GRAPH  = token.graph
+                TREE   = token.tree
 
                 notice.use (msg, next) -> 
 
@@ -39,7 +39,7 @@ describe 'Run', ->
                         # tree is ready, locate UUIDs of test phrase nodes
                         #
 
-                        vertices = TOKEN.graph.vertices
+                        vertices = TOKEN.tree.vertices
                         # LEAF_TWO = ( for uuid of vertices
                         #     continue unless vertices[uuid].title == 'LEAF_TWO'
                         #     uuid
@@ -177,7 +177,7 @@ describe 'Run', ->
 
         it 'collects the sequence of calls required to run all the leaves on any given branch', (done) -> 
 
-            root     = context: graph: GRAPH
+            root     = context: tree: TREE
             opts     = uuid: NEST_ONE
             deferral = notify: ->
 
@@ -223,7 +223,7 @@ describe 'Run', ->
 
         it 'assigns step sets per leaf', (done) -> 
 
-            root     = context: graph: GRAPH
+            root     = context: tree: TREE
             opts     = uuid: NEST_ONE
             deferral = notify: ->
 
@@ -264,7 +264,7 @@ describe 'Run', ->
         it 'assigns depth to each step', (done) -> 
 
 
-            root     = context: graph: GRAPH
+            root     = context: tree: TREE
             opts     = uuid: NEST_ONE
             deferral = notify: ->
 
@@ -306,7 +306,7 @@ describe 'Run', ->
 
             tick     = 0 
             Date.now = -> tick++
-            root     = context: graph: GRAPH
+            root     = context: tree: TREE
             opts     = uuid: NEST_ONE
             UPDATES  = []
             deferral = notify: (update) -> UPDATES.push update

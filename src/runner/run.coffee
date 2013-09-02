@@ -13,7 +13,7 @@ api =
         #
 
         {context}       = root
-        {graph, notice} = context
+        {tree, notice}  = context
         {uuid}          = opts
 
         #
@@ -26,7 +26,7 @@ api =
             unless uuid? 
                 return running.reject error 1, "missing opts.uuid"
 
-            unless graph.vertices[uuid]?
+            unless tree.vertices[uuid]?
                 return running.reject error 2, "uuid: '#{uuid}' not in local tree"
 
             pipeline([
@@ -66,11 +66,11 @@ api =
     getSteps: (root, opts, running) ->
 
         {context} = root
-        {graph}   = context
+        {tree}    = context
         {uuid}    = opts
 
         getting   = defer() 
-        leaves    = graph.leavesOf uuid
+        leaves    = tree.leavesOf uuid
         count     = leaves.length
 
         #
@@ -126,12 +126,12 @@ api =
 
 
             leaf     = leaves.shift()
-            route    = graph.findRoute null, leaf.uuid
+            route    = tree.findRoute null, leaf.uuid
             outbound = []
             inbound  = route.map (uuid) -> 
 
-                outbound.unshift graph.vertices[uuid]
-                graph.vertices[uuid]
+                outbound.unshift tree.vertices[uuid]
+                tree.vertices[uuid]
 
             #
             # inbound  (Array) Contains all the phrases along the path 

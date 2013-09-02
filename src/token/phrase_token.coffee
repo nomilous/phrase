@@ -27,4 +27,4 @@ exports.createClass = (root) ->
             # * include only vertices
             # 
 
-            return SERIALIZE_FROM_THIS: root.context.graph.vertices[@uuid]
+            return SERIALIZE_FROM_THIS: root.context.tree.vertices[@uuid]

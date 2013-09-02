@@ -61,8 +61,8 @@ describe 'RecursorAfterAll', ->
                     stack: []
                     walking: startedAt: 1
                     notice: event: -> then: (fn) -> fn()
-                    graph:  version: 1, vertices: {}, update: => then: (done) => @updated++; done()
-                    graphs: latest: version: 2, vertices: {}
+                    tree:  version: 1, vertices: {}, update: => then: (done) => @updated++; done()
+                    trees: latest: version: 2, vertices: {}
 
             @hook = RecursorAfterAll.create @root, {}
 
@@ -78,7 +78,7 @@ describe 'RecursorAfterAll', ->
             @root.context.firstWalk.should.equal @first
             done()
 
-        it 'does not call update() on the root graph on first walk', (done) -> 
+        it 'does not call update() on the root tree on first walk', (done) -> 
 
             @root.context.walks = undefined
             @root.context.walking = startedAt: 2
@@ -109,7 +109,7 @@ describe 'RecursorAfterAll', ->
         it 'afterAll hook waits for update', (done) -> 
 
             recurseDone = false
-            @root.context.graph.update = -> then: (resolve) -> 
+            @root.context.tree.update = -> then: (resolve) -> 
 
                 process.nextTick -> 
 

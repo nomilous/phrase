@@ -7,7 +7,7 @@ PhraseTokenFactory = require '../token/phrase_token'
 # ==========
 # 
 # * Performs a recursive 'walk' through the tree being passed to the rootRegistrar 
-#   to assemble the PhraseGraph
+#   to assemble the PhraseTree
 #   
 # * Does not run any of the hooks or leaf nodes in the tree.
 # 
@@ -15,37 +15,37 @@ PhraseTokenFactory = require '../token/phrase_token'
 exports.walk = (root, opts, rootString, rootFn) ->
 
     {context, inject, util}             = root
-    {stack, notice, graph, PhraseGraph} = context
+    {stack, notice, tree, PhraseTree} = context
 
     context.hooks       = PhraseHook.bind root
     context.PhraseToken = PhraseTokenFactory.createClass root
 
-    if graph? 
+    if tree? 
 
         # 
-        # root graph is already defined
-        # -----------------------------
+        # primary tree is already defined
+        # -------------------------------
         # 
-        # * create a new (orphaned) graph
-        # * accessable at context.graphs.latest
+        # * create a new (orphaned) tree
+        # * accessable at context.trees.latest
         # 
 
-        new PhraseGraph
+        new PhraseTree
 
     else
 
         #
-        # create root graph
-        # -----------------
+        # create primary tree
+        # -------------------
         # 
-        # * This graph houses the PhraseTree
+        # * This primary houses the PhraseTree
         # * It is only ever created on the 'first walk'
-        # TODO * Subsequent walks assemble a second graph
-        # TODO * Second graph is merged into the first
+        # TODO * Subsequent walks assemble a second tree
+        # TODO * Second tree is merged into the first
         # TODO * Merge generates appropriate add/remove/change events on the root token
         # 
 
-        context.graph = new PhraseGraph
+        context.tree = new PhraseTree
 
 
     recursor = (parentPhraseString, parentPhraseControl) -> 

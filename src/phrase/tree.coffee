@@ -1,22 +1,22 @@
 {v1}             = require 'node-uuid'
 pipeline         = require 'when/pipeline'
 ChangeSetFactory = require './change_set'
-seq                                                                = 0 # couldn't resist
+seq              = 0
 
 exports.createClass = (root) -> 
 
     #
-    # PhraseGraph (class factory)
+    # PhraseTree (class factory)
     # ===========================
     #
-    # * Creates a root context container to house the list of graphs
+    # * Creates a root context container to house the list of trees
     # 
-    # * Returns the PhraseGraph class definition 
+    # * Returns the PhraseTree class definition 
     # 
 
     {context}      = root
     {notice}       = context
-    context.graphs = graphs = 
+    context.trees  = trees = 
 
         latest: null
         list:   {} 
@@ -27,8 +27,8 @@ exports.createClass = (root) ->
     # 
     # * Generated when the TreeWalker is called to re-walk the phrase tree.
     # 
-    # * Builds the delta that, when applied, would advance the root.context.graph 
-    #   to the new definition in root.context.graphs.latest
+    # * Builds the delta that, when applied, would advance the root.context.tree 
+    #   to the new definition in root.context.trees.latest
     # 
     # * It is a class factory so that the class definition can reside inside a 
     #   a closure with access to the root context.
@@ -38,21 +38,21 @@ exports.createClass = (root) ->
 
     
     #
-    # Graph Assembler (middleware)
-    # ----------------------------
+    # Tree Assembler (middleware)
+    # ---------------------------
     # 
     # * TreeWalker walks the phrase tree and transmits all vertex and edge data 
     #   onto the message bus.
     # 
-    # * This middleware constructs the graph from that data.
+    # * This middleware constructs the tree from that data.
     # 
-    # * It assembles into the latest gragh only. All previously created graphs
+    # * It assembles into the latest gragh only. All previously created trees
     #   remain unchanged. 
     #
 
     notice.use assembler = (msg, next) -> 
 
-        return next() unless graphs.latest?
+        return next() unless trees.latest?
 
         switch msg.context.title
 
@@ -62,22 +62,22 @@ exports.createClass = (root) ->
 
             when 'phrase::edge:create'
 
-                graphs.latest.registerEdge msg, next
+                trees.latest.registerEdge msg, next
 
             when 'phrase::leaf:create'
 
-                graphs.latest.registerLeaf msg, next
+                trees.latest.registerLeaf msg, next
 
             when 'phrase::recurse:end'
 
-                graphs.latest.createIndexes msg, next
+                trees.latest.createIndexes msg, next
 
 
             else next()
 
 
 
-    class PhraseGraph
+    class PhraseTree
 
         constructor: (opts = {}) -> 
 
@@ -108,13 +108,13 @@ exports.createClass = (root) ->
                 leaves:    []
 
 
-            graphs.list[ localOpts.uuid ] = this
-            graphs.latest = this
+            trees.list[ localOpts.uuid ] = this
+            trees.latest = this
 
             order = []
             historyLength = 2
-            order.push uuid for uuid of graphs.list
-            delete graphs.list[uuid] for uuid in order[ ..( -1 - historyLength) ]
+            order.push uuid for uuid of trees.list
+            delete trees.list[uuid] for uuid in order[ ..( -1 - historyLength) ]
 
 
             #
@@ -174,7 +174,7 @@ exports.createClass = (root) ->
 
             if uuidA?
 
-                throw new Error 'PhraseGraph.route(null, uuidB) only supports tree route calculation from root to uuidB'
+                throw new Error 'PhraseTree.route(null, uuidB) only supports tree route calculation from root to uuidB'
 
             recurse = (uuid, uuids = []) => 
 
@@ -192,13 +192,13 @@ exports.createClass = (root) ->
                 #
                 # WARNING - The event sequence / the event names will very likely 
                 #           change when this update pipeline is expanded to support 
-                #           scrolling the running graph (root.context.graph) forward 
+                #           scrolling the running tree (root.context.tree) forward 
                 #           and backward through versions. 
                 #
 
-                (       ) -> notice.event 'graph::compare:start'
-                (       ) -> new ChangeSet( context.graph, context.graphs.latest ).changes
-                (changes) -> notice.event 'graph::compare:end', changes: changes
+                (       ) -> notice.event 'tree::compare:start'
+                (       ) -> new ChangeSet( context.tree, context.trees.latest ).changes
+                (changes) -> notice.event 'tree::compare:end', changes: changes
 
                     #
                     # * This currently goes on to auto apply the new changes
@@ -208,13 +208,13 @@ exports.createClass = (root) ->
                     # TODO: pend change apply per later instruction
                     # 
 
-                (message) -> notice.event 'graph::update:start', message
+                (message) -> notice.event 'tree::update:start', message
                 (message) -> 
 
                     return skipped: true if message.skipChange
                     ChangeSet.applyChanges message.changes.uuid
 
-                (updated) -> notice.event 'graph::update:end', updated
+                (updated) -> notice.event 'tree::update:end', updated
 
             ]
 
@@ -247,12 +247,12 @@ exports.createClass = (root) ->
 
 
 
-            if msg.type == 'tree'
+            
 
-                @children[ vertex1.uuid ]  ||= []
-                @children[ vertex1.uuid ].push vertex2.uuid
-                @parent[   vertex2.uuid ]    = vertex1.uuid
-                @leaves.push vertex2.uuid  if vertex2.token? and vertex2.token.type == 'leaf'
+            @children[ vertex1.uuid ]  ||= []
+            @children[ vertex1.uuid ].push vertex2.uuid
+            @parent[   vertex2.uuid ]    = vertex1.uuid
+            @leaves.push vertex2.uuid  if vertex2.token? and vertex2.token.type == 'leaf'
 
 
             next()
@@ -282,11 +282,11 @@ exports.createClass = (root) ->
 
 
     #
-    # expose the graph assembler as classmethod
+    # expose the tree assembler as classmethod
     # (hidden, exposed for testing)
     # 
 
-    Object.defineProperty PhraseGraph, 'assembler',
+    Object.defineProperty PhraseTree, 'assembler',
 
         enumerable: false
         get: -> assembler
@@ -302,7 +302,7 @@ exports.createClass = (root) ->
     #   property was defined.
     #
 
-    return PhraseGraph
+    return PhraseTree
 
     #
     # * rotate the 'chaos manifold'

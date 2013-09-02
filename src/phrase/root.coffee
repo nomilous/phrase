@@ -1,6 +1,6 @@
 Notice      = require 'notice'
 PhraseNode  = require './node'
-PhraseGraph = require './graph'
+PhraseTree  = require './tree'
 AccessToken = require '../token/access_token'
 TreeWalker  = require '../recursor/tree_walker'
 Job         = require '../runner/job'
@@ -135,16 +135,16 @@ exports.createClass = (root) ->
 
                     # 
                     #
-                    # create PhraseGraph (class definition)
+                    # create PhraseTree  (class definition)
                     # -------------------------------------
                     # 
                     # * Houses the set of vertexes and edges that define the phrase tree
                     # * Assembled (via message bus) by the 'first walk' of the phrase recursor
-                    # * This is the PhraseGraph definition (class)
+                    # * This is the PhraseTree definition (class)
                     # * Instance is managed in TreeWalker
                     # 
 
-                    context.PhraseGraph = PhraseGraph.createClass root
+                    context.PhraseTree = PhraseTree.createClass root
 
 
                     #
@@ -153,7 +153,7 @@ exports.createClass = (root) ->
                     # 
                     # * A PhraseNode instance is created for each vertex (Node) 
                     #   in the phrase tree. 
-                    # * They are stored in a collection in the PhraseGraph  
+                    # * They are stored in a collection in the PhraseTree  
                     #
 
                     context.PhraseNode = PhraseNode.createClass root

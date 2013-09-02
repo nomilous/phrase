@@ -75,7 +75,7 @@ exports.create = (root, parentControl) ->
         # -------------------------
         # 
         # * This pushes the stack from which 'phrase::edge:create' events are 
-        #   transmitted into the PhraseGraph.assemble via the message bus.
+        #   transmitted into the PhraseTree.assemble via the message bus.
         # 
         # * The stack is popped on the return walk (in recursor/control/after_each)
         #
@@ -182,14 +182,7 @@ exports.create = (root, parentControl) ->
         run = sequence [
 
             ->  
-
                 notice.event 'phrase::edge:create',
-
-                    #
-                    # trees as special case of graph, edge needs to know
-                    # 
-
-                    type: 'tree'
 
                     #
                     # top two phraseNodes in the stack are parent and this
@@ -272,7 +265,7 @@ exports.create = (root, parentControl) ->
                         # 
                         # ### nest
                         # 
-                        # `graph assembly continues with recrsion across the phrase boundry`
+                        # `tree assembly continues with recrsion across the phrase boundry`
                         # 
                         # Each PhraseTree from the other side of the boundry is grafted into this
                         # PhraseTree at the vertex where the link was called. 
@@ -301,8 +294,8 @@ exports.create = (root, parentControl) ->
                             # * push a phrase containing reference to the new tree's root
                             #   into the local stack 
                             #  
-                            # * send phrase::edge:create onto the bus so that the local graph
-                            #   stores the reference to another tree as a local leaf
+                            # * send phrase::edge:create onto the bus so that the local tree
+                            #   stores the reference the another tree as a local leaf
                             # 
                             # * pop the stack (and repeat for each boundry phrase)
                             # 
