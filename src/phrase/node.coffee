@@ -1,5 +1,3 @@
-{v1} = require 'node-uuid'
-
 exports.createClass = (root) -> 
 
     #
@@ -8,6 +6,8 @@ exports.createClass = (root) ->
     # TODO: after merge (and enlightenment)
     #
 
+    {util} = root
+
     class PhraseHook
 
         constructor: (opts) -> 
@@ -15,7 +15,7 @@ exports.createClass = (root) ->
             #GREP3 duplicate definition
 
             @fn        = opts.fn 
-            @uuid      = v1()
+            @uuid      = util.uuid()
             @timeout   = opts.timeout || root.timeout || 2000
 
 
@@ -133,7 +133,7 @@ exports.createClass = (root) ->
                 # enumarable
                 #
 
-                uuid:      opts.uuid  || v1()
+                uuid:      opts.uuid  || util.uuid()
                 title:     opts.title
                 leaf:      opts.leaf
 

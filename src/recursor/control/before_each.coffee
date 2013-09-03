@@ -1,7 +1,6 @@
 sequence            = require 'when/sequence'
 PhraseTokenFactory  = require '../../token/phrase_token'
 BoundryHandler      = require '../boundry_handler'
-{v1}                = require 'node-uuid'
 
 #
 # Before Each (recursion hook)
@@ -104,7 +103,7 @@ exports.create = (root, parentControl) ->
 
                 type: phraseType
 
-                uuid: uuid || v1()
+                uuid: uuid || util.uuid()
 
                 #
                 # * signature is the signature name of the recursor that 

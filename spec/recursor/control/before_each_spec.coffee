@@ -3,6 +3,7 @@ RecursorBeforeEach  = require '../../../lib/recursor/control/before_each'
 PhraseNode          = require '../../../lib/phrase/node'
 PhraseTokenFactory  = require '../../../lib/token/phrase_token' 
 BoundryHandler      = require '../../../lib/recursor/boundry_handler'
+also                = require 'also'
 
 
 describe 'RecursorBeforeEach', -> 
@@ -15,6 +16,7 @@ describe 'RecursorBeforeEach', ->
 
         root = 
             uuid: 'ROOTUUID'
+            util: also.util
             context: 
                 stack: []
 
@@ -25,10 +27,10 @@ describe 'RecursorBeforeEach', ->
                     info: -> then: (resolve) -> resolve()
                     event: -> then: (resolve) -> resolve()
 
-                PhraseNode: PhraseNode.createClass root
-                PhraseToken: PhraseTokenFactory.createClass root
+        root.context.PhraseNode  = PhraseNode.createClass root
+        root.context.PhraseToken = PhraseTokenFactory.createClass root
 
-            util: require('also').util
+            
 
         injectionControl = 
             defer: resolve: ->

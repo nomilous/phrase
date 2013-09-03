@@ -1,6 +1,7 @@
 should             = require 'should'
 RecursorBeforeAll  = require '../../../lib/recursor/control/before_all'
 {PhraseHook}       = require '../../../lib/phrase/hook'
+also               = require 'also'
 
 describe 'RecursorBeforeAll', -> 
     
@@ -10,6 +11,7 @@ describe 'RecursorBeforeAll', ->
 
         root = 
             uuid: 'ROOTUUID'
+            util: also.util
             context: 
                 notice: event: -> then: (resolve) -> resolve() 
                 hooks: 

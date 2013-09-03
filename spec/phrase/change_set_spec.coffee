@@ -22,6 +22,7 @@ describe 'ChangeSet', ->
     beforeEach -> 
 
         @root = 
+            util: also.util
             context: 
                 notice: 
                     event: ->

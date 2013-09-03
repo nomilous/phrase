@@ -1,4 +1,5 @@
 should      = require 'should'
+also        = require 'also'
 PhraseTree  = require '../../lib/phrase/tree'
 
 describe 'PhraseTree', -> 
@@ -12,6 +13,7 @@ describe 'PhraseTree', ->
 
         root = 
             context: notice: use: ->
+            util:    also.util
         Tree = PhraseTree.createClass root
         tree = new Tree
 
@@ -92,6 +94,7 @@ describe 'PhraseTree', ->
 
             @Tree = PhraseTree.createClass 
                 uuid: 'ROOTUUID'
+                util: also.util
                 context: notice: use: (@middleware) =>
 
 

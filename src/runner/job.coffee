@@ -1,4 +1,3 @@
-{v1}         = require 'node-uuid'
 {defer}      = require 'when'
 sequence     = require 'when/sequence'
 
@@ -11,8 +10,8 @@ exports.createClass = (root) ->
     # Has root access factory create() scope
     #
 
-    {inject, context} = root
-    {notice}          = context
+    {inject, context, util} = root
+    {notice}                = context
 
     return class Job
 
@@ -22,7 +21,7 @@ exports.createClass = (root) ->
             # job uuid can be assigned (allows resume, later...)
             #
 
-            opts.uuid ||= v1()
+            opts.uuid ||= util.uuid()
 
             #
             # job deferrral is optional

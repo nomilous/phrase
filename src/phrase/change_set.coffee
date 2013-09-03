@@ -1,4 +1,3 @@
-{v1}    = require 'node-uuid'
 {defer} = require 'when'
 
 exports.createClass = (root) -> 
@@ -27,6 +26,8 @@ exports.createClass = (root) ->
     #                too big... )
     # 
 
+    {util} = root
+
     changeSets = {}
 
     class ChangeSet
@@ -34,7 +35,7 @@ exports.createClass = (root) ->
         constructor: (@treeA, @treeB) -> 
 
             historyLength     = 1
-            @uuid             = v1()
+            @uuid             = util.uuid()
             @changes          = uuid: @uuid
             changeSets[@uuid] = this
             runningTree       = @treeA

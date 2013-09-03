@@ -1,6 +1,6 @@
 should              = require 'should'
 phraseJob           = require '../../lib/runner/job'
-{inject}            = require 'also'
+{inject, util}      = require 'also'
 
 describe 'Job', -> 
 
@@ -22,8 +22,10 @@ describe 'Job', ->
             event: -> then: (fn) -> fn()
 
         root      = 
+            util:   util
             inject: inject
             context: notice: NOTICE
+
 
         Job = phraseJob.createClass root
 

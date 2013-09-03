@@ -1,12 +1,13 @@
 should      = require 'should'
 PhraseNode  = require '../../lib/phrase/node'
-PhraseToken = require( '../../lib/token/phrase_token' ).createClass {}
+also        = require 'also'
+PhraseToken = require( '../../lib/token/phrase_token' ).createClass {util: also.util}
 
 describe 'PhraseNode', -> 
 
     before -> 
 
-        @Node = PhraseNode.createClass {}
+        @Node = PhraseNode.createClass {util: also.util}
 
     xcontext 'general', -> 
 

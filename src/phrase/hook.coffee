@@ -1,5 +1,3 @@
-{v1} = require 'node-uuid'
-
 #
 # (Phrase) Hook
 #
@@ -19,7 +17,7 @@ exports.PhraseHook = class PhraseHook
             when 'beforeEach', 'afterEach' then opts.each
             when 'beforeAll',  'afterAll'  then opts.all
 
-        @uuid      = v1()
+        @uuid      = root.util.uuid()
         @timeout   = opts.timeout || root.timeout || 2000
 
 

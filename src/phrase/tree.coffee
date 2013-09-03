@@ -1,4 +1,3 @@
-{v1}             = require 'node-uuid'
 pipeline         = require 'when/pipeline'
 ChangeSetFactory = require './change_set'
 seq              = 0
@@ -14,9 +13,9 @@ exports.createClass = (root) ->
     # * Returns the PhraseTree class definition 
     # 
 
-    {context}      = root
-    {notice}       = context
-    context.trees  = trees = 
+    {context, util} = root
+    {notice}        = context
+    context.trees   = trees = 
 
         latest: null
         list:   {} 
@@ -82,7 +81,7 @@ exports.createClass = (root) ->
 
             localOpts = 
 
-                uuid:       opts.uuid || v1()
+                uuid:       opts.uuid || util.uuid()
                 version:    opts.version || ++seq
                 rootVertex: undefined
                 vertices:   {}
