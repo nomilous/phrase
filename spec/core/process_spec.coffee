@@ -1,5 +1,6 @@
 should       = require 'should'
 Process      = require '../../lib/core/process'
+Graph        = require '../../lib/core/graph'
 core         = require 'also'
 
 describe 'ProcessToken', -> 
@@ -8,6 +9,7 @@ describe 'ProcessToken', ->
 
         before -> 
 
+            Graph.create core
             @process = new Process core
 
         it 'houses the core but does not expose it', (done) -> 
@@ -54,6 +56,13 @@ describe 'ProcessToken', ->
                 A.root('B').one  = 1
 
                 B.one.should.equal 1
+                done()
+
+
+            it 'assigns ref to core graph assembler', (done) ->
+
+                A = @process.root 'A'
+                A.assembler.should.equal core.assembler
                 done()
 
 

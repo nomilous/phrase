@@ -52,6 +52,12 @@ class Process
                         root:     @root
 
                         #
+                        # * each root is assigned reference to graph assembler
+                        #
+
+                        assembler: core.assembler
+
+                        #
                         # * each root has access to validate, 
                         #   inject, util
                         #
