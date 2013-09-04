@@ -43,10 +43,6 @@ module.exports.create = (core) ->
         # 
         #
 
-        try console.log msg.context.title, UUID: msg.root.uuid
-        catch error
-            console.log msg.context.title
-
         return next() unless msg.context.title == 'boundry::edge:create'
 
         srcPhrase        = msg.vertices[0]
@@ -93,7 +89,7 @@ module.exports.create = (core) ->
 
             if msg.context.title == 'phrase::recurse:end'
 
-                console.log '\nREFERRED_TITLE:',newPhraseTitle
+                console.log '\nREFERRED TREE:',newPhraseTitle
                 console.log path for path of msg.tokens
 
             next()
@@ -105,7 +101,25 @@ module.exports.create = (core) ->
 
         TreeWalker.walk( newRoot, opts, newPhraseTitle, newPhraseFn ).then(
 
-            (resolve) -> next()
+            (resolve) -> 
+
+                #
+                # * create reference phrase to nest into the boundry
+                #   leaf at the link origin
+                #
+
+                msg.phrase = 
+                    title: newPhraseTitle
+                    token: 
+                        signature: srcControl.phraseToken.signature
+                        uuid: newPhraseUUID
+                        type: 'tree'
+                        source:
+                            type: 'file'
+                            filename: assemblyOpts.filename          
+
+                next()
+
             (reject)  -> console.log REJECT:  reject; next()
             
 

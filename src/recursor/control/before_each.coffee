@@ -183,6 +183,7 @@ exports.create = (root, parentControl) ->
 
             ->  
                 notice.event 'phrase::edge:create',
+                    #DUPLICATE3
 
                     #
                     # top two phraseNodes in the stack are parent and this
@@ -286,16 +287,12 @@ exports.create = (root, parentControl) ->
 
                             #
                             # handle 'refer' boundry mode
-                            # -------------------------
-                            # 
-
-                            -> if phrases.refer.length > 0
-
+                            # ---------------------------
                             #
                             # * Sequence each linked phrase into a pipeline
                             #
 
-                                sequence( for referPhrase in phrases.refer
+                            -> sequence( for referPhrase in phrases.refer
 
                                     do (referPhrase) -> pipeline [
 
@@ -305,7 +302,7 @@ exports.create = (root, parentControl) ->
                             #   phrase onto the event message.
                             # 
 
-                                        () -> notice.event 'boundry::edge:create',
+                                        (        ) -> notice.event 'boundry::edge:create',
 
                                             vertices: [phrase, referPhrase]
                                             control: phraseControl
@@ -318,12 +315,18 @@ exports.create = (root, parentControl) ->
                             # * send phrase::edge:create onto the bus so that the local tree
                             #   stores the reference the another tree as a local leaf
                             # 
-                            # * pop the stack (and repeat for each boundry phrase)
+                            # * pop the stack (this sequence repeats for each boundry phrase)
                             # 
 
-                                        ({phrase}) -> 
+                                        ({phrase}) -> stack.push phrase
 
-                                            console.log LOCAL_PHRASE: phrase
+                                        (        ) -> notice.event 'phrase::edge:create',
+                                                        #DUPLICATE3  
+   
+                                            vertices: stack[ -2.. ]
+                                            root: uuid: root.uuid
+
+                                        (        ) -> stack.pop()
 
                                     ]
 
@@ -354,6 +357,7 @@ exports.create = (root, parentControl) ->
                             ->  
                                 console.log DONE: 'boundry'
                                 done()
+
                             (reject) -> done( reject )
 
 
