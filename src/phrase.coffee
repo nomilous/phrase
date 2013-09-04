@@ -1,7 +1,10 @@
 Process    = require './core/process'
+Graph      = require './core/graph'
 PhraseRoot = require './phrase/root'
 
 require( 'also' ) exports, {}, (core) -> 
+
+    Graph.create core
 
     process = new Process core
 

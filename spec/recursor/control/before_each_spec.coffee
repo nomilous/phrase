@@ -50,7 +50,7 @@ describe 'RecursorBeforeEach', ->
         BoundryHandler.link = @boundryLink
         BoundryHandler.recurse = @boundryRecurse
 
-    context 'recursion control -', ->
+    xcontext 'recursion control -', ->
 
 
         it 'extracts the injection deferral', (done) -> 
@@ -165,7 +165,7 @@ describe 'RecursorBeforeEach', ->
 
 
 
-    context 'phrase type control -', ->
+    xcontext 'phrase type control -', ->
 
 
         it 'gets the phrase type', (done) -> 
@@ -258,7 +258,7 @@ describe 'RecursorBeforeEach', ->
             ), injectionControl
 
 
-    context 'stack and tree assembly -', ->
+    xcontext 'stack and tree assembly -', ->
 
 
         it 'pushes the new phrase into the stack and resolves the injection deferral if leaf', (done) -> 
@@ -368,7 +368,7 @@ describe 'RecursorBeforeEach', ->
         #     hook (->), injectionControl
 
 
-        it 'noops the injected recursion phraseFn', (done) ->
+        xit 'noops the injected recursion phraseFn', (done) ->
 
             #
             # so that the injection recursion can proceed unhindered
@@ -388,10 +388,9 @@ describe 'RecursorBeforeEach', ->
                 done()
 
             ), injectionControl
-            
-            
 
-        it 'resolves the injection deferral if no call to link', (done) -> 
+
+        xit 'resolves the injection deferral if no call to link', (done) -> 
 
             parent.phraseType = (fn) -> 'boundry'
             injectionControl.args  = [ 'edge phrase', (edge) ->
@@ -437,7 +436,7 @@ describe 'RecursorBeforeEach', ->
             hook injectionResolver, injectionControl 
 
 
-        it 'proxies errors into the injections hook resolver', (done) -> 
+        xit 'proxies errors into the injections hook resolver', (done) -> 
 
             injectionResolver = (result) -> 
 
@@ -465,13 +464,7 @@ describe 'RecursorBeforeEach', ->
 
             it 'creates a reference phrase in the primary tree for each boundry phrase', (done) -> 
 
-                BoundryHandler.recurse = -> [
-
-                    'list'
-                    'again'
-                    'threetimes'
-
-                ]
+                BoundryHandler.recurse = -> [ 'list1', 'list2' ]
 
                 recursor = require('../../../lib/phrase').createRoot
 
@@ -481,6 +474,9 @@ describe 'RecursorBeforeEach', ->
                     (accessToken, messageBus) -> 
 
                         messageBus.use (msg, next) -> 
+
+                            console.log '\n', msg.context.title
+                            console.log JSON.stringify msg, null, 2
 
                             if msg.context.title == 'phrase::boundry:assemble'
 
@@ -493,7 +489,6 @@ describe 'RecursorBeforeEach', ->
                                 # TODO: (maybe) default assembly, (or the recursor never completes the 'first walk')
                                 #
 
-                                msg.opts.mode = 'nest'
                                 msg.phrase = 
 
                                     title: msg.opts.filename.split('/')[-1..].join()
@@ -511,6 +506,8 @@ describe 'RecursorBeforeEach', ->
 
                         accessToken.on 'ready', ({tokens}) -> 
 
+                            console.log tokens
+
                             should.exist tokens["/Boundry Test (refer)/Exploration/space/probes/edge/list/probe/2011 -  USA - Jupiter - Juno - launched and en route"]
                             done()
 
@@ -526,7 +523,7 @@ describe 'RecursorBeforeEach', ->
             it 'the reference phrase contains uuid of new tree rooted on the local core'
 
 
-        context 'integration (nested boundry)', -> 
+        xcontext 'integration (nested boundry)', -> 
 
             it "boundry handler errors into the accessToken's error event listeners"
 

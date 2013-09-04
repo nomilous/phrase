@@ -1,4 +1,5 @@
 sequence            = require 'when/sequence'
+pipeline            = require 'when/pipeline'
 PhraseTokenFactory  = require '../../token/phrase_token'
 BoundryHandler      = require '../boundry_handler'
 
@@ -281,16 +282,36 @@ exports.create = (root, parentControl) ->
                                 opts: boundry.opts
                                 phrase: boundry.phrase
 
-
                         sequence([
 
+                            #
+                            # handle 'refer' boundry mode
+                            # -------------------------
+                            # 
+
+                            -> if phrases.refer.length > 0
 
                             #
-                            # TODO: handle refer boundry mode
-                            # -------------------------------
+                            # * Sequence each linked phrase into a pipeline
+                            #
+
+                                sequence( for referPhrase in phrases.refer
+
+                                    do (referPhrase) -> pipeline [
+
                             # 
-                            # * create new phrase tree for each boundy phrass
+                            # * RootGraph.assembler() assembles a new tree with this
+                            #   boundry::edge:create payload and appends a reference
+                            #   phrase onto the event message.
                             # 
+
+                                        () -> notice.event 'boundry::edge:create',
+
+                                            vertices: [phrase, referPhrase]
+                                            control: phraseControl
+                                            root: uuid: root.uuid
+
+                            #
                             # * push a phrase containing reference to the new tree's root
                             #   into the local stack 
                             #  
@@ -300,27 +321,33 @@ exports.create = (root, parentControl) ->
                             # * pop the stack (and repeat for each boundry phrase)
                             # 
 
-                            #-> if phrases.refer.length > 0
-                                
+                                        ({phrase}) -> 
 
+                                            console.log phrase
 
+                                    ]
+
+                                )
 
                             #
-                            # handle nest boundry mode
-                            # ------------------------------    
+                            # handle 'nest' boundry mode
+                            # --------------------------    
                             #  
                             # * pass local closure containing assembled phrases into the recursor 
                             #   as a phrase of nested phrases
                             # 
 
-                            -> if phrases.nest.length > 0
+                            -> 
 
-                                injectionControl.args[2] = (recursor) -> 
+                                if phrases.nest.length > 0
 
-                                    phrases.nest.map ({opts, phrase}) -> 
+                                    injectionControl.args[2] = (recursor) -> 
 
-                                        recursor phrase.title, phrase.control, phrase.fn
+                                        phrases.nest.map ({opts, phrase}) -> 
 
+                                            recursor phrase.title, phrase.control, phrase.fn
+
+                                else injectionControl.args[2] = -> 
 
                         ]).then(
 

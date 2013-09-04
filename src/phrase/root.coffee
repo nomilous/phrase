@@ -107,6 +107,8 @@ exports.createClass = (root) ->
 
             context.notice = opts.notice || Notice.create opts.uuid
 
+            context.notice.use root.assembler
+
 
             #
             # * used in hooks (TEMPORARY)
@@ -193,7 +195,7 @@ exports.createClass = (root) ->
                     #   phrase tree (via the token) and the message bus
                     #   
 
-                    linkFn context.token, context.notice
+                    linkFn context.token, context.notice, root
 
 
                     #
