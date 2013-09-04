@@ -12,7 +12,6 @@ class Process
 
     constructor: (core) -> 
 
-
         #
         # processToken.root( uuid )
         # -------------------------
@@ -86,13 +85,7 @@ class Process
 
                 )
 
-        #
-        # processToken.type = 'process'
-        #
-        Object.defineProperty this, 'type', 
-            enumerable: true
-            get: -> 'process'
-
+        core.root = this.root
 
 
 module.exports = Process

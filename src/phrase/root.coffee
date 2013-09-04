@@ -133,6 +133,9 @@ exports.createClass = (root) ->
 
                     #
                     # this is the first walk
+                    # ======================
+                    # 
+                    # #DUPLICATE2
                     # 
 
                     # 
@@ -223,6 +226,7 @@ exports.createClass = (root) ->
 
                 #
                 # not the first walk
+                # ==================
                 # 
 
                 TreeWalker.walk root, opts, phraseRootString, phraseRootFn

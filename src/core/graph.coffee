@@ -5,7 +5,12 @@
 # * Stores the collection of boundry phrase edge references.
 #
 
+PhraseNode  = require '../phrase/node'
+PhraseTree  = require '../phrase/tree'
+
 module.exports.create = (core) -> 
+
+    {util} = core
 
     core.assembler = (msg, next) -> 
 
@@ -36,21 +41,37 @@ module.exports.create = (core) ->
         # 
         #
 
+        console.log msg.context.title, UUID: msg.root.uuid
+
         if msg.context.title == 'boundry::edge:create'
 
-            srcPhrase     = msg.vertices[0]
-            srcControl    = msg.control
-            srcRoot       = msg.root
-            newPhraseDefn = msg.vertices[1].phrase
-            newPhraseOpts = msg.vertices[1].opts
+            srcPhrase        = msg.vertices[0]
+            srcControl       = msg.control
+            srcRoot          = msg.root
+            newPhraseTitle   = msg.vertices[1].phrase.title
+            newPhraseControl = msg.vertices[1].phrase.control
+            newPhraseUUID    = msg.vertices[1].phrase.control.uuid || util.uuid()
+            newPhraseFn      = msg.vertices[1].phrase
+            assemblyOpts     = msg.vertices[1].opts
 
-            console.log
+            #
+            # * Create and configure new root to house the refered PhraseTree
+            #
 
-                srcPhrase:     srcPhrase
-                srcControl:    srcControl
-                srcRoot:       srcRoot
-                newPhraseDefn: newPhraseDefn
-                newPhraseOpts: newPhraseOpts
+            newRoot = core.root newPhraseUUID
+
+            newRoot.context = 
+
+                PhraseTree: PhraseTree.createClass root
+                PhraseNode: PhraseNode.createClass root
+
+            # console.log
+
+            #     srcPhrase:     srcPhrase
+            #     srcControl:    srcControl
+            #     srcRoot:       srcRoot
+            #     newPhraseDefn: newPhraseDefn
+            #     newPhraseOpts: newPhraseOpts
 
 
 

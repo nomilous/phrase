@@ -39,12 +39,14 @@ describe 'Graph', ->
                                 title: msg.opts.filename.replace /\//g, '.'
                                 control: uuid:  i++
                                 fn: (nested) -> 
-                                    nested 'phrase', (end) -> end()
+                                    nested 'phrase title', (deeper) -> 
+                                        deeper 'phrase title', (end) -> 
+                                            end()
                         
                         next()
             
             phrase1 'test', (nest) -> 
                 nest 'boundry phrase', (edge) ->
-                    
+
                     edge.link directory: './examples'
             
