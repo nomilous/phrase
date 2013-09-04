@@ -5,8 +5,10 @@
 # * Stores the collection of boundry phrase edge references.
 #
 
+Notice      = require 'notice'
 PhraseNode  = require '../phrase/node'
 PhraseTree  = require '../phrase/tree'
+TreeWalker  = require '../recursor/tree_walker'
 
 module.exports.create = (core) -> 
 
@@ -41,7 +43,9 @@ module.exports.create = (core) ->
         # 
         #
 
-        console.log msg.context.title, UUID: msg.root.uuid
+        try console.log msg.context.title, UUID: msg.root.uuid
+        catch error
+            console.log msg.context.title
 
         if msg.context.title == 'boundry::edge:create'
 
@@ -55,15 +59,42 @@ module.exports.create = (core) ->
             assemblyOpts     = msg.vertices[1].opts
 
             #
-            # * Create and configure new root to house the refered PhraseTree
-            #
+            # * Create and configure new root to house the referred PhraseTree
+            #   #DUPLICATE2
+            # 
 
             newRoot = core.root newPhraseUUID
+            newRoot.context = {}
 
-            newRoot.context = 
+            #
+            # * Has isolated message bus 
+            # 
+            # TODO: this bus needs be externally accessed somewhere
+            #
 
-                PhraseTree: PhraseTree.createClass root
-                PhraseNode: PhraseNode.createClass root
+            newRoot.context.notice     = Notice.create newPhraseUUID
+            newRoot.context.PhraseTree = PhraseTree.createClass newRoot
+            newRoot.context.PhraseNode = PhraseNode.createClass newRoot
+
+
+            #
+            # TODO: assemblyOpts can specify 'do first walk' into the
+            #       referred PhraseTree
+            #
+
+            #
+            # * inherit phrase control (opts) from the link origin but
+            #   override where local phrase specifies
+            #
+
+            opts =
+
+                leaf:    newPhraseControl.leaf    || srcControl.leaf
+                boundry: newPhraseControl.boundry || srcControl.boundry
+                timeout: newPhraseControl.timeout || srcControl.timeout
+
+            console.log OPTS: opts
+
 
             # console.log
 
