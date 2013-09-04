@@ -55,7 +55,7 @@ module.exports.create = (core) ->
             newPhraseTitle   = msg.vertices[1].phrase.title
             newPhraseControl = msg.vertices[1].phrase.control
             newPhraseUUID    = msg.vertices[1].phrase.control.uuid || util.uuid()
-            newPhraseFn      = msg.vertices[1].phrase
+            newPhraseFn      = msg.vertices[1].phrase.fn
             assemblyOpts     = msg.vertices[1].opts
 
             #
@@ -76,12 +76,6 @@ module.exports.create = (core) ->
             newRoot.context.PhraseTree = PhraseTree.createClass newRoot
             newRoot.context.PhraseNode = PhraseNode.createClass newRoot
 
-
-            #
-            # TODO: assemblyOpts can specify 'do first walk' into the
-            #       referred PhraseTree
-            #
-
             #
             # * inherit phrase control (opts) from the link origin but
             #   override where local phrase specifies
@@ -93,8 +87,31 @@ module.exports.create = (core) ->
                 boundry: newPhraseControl.boundry || srcControl.boundry
                 timeout: newPhraseControl.timeout || srcControl.timeout
 
-            console.log OPTS: opts
 
+            newRoot.context.notice.use (msg, next) -> 
+
+                if msg.context.title == 'phrase::recurse:end'
+
+                    console.log TOKENS:  msg.tokens
+                    console.log CONTEXT: newRoot.context
+
+                next()
+
+
+            #
+            # TODO: assemblyOpts can specify 'do first walk' (or not) into the
+            #       referred PhraseTree
+            #
+
+            TreeWalker.walk( newRoot, opts, newPhraseTitle, newPhraseFn ).then(
+
+                (resolve) -> 
+
+
+                (reject)  -> console.log REJECT:  reject 
+                (notify)  -> console.log NOTIFY:  notify
+
+            )
 
             # console.log
 
