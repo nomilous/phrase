@@ -30,20 +30,15 @@ beforeHooks = each: [], all: []
 afterHooks  = each: [], all: []
 
 exports.bind = (root) -> 
-
-    #
-    # global appears to allow property redefines, huh?
-    #
     
-    Object.defineProperty global, 'before',
+    try Object.defineProperty global, 'before',
         enumerable: false
         get: -> (opts = {}) -> 
 
             beforeHooks.each.push new PhraseHook root, 'beforeEach', opts if typeof opts.each == 'function'
             beforeHooks.all.push  new PhraseHook root, 'beforeAll', opts  if typeof opts.all  == 'function'
 
-
-    Object.defineProperty global, 'after',
+    try Object.defineProperty global, 'after',
         enumerable: false
         get: -> (opts = {}) -> 
 

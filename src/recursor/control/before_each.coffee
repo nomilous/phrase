@@ -122,7 +122,7 @@ exports.create = (root, parentControl) ->
 
             stack.push phrase = new PhraseNode 
 
-                title:     phraseTitle
+                title:    phraseTitle
                 token:    phraseToken
 
                 #
@@ -323,7 +323,7 @@ exports.create = (root, parentControl) ->
 
                                         ({phrase}) -> 
 
-                                            console.log phrase
+                                            console.log LOCAL_PHRASE: phrase
 
                                     ]
 
@@ -351,7 +351,9 @@ exports.create = (root, parentControl) ->
 
                         ]).then(
 
-                            -> done()
+                            ->  
+                                console.log DONE: 'boundry'
+                                done()
                             (reject) -> done( reject )
 
 

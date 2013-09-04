@@ -47,80 +47,78 @@ module.exports.create = (core) ->
         catch error
             console.log msg.context.title
 
-        if msg.context.title == 'boundry::edge:create'
+        return next() unless msg.context.title == 'boundry::edge:create'
 
-            srcPhrase        = msg.vertices[0]
-            srcControl       = msg.control
-            srcRoot          = msg.root
-            newPhraseTitle   = msg.vertices[1].phrase.title
-            newPhraseControl = msg.vertices[1].phrase.control
-            newPhraseUUID    = msg.vertices[1].phrase.control.uuid || util.uuid()
-            newPhraseFn      = msg.vertices[1].phrase.fn
-            assemblyOpts     = msg.vertices[1].opts
+        srcPhrase        = msg.vertices[0]
+        srcControl       = msg.control
+        srcRoot          = msg.root
+        newPhraseTitle   = msg.vertices[1].phrase.title
+        newPhraseControl = msg.vertices[1].phrase.control
+        newPhraseUUID    = msg.vertices[1].phrase.control.uuid || util.uuid()
+        newPhraseFn      = msg.vertices[1].phrase.fn
+        assemblyOpts     = msg.vertices[1].opts
 
-            #
-            # * Create and configure new root to house the referred PhraseTree
-            #   #DUPLICATE2
-            # 
+        #
+        # * Create and configure new root to house the referred PhraseTree
+        #   #DUPLICATE2
+        # 
 
-            newRoot = core.root newPhraseUUID
-            newRoot.context = {}
+        newRoot = core.root newPhraseUUID
+        newRoot.context = {}
 
-            #
-            # * Has isolated message bus 
-            # 
-            # TODO: this bus needs be externally accessed somewhere
-            #
+        #
+        # * Has isolated message bus 
+        # 
+        # TODO: this bus needs be externally accessed somewhere
+        #
 
-            newRoot.context.notice     = Notice.create newPhraseUUID
-            newRoot.context.PhraseTree = PhraseTree.createClass newRoot
-            newRoot.context.PhraseNode = PhraseNode.createClass newRoot
+        newRoot.context.notice     = Notice.create newPhraseUUID
+        newRoot.context.PhraseTree = PhraseTree.createClass newRoot
+        newRoot.context.PhraseNode = PhraseNode.createClass newRoot
 
-            #
-            # * inherit phrase control (opts) from the link origin but
-            #   override where local phrase specifies
-            #
+        #
+        # * inherit phrase control (opts) from the link origin but
+        #   override where local phrase specifies
+        #
 
-            opts =
-
-                leaf:    newPhraseControl.leaf    || srcControl.leaf
-                boundry: newPhraseControl.boundry || srcControl.boundry
-                timeout: newPhraseControl.timeout || srcControl.timeout
-
-
-            newRoot.context.notice.use (msg, next) -> 
-
-                if msg.context.title == 'phrase::recurse:end'
-
-                    console.log TOKENS:  msg.tokens
-                    console.log CONTEXT: newRoot.context
-
-                next()
+        opts =
+            title:   srcControl.phraseToken.signature
+            uuid:    newPhraseUUID
+            leaf:    newPhraseControl.leaf    || srcControl.leaf
+            boundry: newPhraseControl.boundry || srcControl.boundry
+            timeout: newPhraseControl.timeout || srcControl.timeout
 
 
-            #
-            # TODO: assemblyOpts can specify 'do first walk' (or not) into the
-            #       referred PhraseTree
-            #
+        newRoot.context.notice.use (msg, next) -> 
 
-            TreeWalker.walk( newRoot, opts, newPhraseTitle, newPhraseFn ).then(
+            if msg.context.title == 'phrase::recurse:end'
 
-                (resolve) -> 
+                console.log '\nREFERRED_TITLE:',newPhraseTitle
+                console.log path for path of msg.tokens
 
+            next()
 
-                (reject)  -> console.log REJECT:  reject 
-                (notify)  -> console.log NOTIFY:  notify
+        #
+        # TODO: assemblyOpts can specify 'do first walk' (or not) into the
+        #       referred PhraseTree
+        #
 
-            )
+        TreeWalker.walk( newRoot, opts, newPhraseTitle, newPhraseFn ).then(
 
-            # console.log
+            (resolve) -> next()
+            (reject)  -> console.log REJECT:  reject; next()
+            
 
-            #     srcPhrase:     srcPhrase
-            #     srcControl:    srcControl
-            #     srcRoot:       srcRoot
-            #     newPhraseDefn: newPhraseDefn
-            #     newPhraseOpts: newPhraseOpts
+        )
+
+        # console.log
+
+        #     srcPhrase:     srcPhrase
+        #     srcControl:    srcControl
+        #     srcRoot:       srcRoot
+        #     newPhraseDefn: newPhraseDefn
+        #     newPhraseOpts: newPhraseOpts
 
 
 
-        next()
+    
