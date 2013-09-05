@@ -141,8 +141,6 @@ exports.createClass = (root) ->
 
         createIndexes: (msg, next) -> 
 
-            return next() unless @leaves.length > 0
-
             msg.tokens = {}
 
             recurse = (vertex, stack = []) => 
@@ -251,7 +249,6 @@ exports.createClass = (root) ->
             @children[ vertex1.uuid ].push vertex2.uuid
             @parent[   vertex2.uuid ]    = vertex1.uuid
             @leaves.push vertex2.uuid  if vertex2.token? and vertex2.token.type == 'leaf'
-
 
             next()
 

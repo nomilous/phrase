@@ -50,7 +50,7 @@ describe 'RecursorBeforeEach', ->
         BoundryHandler.link = @boundryLink
         BoundryHandler.recurse = @boundryRecurse
 
-    xcontext 'recursion control -', ->
+    context 'recursion control -', ->
 
 
         it 'extracts the injection deferral', (done) -> 
@@ -165,7 +165,7 @@ describe 'RecursorBeforeEach', ->
 
 
 
-    xcontext 'phrase type control -', ->
+    context 'phrase type control -', ->
 
 
         it 'gets the phrase type', (done) -> 
@@ -258,7 +258,7 @@ describe 'RecursorBeforeEach', ->
             ), injectionControl
 
 
-    xcontext 'stack and tree assembly -', ->
+    context 'stack and tree assembly -', ->
 
 
         it 'pushes the new phrase into the stack and resolves the injection deferral if leaf', (done) -> 
@@ -368,7 +368,7 @@ describe 'RecursorBeforeEach', ->
         #     hook (->), injectionControl
 
 
-        xit 'noops the injected recursion phraseFn', (done) ->
+        it 'noops the injected recursion phraseFn', (done) ->
 
             #
             # so that the injection recursion can proceed unhindered
@@ -390,7 +390,7 @@ describe 'RecursorBeforeEach', ->
             ), injectionControl
 
 
-        xit 'resolves the injection deferral if no call to link', (done) -> 
+        it 'resolves the injection deferral if no call to link', (done) -> 
 
             parent.phraseType = (fn) -> 'boundry'
             injectionControl.args  = [ 'edge phrase', (edge) ->
@@ -436,7 +436,7 @@ describe 'RecursorBeforeEach', ->
             hook injectionResolver, injectionControl 
 
 
-        xit 'proxies errors into the injections hook resolver', (done) -> 
+        it 'proxies errors into the injections hook resolver', (done) -> 
 
             injectionResolver = (result) -> 
 
@@ -471,12 +471,12 @@ describe 'RecursorBeforeEach', ->
                     title:   'Boundry Test (refer)'
                     uuid:    '0000000001'
 
-                    (accessToken, messageBus) -> 
+                    (accessToken, messageBus, root) -> 
 
                         messageBus.use (msg, next) -> 
 
-                            console.log '\n', msg.context.title
-                            console.log JSON.stringify msg, null, 2
+                            # console.log '\n', msg.context.title
+                            # console.log JSON.stringify msg, null, 2
 
                             if msg.context.title == 'phrase::boundry:assemble'
 
@@ -506,9 +506,26 @@ describe 'RecursorBeforeEach', ->
 
                         accessToken.on 'ready', ({tokens}) -> 
 
-                            console.log tokens
+                            #
+                            # local reference token
+                            #
 
-                            should.exist tokens["/Boundry Test (refer)/Exploration/space/probes/edge/list/probe/2011 -  USA - Jupiter - Juno - launched and en route"]
+                            tokens['/Boundry Test (refer)/Exploration/space/probes/edge/list2'].should.eql
+
+                                signature: 'edge'
+                                uuid: 'list2'
+                                type: 'tree'
+                                source: 
+                                    type: 'file'
+                                    filename: 'list2'
+
+                            #
+                            # refers to another PhraseTree
+                            #
+
+                            should.exist root.roots('list2').context.tree.path2uuid['/edge/list2']
+                            should.exist root.roots('list2').context.tree.path2uuid['/edge/list2/probe/2011 -  USA - Jupiter - Juno - launched and en route']
+
                             done()
 
                            
@@ -523,7 +540,7 @@ describe 'RecursorBeforeEach', ->
             it 'the reference phrase contains uuid of new tree rooted on the local core'
 
 
-        xcontext 'integration (nested boundry)', -> 
+        context 'integration (nested boundry)', -> 
 
             it "boundry handler errors into the accessToken's error event listeners"
 
@@ -543,7 +560,7 @@ describe 'RecursorBeforeEach', ->
 
                         accessToken.on 'ready', ({tokens}) -> 
 
-                            #console.log JSON.stringify tokens, null, 2
+                            # console.log JSON.stringify tokens, null, 2
 
                             tokens[ '/Boundry Test (nest)/tree1/nest/boundry leaf' ].should.eql 
 
@@ -565,7 +582,6 @@ describe 'RecursorBeforeEach', ->
                                 #     when 1 then msg.opts.mode = 'refer'
 
                                 msg.opts.mode = 'nest'
-
                                 msg.phrase = 
 
                                     title: "NESTED #{count++}"

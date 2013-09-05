@@ -64,7 +64,7 @@ It calls the linkFunction with the PhraseTree root token
 
                 @token.on 'ready', ({tokens}) => 
 
-                    console.log JSON.stringify tokens, null, 2
+                    # console.log JSON.stringify tokens, null, 2
 
                     for path of tokens
 

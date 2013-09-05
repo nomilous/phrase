@@ -87,10 +87,10 @@ module.exports.create = (core) ->
 
         newRoot.context.notice.use (msg, next) -> 
 
-            if msg.context.title == 'phrase::recurse:end'
+            # if msg.context.title == 'phrase::recurse:end'
 
-                console.log '\nREFERRED TREE:',newPhraseTitle
-                console.log path for path of msg.tokens
+            #     console.log '\nREFERRED TREE:',newPhraseTitle
+            #     console.log path for path of msg.tokens
 
             next()
 
@@ -110,13 +110,14 @@ module.exports.create = (core) ->
 
                 msg.phrase = 
                     title: newPhraseTitle
+                    uuid: newPhraseUUID
                     token: 
                         signature: srcControl.phraseToken.signature
                         uuid: newPhraseUUID
                         type: 'tree'
                         source:
                             type: 'file'
-                            filename: assemblyOpts.filename          
+                            filename: assemblyOpts.filename      
 
                 next()
 
@@ -124,15 +125,3 @@ module.exports.create = (core) ->
             
 
         )
-
-        # console.log
-
-        #     srcPhrase:     srcPhrase
-        #     srcControl:    srcControl
-        #     srcRoot:       srcRoot
-        #     newPhraseDefn: newPhraseDefn
-        #     newPhraseOpts: newPhraseOpts
-
-
-
-    

@@ -53,7 +53,7 @@ describe 'ProcessToken', ->
 
                 A = @process.root 'A'
                 B = @process.root 'B'
-                A.root('B').one  = 1
+                A.roots('B').one  = 1
 
                 B.one.should.equal 1
                 done()

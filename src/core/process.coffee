@@ -48,7 +48,7 @@ class Process
                         # * each root has access to peer roots
                         #
 
-                        root:     @root
+                        roots:     @root
 
                         #
                         # * each root is assigned reference to graph assembler

@@ -217,16 +217,22 @@ exports.create = (root, parentControl) ->
                 linkQueue = []
                 phrase.fn link: (opts) -> linkQueue.push opts
 
+                injectionControl.args[2] = -> 
+
                 if linkQueue.length == 0 then return process.nextTick ->
 
                     #
                     # * empty boundry phrase, same as leaf. 
                     #
 
-                    injectionControl.args[2] = -> 
                     done()
                     deferral.resolve()
 
+
+
+                #
+                # THIS NEEDS SOME REFACTORING/COHERENCY...
+                #
                 
                 sequence( for opts in linkQueue
 
@@ -294,43 +300,54 @@ exports.create = (root, parentControl) ->
 
                             -> sequence( for referPhrase in phrases.refer
 
-                                    do (referPhrase) -> pipeline [
+                                    do (referPhrase) -> 
 
-                            # 
-                            # * RootGraph.assembler() assembles a new tree with this
-                            #   boundry::edge:create payload and appends a reference
-                            #   phrase onto the event message.
-                            # 
+                                        -> pipeline [
 
-                                        (        ) -> notice.event 'boundry::edge:create',
+                                # 
+                                # * RootGraph.assembler() assembles a new tree with this
+                                #   boundry::edge:create payload and appends a reference
+                                #   phrase onto the event message.
+                                # 
 
-                                            vertices: [phrase, referPhrase]
-                                            control: phraseControl
-                                            root: uuid: root.uuid
+                                            (        ) -> 
 
-                            #
-                            # * push a phrase containing reference to the new tree's root
-                            #   into the local stack 
-                            #  
-                            # * send phrase::edge:create onto the bus so that the local tree
-                            #   stores the reference the another tree as a local leaf
-                            # 
-                            # * pop the stack (this sequence repeats for each boundry phrase)
-                            # 
+                                                notice.event 'boundry::edge:create',
 
-                                        ({phrase}) -> stack.push phrase
+                                                    vertices: [phrase, referPhrase]
+                                                    control: phraseControl
+                                                    root: uuid: root.uuid
 
-                                        (        ) -> notice.event 'phrase::edge:create',
-                                                        #DUPLICATE3  
-   
-                                            vertices: stack[ -2.. ]
-                                            root: uuid: root.uuid
+                                #
+                                # * push a phrase containing reference to the new tree's root
+                                #   into the local stack 
+                                #  
+                                # * send phrase::edge:create onto the bus so that the local tree
+                                #   stores the reference the another tree as a local leaf
+                                # 
+                                # * pop the stack (this sequence repeats for each boundry phrase)
+                                # 
 
-                                        (        ) -> stack.pop()
+                                            ({phrase}) -> 
+                                                
+                                                stack.push phrase
 
-                                    ]
 
-                                )
+                                            (        ) -> 
+
+                                                notice.event 'phrase::edge:create',
+                                                    #DUPLICATE3  
+
+                                                    vertices: stack[ -2.. ]
+                                                    root: uuid: root.uuid
+
+                                            (        ) -> 
+                                                
+                                                stack.pop()
+
+                                        ]
+
+                                    )
 
                             #
                             # handle 'nest' boundry mode
@@ -350,12 +367,11 @@ exports.create = (root, parentControl) ->
 
                                             recursor phrase.title, phrase.control, phrase.fn
 
-                                else injectionControl.args[2] = -> 
-
                         ]).then(
 
                             ->  
-                                console.log DONE: 'boundry'
+                                
+                                deferral.resolve() unless phrases.nest.length > 0
                                 done()
 
                             (reject) -> done( reject )

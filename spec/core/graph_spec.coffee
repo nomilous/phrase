@@ -37,13 +37,27 @@ describe 'Graph', ->
 
                             msg.phrase = 
                                 title: msg.opts.filename.replace /\//g, '.'
-                                control: uuid:  i++
+                                control: uuid:  "0000000#{i++}"
                                 fn: (nested) -> 
                                     nested 'phrase title', (deeper) -> 
                                         deeper 'phrase title', (end) -> 
                                             end()
                         
                         next()
+
+                    token.on 'ready', ({tokens}) -> 
+
+                        tokens['/Phrase1/test/nest/boundry phrase/edge/examples.neuron.coffee'].should.eql
+
+                            signature: 'edge'
+                            uuid: '00000001'
+                            type: 'tree'
+                            source: 
+                                type: 'file'
+                                filename: 'examples/neuron.coffee'
+
+                        done()
+                        
             
             phrase1 'test', (nest) -> 
                 nest 'boundry phrase', (edge) ->
