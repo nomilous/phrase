@@ -18,6 +18,12 @@ module.exports = boundryHandler =
 
         {notice} = root.context
 
+        notice.event 'phrase::link:directory',
+
+            directory: opts.directory
+            match: regex
+
+
         sequence( for filename in boundryHandler.recurse opts.directory, regex
 
             #
