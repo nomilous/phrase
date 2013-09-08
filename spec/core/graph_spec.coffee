@@ -1,10 +1,17 @@
-should   = require 'should'
-Graph    = require '../../lib/core/graph'
-phrase   = require '../../lib/phrase'
+should     = require 'should'
+Graph      = require '../../lib/core/graph'
+phrase     = require '../../lib/phrase'
+TreeWalker = require '../../lib/recursor/tree_walker' 
 
 
 
 describe 'Graph', -> 
+
+    beforeEach -> 
+        @walk = TreeWalker.walk
+
+    afterEach -> 
+        TreeWalker.walk = @walk
 
     it 'dangles a middleware onto the core', (done) -> 
 
@@ -24,7 +31,7 @@ describe 'Graph', ->
                 title: 'Phrase1'
                 uuid:  'phrase1'
 
-                (token, notice) -> 
+                (token, notice, root) -> 
 
                     i = 0
                     notice.use (msg, next) -> 
@@ -47,7 +54,9 @@ describe 'Graph', ->
 
                     token.on 'ready', ({tokens}) -> 
 
-                        tokens['/Phrase1/test/nest/boundry phrase/edge/examples.neuron.coffee'].should.eql
+                        neuron = tokens['/Phrase1/test/nest/boundry phrase/edge/examples.neuron.coffee']
+
+                        neuron.should.eql
 
                             signature: 'edge'
                             uuid: '00000001'
@@ -56,6 +65,24 @@ describe 'Graph', ->
                                 type: 'file'
                                 filename: 'examples/neuron.coffee'
 
+                        #
+                        # the generated boundry reference phrase should be an insstance of 
+                        # the PhraseNode definition from the boundry origin tree 
+                        #
+
+                        vertex = root.context.tree.vertices[neuron.uuid]
+                        vertex.should.be.an.instanceof root.context.PhraseNode
+
+                        #
+                        # the generated token in the boundry phrase should be an instance 
+                        # of the PhraseToken definition from the boundry origin tree 
+                        #
+
+                        neuron.should.be.an.instanceof root.context.PhraseToken
+
+
+
+
                         done()
                         
             
@@ -63,4 +90,4 @@ describe 'Graph', ->
                 nest 'boundry phrase', (edge) ->
 
                     edge.link directory: './examples'
-            
+        

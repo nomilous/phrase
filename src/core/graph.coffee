@@ -108,16 +108,20 @@ module.exports.create = (core) ->
                 #   leaf at the link origin
                 #
 
-                msg.phrase = 
+                OriginPhraseToken = core.root( msg.root.uuid ).context.PhraseToken
+                OriginPhraseNode = core.root( msg.root.uuid ).context.PhraseNode
+
+                msg.phrase = new OriginPhraseNode
                     title: newPhraseTitle
                     uuid: newPhraseUUID
-                    token: 
+                    token: new OriginPhraseToken
                         signature: srcControl.phraseToken.signature
                         uuid: newPhraseUUID
                         type: 'tree'
                         source:
                             type: 'file'
-                            filename: assemblyOpts.filename      
+                            filename: assemblyOpts.filename
+                    fn: (end) -> end()    
 
                 next()
 

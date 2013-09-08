@@ -8,6 +8,10 @@ exports.createClass = (root) ->
             @uuid      = params.uuid
             @signature = params.signature
 
+            if @type == 'tree'
+
+                @source = params.source
+
 
             #
             # immutables 

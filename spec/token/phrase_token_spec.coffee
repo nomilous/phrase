@@ -20,6 +20,12 @@ describe 'PhraseToken', ->
         token.should.eql type: 'leaf', uuid: 'UUID', signature: 'signature'
         done()
 
+    it 'has source property if type is tree', (done) -> 
+
+        token = new PhraseToken type: 'tree', uuid: 'UUID', signature: 'signature', source: 'SOURCE'
+        token.source.should.equal 'SOURCE'
+        done()
+
 
     xit 'can serialize its branch', (done) -> 
 
