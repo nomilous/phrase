@@ -1,17 +1,8 @@
 should     = require 'should'
 Graph      = require '../../lib/core/graph'
 phrase     = require '../../lib/phrase'
-TreeWalker = require '../../lib/recursor/tree_walker' 
-
-
 
 describe 'Graph', -> 
-
-    beforeEach -> 
-        @walk = TreeWalker.walk
-
-    afterEach -> 
-        TreeWalker.walk = @walk
 
     it 'dangles a middleware onto the core', (done) -> 
 
