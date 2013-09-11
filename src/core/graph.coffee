@@ -16,6 +16,7 @@ module.exports.create = (core) ->
 
     core.assembler = (msg, next) -> 
 
+
         #
         # The 'first walk' has encoundered a boundry phrase
         # -------------------------------------------------
@@ -72,6 +73,50 @@ module.exports.create = (core) ->
         newRoot.context.PhraseTree = PhraseTree.createClass newRoot
         newRoot.context.PhraseNode = PhraseNode.createClass newRoot
 
+
+        #
+        # Loading the 'remote' tree is optional
+        # -------------------------------------
+        # 
+        # * The assembly pipeline middlewares (phrase::boundry:assemble) can 
+        #   configure msg.loadTree = false to prevent the loading of the 
+        #   boundry tree.
+        # 
+        # * The reference token nested at link origin in the primary tree will 
+        #   still refer to the newRoot, but the phraseFn defining the new 
+        #   tree will not be walked, leaving the newRoot unpopulated.
+        #
+        # * The default is to load the tree
+        # 
+
+        if assemblyOpts.loadTree is false
+
+            OriginPhraseToken = core.root( msg.root.uuid ).context.PhraseToken
+            OriginPhraseNode = core.root( msg.root.uuid ).context.PhraseNode
+
+            #
+            # * create reference phrase to nest into the boundry
+            #   leaf at the link origin
+            #
+
+            msg.phrase = new OriginPhraseNode
+                title: newPhraseTitle
+                uuid: newPhraseUUID
+                token: new OriginPhraseToken
+                    signature: srcControl.phraseToken.signature
+                    uuid: newPhraseUUID
+                    type: 'tree'
+                    loaded: false
+                    source:
+                        type: 'file'
+                        filename: assemblyOpts.filename
+                fn: (end) -> end()    
+
+            return next()
+
+        #
+        # Walk the boundry phrase to assemble the referred PhraseTree
+        # -----------------------------------------------------------
         #
         # * inherit phrase control (opts) from the link origin but
         #   override where local phrase specifies
@@ -118,6 +163,7 @@ module.exports.create = (core) ->
                         signature: srcControl.phraseToken.signature
                         uuid: newPhraseUUID
                         type: 'tree'
+                        loaded: true
                         source:
                             type: 'file'
                             filename: assemblyOpts.filename

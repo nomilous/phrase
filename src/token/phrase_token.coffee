@@ -11,6 +11,7 @@ exports.createClass = (root) ->
             if @type == 'tree'
 
                 @source = params.source
+                @loaded = params.loaded
 
 
             #
