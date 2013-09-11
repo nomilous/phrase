@@ -79,7 +79,7 @@ module.exports.create = (core) ->
         # -------------------------------------
         # 
         # * The assembly pipeline middlewares (phrase::boundry:assemble) can 
-        #   configure msg.loadTree = false to prevent the loading of the 
+        #   configure msg.opts.loadTree = false to prevent the loading of the 
         #   boundry tree.
         # 
         # * The reference token nested at link origin in the primary tree will 
