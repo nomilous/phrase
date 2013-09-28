@@ -124,7 +124,7 @@ neuron 'soma', (dendrite) ->
                         #
 
                         Wanted:   'axon synapse for coupling'
-                        Likes:    'long walks on the beach'
+                        Likes:    'long stalks on the peach'
                         Dislikes: 'electro-shock therapy'
 
 
