@@ -1,7 +1,7 @@
 Notice      = require 'notice'
 PhraseNode  = require './node'
-PhraseGraph = require './graph'
-RootToken   = require '../token/root_token'
+PhraseTree  = require './tree'
+AccessToken = require '../token/access_token'
 TreeWalker  = require '../recursor/tree_walker'
 Job         = require '../runner/job'
 
@@ -42,13 +42,32 @@ exports.createClass = (root) ->
 
                         eg. 
 
-                        phraseRegistrar 'phrase text', (end) -> 
+                        phraseRegistrar 'phrase title', (end) -> 
 
                             # 
                             # this is a leaf function
                             # 
 
                 """
+
+            boundry:
+                $default: ['edge']
+                $description: """
+
+                    This specifies an array of possible phraseFn arg1 signature names 
+                    that are used to determine if the phrase function is a boundry
+                    link to another phrase tree.
+
+                        eg. 
+
+                        phraseRegistrar 'phrase title', (edge) -> 
+
+                            # 
+                            # TODO...
+                            # 
+
+                """
+
             timeout: 
                 $default: 2000
                 $description: """
@@ -86,7 +105,9 @@ exports.createClass = (root) ->
             # * create the message bus
             # 
 
-            context.notice = Notice.create opts.uuid
+            context.notice = opts.notice || Notice.create opts.uuid
+
+            context.notice.use root.assembler
 
 
             #
@@ -112,20 +133,23 @@ exports.createClass = (root) ->
 
                     #
                     # this is the first walk
+                    # ======================
+                    # 
+                    # #DUPLICATE2
                     # 
 
                     # 
                     #
-                    # create PhraseGraph (class definition)
+                    # create PhraseTree  (class definition)
                     # -------------------------------------
                     # 
                     # * Houses the set of vertexes and edges that define the phrase tree
                     # * Assembled (via message bus) by the 'first walk' of the phrase recursor
-                    # * This is the PhraseGraph definition (class)
+                    # * This is the PhraseTree definition (class)
                     # * Instance is managed in TreeWalker
                     # 
 
-                    context.PhraseGraph = PhraseGraph.createClass root
+                    context.PhraseTree = PhraseTree.createClass root
 
 
                     #
@@ -134,7 +158,7 @@ exports.createClass = (root) ->
                     # 
                     # * A PhraseNode instance is created for each vertex (Node) 
                     #   in the phrase tree. 
-                    # * They are stored in a collection in the PhraseGraph  
+                    # * They are stored in a collection in the PhraseTree  
                     #
 
                     context.PhraseNode = PhraseNode.createClass root
@@ -153,20 +177,20 @@ exports.createClass = (root) ->
 
 
                     #
-                    # create RootToken (root instance)
+                    # create AccessToken (instance)
                     # ----------------------------------
                     # 
                     # * This token is the primary interface into the phrase tree
                     # 
 
-                    context.token = RootToken.create root
+                    context.token = AccessToken.create root
 
 
                     #
                     # * Start 'first walk' to load the phrase tree
                     #
 
-                    TreeWalker.walk root, opts, phraseRootString, phraseRootFn
+                    promise = TreeWalker.walk root, opts, phraseRootString, phraseRootFn
 
 
                     # 
@@ -174,7 +198,7 @@ exports.createClass = (root) ->
                     #   phrase tree (via the token) and the message bus
                     #   
 
-                    linkFn context.token, context.notice
+                    linkFn context.token, context.notice, root
 
 
                     #
@@ -188,7 +212,7 @@ exports.createClass = (root) ->
                     # * activate 'causality phase array'
                     #
 
-                    return
+                    return promise
 
                     #
                     # the quantum flux has stabalized
@@ -202,6 +226,7 @@ exports.createClass = (root) ->
 
                 #
                 # not the first walk
+                # ==================
                 # 
 
                 TreeWalker.walk root, opts, phraseRootString, phraseRootFn

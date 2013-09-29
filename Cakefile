@@ -21,8 +21,8 @@ runSpec = (fileOrFolder, after) ->
     console.log 'run test...'
     test_runner = child_process.spawn './node_modules/.bin/mocha', [
         '--colors',
-        '--compilers', 
-        'coffee:coffee-script', 
+        '--compilers', 'coffee:coffee-script', 
+        '--reporter', 'dot',
         fileOrFolder
     ]
     test_runner.stdout.pipe process.stdout

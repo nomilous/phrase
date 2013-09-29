@@ -1,4 +1,7 @@
-sequence   = require 'when/sequence'
+sequence            = require 'when/sequence'
+pipeline            = require 'when/pipeline'
+PhraseTokenFactory  = require '../../token/phrase_token'
+BoundryHandler      = require '../boundry_handler'
 
 #
 # Before Each (recursion hook)
@@ -7,9 +10,7 @@ sequence   = require 'when/sequence'
 exports.create = (root, parentControl) -> 
 
     {context, util}  = root
-    {stack, notice, PhraseNode} = context
-
-    #phraseLeaf = PhraseLeaf.create root, parentControl
+    {stack, notice, PhraseNode, PhraseToken} = context
 
     (done, injectionControl) -> 
 
@@ -17,12 +18,10 @@ exports.create = (root, parentControl) ->
         # injectionControl
         # ----------------
         # 
-        # This object controls the behaviour of the async injection into 
-        # the target function for the recursor's 'first walk'
-        # 
         # * injectionControl.defer is a deferral held by the async controller
         #   that wraps the call to the injection target. Ordinarilly it would
-        #   be passed into the injection target function as arg1 (done)
+        #   be passed into the injection target function (ThePhraseRecursor) 
+        #   as arg1 `(done) ->`
         #   
         #   But, instead, calling it out here...
         # 
@@ -42,87 +41,100 @@ exports.create = (root, parentControl) ->
         #
         # 
 
-
+        #
+        # injectionControl.args
+        # ---------------------
         #
         # * injectionControl.args are the inbound args that were called into the 
         #   decorated function that was returned by inject.async.
         # 
         # * These args are used to assemble a Phrase to be pushed into the stack
-        # 
-        # * These args are then passed oneward to the injection target for recrsion.
-        # 
+        #   for PhraseTree assembly.
+        #
 
-        phraseText    = if typeof injectionControl.args[0] == 'function' then '' else injectionControl.args[0]
+        phraseTitle   = if typeof injectionControl.args[0] == 'function' then '' else injectionControl.args[0]
         phraseControl = if typeof injectionControl.args[1] == 'function' then {} else injectionControl.args[1]
         phraseFn      = injectionControl.args[2] || injectionControl.args[1] || injectionControl.args[0] || -> console.log 'NO ARGS'
 
-
-        #
-        # inherit parent control unless re-defined and assign injection args
-        #
-
         phraseControl          ||= {}
-        phraseControl.leaf     ||= parentControl.leaf
-        phraseControl.timeout  ||= parentControl.timeout
-        injectionControl.args[0] = phraseText
-        injectionControl.args[1] = phraseControl
-        injectionControl.args[2] = phraseFn
+        phraseControl.leaf     ||= parentControl.leaf      # inherites
+        phraseControl.boundry  ||= parentControl.boundry   # unless 
+        phraseControl.timeout  ||= parentControl.timeout   # defined
 
-
-        #
-        # phraseToken 
-        # -----------
         # 
-        # * is the signature name of the nested phrase recursor
-        #  
-        #     ie.    
-        #           phrase 'text', (nest) -> 
-        #                   
-        #               #    
-        #               # `nest` is now the phraseToken name
-        #               # 
-        #              
-        # * is carried through the injection to become the phraseToken 
-        #   associated with each nested child phrase
-        #    
+        # * Assign final args to be injected into ThePhraseRecursor.
+        # 
 
-        if phraseControl? 
-
-            phraseControl.phraseToken = name: util.argsOf( phraseFn )[0]
+        injectionControl.args[0] = phraseTitle
+        injectionControl.args[1] = phraseControl
+        injectionControl.args[2] = phraseFn  # becomes noop for leaf or boundry phrases
 
 
         #
-        # inject new phrase into stack
+        # Phrase and Token assembly
+        # -------------------------
+        # 
+        # * This pushes the stack from which 'phrase::edge:create' events are 
+        #   transmitted into the PhraseTree.assemble via the message bus.
+        # 
+        # * The stack is popped on the return walk (in recursor/control/after_each)
         #
 
-        if stack.length == 0 
+        try  
 
-            #
-            # root node is assigned uuid of the phrase tree
-            #
+            if phraseControl? 
 
-            uuid = parentControl.phraseToken.uuid 
+                phraseControl.phraseToken = signature: util.argsOf( phraseFn )[0]
 
-        else 
+            phraseType = actualPhraseType = parentControl.phraseType phraseFn
+                                #
+                                # needed if root is also a leaf or boundy
+                                #
 
-            #
-            # others can optionally be set on the phraseControl
-            # 
-            #    nested 'phrase text', uuid: '123', (end) -> 
-            #
+            if stack.length == 0
 
-            uuid = phraseControl.uuid
+                phraseType  = 'root'
+                uuid  = parentControl.phraseToken.uuid
 
+            else 
 
-        #console.log TODO: 'allow no / in phraseString'
+                uuid = phraseControl.uuid
 
-        try 
+            phraseToken = new PhraseToken
+
+                type: phraseType
+
+                uuid: uuid || util.uuid()
+
+                #
+                # * signature is the signature name of the recursor that 
+                #   created the phrase assiciated with the token. 
+                # 
+                #   ie. 
+                # 
+                #     recurse 'this phrase has token signature "recurse"', (nest) -> 
+                # 
+                #         nest 'this phrase has token signature "nest"', (end) -> 
+                #
+
+                signature: parentControl.phraseToken.signature
+
 
             stack.push phrase = new PhraseNode 
 
-                text:     phraseText
-                token:    parentControl.phraseToken
-                uuid:     uuid
+                title:    phraseTitle
+                token:    phraseToken
+
+                #
+                # TEMPORARY
+                #
+                uuid:     phraseToken.uuid
+
+                #
+                # TEMPORARY
+                #
+                # leaf:     phraseType == 'leaf'
+
                 timeout:  phraseControl.timeout
                 hooks: 
                                             #
@@ -130,7 +142,7 @@ exports.create = (root, parentControl) ->
                                             # into each nested phase has lead to some 
                                             # undesired complexity  #GREP3
                                             #
-                                            # correcting it will affect how the RootToken's 
+                                            # correcting it will affect how the AccessToken's 
                                             # call to run a phrase assembels the step sequence 
                                             # to pass to the Job, specifically the mechanisms 
                                             # for not repeating the 'All' hook steps
@@ -149,65 +161,244 @@ exports.create = (root, parentControl) ->
 
             #
             # could not create new phrase
+            # ---------------------------
+            # 
+            # * Errors are passed into the TreeWalkers error handler
+            # * It has capacity to terminate the recursion of the current phrase
+            # 
+            # #GREP4
             #
 
-            done error
-
-
-        #
-        # is this phrase a leaf
-        #
-
-        parentControl.detectLeaf phrase, (leaf) -> 
-
-            #
-            # when this phrase is a leaf
-            # --------------------------
+            #SUSPECT1 done error
             # 
-            # * inject noop as phraseFn into the recursor instead of 
-            #   the nestedPhraseFn that contains the recursive call
+            # - not clear on how this affects the recursion 
+            #  (or how it 'should' affect it)
             # 
-            # * emit 'phrase::edge:create' for the graph assembler
-            # 
-            # * resolve the phraseFn promise so that the recusrion 
-            #   control thinks it was run
-            # 
+            return done error
 
-            if leaf then injectionControl.args[2] = ->
 
-            run = sequence [
+        if phraseType == 'leaf' then injectionControl.args[2] = ->
 
-                ->  
+        run = sequence [
 
-                    notice.event 'phrase::edge:create',
+            ->  
+                notice.event 'phrase::edge:create',
+                    #DUPLICATE3
+
+                    #
+                    # top two phraseNodes in the stack are parent and this
+                    #
+
+                    vertices: stack[ -2.. ]
+                    root: uuid: root.uuid
+
+        ]
+
+        run.then -> 
+
+            if phraseType == 'leaf' then return process.nextTick -> 
+
+                #
+                # * inject noop into 'ThePhraseRecursor', (no children)
+                #   #GREP1
+                #
+
+                injectionControl.args[2] = ->
+                done()
+                deferral.resolve()
+
+
+            if actualPhraseType == 'boundry'
+
+                #
+                # * Call the phaseFn and accumulate the calls it makes to link
+                #
+
+                linkQueue = []
+                phrase.fn link: (opts) -> linkQueue.push opts
+
+                injectionControl.args[2] = -> 
+
+                if linkQueue.length == 0 then return process.nextTick ->
+
+                    #
+                    # * empty boundry phrase, same as leaf. 
+                    #
+
+                    done()
+                    deferral.resolve()
+
+
+
+                #
+                # THIS NEEDS SOME REFACTORING/COHERENCY...
+                #
+                
+                sequence( for opts in linkQueue
+
+                    #
+                    # * Each call to BoundryHandler returns the promise necessary 
+                    #   for the sequence's flow control.
+                    #
+
+                    do (opts) -> -> BoundryHandler.link root, opts
+
+                ).then(
+
+                    #
+                    # * All boundry links have been processed.
+                    # 
+
+                    (boundries) -> 
 
                         #
-                        # trees as special case of graph, edge needs to know
+                        # * boundries is an array of arrays, reduce it to
+                        #   arrays by boundry mode
                         # 
 
-                        type: 'tree'
-                        leaf: leaf
-
                         #
-                        # top two phraseNodes in the stack are parent and this
-                        #
+                        # Boundry Mode
+                        # ------------
+                        # 
+                        # Refers to how the PhraseTree on the other side of the boundry is attached 
+                        # to this PhraseTree
+                        # 
+                        # ### refer 
+                        # 
+                        # `boundry token carries reference to the 'other' tree`
+                        # 
+                        # Each PhraseTree from across the boundry is built onto a new root on the 
+                        # core and a reference if placed into this PhraseTree at the vertex where
+                        # the link was called.
+                        # 
+                        # ### nest
+                        # 
+                        # `tree assembly continues with recrsion across the phrase boundry`
+                        # 
+                        # Each PhraseTree from the other side of the boundry is grafted into this
+                        # PhraseTree at the vertex where the link was called. 
+                        #  
+                        #  
+                        
+                        phrases = refer: [], nest: []
 
-                        vertices: stack[ -2.. ]
+                        boundries.reduce( (a, b) -> a.concat b ).map (boundry) -> 
 
-            ]
+                            phrases[ boundry.opts.mode ].push 
 
-            run.then -> 
+                                opts: boundry.opts
+                                phrase: boundry.phrase
 
-                done()
+                        sequence([
 
-                if leaf then process.nextTick -> 
+                            #
+                            # handle 'refer' boundry mode
+                            # ---------------------------
+                            #
+                            # * Sequence each linked phrase into a pipeline
+                            #
+
+                            -> sequence( for referPhrase in phrases.refer
+
+                                    do (referPhrase) -> 
+
+                                        -> pipeline [
+
+                                # 
+                                # * RootGraph.assembler() assembles a new tree with this
+                                #   boundry::edge:create payload and appends a reference
+                                #   phrase onto the event message.
+                                # 
+
+                                            (        ) -> 
+
+                                                notice.event 'boundry::edge:create',
+
+                                                    vertices: [phrase, referPhrase]
+                                                    control: phraseControl
+                                                    root: uuid: root.uuid
+
+                                #
+                                # * push a phrase containing reference to the new tree's root
+                                #   into the local stack 
+                                #  
+                                # * send phrase::edge:create onto the bus so that the local tree
+                                #   stores the reference the another tree as a local leaf
+                                # 
+                                # * pop the stack (this sequence repeats for each boundry phrase)
+                                # 
+
+                                            ({phrase}) -> 
+                                                
+                                                stack.push phrase
+
+
+                                            (        ) -> 
+
+                                                notice.event 'phrase::edge:create',
+                                                    #DUPLICATE3  
+
+                                                    vertices: stack[ -2.. ]
+                                                    root: uuid: root.uuid
+
+                                            (        ) -> 
+                                                
+                                                stack.pop()
+
+                                        ]
+
+                                    )
+
+                            #
+                            # handle 'nest' boundry mode
+                            # --------------------------    
+                            #  
+                            # * pass local closure containing assembled phrases into the recursor 
+                            #   as a phrase of nested phrases
+                            # 
+
+                            -> 
+
+                                if phrases.nest.length > 0
+
+                                    injectionControl.args[2] = (recursor) -> 
+
+                                        phrases.nest.map ({opts, phrase}) -> 
+
+                                            recursor phrase.title, phrase.control, phrase.fn
+
+                        ]).then(
+
+                            ->  
+                                
+                                deferral.resolve() unless phrases.nest.length > 0
+                                done()
+
+                            (reject) -> done( reject )
+
+
+                        )
 
                     #
-                    # leaf node resolves self, there are
-                    # no children to recurse into
-                    # 
-                    # #GREP1
+                    # TODO: one boundry hander error terminates the entire sequence
+                    #       should it? && ?fix it
                     #
+                        
+                    (reject)  -> done reject 
 
-                    deferral.resolve()
+                )
+
+                return
+
+
+
+            #
+            # vertex or root phrases, continue to injection recursor
+            #
+
+            done()
+
+                    
+
+            
 

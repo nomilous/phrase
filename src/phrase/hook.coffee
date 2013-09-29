@@ -1,5 +1,3 @@
-{v1} = require 'node-uuid'
-
 #
 # (Phrase) Hook
 #
@@ -19,7 +17,7 @@ exports.PhraseHook = class PhraseHook
             when 'beforeEach', 'afterEach' then opts.each
             when 'beforeAll',  'afterAll'  then opts.all
 
-        @uuid      = v1()
+        @uuid      = root.util.uuid()
         @timeout   = opts.timeout || root.timeout || 2000
 
 
@@ -32,20 +30,15 @@ beforeHooks = each: [], all: []
 afterHooks  = each: [], all: []
 
 exports.bind = (root) -> 
-
-    #
-    # global appears to allow property redefines, huh?
-    #
     
-    Object.defineProperty global, 'before',
+    try Object.defineProperty global, 'before',
         enumerable: false
         get: -> (opts = {}) -> 
 
             beforeHooks.each.push new PhraseHook root, 'beforeEach', opts if typeof opts.each == 'function'
             beforeHooks.all.push  new PhraseHook root, 'beforeAll', opts  if typeof opts.all  == 'function'
 
-
-    Object.defineProperty global, 'after',
+    try Object.defineProperty global, 'after',
         enumerable: false
         get: -> (opts = {}) -> 
 

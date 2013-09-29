@@ -1,14 +1,15 @@
+Process    = require './core/process'
+Graph      = require './core/graph'
 PhraseRoot = require './phrase/root'
 
 require( 'also' ) exports, {}, (core) -> 
-    
-    #
-    # leave room for multiple phrase trees per process
-    # ------------------------------------------------
-    #
-    # * for nez objective
-    # 
 
-    core.root1 = core
+    Graph.create core
 
-    PhraseRoot.createClass core.root1
+    process = new Process core
+
+    createRoot: (opts, linkFn) -> 
+
+        root = process.root opts.uuid
+
+        PhraseRoot.createClass( root ).createRoot opts, linkFn

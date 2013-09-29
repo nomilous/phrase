@@ -1,15 +1,11 @@
-should               = require 'should'
-PhraseGraphChangeSet = require '../../lib/phrase/change_set'
-PhraseGraph          = require '../../lib/phrase/graph'
-RootToken            = require '../../lib/token/root_token'
-PhraseNode           = require '../../lib/phrase/node'
-TreeWalker           = require '../../lib/recursor/tree_walker'
-Notice               = require 'notice'
-also                 = require 'also'
+should           = require 'should'
+ChangeSetFactory = require '../../lib/phrase/change_set'
+PhraseTree       = require '../../lib/phrase/tree'
+PhraseRoot       = require '../../lib/phrase/root'
+Process          = require '../../lib/core/process'
+also             = require 'also'
 
-describe 'PhraseGraphChangeSet', -> 
-
-
+describe 'ChangeSet', -> 
 
     it 'can do the changes in reverse'
 
@@ -26,23 +22,23 @@ describe 'PhraseGraphChangeSet', ->
     beforeEach -> 
 
         @root = 
+            util: also.util
             context: 
                 notice: 
                     event: ->
                     use: ->
 
-        @ChangeSet  = PhraseGraphChangeSet.createClass @root
-        @Graph      = PhraseGraph.createClass @root
-        @Node       = PhraseNode.createClass @root
-        @graphA     = new @Graph
-        @graphB     = new @Graph
+        @ChangeSet  = ChangeSetFactory.createClass @root
+        @Tree      = PhraseTree.createClass @root
+        @treeA     = new @Tree
+        @treeB     = new @Tree
 
     context 'general', ->
 
         it 'creates a changeSet with uuid', (done) -> 
 
-            set1 = new @ChangeSet @graphA, @graphB
-            set2 = new @ChangeSet @graphA, @graphB
+            set1 = new @ChangeSet @treeA, @treeB
+            set2 = new @ChangeSet @treeA, @treeB
 
             should.exist set1.changes.uuid
             should.exist set2.changes.uuid
@@ -51,7 +47,7 @@ describe 'PhraseGraphChangeSet', ->
 
         it 'can have no changes', (done) -> 
 
-            set1 = new @ChangeSet @graphA, @graphB
+            set1 = new @ChangeSet @treeA, @treeB
 
             should.not.exist set1.changes.created
             should.not.exist set1.changes.updated
@@ -63,61 +59,55 @@ describe 'PhraseGraphChangeSet', ->
     context 'change', -> 
 
         #
-        # some laziness here (building graph by hand is laborious)
+        # some laziness here (building tree by hand is laborious)
         # these tests depend heavilly on functionlity of the rest of the system
         # 
 
-        # console.log before.toString()
         ChangeSet = undefined
         Test      = undefined
+        ROOTUUID  = undefined
 
         before (done) -> 
 
+            seq  = 0
 
             Test = (phrases, compare) => 
 
                 {phrase1, phrase2} = phrases
 
+                ROOTUUID = "ROOT#{seq++}"
+
                 #
-                # assemble graph pair from each phrase
+                # assemble tree pair from each phrase
                 #
 
-                opts = 
+                opts1 = 
                     title:   'TEST'
-                    uuid:    '0001'
+                    uuid:    ROOTUUID
                     leaf:    ['end']
                     timeout: 2000
 
-                #
-                # load runtime
-                #
+                process   = new Process also
+                root1     = process.root opts1.uuid
 
-                root                     = also
-                root.context             = {}
-                root.context.notice      = Notice.create opts.uuid
-                root.context.PhraseGraph = PhraseGraph.createClass root
-                root.context.PhraseNode  = PhraseNode.createClass root
-                root.context.token       = RootToken.create root
-                ChangeSet                = PhraseGraphChangeSet.createClass root
+                recursor1 = PhraseRoot.createClass( root1 ).createRoot opts1, (token, notice) -> 
 
-                #
-                # skip the change, so that test can call manually
-                #
-
-                root.context.notice.use (msg, next) -> 
-
-                    return next() unless msg.context.title == 'graph::compare:end'
-                    msg.skipChange = true
-                    next()
+                    notice.use (msg, next) -> 
+                        msg.skipChange = true
+                        next()
 
 
-                TreeWalker.walk( root, opts, 'phrase', phrase1 ).then ->
+                recursor1( 'phrase', phrase1 ).then -> 
 
-                    previousGraph = root.context.graphs.latest
+                    recursor1( 'phrase', phrase2 ).then -> 
+
+                        ChangeSet = ChangeSetFactory.createClass root1
+                        compare( 
+                            root1.context.tree
+                            root1.context.trees.latest
+                        )
+                        
                 
-                    TreeWalker.walk( root, opts, 'phrase', phrase2 ).then -> 
-
-                        compare previousGraph, root.context.graphs.latest
 
 
             done()
@@ -139,15 +129,15 @@ describe 'PhraseGraphChangeSet', ->
                             end()
 
 
-                    (graphA, graphB) -> 
+                    (treeA, treeB) -> 
 
-                        set1 = new ChangeSet graphA, graphB
-                        set2 = new ChangeSet graphA, graphB
-                        set3 = new ChangeSet graphA, graphB
-                        set4 = new ChangeSet graphA, graphB
-                        set5 = new ChangeSet graphA, graphB
+                        set1 = new ChangeSet treeA, treeB
+                        set2 = new ChangeSet treeA, treeB
+                        set3 = new ChangeSet treeA, treeB
+                        set4 = new ChangeSet treeA, treeB
+                        set5 = new ChangeSet treeA, treeB
 
-                        set6 = new ChangeSet graphA, graphB
+                        set6 = new ChangeSet treeA, treeB
 
                         ChangeSet.applyChanges( set5.uuid, 'AtoB' ).then(
 
@@ -175,7 +165,7 @@ describe 'PhraseGraphChangeSet', ->
                         )
 
 
-        context 'detecting changes', ->
+        xcontext 'detecting changes', ->
 
             it 'detects removed leaves', (done) -> 
 
@@ -192,10 +182,35 @@ describe 'PhraseGraphChangeSet', ->
                             end()
 
 
-                    (graphA, graphB) -> 
+                    (treeA, treeB) -> 
 
-                        set = new ChangeSet graphA, graphB
+                        set = new ChangeSet treeA, treeB
                         should.exist set.changes.deleted['/TEST/phrase/nested/deletes this']
+                        done()
+
+
+            it 'detects leaf becoming branch vertex', (done) -> 
+
+                Test
+
+                    phrase1: (nested) -> 
+                        nested 'nested phrase 1', (end) -> 
+                            end()
+
+                    phrase2: (nested) -> 
+                        nested 'nested phrase 1', (more) -> 
+                            more 'more', (end) ->
+
+
+                    (treeA, treeB) -> 
+
+                        set = new ChangeSet treeA, treeB
+                        should.exist set.changes.updated['/TEST/phrase/nested/nested phrase 1']
+                        set.changes.updated['/TEST/phrase/nested/nested phrase 1'].type.should.eql 
+
+                            from: 'leaf'
+                            to: 'vertex'
+
                         done()
 
 
@@ -218,15 +233,14 @@ describe 'PhraseGraphChangeSet', ->
                             end()
 
 
-                    (graphA, graphB) -> 
+                    (treeA, treeB) -> 
 
-                        set = new ChangeSet graphA, graphB
+                        set = new ChangeSet treeA, treeB
+
                         should.exist set.changes.deleted['/TEST/phrase/nested/deletes this']
                         should.exist set.changes.deleted['/TEST/phrase/nested/deletes this/more/1']
                         should.exist set.changes.deleted['/TEST/phrase/nested/deletes this/more/2']
                         done()
-
-
 
 
             it 'detects created leaves', (done) -> 
@@ -243,9 +257,9 @@ describe 'PhraseGraphChangeSet', ->
                         nested 'creates this', (end) -> 
                             end()
 
-                    (graphA, graphB) -> 
+                    (treeA, treeB) -> 
 
-                        set = new ChangeSet graphA, graphB
+                        set = new ChangeSet treeA, treeB
                         should.exist set.changes.created['/TEST/phrase/nested/creates this']
                         done()
 
@@ -266,9 +280,9 @@ describe 'PhraseGraphChangeSet', ->
                             more '2', (end) ->
 
 
-                    (graphA, graphB) -> 
+                    (treeA, treeB) -> 
 
-                        set = new ChangeSet graphA, graphB
+                        set = new ChangeSet treeA, treeB
                         should.exist set.changes.created['/TEST/phrase/nested/created this']
                         should.exist set.changes.created['/TEST/phrase/nested/created this/more/1']
                         should.exist set.changes.created['/TEST/phrase/nested/created this/more/2']
@@ -286,9 +300,9 @@ describe 'PhraseGraphChangeSet', ->
                     phrase2: (nested) -> 
                         nested 'nested phrase 1', (end) -> 2
 
-                    (graphA, graphB) -> 
+                    (treeA, treeB) -> 
 
-                        set = new ChangeSet graphA, graphB
+                        set = new ChangeSet treeA, treeB
                         
                         update = set.changes.updated['/TEST/phrase/nested/nested phrase 1']
                         update.fn.from().should.equal 1
@@ -320,9 +334,9 @@ describe 'PhraseGraphChangeSet', ->
                             more '2', (end) ->
 
 
-                    (graphA, graphB) -> 
+                    (treeA, treeB) -> 
 
-                        set = new ChangeSet graphA, graphB
+                        set = new ChangeSet treeA, treeB
 
                         update = set.changes.updated['/TEST/phrase/nested/updates this']
                         update.hooks.beforeEach.fn.from().should.equal 1
@@ -362,9 +376,9 @@ describe 'PhraseGraphChangeSet', ->
                                                 #
 
 
-                    (graphA, graphB) -> 
+                    (treeA, treeB) -> 
 
-                        set = new ChangeSet graphA, graphB
+                        set = new ChangeSet treeA, treeB
 
                         updates = set.changes.updated
                         should.not.exist updates['/TEST/phrase/nested/updates this/more/2']
@@ -398,9 +412,9 @@ describe 'PhraseGraphChangeSet', ->
                             more '2', (end) -> 
 
 
-                    (graphA, graphB) -> 
+                    (treeA, treeB) -> 
 
-                        set = new ChangeSet graphA, graphB
+                        set = new ChangeSet treeA, treeB
                         updates = set.changes.updated
                         updates['/TEST/phrase/nested/updates this'].hooks.should.eql
                             beforeAll:
@@ -413,9 +427,9 @@ describe 'PhraseGraphChangeSet', ->
                         done()
                     
 
-        context 'applying changes (A-B)', -> 
+        xcontext 'applying changes (A-B)', -> 
 
-            it 'applies changes into graphA and preserves vertex uuid', (done) ->
+            it 'applies changes into treeA and preserves vertex uuid', (done) ->
 
                 Test
 
@@ -427,15 +441,15 @@ describe 'PhraseGraphChangeSet', ->
                         nested 'nested phrase 1',               (end) -> 'NEW'
                         nested 'nested phrase 2', timeout: 200, (end) -> 2
 
-                    (graphA, graphB) -> 
+                    (treeA, treeB) -> 
 
 
-                        set = new ChangeSet graphA, graphB
+                        set = new ChangeSet treeA, treeB
 
                         set.AtoB()
 
-                        graphA.vertices[1111].fn().should.equal 'NEW'
-                        graphA.vertices[2222].timeout.should.equal 200
+                        treeA.vertices[1111].fn().should.equal 'NEW'
+                        treeA.vertices[2222].timeout.should.equal 200
                         done()
 
 
@@ -457,14 +471,14 @@ describe 'PhraseGraphChangeSet', ->
                         nested 'nested phrase 1', (end) -> 
                         nested 'nested phrase 2', (end) -> 
 
-                    (graphA, graphB) -> 
+                    (treeA, treeB) -> 
 
-                        set = new ChangeSet graphA, graphB
+                        set = new ChangeSet treeA, treeB
 
                         set.AtoB()
 
-                        graphA.vertices[1111].hooks.beforeAll.fn().should.equal 'UPDATED'
-                        graphA.vertices[2222].hooks.beforeAll.fn().should.equal 'UPDATED'
+                        treeA.vertices[1111].hooks.beforeAll.fn().should.equal 'UPDATED'
+                        treeA.vertices[2222].hooks.beforeAll.fn().should.equal 'UPDATED'
                         done()
 
                 
@@ -485,16 +499,16 @@ describe 'PhraseGraphChangeSet', ->
                         nested 'nested phrase 1', (end) -> 
                         nested 'nested phrase 2', (end) -> 
 
-                    (graphA, graphB) -> 
+                    (treeA, treeB) -> 
 
-                        set = new ChangeSet graphA, graphB
+                        set = new ChangeSet treeA, treeB
 
                         set.AtoB() 
 
-                        # console.log graphA.vertices[1111].hooks.beforeAll
-                        # console.log graphA.vertices[2222].hooks.beforeAll
-                        graphA.vertices[1111].hooks.beforeAll.fn().should.equal 'NEW'
-                        graphA.vertices[2222].hooks.beforeAll.should.equal graphA.vertices[2222].hooks.beforeAll
+                        # console.log treeA.vertices[1111].hooks.beforeAll
+                        # console.log treeA.vertices[2222].hooks.beforeAll
+                        treeA.vertices[1111].hooks.beforeAll.fn().should.equal 'NEW'
+                        treeA.vertices[2222].hooks.beforeAll.should.equal treeA.vertices[2222].hooks.beforeAll
                         done()
 
 
@@ -517,13 +531,13 @@ describe 'PhraseGraphChangeSet', ->
                                                          # this one is already uuid: 2222
                                                          # 
 
-                    (graphA, graphB) -> 
+                    (treeA, treeB) -> 
 
-                        set = new ChangeSet graphA, graphB
+                        set = new ChangeSet treeA, treeB
                         set.AtoB()
-                        should.not.exist graphA.vertices[1111]
-                        should.not.exist graphA.vertices[9999]
-                        graphA.vertices[2222].fn().should.equal 'not allowing uuid re-assign for now'
+                        should.not.exist treeA.vertices[1111]
+                        should.not.exist treeA.vertices[9999]
+                        treeA.vertices[2222].fn().should.equal 'not allowing uuid re-assign for now'
                         done()
 
 
@@ -542,16 +556,16 @@ describe 'PhraseGraphChangeSet', ->
 
                         nested 'nested phrase 1', (end) -> 
 
-                    (graphA, graphB) -> 
+                    (treeA, treeB) -> 
 
-                        set = new ChangeSet graphA, graphB
+                        set = new ChangeSet treeA, treeB
 
                         set.AtoB()
 
-                        should.exist     graphA.vertices[1111]
-                        should.not.exist graphA.vertices[2222]
-                        should.not.exist graphA.vertices[3333]
-                        should.not.exist graphA.vertices[4444]
+                        should.exist     treeA.vertices[1111]
+                        should.not.exist treeA.vertices[2222]
+                        should.not.exist treeA.vertices[3333]
+                        should.not.exist treeA.vertices[4444]
                         done()
 
 
@@ -570,12 +584,12 @@ describe 'PhraseGraphChangeSet', ->
                         nested 'nested phrase 2', uuid: 2222, (end) -> 2
 
 
-                    (graphA, graphB) -> 
+                    (treeA, treeB) -> 
 
-                        set = new ChangeSet graphA, graphB
+                        set = new ChangeSet treeA, treeB
                         set.AtoB()
-                        graphA.vertices[1111].fn().should.equal 1
-                        graphA.vertices[2222].fn().should.equal 2
+                        treeA.vertices[1111].fn().should.equal 1
+                        treeA.vertices[2222].fn().should.equal 2
                         done()
 
 
@@ -595,15 +609,15 @@ describe 'PhraseGraphChangeSet', ->
                             deeper 'one', uuid: 3333, (end) ->
                             deeper 'two', uuid: 4444, (end) ->  
 
-                    (graphA, graphB) -> 
+                    (treeA, treeB) -> 
 
-                        set = new ChangeSet graphA, graphB
+                        set = new ChangeSet treeA, treeB
                         set.AtoB()
 
-                        should.exist     graphA.vertices[1111]
-                        should.exist     graphA.vertices[2222]
-                        should.exist     graphA.vertices[3333]
-                        should.exist     graphA.vertices[4444]
+                        should.exist     treeA.vertices[1111]
+                        should.exist     treeA.vertices[2222]
+                        should.exist     treeA.vertices[3333]
+                        should.exist     treeA.vertices[4444]
                         done()
 
 
@@ -622,11 +636,11 @@ describe 'PhraseGraphChangeSet', ->
                             deeper 'one', uuid: 2222, (end) ->
                             deeper 'two', uuid: 3333, (end) ->  
 
-                    (graphA, graphB) -> 
+                    (treeA, treeB) -> 
 
-                        set = new ChangeSet graphA, graphB
+                        set = new ChangeSet treeA, treeB
                         set.AtoB()
-                        graphA.vertices[1111].leaf.should.equal false
+                        treeA.vertices[1111].token.type.should.equal 'vertex'
                         done()
 
 
@@ -636,7 +650,7 @@ describe 'PhraseGraphChangeSet', ->
 
                     phrase1: (nested) -> 
 
-                        nested 'nested phrase 1', uuid: 1111, (end) -> 
+                        nested 'nested phrase 1', uuid: 1111, (deeper) -> 
                             deeper 'one', uuid: 2222, (end) ->
                             deeper 'two', uuid: 3333, (end) ->  
 
@@ -645,15 +659,17 @@ describe 'PhraseGraphChangeSet', ->
 
                         nested 'nested phrase 1', (end) ->
 
-                    (graphA, graphB) -> 
+                    (treeA, treeB) -> 
 
-                        set = new ChangeSet graphA, graphB
+                        set = new ChangeSet treeA, treeB
                         set.AtoB()
-                        graphA.vertices[1111].leaf.should.equal true
+                        treeA.vertices[1111].token.type.should.equal 'leaf'
+                        should.not.exist treeA.vertices[2222]
+                        should.not.exist treeA.vertices[3333]
                         done()
 
 
-        context 'updates indexes', -> 
+        xcontext 'updates indexes', -> 
 
             it 'ammends path2uuid and uuid2path indexes (not in order)', (done) ->
 
@@ -687,17 +703,17 @@ describe 'PhraseGraphChangeSet', ->
                             deeper 'one',                 (end) ->
                             deeper 'two',                 (end) ->  
 
-                    (graphA, graphB) -> 
+                    (treeA, treeB) -> 
 
-                        set = new ChangeSet graphA, graphB
+                        set = new ChangeSet treeA, treeB
                         set.AtoB()
 
-                        should.not.exist graphA.path2uuid['/TEST/phrase/nested/nested phrase 1/deeper/deleted']
-                        should.not.exist graphA.uuid2path['deleted']
+                        should.not.exist treeA.path2uuid['/TEST/phrase/nested/nested phrase 1/deeper/deleted']
+                        should.not.exist treeA.uuid2path['deleted']
 
-                        graphA.path2uuid.should.eql 
+                        treeA.path2uuid.should.eql 
 
-                            '/TEST/phrase': '0001',
+                            '/TEST/phrase': ROOTUUID
                             '/TEST/phrase/nested/nested phrase 1': 1111
                             '/TEST/phrase/nested/nested phrase 2': 2222
                             '/TEST/phrase/nested/nested phrase 2/deeper/one': 3333
@@ -705,15 +721,12 @@ describe 'PhraseGraphChangeSet', ->
 
                             '/TEST/phrase/nested/nested phrase 2/deeper/created': 9999
 
-                        graphA.uuid2path.should.eql 
-
-                            '0001': '/TEST/phrase'
-                            '1111': '/TEST/phrase/nested/nested phrase 1'
-                            '2222': '/TEST/phrase/nested/nested phrase 2'
-                            '3333': '/TEST/phrase/nested/nested phrase 2/deeper/one'
-                            '4444': '/TEST/phrase/nested/nested phrase 2/deeper/two'
-
-                            '9999': '/TEST/phrase/nested/nested phrase 2/deeper/created'                   
+                        treeA.uuid2path[ROOTUUID].should.equal '/TEST/phrase'
+                        treeA.uuid2path['1111'].should.equal '/TEST/phrase/nested/nested phrase 1'
+                        treeA.uuid2path['2222'].should.equal '/TEST/phrase/nested/nested phrase 2'
+                        treeA.uuid2path['3333'].should.equal '/TEST/phrase/nested/nested phrase 2/deeper/one'
+                        treeA.uuid2path['4444'].should.equal '/TEST/phrase/nested/nested phrase 2/deeper/two'
+                        treeA.uuid2path['9999'].should.equal '/TEST/phrase/nested/nested phrase 2/deeper/created'                   
                         
                         done()
 
@@ -742,30 +755,25 @@ describe 'PhraseGraphChangeSet', ->
                             deeper 'one',                 (end) ->
                             deeper 'two',                 (end) ->  
 
-                    (graphA, graphB) -> 
+                    (treeA, treeB) -> 
 
-                        set = new ChangeSet graphA, graphB
+                        set = new ChangeSet treeA, treeB
                         set.AtoB()
 
                         children = {}
-                        for parent of graphA.children
+                        for parent of treeA.children
                             children[parent] = []
-                            for child in graphA.children[parent]
+                            for child in treeA.children[parent]
                                 children[parent].push child
 
-                        children.should.eql 
+                        children[ROOTUUID].should.eql  [ 1111, 2222       ]
+                        children['2222'].should.eql    [ 9999, 3333, 4444 ]
 
-                                        #
-                                        # preserved child vertex order
-                                        #
-
-                            '0001': [ 1111, 2222 ]
-                            '2222': [ 9999, 3333, 4444 ]
+                                                    #
+                                                    # preserved child vertex order
+                                                    #   
 
                         should.not.exist children[1111] # no longer a parent
-
-
- 
                         done()
 
 
@@ -793,15 +801,15 @@ describe 'PhraseGraphChangeSet', ->
                             deeper 'one',                 (end) ->
                             deeper 'two',                 (end) ->  
 
-                    (graphA, graphB) -> 
+                    (treeA, treeB) -> 
 
-                        set = new ChangeSet graphA, graphB
+                        set = new ChangeSet treeA, treeB
                         set.AtoB()
 
-                        graphA.parent.should.eql 
+                        treeA.parent.should.eql 
 
-                            '1111': '0001'
-                            '2222': '0001'
+                            '1111': ROOTUUID
+                            '2222': ROOTUUID
                             '3333': 2222
                             '4444': 2222
                             '9999': 2222
@@ -832,12 +840,12 @@ describe 'PhraseGraphChangeSet', ->
                             deeper 'one',                 (end) ->
                             deeper 'two',                 (end) ->  
 
-                    (graphA, graphB) -> 
+                    (treeA, treeB) -> 
 
-                        set = new ChangeSet graphA, graphB
+                        set = new ChangeSet treeA, treeB
                         set.AtoB()
 
-                        graphA.leaves.should.eql [ 1111, 9999, 3333, 4444 ]
+                        treeA.leaves.should.eql [ 1111, 9999, 3333, 4444 ]
                         done()
 
 
@@ -868,19 +876,19 @@ describe 'PhraseGraphChangeSet', ->
                             deeper 'one',                 (end) ->
                             deeper 'two',                 (end) ->  
 
-                    (graphA, graphB) -> 
+                    (treeA, treeB) -> 
 
-                        set = new ChangeSet graphA, graphB
+                        set = new ChangeSet treeA, treeB
                         set.AtoB()
-                        graphA.edges.should.eql 
+                        treeA.edges.should.eql 
 
-                            '1111': [ { to: '0001' }, { to: 'kept' }                           ]
-                            '2222': [ { to: '0001' }, { to: 3333 }, { to: 4444 }, { to: 9999 } ]
-                            '3333': [ { to: 2222 }                                             ]
-                            '4444': [ { to: 2222 }                                             ]
-                            '9999': [ { to: 2222 }                                             ]
-                            '0001': [ { to: 1111 }, { to: 2222 }                               ]
-                            kept:   [ { to: 1111 }                                             ]
+                        treeA.edges['1111'  ].should.eql [ { to: ROOTUUID }, { to: 'kept' }                           ]
+                        treeA.edges['2222'  ].should.eql [ { to: ROOTUUID }, { to: 3333 }, { to: 4444 }, { to: 9999 } ]
+                        treeA.edges['3333'  ].should.eql [ { to: 2222 }                                             ]
+                        treeA.edges['4444'  ].should.eql [ { to: 2222 }                                             ]
+                        treeA.edges['9999'  ].should.eql [ { to: 2222 }                                             ]
+                        treeA.edges[ROOTUUID].should.eql [ { to: 1111 }, { to: 2222 }                               ]
+                        treeA.edges.kept.should.eql    [ { to: 1111 }                                             ]
 
                         
                         done()

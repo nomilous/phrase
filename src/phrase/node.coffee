@@ -1,5 +1,3 @@
-{v1} = require 'node-uuid'
-
 exports.createClass = (root) -> 
 
     #
@@ -8,6 +6,8 @@ exports.createClass = (root) ->
     # TODO: after merge (and enlightenment)
     #
 
+    {util} = root
+
     class PhraseHook
 
         constructor: (opts) -> 
@@ -15,7 +15,7 @@ exports.createClass = (root) ->
             #GREP3 duplicate definition
 
             @fn        = opts.fn 
-            @uuid      = v1()
+            @uuid      = util.uuid()
             @timeout   = opts.timeout || root.timeout || 2000
 
 
@@ -46,21 +46,21 @@ exports.createClass = (root) ->
         #    fn:    (end) ->   
         # 
 
-        class PhraseToken 
+        # class PhraseToken 
 
-            constructor: (opts = {}) -> 
+        #     constructor: (opts = {}) -> 
 
-                localOpts = {}
+        #         localOpts = {}
 
-                for property in ['name', 'uuid']
+        #         for property in ['name', 'uuid']
 
-                    do (property) => 
+        #             do (property) => 
 
-                        localOpts[property] = opts[property]
+        #                 localOpts[property] = opts[property]
 
-                        Object.defineProperty this, property, 
-                            get: -> localOpts[property]
-                            enumerable: true
+        #                 Object.defineProperty this, property, 
+        #                     get: -> localOpts[property]
+        #                     enumerable: true
 
 
         #
@@ -123,9 +123,9 @@ exports.createClass = (root) ->
 
         constructor: (opts = {}) -> 
 
-            if opts.text.match /\//
+            if opts.title.match /\//
 
-                throw new Error "PhraseNode(text,opts,nestedFn) INVALID text: (=#{ opts.text })"
+                throw new Error "PhraseNode(title,opts,nestedFn) INVALID title: (=#{ opts.title })"
 
             localOpts = 
 
@@ -133,8 +133,8 @@ exports.createClass = (root) ->
                 # enumarable
                 #
 
-                uuid:      opts.uuid  || v1()
-                text:      opts.text
+                uuid:      opts.uuid  || util.uuid()
+                title:     opts.title
                 leaf:      opts.leaf
 
                 #
@@ -151,11 +151,11 @@ exports.createClass = (root) ->
             # copy uuid into token
             #
 
-            opts.token.uuid = localOpts.uuid
-            localOpts.token = new PhraseToken opts.token
+            #opts.token.uuid = localOpts.uuid
+            localOpts.token = opts.token
 
 
-            for property in ['uuid', 'token', 'text']
+            for property in ['uuid', 'token', 'title']
 
                 do (property) => 
 
@@ -181,7 +181,6 @@ exports.createClass = (root) ->
                     localOpts.leaf = value
 
 
-
             Object.defineProperty this, 'update', 
 
                 enumerable: false
@@ -195,7 +194,7 @@ exports.createClass = (root) ->
                     return target.update changes if target? and target isnt this
 
 
-                    for thing in ['fn', 'timeout', 'leaf']
+                    for thing in ['fn', 'timeout']
 
                         if changes[thing]? 
 
@@ -204,6 +203,10 @@ exports.createClass = (root) ->
                     if changes.hooks?
 
                         localOpts.hooks.update changes.hooks
+
+                    if changes.type? 
+
+                        localOpts.token.type = changes.type.to
 
 
         getChanges: (vertex) -> 
@@ -233,8 +236,8 @@ exports.createClass = (root) ->
             # 
             # * The target is included to provide a direct reference to the
             #   the change destination (the results of this function are used
-            #   by the PhraseGraph to assemble a changeSet, which could likely
-            #   be queued and applied onto the graph by later instruction)
+            #   by the PhraseTree to assemble a changeSet, which could likely
+            #   be queued and applied onto the tree by later instruction)
             # 
             # * The target is specifically used for cases where the change
             #   is a hook. In these cases the changeset refers to the parent
@@ -249,7 +252,7 @@ exports.createClass = (root) ->
 
             changes = undefined
 
-            for property in ['fn', 'timeout', 'leaf']
+            for property in ['fn', 'timeout']
 
                 from = try @[property].toString()
                 to   = try vertex[property].toString()
@@ -262,6 +265,21 @@ exports.createClass = (root) ->
                     changes[property] = 
                         from: @[property]
                         to: vertex[property]
+
+            for tokenProperty in ['type']
+
+                from = try @token[tokenProperty]
+                to   = try vertex.token[tokenProperty]
+
+                if from != to
+                    
+                    changes ||= 
+                        target: this
+                        #source: vertex
+                    changes[tokenProperty] = 
+                        from: @token[tokenProperty]
+                        to: vertex.token[tokenProperty]
+
 
             for hookType in ['beforeAll', 'beforeEach', 'afterEach', 'afterAll']
 

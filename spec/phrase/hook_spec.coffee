@@ -3,7 +3,7 @@ PhraseHook  = require '../../lib/phrase/hook'
 
 describe 'PhraseHook', -> 
 
-    hooks = PhraseHook.bind timeout: 200
+    hooks = PhraseHook.bind timeout: 200, util: require('also').util
 
     it 'creates before and after hook registrars on the global scope', (done) -> 
  

@@ -1,4 +1,4 @@
-### Version 0.0.3 (prerelease, unstable)
+### Version 0.0.4 (prerelease, unstable)
 
 `npm install phrase`
 
@@ -124,7 +124,7 @@ neuron 'soma', (dendrite) ->
                         #
 
                         Wanted:   'axon synapse for coupling'
-                        Likes:    'long walks on the beach'
+                        Likes:    'long stalks on the peach'
                         Dislikes: 'electro-shock therapy'
 
 

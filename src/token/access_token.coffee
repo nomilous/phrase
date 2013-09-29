@@ -1,7 +1,8 @@
 #
-# root token
-# ===========
+# Access Token
+# ============
 # 
+# Interface into the PhraseTree
 # 
 
 {EventEmitter} = require 'events' 
@@ -10,20 +11,22 @@ Run            = require '../runner/run'
 exports.create = (root) -> 
 
     {context}       = root
-    {graph, notice} = context
+    {tree, notice} = context
     emitter         = new EventEmitter
 
 
 
 
-    #
-    # TEMPORARY: direct access to graph
-    # =========
-    #
-    Object.defineProperty emitter, 'graph', 
+    # #
+    # # TEMPORARY: direct access to tree
+    # # =========
+    # #
 
-        enumerable: false
-        get: -> context.graph
+    # console.log 'DELETE'
+    # Object.defineProperty emitter, 'tree', 
+
+    #     enumerable: false
+    #     get: -> context.tree
     
 
 

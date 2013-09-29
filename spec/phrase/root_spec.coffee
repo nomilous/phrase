@@ -1,6 +1,8 @@
 should      = require 'should'
-PhraseRoot  = require('../../lib/phrase/root').createClass require 'also'
+PhraseRoot  = undefined
 TreeWalker  = require '../../lib/recursor/tree_walker'
+also        = require 'also'
+Notice      = require 'notice'
 
 describe 'phrase', -> 
 
@@ -8,6 +10,8 @@ describe 'phrase', ->
     
     beforeEach -> 
 
+        also.context = {}
+        PhraseRoot  = require('../../lib/phrase/root').createClass also
         phraseRecursor_swap = TreeWalker.walk 
 
     afterEach -> 
@@ -27,7 +31,7 @@ describe 'phrase', ->
             try PhraseRoot.createRoot 
 
                 title: 'Phrase Title'
-                uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
+                uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf99'
             
             catch error
 
@@ -35,48 +39,43 @@ describe 'phrase', ->
                 done()
 
 
+        it 'can be initialized with existing messenger', (done) -> 
+
+            existing = Notice.create 'origin name'
+
+            registrar = PhraseRoot.createRoot
+
+                title:  'Zero'
+                uuid:   '000'
+                notice: existing
+
+                (accessToken, messageBus) -> 
+
+                    messageBus.should.equal existing
+                    done()
+
+
+            registrar 'phraseTitle', (nest) -> nest 'phraseTitle', (end) ->
+
 
         context 'phrase root registrar', -> 
 
 
-            before -> 
+            it 'calls linkFn only once', (done) -> 
 
-                @count = 0
+                count = 0
 
-                @registrar = PhraseRoot.createRoot
+                registrar = PhraseRoot.createRoot
 
                     title:  'Phrase Title'
                     uuid:   '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
-                    notice: {}
+                    (token, notice) -> count++
 
-                    (token, notice) =>
+                registrar 'phrase title', (end) -> 
+                registrar( 'phrase title', (end) -> ).then ->
 
-                        @count++
-                        @token  = token
-                        @notice = notice
-
-                @registrar 'phrase text', (end) -> 
-
-
-            afterEach -> 
-
-                @token.removeAllListeners()
-
-
-            it 'calls linkFn', (done) -> 
-
-                # 
-                # @registrar 'phrase text', (end) -> 
-                #
-
-                should.exist @token
-                done()
-
-
-            it 'calls linkFn only once', (done) -> 
-
-                @count.should.equal 1
-                done()
+                    count.should.equal 1
+                    done()
 
 
             it 'creates a TreeWalker with root context', (done) -> 
@@ -88,57 +87,32 @@ describe 'phrase', ->
                     done()
 
 
-                @registrar 'phrase text', -> 
+                registrar = PhraseRoot.createRoot
+
+                    title:  'Phrase Title'
+                    uuid:   '63e2d6b0-f242-11e2-85ef-03366e5fcf9b'
+                    (token, notice) -> 
+
+                registrar 'phrase title', (end) -> 
+
 
 
 
             it 'does not allow concurrent walks', (done) -> 
                 
-                ERROR = undefined
+                registrar = PhraseRoot.createRoot
 
-                @registrar 'phrase text', (nested) =>  
+                    title:  'Concurrent Test'
+                    uuid:   '00000000-f242-11e2-85ef-03366e5fcf9c'
+                    (token, notice) =>
 
-                    try @registrar 'phrase text', (nested) ->  
+                registrar 'phrase title', (nested) =>  
 
+                    try registrar 'phrase title', (nested) ->  
                     catch error
 
-                        ERROR = error
-
-                    nested 'n', (end) ->
-
-                @token.on 'changed', -> 
-
-                    ERROR.should.match /Phrase root registrar cannot perform concurrent walks/
-                    done()
-
-
-
-            xit 'has accumulated dead leaves', (done) -> 
-
-
-                #
-                # and should not have...
-                #
-
-
-                @token.on 'ready', => 
-
-                    console.log @token.graph.tree.leaves
-                    console.log @token.graph.leaves
-
-                    @token.graph.leaves.length.should.equal 2
-                    done()
-
-
-                @registrar 'entirely new tree', (that) -> 
-
-                    that 'has one leaf', (end) ->
-
-                        end()
-
-                    that 'has another leaf', (end) ->
-
-                        end()
+                        error.should.match /Phrase root registrar cannot perform concurrent walks/
+                        done()
 
 
 
@@ -147,7 +121,7 @@ describe 'phrase', ->
             PhraseRoot.createRoot 
 
                 title: 'Phrase Title'
-                uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
+                uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9d'
 
                 (token, notice) -> 
 
@@ -160,7 +134,7 @@ describe 'phrase', ->
             PhraseRoot.createRoot 
 
                 title: 'Phrase Title'
-                uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
+                uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9e'
 
                 (token, notice) -> 
 
@@ -173,7 +147,7 @@ describe 'phrase', ->
             TreeWalker.walk = (root, opts) -> -> 
 
                 opts.title.should.equal 'Phrase Title'
-                opts.uuid.should.equal '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
+                opts.uuid.should.equal '63e2d6b0-f242-11e2-85ef-03366e5fcf9f'
                 done()
 
             root = PhraseRoot.createRoot 

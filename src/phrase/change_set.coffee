@@ -1,13 +1,12 @@
-{v1}    = require 'node-uuid'
 {defer} = require 'when'
 
 exports.createClass = (root) -> 
 
     #
-    # PhraseGraphChangeSets (class factory)
-    # =====================================
+    # ChangeSets (class factory)
+    # ==========================
     #
-    # * Stores the set of changes to be applied to a graph to 
+    # * Stores the set of changes to be applied to a tree to 
     #   advance it to the next ersion.
     # 
     # * And probably the corresponding inverse set, for retreat.
@@ -22,23 +21,25 @@ exports.createClass = (root) ->
     # 
     #        And won't be fully implemented now, 
     # 
-    #        ( just wanna clear up the phrase graph 
+    #        ( just wanna clear up the phrase tree 
     #             definition for now, file's getting 
     #                too big... )
     # 
+
+    {util} = root
 
     changeSets = {}
 
     class ChangeSet
 
-        constructor: (@graphA, @graphB) -> 
+        constructor: (@treeA, @treeB) -> 
 
             historyLength     = 1
-            @uuid             = v1()
+            @uuid             = util.uuid()
             @changes          = uuid: @uuid
             changeSets[@uuid] = this
-            runningGraph      = @graphA
-            newGraph          = @graphB
+            runningTree       = @treeA
+            newTree           = @treeB
 
             order = []
             order.push uuid for uuid of changeSets
@@ -48,16 +49,16 @@ exports.createClass = (root) ->
             # updated or deleted
             #
 
-            for path of runningGraph.path2uuid
+            for path of runningTree.path2uuid
 
-                runningUUID   = runningGraph.path2uuid[path]
-                runningVertex = runningGraph.vertices[runningUUID]
-                newUUID       = newGraph.path2uuid[path]
+                runningUUID   = runningTree.path2uuid[path]
+                runningVertex = runningTree.vertices[runningUUID]
+                newUUID       = newTree.path2uuid[path]
 
                 unless newUUID?
 
                     #
-                    # missing from newGraph
+                    # missing from newTree
                     #
 
                     @changes.deleted ||= {}
@@ -65,23 +66,23 @@ exports.createClass = (root) ->
                     continue
 
                 #
-                # in both graphs
+                # in both trees
                 #
 
-                newVertex = newGraph.vertices[newUUID]
+                newVertex = newTree.vertices[newUUID]
 
                 if changes = runningVertex.getChanges newVertex
 
-                    if changes.leaf?
+                    if changes.type?
 
                         @changes.updated ||= {}
                         @changes.updated[path] ||= {}
-                        @changes.updated[path].leaf = changes.leaf
+                        @changes.updated[path].type = changes.type
 
 
                     if changes.fn?
 
-                        if runningVertex.leaf # and newVertex.leaf
+                        if runningVertex.token.type == 'leaf' # and newVertex.type == 'leaf'
                                               # 
                                               # would prevent leaf that is becoming
                                               # vertex with nested leaf(s) from 
@@ -142,16 +143,16 @@ exports.createClass = (root) ->
             # created
             #
 
-            for path of newGraph.path2uuid 
+            for path of newTree.path2uuid 
 
-                unless runningGraph.path2uuid[path]?
+                unless runningTree.path2uuid[path]?
 
                     #
-                    # missing from runningGraph
+                    # missing from runningTree
                     #
 
-                    uuid   = newGraph.path2uuid[path]
-                    vertex = newGraph.vertices[uuid]
+                    uuid   = newTree.path2uuid[path]
+                    vertex = newTree.vertices[uuid]
 
                     @changes.created ||= {}
                     @changes.created[path] = vertex
@@ -182,18 +183,18 @@ exports.createClass = (root) ->
                     # consider keeping it for BtoA (later)
                     #
 
-                    uuid = @graphA.path2uuid[path]
-                    delete @graphA.path2uuid[path]
-                    delete @graphA.uuid2path[uuid]
+                    uuid = @treeA.path2uuid[path]
+                    delete @treeA.path2uuid[path]
+                    delete @treeA.uuid2path[uuid]
 
                     try 
-                        parent = @graphA.parent[uuid]
-                        @graphA.edges[parent] = @graphA.edges[parent].filter (edge) -> edge.to != uuid
+                        parent = @treeA.parent[uuid]
+                        @treeA.edges[parent] = @treeA.edges[parent].filter (edge) -> edge.to != uuid
 
-                    delete @graphA.edges[uuid]
-                    delete @graphA.parent[uuid]
-                    delete @graphA.children[uuid]
-                    delete @graphA.vertices[uuid]
+                    delete @treeA.edges[uuid]
+                    delete @treeA.parent[uuid]
+                    delete @treeA.children[uuid]
+                    delete @treeA.vertices[uuid]
 
 
             if @changes.created?
@@ -201,15 +202,15 @@ exports.createClass = (root) ->
                 for path of @changes.created
 
                     uuid = @changes.created[path].uuid
-                    @graphA.vertices[uuid]  = @changes.created[path]
-                    @graphA.path2uuid[path] = @changes.created[path].uuid
-                    @graphA.uuid2path[uuid] = path
+                    @treeA.vertices[uuid]  = @changes.created[path]
+                    @treeA.path2uuid[path] = @changes.created[path].uuid
+                    @treeA.uuid2path[uuid] = path
 
-                    parentB = @graphB.parent[uuid]
-                    parent  = @graphA.path2uuid[ @graphB.uuid2path[ parentB ] ]
-                    @graphA.edges[uuid]    = [to: parent]
-                    @graphA.edges[parent] ||= []
-                    @graphA.edges[parent].push to: uuid
+                    parentB = @treeB.parent[uuid]
+                    parent  = @treeA.path2uuid[ @treeB.uuid2path[ parentB ] ]
+                    @treeA.edges[uuid]    = [to: parent]
+                    @treeA.edges[parent] ||= []
+                    @treeA.edges[parent].push to: uuid
                                             #
                                             # not preserving order in edge array 
                                             #
@@ -219,11 +220,11 @@ exports.createClass = (root) ->
             # rebuild indexes 
             # ---------------
             #
-            # TODO: This is very inefficient. It rebuilds the indexes in graphA according 
-            #       to the contents of the new graphB, but preserving the uuids from 
-            #       the uuids of graphA.
+            # TODO: This is very inefficient. It rebuilds the indexes in treeA according 
+            #       to the contents of the new treeB, but preserving the uuids from 
+            #       the uuids of treeA.
             # 
-            #       It would be better (for large graphs), to only modify the indexes
+            #       It would be better (for large trees), to only modify the indexes
             #       where necessary.
             # 
             #       Preserving the order is important 
@@ -232,41 +233,41 @@ exports.createClass = (root) ->
 
             stillParent = {}
             #stillChild  = {}
-            for parentUUID of @graphB.children
-                parent = @graphA.path2uuid[ @graphB.uuid2path[parentUUID] ] || parentUUID
-                @graphA.children[parent] = []
+            for parentUUID of @treeB.children
+                parent = @treeA.path2uuid[ @treeB.uuid2path[parentUUID] ] || parentUUID
+                @treeA.children[parent] = []
                 #
-                # translated graphB parentUUID to corresponding uuid in graphA
+                # translated treeB parentUUID to corresponding uuid in treeA
                 # and created a new children index with it
                 #
 
-                stillParent[parent] = not @graphB.vertices[parentUUID].leaf
+                stillParent[parent] = not @treeB.vertices[parentUUID].leaf
 
-                for childUUID in @graphB.children[parentUUID] 
-                    child = @graphA.path2uuid[ @graphB.uuid2path[childUUID] ] || childUUID
-                    @graphA.children[parent].push child
-                    @graphA.parent[child] = parent
+                for childUUID in @treeB.children[parentUUID] 
+                    child = @treeA.path2uuid[ @treeB.uuid2path[childUUID] ] || childUUID
+                    @treeA.children[parent].push child
+                    @treeA.parent[child] = parent
 
                     #
-                    # translated graphB childUUID to corresponding uuid in graphA
+                    # translated treeB childUUID to corresponding uuid in treeA
                     # and ammended parent / children indexes
                     #
             
-            for parentUUID of @graphA.children
+            for parentUUID of @treeA.children
                 unless stillParent[parentUUID]
-                    delete @graphA.children[parentUUID]
+                    delete @treeA.children[parentUUID]
 
 
-            @graphA.leaves.length = 0
-            for leaf in @graphB.leaves
-                @graphA.leaves.push @graphA.path2uuid[ @graphB.uuid2path[leaf] ] || leaf
+            @treeA.leaves.length = 0
+            for leaf in @treeB.leaves
+                @treeA.leaves.push @treeA.path2uuid[ @treeB.uuid2path[leaf] ] || leaf
 
 
             if @changes.updated?
 
                 for path of @changes.updated
 
-                    target = @graphA.vertices[ @graphA.path2uuid[path] ]
+                    target = @treeA.vertices[ @treeA.path2uuid[path] ]
                     target.update @changes.updated[path]
 
 
@@ -281,7 +282,7 @@ exports.createClass = (root) ->
                     #      
                     #      - AND the one that did happen there belongs to the other tree
                     #                                          best to keep it that way!...?
-                    #                                          same object lives in both graphs on create
+                    #                                          same object lives in both trees on create
                     #                                     
                     # 
                     #      - alternatively the change detector could include the entire 
@@ -314,11 +315,11 @@ exports.createClass = (root) ->
                                     timeout: hook.timeout.to
                                     fn:      hook.fn.to
 
-                                parentUUID = @graphA.path2uuid[path]
+                                parentUUID = @treeA.path2uuid[path]
 
-                                for childUUID in @graphA.children[parentUUID]
+                                for childUUID in @treeA.children[parentUUID]
 
-                                    @graphA.vertices[childUUID].hooks[type] = newHook
+                                    @treeA.vertices[childUUID].hooks[type] = newHook
 
 
 

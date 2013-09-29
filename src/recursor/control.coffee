@@ -12,23 +12,22 @@ exports.bindControl = (root, control) ->
 
     {util} = root
 
-    control.detectLeaf = (phrase, isLeaf) -> 
+    control.phraseType = (fn) -> 
 
-        arg1 = try util.argsOf( phrase.fn )[0]
+        arg1 = try util.argsOf( fn )[0]
 
-        #
-        # can override leaf detection list ['end', 'done']
-        # at any depth in the tree, affecting the entire
-        # branch
-        #
+        if arg1? 
 
-        if arg1? and control.leaf.indexOf( arg1 ) >= 0
+            if control.leaf.indexOf( arg1 ) >= 0
 
-            phrase.leaf = true
-            return isLeaf true 
+                return 'leaf'
 
-        phrase.leaf = false
-        isLeaf false
+            else if control.boundry.indexOf( arg1 ) >= 0
+
+                return 'boundry'
+
+        return 'vertex'
+
 
     return {
 

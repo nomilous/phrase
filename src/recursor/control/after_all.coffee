@@ -50,6 +50,7 @@ exports.create = (root, parentControl) ->
             notice.event( 'phrase::recurse:end' 
 
                 walk: context.walking
+                root: uuid: root.uuid
 
             ).then -> 
 
@@ -65,11 +66,11 @@ exports.create = (root, parentControl) ->
                 unless firstwalk
 
                     #
-                    # TODO: - mechanism to pend the graph update until instructed to switch
+                    # TODO: - mechanism to pend the tree update until instructed to switch
                     #       - mechanism to switch back
                     #
 
-                    return context.graph.update().then -> 
+                    return context.tree.update().then -> 
 
                         delete context.walking
                         process.nextTick done

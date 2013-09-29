@@ -3,276 +3,222 @@ phrase = require '../lib/phrase'
 
 describe 'phrase.createRoot(opts, linkFunction)', -> 
 
-    before (done) ->
+    context 'multiple trees', -> 
 
-        """
+        before (done) -> 
 
-It provides a rootRegistrar for assembling a PhraseGraph
---------------------------------------------------------
+            phraseOne = phrase.createRoot
 
-* For now the PhraseGraph is a tree (only)
+                title: 'One'
+                uuid:  '001'
 
-    ie. no complex pathways
+                (@token1, notice) =>
 
-* The rootRegistrar is returned by `phrase.createRoot( opts, linkFunction )`
+                    @token1.on 'ready', ({tokens}) =>
 
-    ie. `arithmatic` below
+                        @tokens1 = tokens
 
-* It expects a string and a nested PhraseFunction to be passed
+                    @token1.on 'error', (error) ->
 
-    ie. arithmatic 'operations', ( args ) -> 
-
-        #
-        # args?: see 'The PhraseFunction' below TODO
-        #  
+                        console.log PHRASE_1_ERROR: error
 
 
-It calls the linkFunction with the PhraseGraph root token
----------------------------------------------------------
+            phraseTwo = phrase.createRoot
 
-* The link function is called when the PhraseGraph is initialized
+                title: 'Two'
+                uuid:  '002'
 
-    ie. At the first call to rootRegistrar  (arithmatic)
+                (@token2) =>
 
-* The token passed to the link function is an event emitter (pubsub)
+                    @token2.on 'ready', ({tokens}) =>
 
-    ie. token.on 'event', ( payload ) -> 
+                        @tokens2 = tokens
+                        done()
 
-        #
-        # event?, payload?: see 'The Root Token'  TODO
-        # 
+                    @token2.on 'error', (error) ->
+
+                        console.log PHRASE_2_ERROR: error
 
 
-        """
 
-        arithmatic = phrase.createRoot
+            phraseOne '1 outer phrase', (nest) -> 
+
+                nest '1 inner phrase', (end) ->
+
+
+
+            phraseTwo '2 outer phrase', (nest) -> 
+
+                nest '2 inner phrase', (end) ->
+
+            
+        it 'allows multiple phrase trees', (done) -> 
+
+            should.exist @tokens1['/One/1 outer phrase/nest/1 inner phrase']
+            should.exist @tokens2['/Two/2 outer phrase/nest/2 inner phrase']
+            done()
+
+
+    context 'interspercement', -> 
+
+        before (done) -> 
 
             #
-            # opts... 
+            # attach phraseRegistrars and tokens 
+            # for two separate trees onto 'this'
             #
 
-            title: 'Arithmatic'
-            uuid:  '1'
-            #
-            # this is an implicit hash (coffee!) passed to createRoot(opts, linkFunction)
-            #
+            phrase.createRoot( 
+                title: 'A', uuid: 'aaa', (@tokenA) => 
+            ) 'outer A', (@phraseA) =>
+
+            phrase.createRoot( 
+                title: 'B', uuid: 'bbb', (@tokenB) => 
+            ) 'outer B', (@phraseB) => done()
+
+
+        it 'hook registrations survive intersperced walk', (done) -> 
 
             #
-            # linkFunction
+            # await tokens from both A and B
             #
-            (@token) => 
 
-                @token.on 'ready', (data) => 
+            Atokens = undefined
 
-                    # console.log data
-
-                    for path of data.tokens
-
-                        @add      = data.tokens[path] if path.match /add$/
-                        @subtract = data.tokens[path] if path.match /subtract$/
-
-                    done()
-
-                @token.on 'error', (error) -> 
-
-                    console.log PHRASE_ERROR: error
+            @tokenA.on 'ready', ({tokens}) -> Atokens = tokens
 
 
-        """
 
-The PhraseFunction
-------------------
+                # console.log A: tokens
+                #
+                # '/A/outer A':                                       { name: ...
+                # '/A/outer A/phraseA/nested 1 A':                    { name: ...
+                # '/A/outer A/phraseA/nested 1 A/deeperA/deeper 1 A': { name: ...
+                #
 
-TODO
+            @tokenB.on 'ready', ({tokens}) => 
 
-        """
+                Btokens = tokens
 
-        arithmatic 'operations', (operation) -> 
+                # console.log B: tokens
+                #
+                # '/B/outer B':                                       { name: ...
+                # '/B/outer B/phraseB/nested 1 B leaf':               { name: ...
+                # '/B/outer B/phraseB/nested 2 B':                    { name: ...
+                # '/B/outer B/phraseB/nested 2 B/deeperB/deeper 1 B': { name: ...
+                #
 
-            operation 'subtract', (end) -> 
+                require('when/sequence')([
 
-                @answer = @input1 - @input2
-                end()
+                    => @tokenB.run Btokens['/B/outer B/phraseB/nested 1 B leaf']
+                    => @tokenA.run Atokens['/A/outer A/phraseA/nested 1 A/deeperA/deeper 1 A']
+                    => @tokenB.run Btokens['/B/outer B/phraseB/nested 2 B/deeperB/deeper 1 B']
 
+                ]).then(
 
-            operation 'just checking', (nested) -> 
+                    (results) -> 
 
-                nested 'invalid / phrase text', (end) -> 
+                        #
+                        # did straight forward hook registration work? 
+                        #
 
-                nested 'still running', (nest) -> 
+                        # console.log results[0].job
+                        results[0].job.should.eql 
 
-                    console.log still_running: true
-
-                    nest 'deeper', (end) -> 
-
-            operation 'add', (end) -> 
-
-                #@answer = @input1 + @input2
-                throw new Error 'UnexpectedError caught inline'
-                                #=============================
-
-                """
-
-Leaf Exceptions
----------------
-
-Related: 'Token Run Updates' (below)
-
-* This step has now failed, But the token.run() **Has Not Failed**
-
-* This error was passed into the token.run().then promise handler's
-  notifier function (the 3rd function passed to then())
-   
-     ie. token.run( phraseOrBranchToken ).then(
-
-          #
-          # these three functions are the promise handler
-          #   (see 'when' or 'q', node modules)
-          # 
-
-          (result) -> # final result from the entire run
-          (error)  -> # a catastrophic error terminstes the run
-          (update) -> # an event occurs in the run (eg. 'run::step:failed')
-
-     )
-
-* The error was passed into the handlers notifier to allow the token
-  run to continue processing the remaining leaves on the phraseBranch
-  that was called.
+                            RAN_before_all_nested_n_B: true
+                            RAN_nested_n_B_leaf: true
 
 
-                """
+                        #
+                        # FAILS more complex hook registration
+                        # -----
+                        #
+                        # * should have run all hooks
+                        #
 
+                        # console.log results[1].job
+                        results[1].job.should.eql
+
+                            ####RAN_before_all_nested_n_B: true
+                            RAN_before_deeper_1_AB: true
+                            RAN_deeperA: true
+
+
+                        #
+                        # FAILS
+                        # -----
+                        #
+                        # console.log results[2].job
+                        results[2].job.should.eql
+
+                            RAN_before_all_nested_n_B: true
+                            ####RAN_before_deeper_1_AB: true
+                            RAN_deeperB: true
+
+
+                        console.log 'TODO: fix limited hook functionality on multiwalk'
+                        #
+                        # * need a cleverer hook registration mechanism
+                        # * currently they're popped of a shallow stack
+                        #   by the next recursor
+                        # * if A pops first then B gets none
+                        #
+                        # * first consider: how 'should' it behave 
+                        #        (there's a catch 21.999999999993)
+                        # 
+
+                        done()
+
+
+                    (error)  -> console.log ERROR: error
+                    (notify) -> # NOISE!! console.log NOTIFY: notify
+
+                )
+
+
+            #
+            # continue the walk into A
+            #
+
+            @phraseA 'nested 1 A', uuid: 0, (deeperA) =>
 
                 #
-                # TODO: KnownError pathway
+                # continue the walk into B
+                # ------------------------
+                # 
+                # * inside A
+                # * with a before all hook
                 #
-                #  end new Error 'KnownError via resolver'
-                
 
-    it """
+                before all: (done) -> 
 
-The Root Token
---------------
-
-### run()
-
-TODO
-
-
-    """, (done) -> 
-
-        @token.run( @subtract, input1: 10, input2: 3 ).then(
-
-            (result) ->
-
-                result.job.answer.should.equal 7
-                done()
-
-            (error)  -> 
-            (update) -> 
-
-        )
-
-
-    it  """
-
-Token Run Updates
------------------
-
-TODO
-
-
-    """, (done) -> 
-
-
-        @token.run( @add, input1: 7, input2: 3 ).then(
-
-            (result) ->
-            (error)  ->
-            (update) ->
-
-                if update.state == 'run::step:failed'
-                            #
-                            # TODO: rename to event
-                            #
-
-                    # console.log update
-
-                    #
-                    #  state: 'run::step:failed',
-                    #  class: 'Job',
-                    #  jobUUID: 'd254b360-0cbf-11e3-823a-01cf205a2ddf',
-                    #  progress: { steps: 1, done: 0, failed: 1, skipped: 0 },
-                    #  at: 1377350375835,
-                    # 
-                    # 
-                    #  error: [Error: UnexpectedError caught inline],
-                    #                 =============================
-                    # 
-                    #  step: 
-                    #   { set: 1,
-                    #     depth: 2,
-                    #     type: 'leaf',
-                    #     ref: 
-                    #      { uuid: [Getter],
-                    #        token: [Getter],
-                    #        text: [Getter],
-                    #        leaf: [Getter/Setter] },
-                    #     fail: true },
-                    #  originator: true }
-                    #
-
+                    #console.log RUNNING: 'before_nested_1_B'
+                    @RAN_before_all_nested_n_B = true
                     done()
 
+                @phraseB 'nested 1 B leaf', uuid: 1, (end) -> 
 
+                    #console.log RUNNING: 'nested 1 B leaf'
+                    @RAN_nested_n_B_leaf = true
+                    end()
 
-        )
+                @phraseB 'nested 2 B', uuid: 2, (deeperB) -> 
 
-        #
-        # add and subtract are also tokens
-        # --------------------------------
-        # 
-        # TODO: make them directly callable 
-        #     
-        #       but later... (because a future use case plays that hand very specifically)
-        #
+                    #
+                    # * register before each on A and B vertices
+                    # 
 
-        # add( input1: 7, input2: 3 ).then -> 
+                    before each: (done) -> 
 
+                        @RAN_before_deeper_1_AB = true
+                        done()
 
+                    deeperA 'deeper 1 A', uuid: 3, (end) -> 
 
+                        @RAN_deeperA = true
+                        end()
 
-    it """
+                    deeperB 'deeper 1 B', uuid: 4, (end) -> 
 
-The PhraseCache
----------------
-
-    """
-
-
-
-    it """
-
-The RootCache
--------------
-
-    """
-
-
-
-    it """
-
-The PhraseMetrics
------------------
-
-    """
-
-
-
-    it """
-
-The RootMetrics
----------------
-
-    """
+                        @RAN_deeperB = true
+                        end()

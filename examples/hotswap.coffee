@@ -1,114 +1,118 @@
-#!/usr/bin/env coffee
+# #!/usr/bin/env coffee
 
-coffee  = require 'coffee-script'
-hotswap = require( '../lib/phrase' ).createRoot
+# coffee  = require 'coffee-script'
+# hotswap = require( '../lib/phrase' ).createRoot
 
-    title: 'Hotswap'
-    uuid:  '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
+#     title: 'Hotswap'
+#     uuid:  '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
 
-    (token, notice) -> 
+#     (token, notice) -> 
 
-        token.on 'ready', -> 
+#         token.on 'ready', ({tokens})-> 
 
-            #
-            # start first player on version 1
-            #
+#             #console.log tokens
 
-            token.run uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
+#             #
+#             # start first player on version 1
+#             #
 
-            #
-            # perform upgrade after 1 second
-            #
+#             token.run uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
 
-            vertices = token.graph.vertices
-            setTimeout (->
+#             #
+#             # perform upgrade after 1 second
+#             #
 
+            
 
-                console.log """
-
-                #
-                # fake an upgrade deployment
-                # 
-
-                """
-
-                #
-                # modify beforeEach of can/remain/running to migrate context data from version 1 to version 2
-                # 
-
-                for uuid of vertices
-
-                    continue unless vertices[uuid].text == 'remain'
-
-                    vertices[uuid].hooks.beforeEach.fn = eval coffee.compile """ 
-
-                    -> 
-
-                        @choices = ['rock', 'paper', 'scissors']
-                        @version  = 2 
-                        @interval = 490
+#             vertices = token.tree.vertices
+#             setTimeout (->
 
 
-                """, bare: true
+#                 console.log """
 
-                #
-                # start second player on version 2
-                #
+#                 #
+#                 # fake an upgrade deployment
+#                 # 
 
-                token.run uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
+#                 """
 
-            ), 1000
+#                 #
+#                 # modify beforeEach of can/remain/running to migrate context data from version 1 to version 2
+#                 # 
+
+#                 for uuid of vertices
+
+#                     continue unless vertices[uuid].title == 'remain'
+
+#                     vertices[uuid].hooks.beforeEach.fn = eval coffee.compile """ 
+
+#                     -> 
+
+#                         @choices = ['rock', 'paper', 'scissors']
+#                         @version  = 2 
+#                         @interval = 490
 
 
-        notice.use (msg, next) -> 
+#                 """, bare: true
 
-            if msg.context.title == 'choice'
+#                 #
+#                 # start second player on version 2
+#                 #
 
-                console.log "Choice: #{ msg.choice }    \tPlayer: #{msg.player} (version: #{msg.version})"
+#                 token.run uuid: '63e2d6b0-f242-11e2-85ef-03366e5fcf9a'
 
-            next()
+#             ), 1000
 
 
-hotswap 'the process containing this phrase', (can) -> 
+#         notice.use (msg, next) -> 
 
-    before 
+#             if msg.context.title == 'choice'
 
-        each: -> 
+#                 console.log "Choice: #{ msg.choice }    \tPlayer: #{msg.player} (version: #{msg.version})"
+
+#             next()
+
+
+# hotswap 'the process containing this phrase', (can) -> 
+
+#     before 
+
+#         each: -> 
         
-            @version  = 1
-            @interval = 1500
+#             @version  = 1
+#             @interval = 1500
 
-            #
-            # version 1 was discovered to be leaning a little in paper's favour
-            #
+#             #
+#             # version 1 was discovered to be leaning a little in paper's favour
+#             #
 
-            @choices = ['rock', 'paper']
+#             @choices = ['rock', 'paper']
 
 
-    can 'remain', (running) -> 
+#     can 'remain', (running) -> 
 
-        after each: -> 
+#         after each: -> 
 
-            clearInterval @repeat
+#             clearInterval @repeat
 
-        running 'while portions are updgraged', (done) -> 
+#         running 'while portions are updgraged', (done) -> 
 
-            console.log "Player: #{@uuid}    (version #{@version})"
+#             console.log "Player: #{@uuid}    (version #{@version})"
 
-            @repeat = setInterval ( =>
+#             @repeat = setInterval ( =>
 
-                console.log "deciding...   (version #{@version})"
+#                 console.log "deciding...   (version #{@version})"
 
-            ), 100
+#             ), 100
 
-            setTimeout done, @interval
+#             setTimeout done, @interval
 
-        running 'a second step', (done) -> 
+#         running 'a second step', (done) -> 
 
-            @notice.event( 'choice', 
+#             @notice.event( 'choice', 
 
-                player:  @uuid
-                choice:  @choices[  Math.floor Math.random() * @choices.length  ]
-                version: @version
+#                 player:  @uuid
+#                 choice:  @choices[  Math.floor Math.random() * @choices.length  ]
+#                 version: @version
 
-            ).then done
+#             ).then done

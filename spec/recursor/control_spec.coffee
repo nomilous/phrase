@@ -10,7 +10,7 @@ RecursorAfterAll   = require '../../lib/recursor/control/after_all'
 
 describe 'RecursorControl', -> 
 
-    context 'detectLeaf()', ->
+    context 'isLeaf()', ->
 
         root    = undefined
         control = undefined
@@ -26,62 +26,43 @@ describe 'RecursorControl', ->
             @Node = PhraseNode.createClass root
 
             control = 
-                leaf: ['end', 'done', 'slurp']
+                leaf:    ['end', 'done', 'slurp']
+                boundry: ['fingertip']
 
         it 'detects leaf phrases when phrase fn arg1 is in control.leaf', (done) -> 
         
             phrase = new @Node 
                 token: {}
-                text: ''
+                title: ''
                 uuid: '1111'
                 fn: (slurp) -> 
 
             RecursorControl.bindControl root, control
-            control.detectLeaf phrase, (isLeaf) ->
+            control.phraseType( phrase.fn ).should.equal 'leaf'
+            done()
 
-                isLeaf.should.equal true
-                done()
+        it 'detects boundry phrases when phrase fn arg1 is in control.boundry', (done) -> 
+        
+            phrase = new @Node 
+                token: {}
+                title: ''
+                uuid: '1111'
+                fn: (fingertip) -> 
 
-        it 'detects not leaf when phrase fn arg1 is not in control.leaf', (done) ->
+            RecursorControl.bindControl root, control
+            control.phraseType( phrase.fn ).should.equal 'boundry'
+            done()
+
+        it 'defaults to vertex phrase', (done) ->
 
             phrase = new @Node 
                 token: {}
-                text: ''
+                title: ''
                 uuid: '1111'
                 fn: (other) -> 
             RecursorControl.bindControl root, control
-            control.detectLeaf phrase, (isLeaf) ->
-
-                isLeaf.should.equal false
-                done()
-
-
-        it 'marks the phrase as a leaf', (done) -> 
-
-            phrase = new @Node 
-                token: uuid: '1111'
-                text: ''
-                fn: (end) -> 
-            RecursorControl.bindControl root, control
-            control.detectLeaf phrase, (isLeaf) ->
-
-                phrase.leaf.should.equal true
-                done()
-
-        it 'marks the phrase as not a leaf', (done) -> 
-
-            phrase = new @Node 
-                token: {}
-                uuid: '1111'
-                text: ''
-                fn: (other) -> 
-            RecursorControl.bindControl root, control
-            control.detectLeaf phrase, (isLeaf) ->
-
-                phrase.leaf.should.equal false
-                done()
-
-
+            control.phraseType( phrase.fn ).should.equal 'vertex'
+            done()
 
 
 they = it

@@ -1,61 +1,71 @@
-Control    = require '../recursor/control' 
-PhraseHook = require '../phrase/hook'
+Control        = require '../recursor/control' 
+PhraseHook     = require '../phrase/hook'
+PhraseTokenFactory = require '../token/phrase_token'
 
 #
 # TreeWalker
 # ==========
 # 
 # * Performs a recursive 'walk' through the tree being passed to the rootRegistrar 
-#   to assemble the PhraseGraph
+#   to assemble the PhraseTree
 #   
 # * Does not run any of the hooks or leaf nodes in the tree.
 # 
 
 exports.walk = (root, opts, rootString, rootFn) ->
 
-    {context, inject}                   = root
-    {stack, notice, graph, PhraseGraph} = context
+    {context, inject, util}             = root
+    {stack, notice, tree, PhraseTree} = context
 
-    context.hooks  = PhraseHook.bind root
+    context.hooks       = PhraseHook.bind root
+    context.PhraseToken = PhraseTokenFactory.createClass root
 
-
-    if graph? 
+    if tree? 
 
         # 
-        # root graph is already defined
-        # -----------------------------
+        # primary tree is already defined
+        # -------------------------------
         # 
-        # * create a new (orphaned) graph
-        # * accessable at context.graphs.latest
+        # * create a new (orphaned) tree
+        # * accessable at context.trees.latest
         # 
 
-        new PhraseGraph
+        new PhraseTree
 
     else
 
         #
-        # create root graph
-        # -----------------
+        # create primary tree
+        # -------------------
         # 
-        # * This graph houses the PhraseTree
+        # * This primary houses the PhraseTree
         # * It is only ever created on the 'first walk'
-        # TODO * Subsequent walks assemble a second graph
-        # TODO * Second graph is merged into the first
+        # TODO * Subsequent walks assemble a second tree
+        # TODO * Second tree is merged into the first
         # TODO * Merge generates appropriate add/remove/change events on the root token
         # 
 
-        context.graph = new PhraseGraph
+        context.tree = new PhraseTree
 
 
     recursor = (parentPhraseString, parentPhraseControl) -> 
 
+        #
+        # This recursion is proxied through an async injector
+        # ---------------------------------------------------
+        # 
+        # * It provides flow control.
+        # * It provides argument injection.
+        #
+
         recursionControl = Control.bindControl root, parentPhraseControl
 
-        #
-        # recurse via async injector
-        # 
+        return inject.async
 
-        injectionFn = inject.async
+            #
+            # inject.async() arg1 - Injection Preparator
+            # ------------------------------------------
+            # 
 
             parallel:   false
             beforeAll:  recursionControl.beforeAll
@@ -133,16 +143,20 @@ exports.walk = (root, opts, rootString, rootFn) ->
                                     # 
 
 
-                #
+                # #GREP4
                 # TODO: send error event via message bus
                 #       --------------------------------
                 #       * async, await ignore flag
+                # 
                 #
 
                 #
                 # TODO: send error event via token
                 #       if not ignore
                 # 
+
+                # console.log error
+                # console.log error.stack
 
                 root.context.token.emit 'error', error
                 
@@ -151,45 +165,68 @@ exports.walk = (root, opts, rootString, rootFn) ->
                 #
 
 
+            #
+            # inject.async() arg2 - Injection Target (ThePhraseRecursor)
+            # ----------------------------------------------------------
+            # 
+            # * It passes a new instance of the recursor (newRecursorFn) as arg1 to the 
+            #   nested phrase function
+            # 
+            # * The new recursor becomes the phrase registrar for the nested phrases.
+            #
+            # * Calls to the new recursor queue in the injector.
+            # 
+            #   ie. 
+            #         phrase 'phrase title', (arg1)
+            #         
+            #             arg1 'nested phrase test', (...) -> 
+            #             arg1 'another nested phrase test', (...) -> 
+            #             arg1 'these are queueing'
+            #             arg1 'they run on nextTick'
+            #             arg1 """
+            #                   ie. * whenever next the flow of execution breaks out
+            #                         and node decides which pending turn to run in
+            #                         the reactor queue
+            #             
+            #                       * nextTicks are pushed to the front of the reactor 
+            #                         queue
+            #              """
+            # 
+            #
+
             (phraseString, phraseControl, nestedPhraseFn) -> 
-
-                #
-                # injection target function
-                # -------------------------
-                # 
-                # * It passes a new instance of the recursor as arg1 to the nested phrase function
-                #
-                # * The new injection function is initialized with the phraseText and phraseControl
-                #   options of the nested phrase.
-                # 
-                #   ie. 
-                #         phrase 'phrase text', (arg1)
-                #         
-                #             arg1 'nested phrase test', (...) -> 
-                #             arg1 'another nested phrase test', (...) -> 
-                #             arg1 'these are queueing'
-                #             arg1 'they run on nextTick'
-                #             arg1 """
-                #                   ie. * whenever next the flow of execution breaks out
-                #                         and node decides which pending turn to run in
-                #                         the reactor queue
-                #             
-                #                       * nextTicks are pushed to the front of the reactor 
-                #                         queue
-                #              """
-                # 
-                #
-
-                newInjectionFn = recursor phraseString, phraseControl
-                nestedPhraseFn newInjectionFn
+                                                #
+                                                # leaf and boundry phrases inject noop here
+                                                #
+                                                # TODO: quite possibly simply injecting null 
+                                                #       and doing no recursion in that case
+                                                #       will more appropriately achieve the 
+                                                #       desired effect.
+                                                #       
 
 
-        #
-        # recursor( phraseString, phraseControl ) 
-        # returns injector function
-        #
+                # args = util.argsOf nestedPhraseFn
+                # console.log """
 
-        return injectionFn
+                #     This may prove trickier than i thought...
+                #     -----------------------------------------
+
+                #     * is this available in the job run?
+                #     * if not, make it so
+                #     * once so, ...
+
+                #           How to get it into scope?
+                #           Because the vertex phrases 
+                #           are not run at jobtime. 
+
+                #           UM...
+
+
+                # """: args if args.length > 1
+
+                newRecursorFn = recursor phraseString, phraseControl
+                nestedPhraseFn newRecursorFn
+
 
 
     injector = recursor 'ROOT', 
@@ -201,10 +238,11 @@ exports.walk = (root, opts, rootString, rootFn) ->
             # of phrase tree, from phrase.createRoot()
             # 
 
-            name: opts.title
-            uuid: opts.uuid
+            signature: opts.title
+            uuid:      opts.uuid
 
         timeout: opts.timeout
-        leaf: opts.leaf
+        boundry: opts.boundry
+        leaf:    opts.leaf
 
     injector rootString, rootFn

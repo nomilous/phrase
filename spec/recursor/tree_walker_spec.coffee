@@ -2,7 +2,8 @@ should          = require 'should'
 TreeWalker      = require '../../lib/recursor/tree_walker'
 RecursorControl = require '../../lib/recursor/control'
 PhraseNode      = require '../../lib/phrase/node'
-PhraseGraph     = require '../../lib/phrase/graph'
+PhraseTree      = require '../../lib/phrase/tree'
+BoundryHandler  = require '../../lib/recursor/boundry_handler'
 
 describe 'TreeWalker', -> 
 
@@ -30,15 +31,14 @@ describe 'TreeWalker', ->
                     use:   -> 
                 token: emit: (event, args...) ->
 
-                    EVENTS[event] = args
-
             root.context.PhraseNode = PhraseNode.createClass root
-            root.context.PhraseGraph = PhraseGraph.createClass root
+            root.context.PhraseTree = PhraseTree.createClass root
 
             opts = 
-                title: 'Title'
-                uuid:  '00000'
-                leaf: ['end']
+                title:   'Title'
+                uuid:    '00000'
+                leaf:    ['end']
+                boundry: ['edge']
                 timeout: 1000
 
         afterEach -> 
@@ -57,29 +57,29 @@ describe 'TreeWalker', ->
             try TreeWalker.walk root, opts
 
 
-        it 'creates root graph only once', (done) -> 
+        it 'creates root tree only once', (done) -> 
 
-            delete root.context.graph
+            delete root.context.tree
             TreeWalker.walk root, opts, 'phrase string', (nest) ->
-            graph = root.context.graph
-            should.exist graph
+            tree = root.context.tree
+            should.exist tree
 
             TreeWalker.walk root, opts, 'phrase string', (nest) ->
-            graph.should.equal root.context.graph
+            tree.should.equal root.context.tree
             done()
 
 
-        it 'creates an orphaned graph on subsequent calls', (done) -> 
+        it 'creates an orphaned tree on subsequent calls', (done) -> 
 
-            delete root.context.graph
+            delete root.context.tree
             TreeWalker.walk root, opts, 'phrase string', (nest) ->
-            rootGraph = root.context.graph
+            rootTree = root.context.tree
 
             TreeWalker.walk root, opts, 'phrase string', (nest) ->
-            newGraph = root.context.graphs.latest
+            newTree = root.context.trees.latest
 
-            should.exist newGraph
-            newGraph.should.not.equal rootGraph
+            should.exist newTree
+            newTree.should.not.equal rootTree
             done()
 
 
@@ -87,7 +87,7 @@ describe 'TreeWalker', ->
 
             RecursorControl.bindControl = (rooot, parent) -> 
 
-                parent.phraseToken.name.should.equal 'Title'
+                parent.phraseToken.signature.should.equal 'Title'
                 parent.phraseToken.uuid.should.equal '00000'
                 done()
                 throw 'go no further'
@@ -95,15 +95,14 @@ describe 'TreeWalker', ->
             try TreeWalker.walk root, opts, 'phrase string', (nest) ->
 
 
-        it 'emits "error" onto the root token at invalid phrase text', (done) -> 
+        it 'emits "error" onto the root token at invalid phrase title', (done) -> 
 
-            TreeWalker.walk( root, opts, 'phra/se string', (nest) -> ).then( 
+            root.context.token.emit = (event, error) ->
 
-                ->
-                -> EVENTS.error.should.match /NVALID text/; done()
-                ->
+                error.should.match /INVALID title/
+                done()
 
-            )
+            TreeWalker.walk root, opts, 'phra/se string', (nest) -> 
                 
 
         it 'assigns access to registered phrase hooks', (done) -> 
@@ -135,5 +134,20 @@ describe 'TreeWalker', ->
                         CALLS[2][0].should.equal '...'
 
                         done()
+
+
+        # it 'enables linking to other Phrase Trees', (done) -> 
+
+        #     BoundryHandler.link = (root, opts) -> 
+
+        #         root.should.equal root
+        #         opts.should.eql directory: './path/to/more'
+        #         done()
+
+        #     TreeWalker.walk root, opts, 'outer phrase string', (nested) ->
+
+        #         nested 'inner phrase', (boundry) -> 
+                
+        #             boundry.link directory: './path/to/more'
 
 
