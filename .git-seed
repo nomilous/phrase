@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "repos": [
+    {
+      "root": true,
+      "workDir": ".",
+      "packageManager": "npm",
+      "remote.origin.url": "git@github.com:nomilous/phrase.git",
+      "HEAD": "refs/heads/develop",
+      "version": "ROOT_REPO_REF"
+    },
+    {
+      "root": false,
+      "workDir": "./node_modules/notice",
+      "packageManager": "npm",
+      "remote.origin.url": "git@github.com:nomilous/notice.git",
+      "HEAD": "refs/heads/develop",
+      "version": "54f8751473eda4c86aa5f98752e42cdf4c69fea8"
+    }
+  ]
+}

@@ -1,7 +1,7 @@
 {
   "name": "phrase",
   "description": "A describer.",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "author": "nomilous <nomilous@gmail.com>",
   "contributors": [
     {
@@ -12,9 +12,8 @@
   "main": "./lib/phrase",
   "repository": "git@github.com:nomilous/phrase.git",
   "dependencies": {
-    "when": "~2.3.0",
-    "also": "0.0.11",
-    "notice": "0.0.9"
+    "also": "0.0.12",
+    "notice": "0.0.11"
   },
   "devDependencies": {
     "hound": "~1.0.4",
