@@ -97,7 +97,15 @@ Noc 'Duties', (duty) ->
                 step 'classify',   (done) -> done()
                 step 'prioritize', (done, DependancyMatrix, KnowledgeBase) -> 
 
-                    KnowledgeBase.ActiveAlerts.query DependancyMatrix.generateQuery @uuid, @capsule, @context
+                    KnowledgeBase.ActiveAlerts.query( 
+
+                        DependancyMatrix.generateQuery @uuid, @capsule, @context
+
+                    ), (err, rootCauses) => 
+
+
+
+
 
 
                                                 #
