@@ -4,7 +4,7 @@ error = (code, message) -> Object.defineProperty (new Error message), 'code', va
 
 api = 
     
-    start: (root, opts = {}, params = {}) -> 
+    start: deferred (running, root, opts = {}, params = {}) -> 
 
         #
         # opts for control
@@ -15,11 +15,7 @@ api =
         {tree, notice}  = context
         {uuid}          = opts
 
-        #
-        # defer and promise the running phrase node
-        #
 
-        running = defer()
         process.nextTick -> 
 
             unless uuid? 

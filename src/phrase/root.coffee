@@ -107,7 +107,10 @@ exports.createClass = (root) ->
 
             context.notice = opts.notice || Notice.create opts.uuid
 
-            context.notice.use root.assembler
+            context.notice.use
+
+                title: 'phrase core assembler'
+                root.assembler
 
 
             #

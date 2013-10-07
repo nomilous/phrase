@@ -14,7 +14,7 @@ module.exports.create = (core) ->
 
     {util} = core
 
-    core.assembler = (msg, next) -> 
+    core.assembler = (next, capsule) -> 
 
 
         #
@@ -44,16 +44,16 @@ module.exports.create = (core) ->
         # 
         #
 
-        return next() unless msg.context.title == 'boundry::edge:create'
+        return next() unless capsule.context.title == 'boundry::edge:create'
 
-        srcPhrase        = msg.vertices[0]
-        srcControl       = msg.control
-        srcRoot          = msg.root
-        newPhraseTitle   = msg.vertices[1].phrase.title
-        newPhraseControl = msg.vertices[1].phrase.control
-        newPhraseUUID    = msg.vertices[1].phrase.control.uuid || util.uuid()
-        newPhraseFn      = msg.vertices[1].phrase.fn
-        assemblyOpts     = msg.vertices[1].opts
+        srcPhrase        = capsule.vertices[0]
+        srcControl       = capsule.control
+        srcRoot          = capsule.root
+        newPhraseTitle   = capsule.vertices[1].phrase.title
+        newPhraseControl = capsule.vertices[1].phrase.control
+        newPhraseUUID    = capsule.vertices[1].phrase.control.uuid || util.uuid()
+        newPhraseFn      = capsule.vertices[1].phrase.fn
+        assemblyOpts     = capsule.vertices[1].opts
 
         #
         # * Create and configure new root to house the referred PhraseTree
@@ -79,7 +79,7 @@ module.exports.create = (core) ->
         # -------------------------------------
         # 
         # * The assembly pipeline middlewares (phrase::boundry:assemble) can 
-        #   configure msg.opts.loadTree = false to prevent the loading of the 
+        #   configure capsule.opts.loadTree = false to prevent the loading of the 
         #   boundry tree.
         # 
         # * The reference token nested at link origin in the primary tree will 
@@ -91,15 +91,15 @@ module.exports.create = (core) ->
 
         if assemblyOpts.loadTree is false
 
-            OriginPhraseToken = core.root( msg.root.uuid ).context.PhraseToken
-            OriginPhraseNode = core.root( msg.root.uuid ).context.PhraseNode
+            OriginPhraseToken = core.root( capsule.root.uuid ).context.PhraseToken
+            OriginPhraseNode = core.root( capsule.root.uuid ).context.PhraseNode
 
             #
             # * create reference phrase to nest into the boundry
             #   leaf at the link origin
             #
 
-            msg.phrase = new OriginPhraseNode
+            capsule.phrase = new OriginPhraseNode
                 title: newPhraseTitle
                 uuid: newPhraseUUID
                 token: new OriginPhraseToken
@@ -130,14 +130,17 @@ module.exports.create = (core) ->
             timeout: newPhraseControl.timeout || srcControl.timeout
 
 
-        newRoot.context.notice.use (msg, next) -> 
+        newRoot.context.notice.use 
 
-            # if msg.context.title == 'phrase::recurse:end'
+            title: 'this is a complicated way to log something, delete?'
+            (next, capsule) -> 
 
-            #     console.log '\nREFERRED TREE:',newPhraseTitle
-            #     console.log path for path of msg.tokens
+                # if capsule.context.title == 'phrase::recurse:end'
 
-            next()
+                #     console.log '\nREFERRED TREE:',newPhraseTitle
+                #     console.log path for path of capsule.tokens
+
+                next()
 
         #
         # TODO: assemblyOpts can specify 'do first walk' (or not) into the
@@ -153,10 +156,10 @@ module.exports.create = (core) ->
                 #   leaf at the link origin
                 #
 
-                OriginPhraseToken = core.root( msg.root.uuid ).context.PhraseToken
-                OriginPhraseNode = core.root( msg.root.uuid ).context.PhraseNode
+                OriginPhraseToken = core.root( capsule.root.uuid ).context.PhraseToken
+                OriginPhraseNode = core.root( capsule.root.uuid ).context.PhraseNode
 
-                msg.phrase = new OriginPhraseNode
+                capsule.phrase = new OriginPhraseNode
                     title: newPhraseTitle
                     uuid: newPhraseUUID
                     token: new OriginPhraseToken

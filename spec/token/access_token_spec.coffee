@@ -19,6 +19,7 @@ describe 'PhraseToken', ->
 
             title: 'Title'
             uuid:  'ROOT-UUID'
+            notice: use: ->
 
             (token, notice) -> 
 
@@ -57,7 +58,7 @@ describe 'PhraseToken', ->
             @token = AccessToken.create 
                 context: 
                     notice: 
-                        use: (@middleware) =>
+                        use: (@opts, @middleware) =>
 
         afterEach -> 
 
@@ -71,15 +72,15 @@ describe 'PhraseToken', ->
 
                 @token.on 'ready', (data) -> done()
 
-                @middleware
+                @middleware (->),
 
                     #
                     # send mock phrase::recurse:end
                     #
 
-                    context: title: 'phrase::recurse:end'
+                    event: 'phrase::recurse:end'
                     walk: first: true
-                    ->
+                    
 
 
             it 'is only proxied on the first walk', (done) ->
@@ -88,11 +89,9 @@ describe 'PhraseToken', ->
 
                     throw 'SHOULD NOT RUN'
 
-                @middleware
+                @middleware done, 
 
-                    context: title: 'phrase::recurse:end'
+                    event: 'phrase::recurse:end'
                     walk: first: false
-                    
-                    done
 
 

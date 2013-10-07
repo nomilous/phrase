@@ -11,6 +11,7 @@ describe 'phrase', ->
     beforeEach -> 
 
         also.context = {}
+        also.assembler = ->
         PhraseRoot  = require('../../lib/phrase/root').createClass also
         phraseRecursor_swap = TreeWalker.walk 
 
@@ -39,7 +40,7 @@ describe 'phrase', ->
                 done()
 
 
-        it 'can be initialized with existing messenger', (done) -> 
+        it.only 'can be initialized with existing messenger', (done) -> 
 
             existing = Notice.create 'origin name'
 

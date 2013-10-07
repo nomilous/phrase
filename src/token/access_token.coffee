@@ -50,24 +50,27 @@ exports.create = (root) ->
 
         Run.start root, token, params
 
-    notice.use (msg, next) -> 
 
-        if msg.context.title == 'phrase::recurse:end'
+    notice.use 
 
-            if msg.walk.first then emitter.emit 'ready', 
+        title: 'token emitter proxy'
+        (next, capsule) -> 
 
-                walk:   msg.walk
-                tokens: msg.tokens
+            if capsule.event == 'phrase::recurse:end'
 
-            else 
+                if capsule.walk.first then emitter.emit 'ready', 
 
-                console.log 'TODO: changed payload'
-                emitter.emit 'changed'
+                    walk:   capsule.walk
+                    tokens: capsule.tokens
+
+                else 
+
+                    emitter.emit 'changed', 'TODO: changed payload'
 
 
 
 
-        next()
+            next()
 
 
     return emitter
