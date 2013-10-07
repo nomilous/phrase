@@ -1,5 +1,4 @@
-{defer}      = require 'when'
-pipeline     = require 'when/pipeline'
+{deferred, pipeline} = require 'also'
 
 error = (code, message) -> Object.defineProperty (new Error message), 'code', value: code
 
@@ -63,13 +62,12 @@ api =
         return running.promise
 
 
-    getSteps: (root, opts, running) ->
+    getSteps: deferred (getting, root, opts, running) ->
 
         {context} = root
         {tree}    = context
         {uuid}    = opts
 
-        getting   = defer() 
         leaves    = tree.leavesOf uuid
         count     = leaves.length
 
@@ -228,8 +226,5 @@ api =
 
         start()
         
-        return getting.promise
-        
-
 
 module.exports = api

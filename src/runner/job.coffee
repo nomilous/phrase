@@ -1,5 +1,4 @@
-{defer}      = require 'when'
-sequence     = require 'when/sequence'
+{deferred, sequence} = require 'also'
 
 exports.createClass = (root) -> 
 
@@ -95,13 +94,11 @@ exports.createClass = (root) ->
             if opts.params? then @[param] = opts.params[param] for param of opts.params
 
 
-        run: ->
+        run: deferred (running) ->
 
             #
             # a local deferral for the promise of this step run
             #
-
-            running = defer()
 
             if @skipped 
 
@@ -446,7 +443,5 @@ exports.createClass = (root) ->
                         #         running.notify notify
 
                 )
-
-            return running.promise
 
 

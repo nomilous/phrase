@@ -1,4 +1,4 @@
-{defer} = require 'when'
+{deferred} = require 'also'
 
 exports.createClass = (root) -> 
 
@@ -327,9 +327,9 @@ exports.createClass = (root) ->
 
     Object.defineProperty ChangeSet, 'applyChanges', 
         enumarable: true
-        get: -> (uuid, direction) -> 
+        get: -> deferred (doing, uuid, direction) -> 
 
-            doing = defer()
+
             process.nextTick ->
                 return doing.reject new Error( 
 
@@ -338,5 +338,4 @@ exports.createClass = (root) ->
                 ) unless changeSets[uuid]?
                 doing.resolve changeSets[uuid][ direction || 'AtoB' ]()
 
-            doing.promise
 

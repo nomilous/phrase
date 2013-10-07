@@ -1,4 +1,4 @@
-pipeline         = require 'when/pipeline'
+{pipeline}       = require 'also'
 ChangeSetFactory = require './change_set'
 seq              = 0
 
@@ -49,29 +49,32 @@ exports.createClass = (root) ->
     #   remain unchanged. 
     #
 
-    notice.use assembler = (msg, next) -> 
+    notice.use 
 
-        return next() unless trees.latest?
+        title: 'phrase tree assmebler'
+        assembler = (next, capsule) -> 
 
-        switch msg.context.title
+            return next() unless trees.latest?
 
-            when 'phrase::recurse:start'
+            switch capsule.event
 
-                #return next() unless msg.root.uuid == root.uuid
-                next()
+                when 'phrase::recurse:start'
 
-            when 'phrase::edge:create'
+                    #return next() unless msg.root.uuid == root.uuid
+                    next()
 
-                return next() unless msg.root.uuid == root.uuid
-                trees.latest.registerEdge msg, next
+                when 'phrase::edge:create'
 
-            when 'phrase::recurse:end'
+                    return next() unless capsule.root.uuid == root.uuid
+                    trees.latest.registerEdge next, capsule
 
-                return next() unless msg.root.uuid == root.uuid
-                trees.latest.createIndexes msg, next
+                when 'phrase::recurse:end'
+
+                    return next() unless capsule.root.uuid == root.uuid
+                    trees.latest.createIndexes next, capsule
 
 
-            else next()
+                else next()
 
 
 
@@ -139,9 +142,9 @@ exports.createClass = (root) ->
                 set: (value) -> localOpts.rootVertex = value unless localOpts.rootVertex?
 
 
-        createIndexes: (msg, next) -> 
+        createIndexes: (next, capsule) -> 
 
-            msg.tokens = {}
+            capsule.tokens = {}
 
             recurse = (vertex, stack = []) => 
 
@@ -153,7 +156,7 @@ exports.createClass = (root) ->
                 path = stack.join ''
                 @path2uuid[     path    ] = vertex.uuid
                 @uuid2path[ vertex.uuid ] = path
-                msg.tokens[   path  ] = vertex.token
+                capsule.tokens[   path  ] = vertex.token
 
                 if @children[ vertex.uuid ]?
 
@@ -214,9 +217,9 @@ exports.createClass = (root) ->
 
             ]
 
-        registerEdge: (msg, next) -> 
+        registerEdge: (next, capsule) -> 
 
-            [vertex1, vertex2] = msg.vertices
+            [vertex1, vertex2] = capsule.vertices
 
             
             #
@@ -242,8 +245,6 @@ exports.createClass = (root) ->
             @edges[ vertex2.uuid ].push to: vertex1.uuid
 
 
-
-            
 
             @children[ vertex1.uuid ]  ||= []
             @children[ vertex1.uuid ].push vertex2.uuid

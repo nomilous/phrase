@@ -1,5 +1,4 @@
-sequence            = require 'when/sequence'
-pipeline            = require 'when/pipeline'
+{sequence, pipeline} = require 'also'
 PhraseTokenFactory  = require '../../token/phrase_token'
 BoundryHandler      = require '../boundry_handler'
 

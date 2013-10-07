@@ -1,7 +1,6 @@
-{readdirSync} = require 'fs'
-{join}        = require 'path'
-{defer}       = require 'when'
-sequence      = require 'when/sequence'
+{readdirSync}        = require 'fs'
+{join}               = require 'path'
+{deferred, sequence} = require 'also'
 
 
 module.exports = boundryHandler = 

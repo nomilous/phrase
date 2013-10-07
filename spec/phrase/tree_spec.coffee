@@ -95,7 +95,7 @@ describe 'PhraseTree', ->
             @Tree = PhraseTree.createClass 
                 uuid: 'ROOTUUID'
                 util: also.util
-                context: notice: use: (@middleware) =>
+                context: notice: use: (@opts, @middleware) =>
 
 
         it 'registers on the message bus', (done) -> 
@@ -108,7 +108,7 @@ describe 'PhraseTree', ->
                 # middleware.should.equal Tree.assembler
                 # console.log middleware is Tree.assembler
                 #
-
+                @opts.title.should.equal 'phrase tree assmebler'
                 @middleware.toString().should.equal @Tree.assembler.toString()
                 done()          # 
                                 # marginally pointless...
@@ -125,11 +125,11 @@ describe 'PhraseTree', ->
 
                 tree.registerEdge = -> done()
 
-                @Tree.assembler
+                @Tree.assembler (->),
 
-                    context: title: 'phrase::edge:create'
+                    event: 'phrase::edge:create'
                     root: uuid: 'ROOTUUID'
-                    ->
+                    
 
 
             it 'ignores phrase::edge:create if root.uuid is not this root', (done) ->
@@ -138,31 +138,18 @@ describe 'PhraseTree', ->
 
                 tree.registerEdge = -> throw 'should not run'
 
-                @Tree.assembler
+                @Tree.assembler done,
 
                     context: title: 'phrase::edge:create'
                     root: uuid: 'NOTME'
-                    -> done()
+                    
 
 
             it 'creates vertices', (done) -> 
 
                 tree = new @Tree
 
-                tree.registerEdge 
-
-                    #
-                    # mock 'phrase::edge:create' message
-                    #
-
-                    context: title: 'phrase::edge:create'
-                    root: uuid: 'ROOTUUID'
-                    vertices: [
-                        { uuid: 'UUID1', key: 'value1' }
-                        { uuid: 'UUID2', key: 'value2' }
-                    ]
-
-                    -> 
+                tree.registerEdge (-> 
 
                         tree.vertices.should.eql 
 
@@ -172,11 +159,37 @@ describe 'PhraseTree', ->
                         done()
 
 
+                    ),
+
+                    #
+                    # mock 'phrase::edge:create' message
+                    #
+
+                    event: 'phrase::edge:create'
+                    root: uuid: 'ROOTUUID'
+                    vertices: [
+                        { uuid: 'UUID1', key: 'value1' }
+                        { uuid: 'UUID2', key: 'value2' }
+                    ]
+
+                    
+
+
             it 'creates edges' , (done) ->
 
                 tree = new @Tree
 
-                tree.registerEdge 
+                tree.registerEdge (->
+
+                        tree.edges.should.eql 
+
+                            UUID1: [ { to: 'UUID2' } ]
+                            UUID2: [ { to: 'UUID1' } ]
+                        
+                        done()
+
+
+                    ),
 
                     #
                     # mock 'phrase::edge:create' message
@@ -188,26 +201,18 @@ describe 'PhraseTree', ->
                         { uuid: 'UUID2', key: 'value2' }
                     ]
 
-                    -> 
-
-                        tree.edges.should.eql 
-
-                            UUID1: [ { to: 'UUID2' } ]
-                            UUID2: [ { to: 'UUID1' } ]
-                        
-                        done()
-
+                    
 
             it 'allows multiple edges per vertex', (done) -> 
 
                 tree = new @Tree
 
-                tree.registerEdge vertices: [
+                tree.registerEdge (->), vertices: [
                         { uuid: 'UUID1', key: 'value1' }
                         { uuid: 'UUID2', key: 'value2' }
                     ],  ->
 
-                tree.registerEdge vertices: [
+                tree.registerEdge (->), vertices: [
                         { uuid: 'UUID1', key: 'value1' }
                         { uuid: 'UUID3', key: 'value3' }
                     ],  ->
@@ -221,16 +226,17 @@ describe 'PhraseTree', ->
                 
                 done()
 
+
             it 'stores parent and child relations (if tree)', (done) -> 
 
                 tree = new @Tree
 
-                tree.registerEdge type: 'tree', vertices: [
+                tree.registerEdge (->), type: 'tree', vertices: [
                     { uuid: 'UUID1', key: 'value1', token: {              } }
                     { uuid: 'UUID2', key: 'value2', token: {              } }
                 ],  ->
 
-                tree.registerEdge type: 'tree', vertices: [
+                tree.registerEdge (->), type: 'tree', vertices: [
                         { uuid: 'UUID1', key: 'value1', token: {              } }
                         { uuid: 'UUID3', key: 'value3', token: {              } }
                     ],  ->
@@ -254,17 +260,17 @@ describe 'PhraseTree', ->
                 # vertices are flagged as leaf by the TreeWalker
                 #
 
-                tree.registerEdge type: 'tree', vertices: [
+                tree.registerEdge (->), type: 'tree', vertices: [
                         { uuid: 'UUID1', key: 'value1', token: {              } }
                         { uuid: 'UUID2', key: 'value2', token: { type: 'leaf' } }
                     ],  ->
 
-                tree.registerEdge type: 'tree', vertices: [
+                tree.registerEdge (->), type: 'tree', vertices: [
                         { uuid: 'UUID1', key: 'value1' }
                         { uuid: 'UUID3', key: 'value3' }
                     ],  ->
 
-                tree.registerEdge type: 'tree', vertices: [
+                tree.registerEdge (->), type: 'tree', vertices: [
                         { uuid: 'UUID3', key: 'value3', token: {              } }
                         { uuid: 'UUID4', key: 'value4', token: { type: 'leaf' } }
                     ],  ->
@@ -280,7 +286,7 @@ describe 'PhraseTree', ->
 
             tree = new @Tree
 
-            tree.registerEdge type: 'tree', vertices: [
+            tree.registerEdge (->), type: 'tree', vertices: [
                     { uuid: 'UUID1', key: 'value1' }
                     { uuid: 'UUID2', arbkey: 'arbvalue', token: { type: 'leaf' } }
                 ],  ->
@@ -307,31 +313,31 @@ describe 'PhraseTree', ->
 
             tree = new @Tree
 
-            tree.registerEdge type: 'tree', vertices: [
+            tree.registerEdge (->), type: 'tree', vertices: [
                     { uuid: 'UUID1', key: 'value1' }
                     { uuid: 'UUID2', key: 'value2', token: { type: 'leaf' } }
                 ],  ->
-            tree.registerEdge type: 'tree', vertices: [
+            tree.registerEdge (->), type: 'tree', vertices: [
                     { uuid: 'UUID1', key: 'value1' }
                     { uuid: 'UUID3', key: 'value3' }
                 ],  ->
-            tree.registerEdge type: 'tree', vertices: [
+            tree.registerEdge (->), type: 'tree', vertices: [
                     { uuid: 'UUID3', key: 'value3' }
                     { uuid: 'UUID4', key: 'value4' }
                 ],  ->
-            tree.registerEdge type: 'tree', vertices: [
+            tree.registerEdge (->), type: 'tree', vertices: [
                     { uuid: 'UUID3', key: 'value3' }
                     { uuid: 'UUID5', key: 'value5', token: { type: 'leaf' } }
                 ],  ->
-            tree.registerEdge type: 'tree', vertices: [
+            tree.registerEdge (->), type: 'tree', vertices: [
                     { uuid: 'UUID4', key: 'value4' }
                     { uuid: 'UUID6', key: 'value6', token: { type: 'leaf' } }
                 ],  ->
-            tree.registerEdge type: 'tree', vertices: [
+            tree.registerEdge (->), type: 'tree', vertices: [
                     { uuid: 'UUID4', key: 'value4' }
                     { uuid: 'UUID7', key: 'value7', token: { type: 'leaf' } }
                 ],  ->
-            tree.registerEdge type: 'tree', vertices: [
+            tree.registerEdge (->), type: 'tree', vertices: [
                     { uuid: 'UUID1', key: 'value1' }
                     { uuid: 'UUID8', key: 'value8', token: { type: 'leaf' } }
                 ],  ->
@@ -365,11 +371,11 @@ describe 'PhraseTree', ->
 
             @tree = new @Tree
 
-            @tree.registerEdge type: 'tree', vertices: [
+            @tree.registerEdge (->), type: 'tree', vertices: [
                     { uuid: 'PARENT', token: { signature: 'context' }, title: 'the index' }
                     { uuid: 'CHILD1', token: { signature: 'it', type: 'leaf' }, title: 'has map from path to uuid' }
                 ],  ->
-            @tree.registerEdge type: 'tree', vertices: [
+            @tree.registerEdge (->), type: 'tree', vertices: [
                     { uuid: 'PARENT', token: { signature: 'context' }, title: 'the index' }
                     { uuid: 'CHILD2', token: { signature: 'it', type: 'leaf' }, title: 'has map from uuid to path' }
                 ],  ->
@@ -379,7 +385,7 @@ describe 'PhraseTree', ->
 
         it 'creates index from path to uuid', (done) -> 
 
-            @tree.createIndexes {}, =>
+            @tree.createIndexes (=>
 
                 @tree.path2uuid.should.eql 
 
@@ -389,9 +395,11 @@ describe 'PhraseTree', ->
 
                 done()
 
+            ), {}
+
         it 'creates index from uuid to path', (done) -> 
 
-            @tree.createIndexes {}, =>
+            @tree.createIndexes (=>
 
                 @tree.uuid2path.should.eql 
 
@@ -401,17 +409,21 @@ describe 'PhraseTree', ->
 
                 done()
 
+            ), {}
+
         it 'creates index from parent to children', (done) -> 
 
-            @tree.createIndexes {}, =>
+            @tree.createIndexes (=>
 
                 @tree.children['PARENT'].should.eql ['CHILD1', 'CHILD2']
                 done()
 
+            ), {}
+
 
         it 'creates index from children to parent', (done) -> 
 
-            @tree.createIndexes {}, =>
+            @tree.createIndexes (=>
 
                 @tree.parent.should.eql
                     CHILD1: 'PARENT'
@@ -419,19 +431,22 @@ describe 'PhraseTree', ->
 
                 done()
 
+            ), {}
+
 
         it 'creates list of leaves', (done) -> 
 
-            @tree.createIndexes {}, =>
+            @tree.createIndexes (=>
 
                 @tree.leaves.should.eql  ['CHILD1', 'CHILD2']
                 done()
 
+            ), {}
+
 
         it 'appends tokens to message', (done) -> 
 
-            msg = {}
-            @tree.createIndexes msg, =>
+            @tree.createIndexes (=>
 
                 msg.should.eql 
 
@@ -441,6 +456,8 @@ describe 'PhraseTree', ->
                         '/context/the index/it/has map from uuid to path': { signature: 'it', type: 'leaf' }
 
                 done()
+
+            ), msg = {}
 
     context 'findRoute(uuidA, uuidB)', -> 
 
@@ -452,16 +469,16 @@ describe 'PhraseTree', ->
 
             @tree = new @Tree
 
-            @tree.registerEdge type: 'tree', vertices: [
+            @tree.registerEdge (->), type: 'tree', vertices: [
                     { uuid: 'PARENT',      token: { signature: 'context' }, title: 'the index' }
                     { uuid: 'CHILD1',      token: { signature: 'context' }, title: 'has indexes'}
                 ],  ->
-            @tree.registerEdge type: 'tree', vertices: [
+            @tree.registerEdge (->), type: 'tree', vertices: [
                     { uuid: 'PARENT',      token: { signature: 'context' }, title: 'the index' }
                     { uuid: 'CHILD2',      token: { signature: 'it'      }, title: 'has map from uuid to path', type: 'leaf' }
                 ],  ->
 
-            @tree.registerEdge type: 'tree', vertices: [
+            @tree.registerEdge (->), type: 'tree', vertices: [
                     { uuid: 'CHILD1',      token: { signature: 'context' }, title: 'has indexes'}
                     { uuid: 'GRANDCHILD1', token: { signature: 'it'      }, title: 'can get route (array of uuids)', type: 'leaf' }
                 ],  ->
@@ -469,7 +486,7 @@ describe 'PhraseTree', ->
 
         it 'returns array if vertex uuids from start to end (inclusive)', (done) ->
 
-            @tree.createIndexes {}, =>
+            @tree.createIndexes (=>),
 
                 @tree.findRoute( null, 'GRANDCHILD1' ).should.eql ['PARENT', 'CHILD1', 'GRANDCHILD1']
                 done()
