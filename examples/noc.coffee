@@ -2,8 +2,7 @@
 
 #
 # Exploring some ideas here... despite the 'possible' dissarangement 
-# of having an inprocess state machine managing incident lifecycle 
-# without any 'sign' of a persis†ance layer.
+# of having an inprocess state machine managing incident lifecycle.
 #
 
 
@@ -41,40 +40,17 @@ Noc    = require( '../lib/phrase' ).createRoot
                     # Connection to Alert Hub established
                     #
 
-                    alerts.use (alert, next) -> 
+                    alerts.use (next, capsule, context) -> 
 
                         #
                         # An alert has arrived, call the phrase branch
                         #
 
-                        token.run( uuid: alert.uuid, { data: alert } ).then(
-                                     #                  #
-                                     #                  # force as params (arg2)
-                                     #                  #
-                                     # 
-                                     # finds and runs the branch on the tree 
-                                     # that was created with this uuid 
-                                     #
-                                                        #
-                                                        # assigns @data for use in the
-                                                        # resulting Job instance
-                                                        # 
-                                                        # This very useful feature
-                                                        # 
-                            (resolve) ->   
-                            (error)   ->   
-                            (notify)  ->   
+                        token.run
 
-
-                                # if notify.state 'alert::escalate' 
-
-                                    #
-                                    # escalate
-                                    #
-
-                           
-
-                        )
+                            uuid: alert.uuid  # ##1 requires all possible alerts predefined in the KnowledgeBase
+                            capsule: capsule
+                            context: context
 
                         next()
 
@@ -89,39 +65,39 @@ Noc 'Duties', (duty) ->
                                             #
                                             #
     
-    duty 'Handle System Alerts', (handle, KnowledgeBase, TeamHubs, Escalate) -> 
+    duty 'Handle System Alerts', (handle, KnowledgeBase) -> 
 
         #
-        # KnowledgeBase and TeamHub are local libs injected by the 'first walk' of
-        # the Phrase Tree (at initialization)
+        # KnowledgeBase is a local lib injected by the 'first walk' of
+        # the Phrase Tree
         #
 
         KnowledgeBase.SystemAlerts.find().map (alert) -> 
 
                                     # 
-                                    #
-                                    # insert a branch for each known alert and 
-                                    # associate with the alert's assigned uuid 
+                                    # ##1 
+                                    # 
+                                    # insert a branch onto the phrase tree for
+                                    # each known alert and associate with the 
+                                    # alert's assigned uuid 
                                     # 
                                     #  `token.run( uuid: alert.uuid ).then...`
                                     #        
                                     #        from above, at alert time,     
-            before all: ->          #        finds and runs this 
+                                    #        finds and runs this 
                                     #        phrase branch
                                     # 
-                #
-                # create array storage to log the notification 
-                # chatter generated throughout the handling 
-                # of this alert process
-                #
-                # @variables are stored on the Job instance
-                # that is created at token.run(...)
-                # 
-                                    # 
-                @log = []           # use (if present) uuid for PhraseNode
-                                    #
-                                    #
+            
             handle alert.title, uuid: alert.uuid, (step) -> 
+                    #
+                    # not unique... MAKE PLAN
+                    # 
+
+
+                step 'classify',   (done) -> done()
+                step 'prioritize', (done, DependancyMatrix, KnowledgeBase) -> 
+
+                    KnowledgeBase.ActiveAlerts.query DependancyMatrix.generateQuery @uuid, @capsule, @context
 
 
                                                 #
