@@ -92,8 +92,8 @@ describe 'ChangeSet', ->
 
                 recursor1 = PhraseRoot.createClass( root1 ).createRoot opts1, (token, notice) -> 
 
-                    notice.use (msg, next) -> 
-                        msg.skipChange = true
+                    notice.use title: 'skipper', (next, capsule) -> 
+                        capsule.skipChange = true
                         next()
 
 

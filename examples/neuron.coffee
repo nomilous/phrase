@@ -63,8 +63,11 @@ neuron = require( '../lib/phrase' ).createRoot
             #       by ??? (adjusting the synaptic weight)
             # 
 
+console.log neuron
 
 neuron 'soma', (dendrite) -> 
+
+    console.log HUH: 1
 
     before 
 

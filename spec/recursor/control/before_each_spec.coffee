@@ -473,12 +473,12 @@ describe 'RecursorBeforeEach', ->
 
                     (accessToken, messageBus, root) -> 
 
-                        messageBus.use (msg, next) -> 
+                        messageBus.use title: 'spec mock 1', (next, capsule) -> 
 
                             # console.log '\n', msg.context.title
                             # console.log JSON.stringify msg, null, 2
 
-                            if msg.context.title == 'phrase::boundry:assemble'
+                            if capsule.event == 'phrase::boundry:assemble'
 
                                 #
                                 # async boundry phrase assembly line
@@ -489,10 +489,10 @@ describe 'RecursorBeforeEach', ->
                                 # TODO: (maybe) default assembly, (or the recursor never completes the 'first walk')
                                 #
 
-                                msg.phrase = 
+                                capsule.phrase = 
 
-                                    title: msg.opts.filename.split('/')[-1..].join()
-                                    control: uuid: msg.opts.filename
+                                    title: capsule.opts.filename.split('/')[-1..].join()
+                                    control: uuid: capsule.opts.filename
 
                                     fn: (probe) -> 
 
@@ -572,17 +572,17 @@ describe 'RecursorBeforeEach', ->
                             done()
 
                         count = 1
-                        messageBus.use (msg, next) -> 
+                        messageBus.use title: 'spec mock 2', (next, capsule) -> 
                             
-                            if msg.context.title == 'phrase::boundry:assemble'
+                            if capsule.context.title == 'phrase::boundry:assemble'
 
                                 # switch count++ % 2
 
                                 #     when 0 then msg.opts.mode = 'nest'
                                 #     when 1 then msg.opts.mode = 'refer'
 
-                                msg.opts.mode = 'nest'
-                                msg.phrase = 
+                                capsule.opts.mode = 'nest'
+                                capsule.phrase = 
 
                                     title: "NESTED #{count++}"
                                     control: uuid:  count++

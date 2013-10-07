@@ -40,7 +40,7 @@ describe 'phrase', ->
                 done()
 
 
-        it.only 'can be initialized with existing messenger', (done) -> 
+        it 'can be initialized with existing messenger', (done) -> 
 
             existing = Notice.create 'origin name'
 
