@@ -37,7 +37,7 @@ neuron = require( 'phrase' ).createRoot
     title:       'Neuron'
     uuid:        '00000000-0700-0000-0000-fffffffffff0'
     leaf:        ['synapse']
-    timeout:     100000000001  # neuron lifetime (estimate)
+    timeout:     1000000000001  # neuron lifetime (estimate)
     
 
     #
@@ -140,9 +140,9 @@ neuron 'soma', (dendrite) ->
 
                                 connect: address
                                 
-                                (error, socket) -> 
+                                (error, receptor) -> 
 
-                                    socket.use (msg, next) -> 
+                                    receptor.use (next, capsule, context) -> 
 
                                         #
                                         # a new 'excitement' payload has crossed the synaptic cleft
