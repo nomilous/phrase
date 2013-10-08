@@ -165,3 +165,9 @@ neuron 'soma', (dendrite) ->
 
 * [closer to the purpose of 'phrase'](https://github.com/nomilous/phrase/blob/master/spec/phrase_spec.coffee)
 
+Todo
+====
+
+* missing **vital** ability to replace specific branch on the phraseTree
+
+
