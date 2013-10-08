@@ -67,8 +67,6 @@ console.log neuron
 
 neuron 'soma', (dendrite) -> 
 
-    console.log HUH: 1
-
     before 
 
         all:  -> @accumulated    = 0

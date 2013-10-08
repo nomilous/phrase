@@ -105,13 +105,13 @@ describe 'TreeBoundry', ->
                     # the assembly of composite PhraseTrees.
                     #
 
-                    @notice.use (msg, next) -> 
+                    @notice.use title: 'boundry phrase spec 1', (next, capsule) -> 
 
-                        if msg.context.title == 'phrase::boundry:assemble' 
+                        if capsule.event == 'phrase::boundry:assemble' 
 
-                            msg.opts.type.should.equal      'directory'
-                            msg.opts.filename.should.match   new RegExp __dirname
-                            msg.opts.stackpath.should.equal  'TODO'
+                            capsule.opts.type.should.equal      'directory'
+                            capsule.opts.filename.should.match   new RegExp __dirname
+                            capsule.opts.stackpath.should.equal  'TODO'
 
                             done()
                             throw 'go no further'
@@ -178,9 +178,9 @@ describe 'TreeBoundry', ->
                 context 'As Nest', -> 
 
                     beforeEach -> 
-                        @notice.use (msg, next) -> 
-                            if msg.context.title == 'phrase::boundry:assemble'
-                                msg.opts.mode = 'nest'
+                        @notice.use title: 'as nest spec', (next, capsule) -> 
+                            if capsule.event == 'phrase::boundry:assemble'
+                                capsule.opts.mode = 'nest'
                             next()
 
 
@@ -291,13 +291,15 @@ describe 'TreeBoundry', ->
 
                     i = 1000000
 
-                    messageBus.use (msg, next) -> 
+                    messageBus.use 
+                        title: 'integration'
+                        (next, capsule) -> 
 
-                        if msg.context.title == 'phrase::boundry:assemble'
-                            
-                            msg.token.uuid = "REMOTE-UUID#{  i++  }" 
+                            if capsule.event == 'phrase::boundry:assemble'
+                                
+                                capsule.token.uuid = "REMOTE-UUID#{  i++  }" 
 
-                        next()
+                            next()
 
                     accessToken.on 'ready', ({tokens}) -> 
 

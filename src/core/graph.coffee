@@ -44,7 +44,7 @@ module.exports.create = (core) ->
         # 
         #
 
-        return next() unless capsule.context.title == 'boundry::edge:create'
+        return next() unless capsule.event == 'boundry::edge:create'
 
         srcPhrase        = capsule.vertices[0]
         srcControl       = capsule.control

@@ -157,34 +157,39 @@ Noc 'Duties', (duty) ->
 
                     resolve alert.uuid, (done) -> 
 
-                        @assigned.use (msg, next) => 
+                        @assigned.use 
 
-                            #
-                            # log all notification / status updates from 
-                            # the respondent onto `this` (Job instance)
-                            #
+                            title: 'alert resolver'
 
-                            @log.push msg.content  # probably needs a deep copy!
+                            (next, capsule) => 
+
+                                #
+                                # log all notification / status updates from 
+                                # the respondent onto `this` (Job instance)
+                                #
+
+                                @log.push msg.content  # probably needs a deep copy!
 
 
-                            #
-                            # monitor for specific events
-                            #
+                                #
+                                # monitor for specific events
+                                #
 
-                            switch msg.context.title
+                                switch capsule.event
 
-                                when 'alert::resolved' 
+                                    when 'alert::resolved' 
 
-                                    done()
+                                        done()
 
-                                when 'alert::escalate'
+                                    when 'alert::escalate'
 
-                                    #
-                                    # initialize a new Escalation 
-                                    # from `this` (Job instance)
-                                    #
+                                        #
+                                        # initialize a new Escalation 
+                                        # from `this` (Job instance)
+                                        #
 
-                                    done new Escalation @
+                                        done()
+                                        #done new Escalation @
 
 
     duty 'Assist Support Desk' # ...

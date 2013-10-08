@@ -14,8 +14,6 @@ PhraseTokenFactory = require '../token/phrase_token'
 
 exports.walk = (root, opts, rootString, rootFn) ->
 
-    console.log HUH: 2
-
     {context, inject, util}             = root
     {stack, notice, tree, PhraseTree} = context
 
@@ -52,8 +50,6 @@ exports.walk = (root, opts, rootString, rootFn) ->
 
     recursor = (parentPhraseString, parentPhraseControl) -> 
 
-        console.log HUH: 3
-
         #
         # This recursion is proxied through an async injector
         # ---------------------------------------------------
@@ -77,8 +73,6 @@ exports.walk = (root, opts, rootString, rootFn) ->
             afterEach:  recursionControl.afterEach
             afterAll:   recursionControl.afterAll
             onError:    (done, injectionControl, error) -> 
-
-                console.log HUH: ERROR: error
 
                 #
                 # when using also.inject.async 
@@ -230,11 +224,8 @@ exports.walk = (root, opts, rootString, rootFn) ->
 
                 # """: args if args.length > 1
 
-                console.log HUH: 4
-
                 newRecursorFn = recursor phraseString, phraseControl
                 nestedPhraseFn newRecursorFn
-
 
 
     injector = recursor 'ROOT', 

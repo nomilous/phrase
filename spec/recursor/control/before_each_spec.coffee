@@ -475,7 +475,7 @@ describe 'RecursorBeforeEach', ->
 
                         messageBus.use title: 'spec mock 1', (next, capsule) -> 
 
-                            # console.log '\n', msg.context.title
+                            # console.log '\n', capsule.event
                             # console.log JSON.stringify msg, null, 2
 
                             if capsule.event == 'phrase::boundry:assemble'
@@ -510,11 +510,14 @@ describe 'RecursorBeforeEach', ->
                             # local reference token
                             #
 
+                            #console.log tokens['/Boundry Test (refer)/Exploration/space/probes/edge/list2']
+
                             tokens['/Boundry Test (refer)/Exploration/space/probes/edge/list2'].should.eql
 
                                 signature: 'edge'
-                                uuid: 'list2'
-                                type: 'tree'
+                                uuid:  'list2'
+                                type:  'tree'
+                                loaded: true
                                 source: 
                                     type: 'file'
                                     filename: 'list2'
@@ -574,7 +577,7 @@ describe 'RecursorBeforeEach', ->
                         count = 1
                         messageBus.use title: 'spec mock 2', (next, capsule) -> 
                             
-                            if capsule.context.title == 'phrase::boundry:assemble'
+                            if capsule.event == 'phrase::boundry:assemble'
 
                                 # switch count++ % 2
 
