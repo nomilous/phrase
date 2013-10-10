@@ -59,38 +59,39 @@ neuron = require( 'phrase' ).createRoot
             # 
             # console.log data
             # 
-            # { walk: { startedAt: 1377384696287, first: true, duration: 118 },
-            # tokens: 
-            #  { '/Neuron/soma': { name: [Getter], uuid: [Getter] },
-            #    '/Neuron/soma/dendrite/synapses': { name: [Getter], uuid: [Getter] },
-            #    '/Neuron/soma/dendrite/synapses/input/1': { name: [Getter], uuid: [Getter] },
-            #    '/Neuron/soma/dendrite/synapses/input/2': { name: [Getter], uuid: [Getter] },
-            #    '/Neuron/soma/dendrite/synapses/input/3': { name: [Getter], uuid: [Getter] },
-            #    '/Neuron/soma/dendrite/synapses/input/4': { name: [Getter], uuid: [Getter] },
-            # 
-            #  ...
-            # 
 
-            #
-            # TODO: Output Synapses
-            #  
-            #       by ???
-            #
-            #
-            # TODO: Join neural network 
-            #  
-            #       by attaching the synaptic inputs (tokens) to
-            #          synaptic outputs from other neurons 
-            #          just like this one
-            # 
-            #          and presenting this neurons outputs for 
-            #          attachment at inputs to other neurons
-            #
-            # 
-            # TODO: Learn
-            # 
-            #       by ??? (adjusting the synaptic weight)
-            # 
+# { walk: { startedAt: 1377384696287, first: true, duration: 118 },
+# tokens: 
+#  { '/Neuron/soma': { name: [Getter], uuid: [Getter] },
+#    '/Neuron/soma/dendrite/synapses': { name: [Getter], uuid: [Getter] },
+#    '/Neuron/soma/dendrite/synapses/input/1': { name: [Getter], uuid: [Getter] },
+#    '/Neuron/soma/dendrite/synapses/input/2': { name: [Getter], uuid: [Getter] },
+#    '/Neuron/soma/dendrite/synapses/input/3': { name: [Getter], uuid: [Getter] },
+#    '/Neuron/soma/dendrite/synapses/input/4': { name: [Getter], uuid: [Getter] },
+# 
+#  ...
+# 
+
+#
+# TODO: Output Synapses
+#  
+#       by ???
+#
+#
+# TODO: Join neural network 
+#  
+#       by attaching the synaptic inputs (tokens) to
+#          synaptic outputs from other neurons 
+#          just like this one
+# 
+#          and presenting this neurons outputs for 
+#          attachment at inputs to other neurons
+#
+# 
+# TODO: Learn
+# 
+#       by ??? (adjusting the synaptic weight)
+# 
 
 
 neuron 'soma', (dendrite) -> 
