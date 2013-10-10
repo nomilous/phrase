@@ -146,7 +146,8 @@ neuron 'soma', (dendrite) ->
                                     receptor.use (next, capsule, context) -> 
 
                                         #
-                                        # a new 'excitement' payload has crossed the synaptic cleft
+                                        # a new 'excitement' payload 
+                                        # has crossed the synaptic cleft
                                         #
 
                                         next()
