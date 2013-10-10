@@ -1,6 +1,6 @@
-### Version 0.0.5 (prerelease, unstable)
+`npm install phrase` 0.0.5 [license](./license)
 
-`npm install phrase`
+(prerelease, unstable) 
 
 phrase
 ======
