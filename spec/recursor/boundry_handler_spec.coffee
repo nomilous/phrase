@@ -107,7 +107,7 @@ describe 'TreeBoundry', ->
 
                     @notice.use title: 'boundry phrase spec 1', (next, capsule) -> 
 
-                        if capsule.event == 'phrase::boundry:assemble' 
+                        if capsule.phrase == 'phrase::boundry:assemble' 
 
                             capsule.opts.type.should.equal      'directory'
                             capsule.opts.filename.should.match   new RegExp __dirname
@@ -179,7 +179,7 @@ describe 'TreeBoundry', ->
 
                     beforeEach -> 
                         @notice.use title: 'as nest spec', (next, capsule) -> 
-                            if capsule.event == 'phrase::boundry:assemble'
+                            if capsule.phrase == 'phrase::boundry:assemble'
                                 capsule.opts.mode = 'nest'
                             next()
 
@@ -295,7 +295,7 @@ describe 'TreeBoundry', ->
                         title: 'integration'
                         (next, capsule) -> 
 
-                            if capsule.event == 'phrase::boundry:assemble'
+                            if capsule.phrase == 'phrase::boundry:assemble'
                                 
                                 capsule.token.uuid = "REMOTE-UUID#{  i++  }" 
 

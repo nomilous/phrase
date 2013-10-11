@@ -44,7 +44,7 @@ module.exports.create = (core) ->
         # 
         #
 
-        return next() unless capsule.event == 'boundry::edge:create'
+        return next() unless capsule.phrase == 'boundry::edge:create'
 
         srcPhrase        = capsule.vertices[0]
         srcControl       = capsule.control
@@ -99,7 +99,7 @@ module.exports.create = (core) ->
             #   leaf at the link origin
             #
 
-            capsule.phrase = new OriginPhraseNode
+            capsule.assemble = new OriginPhraseNode
                 title: newPhraseTitle
                 uuid: newPhraseUUID
                 token: new OriginPhraseToken
@@ -159,7 +159,7 @@ module.exports.create = (core) ->
                 OriginPhraseToken = core.root( capsule.root.uuid ).context.PhraseToken
                 OriginPhraseNode = core.root( capsule.root.uuid ).context.PhraseNode
 
-                capsule.phrase = new OriginPhraseNode
+                capsule.assemble = new OriginPhraseNode
                     title: newPhraseTitle
                     uuid: newPhraseUUID
                     token: new OriginPhraseToken

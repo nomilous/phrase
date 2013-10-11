@@ -42,7 +42,11 @@ describe 'phrase', ->
 
         it 'can be initialized with existing messenger', (done) -> 
 
-            existing = Notice.create 'origin name'
+            existing = Notice(
+
+                capsule: phrase: {}
+
+            ).create 'origin name'
 
             registrar = PhraseRoot.createRoot
 

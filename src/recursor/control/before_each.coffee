@@ -181,7 +181,7 @@ exports.create = (root, parentControl) ->
         run = sequence [
 
             ->  
-                notice.event 'phrase::edge:create',
+                notice.phrase 'phrase::edge:create',
                     #DUPLICATE3
 
                     #
@@ -311,7 +311,7 @@ exports.create = (root, parentControl) ->
 
                                             (        ) -> 
 
-                                                notice.event 'boundry::edge:create',
+                                                notice.phrase 'boundry::edge:create',
 
                                                     vertices: [phrase, referPhrase]
                                                     control: phraseControl
@@ -328,13 +328,13 @@ exports.create = (root, parentControl) ->
                                 # 
 
                                             ({phrase}) -> 
-                                                
+                                                console.log PPP: phrase
                                                 stack.push phrase
 
 
                                             (        ) -> 
 
-                                                notice.event 'phrase::edge:create',
+                                                notice.phrase 'phrase::edge:create',
                                                     #DUPLICATE3  
 
                                                     vertices: stack[ -2.. ]

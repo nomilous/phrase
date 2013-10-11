@@ -25,7 +25,7 @@ describe 'RecursorBeforeEach', ->
                 #
                 notice: 
                     info: -> then: (resolve) -> resolve()
-                    event: -> then: (resolve) -> resolve()
+                    phrase: -> then: (resolve) -> resolve()
 
         root.context.PhraseNode  = PhraseNode.createClass root
         root.context.PhraseToken = PhraseTokenFactory.createClass root
@@ -337,10 +337,10 @@ describe 'RecursorBeforeEach', ->
             injectionControl.args      = [ 'has this child in', {}, -> ]
             SEQUENCE = []
             EVENTS = {}
-            root.context.notice.event = (event, payload) -> 
+            root.context.notice.phrase = (title, payload) -> 
 
-                SEQUENCE.push event
-                EVENTS[event] = payload
+                SEQUENCE.push title
+                EVENTS[title] = payload
                 return then: (resolve) -> resolve() 
 
             hook = RecursorBeforeEach.create root, parent
@@ -473,12 +473,13 @@ describe 'RecursorBeforeEach', ->
 
                     (accessToken, messageBus, root) -> 
 
+
                         messageBus.use title: 'spec mock 1', (next, capsule) -> 
 
                             # console.log '\n', capsule.event
                             # console.log JSON.stringify msg, null, 2
 
-                            if capsule.event == 'phrase::boundry:assemble'
+                            if capsule.phrase == 'phrase::boundry:assemble'
 
                                 #
                                 # async boundry phrase assembly line
@@ -489,7 +490,7 @@ describe 'RecursorBeforeEach', ->
                                 # TODO: (maybe) default assembly, (or the recursor never completes the 'first walk')
                                 #
 
-                                capsule.phrase = 
+                                capsule.assemble = 
 
                                     title: capsule.opts.filename.split('/')[-1..].join()
                                     control: uuid: capsule.opts.filename
@@ -577,7 +578,7 @@ describe 'RecursorBeforeEach', ->
                         count = 1
                         messageBus.use title: 'spec mock 2', (next, capsule) -> 
                             
-                            if capsule.event == 'phrase::boundry:assemble'
+                            if capsule.phrase == 'phrase::boundry:assemble'
 
                                 # switch count++ % 2
 
@@ -585,7 +586,7 @@ describe 'RecursorBeforeEach', ->
                                 #     when 1 then msg.opts.mode = 'refer'
 
                                 capsule.opts.mode = 'nest'
-                                capsule.phrase = 
+                                capsule.assemble = 
 
                                     title: "NESTED #{count++}"
                                     control: uuid:  count++

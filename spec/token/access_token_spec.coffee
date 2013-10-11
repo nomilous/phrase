@@ -19,7 +19,9 @@ describe 'PhraseToken', ->
 
             title: 'Title'
             uuid:  'ROOT-UUID'
-            notice: use: ->
+            notice: 
+                use: ->
+                phrase: ->
 
             (token, notice) -> 
 
@@ -78,7 +80,7 @@ describe 'PhraseToken', ->
                     # send mock phrase::recurse:end
                     #
 
-                    event: 'phrase::recurse:end'
+                    phrase: 'phrase::recurse:end'
                     walk: first: true
                     
 

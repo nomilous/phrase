@@ -29,11 +29,11 @@ describe 'Run', ->
                 NOTICE = notice
                 TREE   = token.tree
 
-                notice.use (msg, next) -> 
+                notice.use title: 'run_spec', (next, capsule) -> 
 
                     return done() if LEAF_TWO?
 
-                    if msg.context.title == 'phrase::recurse:end'
+                    if capsule.phrase == 'phrase::recurse:end'
 
                         #
                         # tree is ready, locate UUIDs of test phrase nodes

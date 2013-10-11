@@ -43,7 +43,7 @@ exports.create = (root, parentControl) ->
 
         return run() if context.walking?
 
-        notice.event( 'phrase::recurse:start' 
+        notice.phrase( 'phrase::recurse:start' 
 
             root: uuid: root.uuid
 

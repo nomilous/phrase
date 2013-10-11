@@ -47,7 +47,7 @@ exports.create = (root, parentControl) ->
             startedAt = context.walking.startedAt
             context.walking.duration = Date.now() - startedAt
 
-            notice.event( 'phrase::recurse:end' 
+            notice.phrase( 'phrase::recurse:end' 
 
                 walk: context.walking
                 root: uuid: root.uuid

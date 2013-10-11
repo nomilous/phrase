@@ -25,23 +25,25 @@ describe 'Graph', ->
                 (token, notice, root) -> 
 
                     i = 0
-                    notice.use (msg, next) -> 
+                    notice.use 
+                        title: 'graph_spec'
+                        (next, capsule) -> 
 
-                        if msg.context.title == 'phrase::boundry:assemble'
+                            if capsule.phrase == 'phrase::boundry:assemble'
 
-                            #
-                            # create new phrase on the call to boundry assemble
-                            #
+                                #
+                                # create new phrase on the call to boundry assemble
+                                #
 
-                            msg.phrase = 
-                                title: msg.opts.filename.replace /\//g, '.'
-                                control: uuid:  "0000000#{i++}"
-                                fn: (nested) -> 
-                                    nested 'phrase title', (deeper) -> 
-                                        deeper 'phrase title', (end) -> 
-                                            end()
-                        
-                        next()
+                                capsule.assemble = 
+                                    title: msg.opts.filename.replace /\//g, '.'
+                                    control: uuid:  "0000000#{i++}"
+                                    fn: (nested) -> 
+                                        nested 'phrase title', (deeper) -> 
+                                            deeper 'phrase title', (end) -> 
+                                                end()
+                            
+                            next()
 
                     token.on 'ready', ({tokens}) -> 
 

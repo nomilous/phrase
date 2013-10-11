@@ -113,7 +113,7 @@ exports.createClass = (root) ->
                 progress: @progress()
                 at:       Date.now()
 
-            @notice.event( message.update, message ).then => 
+            @notice.phrase( message.update, message ).then => 
 
                             #
                             # asynchronous notification
@@ -248,7 +248,7 @@ exports.createClass = (root) ->
                                     originator: s == step
 
 
-                            @notice.event( 'run::step:failed',  
+                            @notice.phrase( 'run::step:failed',  
 
                                     update:     'run::step:failed'
                                     class:      @constructor.name
@@ -391,7 +391,7 @@ exports.createClass = (root) ->
                                     at:       Date.now()
                                     step:     step
 
-                                return @notice.event( message.update, message ).then => 
+                                return @notice.phrase( message.update, message ).then => 
 
                                     @deferral.notify message
                                     done()
@@ -414,7 +414,7 @@ exports.createClass = (root) ->
                             progress: @progress()
                             at:       Date.now()
 
-                        @notice.event( message.update, message ).then => 
+                        @notice.phrase( message.update, message ).then => 
 
                             @deferral.notify message
 

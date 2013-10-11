@@ -30,7 +30,7 @@ describe 'RecursorAfterAll', ->
                 #
 
                 walking: startedAt: 1
-                notice: event: (title, payload) -> 
+                notice: phrase: (title, payload) -> 
 
                     title.should.equal 'phrase::recurse:end'
                     
@@ -63,7 +63,7 @@ describe 'RecursorAfterAll', ->
                 context: 
                     stack: []
                     walking: startedAt: 1
-                    notice: event: -> then: (fn) -> fn()
+                    notice: phrase: -> then: (fn) -> fn()
                     tree:  version: 1, vertices: {}, update: => then: (done) => @updated++; done()
                     trees: latest: version: 2, vertices: {}
 

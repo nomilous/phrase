@@ -103,9 +103,19 @@ exports.createClass = (root) ->
 
             #
             # * create the message bus
+            # * requires phrase capsule defined
             # 
 
-            context.notice = opts.notice || Notice.create opts.uuid
+            noticeConfig = capsule: phrase: {}
+
+            if opts.notice? then unless typeof opts.notice.phrase == 'function'
+                throw new Error "phrase: requires 'phrase' capsule definition"
+
+            context.notice = opts.notice || Notice( noticeConfig ).create opts.uuid
+            Object.defineProperty context.notice, 'phrase',
+                enumerable: false
+                writable: false
+
 
             context.notice.use
 

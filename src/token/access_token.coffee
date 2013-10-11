@@ -56,7 +56,7 @@ exports.create = (root) ->
         title: 'token emitter proxy'
         (next, capsule) -> 
 
-            if capsule.event == 'phrase::recurse:end'
+            if capsule.phrase == 'phrase::recurse:end'
 
                 if capsule.walk.first then emitter.emit 'ready', 
 

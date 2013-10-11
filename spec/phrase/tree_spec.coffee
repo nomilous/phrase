@@ -127,7 +127,7 @@ describe 'PhraseTree', ->
 
                 @Tree.assembler (->),
 
-                    event: 'phrase::edge:create'
+                    phrase: 'phrase::edge:create'
                     root: uuid: 'ROOTUUID'
                     
 
@@ -140,7 +140,7 @@ describe 'PhraseTree', ->
 
                 @Tree.assembler done,
 
-                    context: title: 'phrase::edge:create'
+                    phrase: 'phrase::edge:create'
                     root: uuid: 'NOTME'
                     
 
@@ -165,7 +165,7 @@ describe 'PhraseTree', ->
                     # mock 'phrase::edge:create' message
                     #
 
-                    event: 'phrase::edge:create'
+                    phrase: 'phrase::edge:create'
                     root: uuid: 'ROOTUUID'
                     vertices: [
                         { uuid: 'UUID1', key: 'value1' }
@@ -195,7 +195,7 @@ describe 'PhraseTree', ->
                     # mock 'phrase::edge:create' message
                     #
 
-                    context: title: 'phrase::edge:create'
+                    phrase: 'phrase::edge:create'
                     vertices: [
                         { uuid: 'UUID1', key: 'value1' }
                         { uuid: 'UUID2', key: 'value2' }

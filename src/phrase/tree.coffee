@@ -56,7 +56,7 @@ exports.createClass = (root) ->
 
             return next() unless trees.latest?
 
-            switch capsule.event
+            switch capsule.phrase
 
                 when 'phrase::recurse:start'
 
@@ -189,15 +189,15 @@ exports.createClass = (root) ->
             return pipeline [
 
                 #
-                # WARNING - The event sequence / the event names will very likely 
+                # WARNING - The phrase capsule sequence / names will very likely 
                 #           change when this update pipeline is expanded to support 
                 #           scrolling the running tree (root.context.tree) forward 
                 #           and backward through versions. 
                 #
 
-                (       ) -> notice.event 'tree::compare:start'
+                (       ) -> notice.phrase 'tree::compare:start'
                 (       ) -> new ChangeSet( context.tree, context.trees.latest ).changes
-                (changes) -> notice.event 'tree::compare:end', changes: changes
+                (changes) -> notice.phrase 'tree::compare:end', changes: changes
 
                     #
                     # * This currently goes on to auto apply the new changes
@@ -207,13 +207,13 @@ exports.createClass = (root) ->
                     # TODO: pend change apply per later instruction
                     # 
 
-                (message) -> notice.event 'tree::update:start', message
+                (message) -> notice.phrase 'tree::update:start', message
                 (message) -> 
 
                     return skipped: true if message.skipChange
                     ChangeSet.applyChanges message.changes.uuid
 
-                (updated) -> notice.event 'tree::update:end', updated
+                (updated) -> notice.phrase 'tree::update:end', updated
 
             ]
 

@@ -13,7 +13,7 @@ describe 'RecursorBeforeAll', ->
             uuid: 'ROOTUUID'
             util: also.util
             context: 
-                notice: event: -> then: (resolve) -> resolve() 
+                notice: phrase: -> then: (resolve) -> resolve() 
                 hooks: 
                     beforeAll: []
                     beforeEach: []
@@ -66,7 +66,7 @@ describe 'RecursorBeforeAll', ->
         EVENT   = undefined
         PAYLOAD = undefined
         Date.now = -> 1
-        root.context.notice.event = (title, payload) -> 
+        root.context.notice.phrase = (title, payload) -> 
 
             EVENT   = title
             PAYLOAD = payload
@@ -88,7 +88,7 @@ describe 'RecursorBeforeAll', ->
 
         EVENT = undefined 
         Date.now = -> 1
-        root.context.notice.event = (title) -> 
+        root.context.notice.phrase = (title) -> 
 
             EVENT = title
             then: (resolve) -> resolve()

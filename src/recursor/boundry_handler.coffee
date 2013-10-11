@@ -17,7 +17,7 @@ module.exports = boundryHandler =
 
         {notice} = root.context
 
-        notice.event 'phrase::link:directory',
+        notice.phrase 'phrase::link:directory',
 
             directory: opts.directory
             match: regex
@@ -51,7 +51,7 @@ module.exports = boundryHandler =
             #   that is waiting on the promise.
             #
 
-            do (filename) -> -> notice.event 'phrase::boundry:assemble', 
+            do (filename) -> -> notice.phrase 'phrase::boundry:assemble', 
 
                 opts:
 

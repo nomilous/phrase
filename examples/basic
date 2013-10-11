@@ -16,23 +16,30 @@ phrase = require( '../lib/phrase' ).createRoot
                 parameter1: 'parameter1'
                 parameter2: 'parameter2'
 
-            ).then (result) -> 
+            ).then( 
 
-                console.log RESULT_1: result
+                (result) -> 
 
-                #
-                # reload the phrase tree
-                #
+                    console.log RESULT_1: result
 
-                phrase 'root phrase title', (nested) -> 
-                    nested 'nested phrase title', (end) -> 
-                        console.log """
-                        
+                    #
+                    # reload the phrase tree
+                    #
 
-                        running REPLACED phrase title with #{@parameter1} and #{@parameter2}
-                        """
-                        @updatedResultData = 1
-                        end()
+                    phrase 'root phrase title', (nested) -> 
+                        nested 'nested phrase title', (end) -> 
+                            console.log """
+                            
+
+                            running REPLACED phrase title with #{@parameter1} and #{@parameter2}
+                            """
+                            @updatedResultData = 1
+                            end()
+
+                (error) -> 
+
+                    console.log error.stack
+            )
 
 
         token.on 'changed', (pending) -> 
@@ -69,8 +76,8 @@ promise = phrase 'root phrase title', (nested) ->
 
 promise.then(
 
-    # (result) -> console.log RESULT: result 
-    # (error)  -> console.log ERROR:  error
-    # (notify) -> console.log NOTIFY: notify
+    (result) -> #console.log RESULT: result 
+    (error)  -> console.log error.stack
+    (notify) -> #console.log NOTIFY: notify
 
 )
