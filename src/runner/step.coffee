@@ -1,4 +1,12 @@
 #
+# ##undecided3 
+# 
+# * 'step' becomes 'middleware'
+# * how to before and after hooks (or are they really necessary (in their current form))
+# 
+
+
+#
 # TODO: formalize job step
 # ------------------------
 # 

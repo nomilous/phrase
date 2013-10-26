@@ -6,6 +6,9 @@ exports.createClass = (root) ->
     # Job (class factory)
     # =========================
     # 
+    # ##undecided3 
+    #   * job becomes capsule
+    # 
     # Has root access factory create() scope
     #
 

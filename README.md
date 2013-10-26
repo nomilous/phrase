@@ -13,7 +13,8 @@ What is it?
 * An heirarchical modeler.
 * ...
 * A metadata enriched scope heap.
-* **An Open Closure**.
+* **An Open Closure**.  (this rabbit hole...
+* **A Distributed Process Scaffold**.  ...it still poorly lit)
 
 
 Usage

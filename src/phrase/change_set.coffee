@@ -26,6 +26,17 @@ exports.createClass = (root) ->
     #                too big... )
     # 
 
+    #
+    # ##undecided3 
+    # 
+    # * reimplement tree as nested notice hubs
+    # * edge middleware contains call to nested hub pupeline
+    # * nested can do the same   ...((star topology) for now)
+    # * each standalone for now
+    # * ((i can't ""see"" all the way to the end of this road)) but it ""feels"" right
+    #
+
+
     {util} = root
 
     changeSets = {}

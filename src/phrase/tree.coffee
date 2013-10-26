@@ -104,6 +104,12 @@ exports.createClass = (root) ->
                 # * `leaves`   - array of leaf uuids
                 # 
 
+                #
+                # ##undecided3
+                # 
+                # * tree ass nested notice hubs
+                # 
+
                 parent:    {}
                 children:  {}
                 leaves:    []
